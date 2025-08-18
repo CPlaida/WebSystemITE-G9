@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - St. Peter HMS</title>
+    <link rel="stylesheet" href="../css/auth.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+            overflow-x: hidden;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            z-index: 1000;
+            transition: 0.3s ease;
+        }
+        header.scrolled {
+            background: rgba(0, 119, 182, 0.85);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0077b6;
+            text-decoration: none;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: 0.3s ease;
+        }
+        header.scrolled nav ul li a {
+            color: #fff;
+        }
+        nav ul li a:hover {
+            color: #ffdd57;
+        }
+        .btn {
+            background: #0077b6;
+            color: white;
+            padding: 18px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 25px rgba(0, 119, 182, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover {
+            background: #005f8a;
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 95, 138, 0.5);
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="../Home.html" class="logo">St. Peter Hospital Inc.</a>
+    <nav>
+        <ul>
+            <li><a href="../Home.html">Home</a></li>
+            <li><a href="../doctors.html">Doctors</a></li>
+            <li><a href="../services.html">Services</a></li>
+            <li><a href="../contact.html">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <h1> Welcome back</h1>
+            <p>Welcome to St. Peter Hospital Inc. Please login to your account</p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="text" id="Email" name="Email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">Login</button>
+            <div class="login-footer" id="patientLoginFooter" style="display: block;">
+                <p>Don't have an account? <a href="register.html">Sign up</a></p>
+                <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
+        background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+    }
+    .login-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        padding: 60px;
+        width: 100%;
+        max-width: 700px;
+        margin: 30px 0;
+        animation: fadeInUp 0.5s ease-out;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .login-header h1 {
+        color: #0077b6;
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    .login-header p {
+        color: #666;
+        font-size: 0.95rem;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #444;
+        font-weight: 500;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        height: 55px;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #0077b6;
+        box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.2);
+    }
+    .login-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    .login-footer a {
+        color: #0077b6;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+    .forgot-password {
+        display: block;
+        margin-top: 10px;
+    }
+</style>
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set active navigation link
+            const currentPage = 'login';
+            const navLinks = document.querySelectorAll('nav ul li a');
+            navLinks.forEach(link => {
+                if (link.textContent.toLowerCase() === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            const loginForm = document.getElementById('loginForm');
+            const patientFooter = document.getElementById('patientLoginFooter');
+
+            // Form submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('Email').value;
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+                
+                console.log('Login attempt:', { username });
+                window.location.href = '../admin/dashboard.html';
+            });
+        });
+    </script>
+</body>
+</html>
