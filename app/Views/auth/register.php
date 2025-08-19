@@ -342,7 +342,7 @@
                 <button type="submit" class="btn">Create Account</button>
                 
                 <div class="login-link">
-                    Already have an account? <a href="login.html">Sign in here</a>
+                    Already have an account? <a href="<?= site_url('login') ?>">Sign in here</a>
                 </div>
             </form>
         </div>
