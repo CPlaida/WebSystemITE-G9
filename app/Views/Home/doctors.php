@@ -225,11 +225,11 @@
     <div class="logo">St. Peter Hospital Inc.</div>
     <nav>
         <ul>
-            <li><a href="Home.html">Home</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="doctors.html" class="active">Doctors</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="auth/login.html">Login</a></li>
+            <li><a href="<?= site_url('/') ?>">Home</a></li>
+            <li><a href="<?= site_url('services') ?>">Services</a></li>
+            <li><a href="<?= site_url('doctors') ?>" class="active">Doctors</a></li>
+            <li><a href="<?= site_url('contact') ?>">Contact</a></li>
+            <li><a href="<?= site_url('login') ?>">Login</a></li>
         </ul>
     </nav>
 </header>
