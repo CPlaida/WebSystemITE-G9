@@ -105,10 +105,22 @@
             <p>Sign in to your account</p>
         </div>
         
+        <?php if (session()->getFlashdata('error')): ?>
+            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <?= session()->getFlashdata('error') ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (session()->getFlashdata('success')): ?>
+            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                <?= session()->getFlashdata('success') ?>
+            </div>
+        <?php endif; ?>
+        
         <form action="<?= site_url('auth/process_login') ?>" method="post">
             <div class="form-group">
-                <label for="username">Email</label>
-                <input type="text" id="username" name="username" required>
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" required>
             </div>
             
             <div class="form-group">

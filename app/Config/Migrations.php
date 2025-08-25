@@ -29,6 +29,23 @@ class Migrations extends BaseConfig
      */
     public string $table = 'migrations';
 
-    public $type = 'sequential';
+     /**
+     * --------------------------------------------------------------------------
+     * Timestamp Format
+     * --------------------------------------------------------------------------
+     *
+     * This is the format that will be used when creating new migrations
+     * using the CLI command:
+     *   > php spark make:migration
+     *
+     * NOTE: if you set an unsupported format, migration runner will not find
+     *       your migration files.
+     *
+     * Supported formats:
+     * - YmdHis_
+     * - Y-m-d-His_
+     * - Y_m_d_His_
+     */
+    public string $timestampFormat = 'Y-m-d-His_';
 
 }

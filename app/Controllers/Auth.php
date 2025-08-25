@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
+use App\Models\UserModel;
 
 class Auth extends Controller
 {
@@ -10,47 +11,79 @@ class Auth extends Controller
     {
         return view('auth/login');
     }
-    
+
     public function process_login()
     {
-        // Get the input
-        $username = $this->request->getPost('Email');
+        $session = session();
+        $model = new UserModel();
+
+        // Input fields (make sure your login form uses 'email' and 'password')
+        $identity = $this->request->getPost('email'); 
         $password = $this->request->getPost('password');
-        
-        // TODO: Add actual authentication logic here
-        // For now, just redirect to dashboard if username and password are not empty
-        if (!empty($username) && !empty($password)) {
-            // Set user session or token here
-            return redirect()->to('/dashboard');
+
+        // Find user by email or username
+        $user = $model->where('email', $identity)
+                      ->orWhere('username', $identity)
+                      ->first();
+
+        if ($user) {
+            if ($user['status'] !== 'active') {
+                return redirect()->back()->with('error', 'Account is inactive, contact admin.');
+            }
+
+            if (password_verify($password, $user['password'])) {
+                // Set session
+                $session->set([
+                    'user_id'  => $user['id'],
+                    'username' => $user['username'],
+                    'role'     => $user['role'],
+                    'logged_in'=> true
+                ]);
+
+                // Redirect based on role
+                if ($user['role'] === 'admin') {
+                    return redirect()->to('/admin/dashboard');
+                } elseif ($user['role'] === 'doctor') {
+                    return redirect()->to('/doctor/dashboard');
+                } elseif ($user['role'] === 'nurse') {
+                    return redirect()->to('/nurse/dashboard');
+                } else {
+                    return redirect()->to('/reception/dashboard');
+                }
+            } else {
+                return redirect()->back()->with('error', 'Wrong password.');
+            }
         }
-        
-        // If authentication fails, redirect back to login with error
-        return redirect()->back()->with('error', 'Invalid username or password');
+
+        return redirect()->back()->with('error', 'Invalid username/email or password.');
     }
-    
+
     public function register()
     {
         return view('auth/register');
     }
-    
+
     public function process_register()
     {
-        // Get form data
+        $model = new UserModel();
+
         $data = [
-            'first_name' => $this->request->getPost('first_name'),
-            'last_name' => $this->request->getPost('last_name'),
-            'email' => $this->request->getPost('email'),
+            'username' => $this->request->getPost('username'),
+            'email'    => $this->request->getPost('email'),
             'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'birthdate' => $this->request->getPost('birthdate'),
-            'gender' => $this->request->getPost('gender'),
-            'contact_number' => $this->request->getPost('contact_number'),
-            'address' => $this->request->getPost('address'),
+            'role'     => $this->request->getPost('role') ?? 'receptionist',
+            'status'   => 'active',
             'created_at' => date('Y-m-d H:i:s')
         ];
-        
-        // TODO: Add validation and database insertion logic here
-        // For now, just redirect to login with success message
-        
-        return redirect()->to('/login')->with('success', 'Registration successful! Please login with your credentials.');
+
+        $model->insert($data);
+
+        return redirect()->to('/login')->with('success', 'Registration successful! Please login.');
+    }
+
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to('/login');
     }
 }

@@ -1,0 +1,97 @@
+ERROR - 2025-08-24 14:02:06 --> mysqli_sql_exception: Duplicate entry 'admin' for key 'username' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `us...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `us...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `us...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `us...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\AdminSeeder.php(21): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\AdminSeeder->run()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#11 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#12 {main}
+ERROR - 2025-08-24 14:10:02 --> mysqli_sql_exception: Duplicate entry 'admin' for key 'username' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `us...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `us...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `us...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `us...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\AdminSeeder.php(21): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\AdminSeeder->run()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#11 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#12 {main}
+ERROR - 2025-08-24 14:11:06 --> mysqli_sql_exception: Duplicate entry 'admin' for key 'username' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `us...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `us...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `us...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `us...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\AdminSeeder.php(21): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\AdminSeeder->run()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#11 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-08-24 14:28:23 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/dashboard.php"
+[Method: GET, Route: admin/dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/dashboard', [], true)
+ 3 APPPATH\Controllers\Admin.php(26): view('admin/dashboard', [...])
+ 4 APPPATH\Controllers\Admin.php(10): App\Controllers\Admin->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-08-24 14:28:52 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/dashboard.php"
+[Method: GET, Route: admin/dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/dashboard', [], true)
+ 3 APPPATH\Controllers\Admin.php(26): view('admin/dashboard', [...])
+ 4 APPPATH\Controllers\Admin.php(10): App\Controllers\Admin->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-08-24 14:28:56 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/dashboard.php"
+[Method: GET, Route: admin/dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/dashboard', [], true)
+ 3 APPPATH\Controllers\Admin.php(26): view('admin/dashboard', [...])
+ 4 APPPATH\Controllers\Admin.php(10): App\Controllers\Admin->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-08-24 14:29:49 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/dashboard.php"
+[Method: GET, Route: admin/dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/dashboard', [], true)
+ 3 APPPATH\Controllers\Admin.php(26): view('admin/dashboard', [...])
+ 4 APPPATH\Controllers\Admin.php(10): App\Controllers\Admin->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
