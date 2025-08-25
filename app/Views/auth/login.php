@@ -106,21 +106,15 @@
         </div>
         
         <?php if (session()->getFlashdata('error')): ?>
-            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+            <div class="alert alert-error" style="background: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
                 <?= session()->getFlashdata('error') ?>
-            </div>
-        <?php endif; ?>
-        
-        <?php if (session()->getFlashdata('success')): ?>
-            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
-                <?= session()->getFlashdata('success') ?>
             </div>
         <?php endif; ?>
         
         <form action="<?= site_url('auth/process_login') ?>" method="post">
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="text" id="email" name="email" required>
+                <label for="Email">Email Address</label>
+                <input type="email" id="Email" name="Email" required>
             </div>
             
             <div class="form-group">
@@ -128,12 +122,8 @@
                 <input type="password" id="password" name="password" required>
             </div>
             
-            <button type="submit" class="btn">Sign In</button>
+            <button type="submit" class="btn">Admin Log In</button>
         </form>
-        
-        <div class="login-footer">
-            <p>Don't have an account? <a href="<?= site_url('register') ?>">Register here</a></p>
-        </div>
     </div>
 </body>
 </html>

@@ -14,3 +14,5 @@ class Nurse extends BaseController
         return view('nurse/reports');
     }
 }
+
+

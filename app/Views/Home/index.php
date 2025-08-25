@@ -223,7 +223,7 @@
             <li><a href="<?= site_url('services') ?>">Services</a></li>
             <li><a href="<?= site_url('doctors') ?>">Doctors</a></li>
             <li><a href="<?= site_url('contact') ?>">Contact</a></li>
-            <li><a href="<?= site_url('auth/login') ?>">Login</a></li>
+            <li><a href="<?= site_url('login') ?>">Login</a></li>
         </ul>
     </nav>
 </header>

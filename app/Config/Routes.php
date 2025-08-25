@@ -20,6 +20,12 @@ $routes->get('register', 'Auth::register');
 $routes->post('auth/process_register', 'Auth::process_register');
 $routes->get('logout', 'Auth::logout');
 
+// Dashboard Route
+$routes->get('dashboard', 'Dashboard::index');
+
+// Logout Route
+$routes->get('auth/logout', 'Auth::logout');
+
 // Remove index.php from URL
 $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('Home');

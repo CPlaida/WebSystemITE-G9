@@ -17,9 +17,14 @@ class Auth extends Controller
         $session = session();
         $model = new UserModel();
 
-        // Input fields (make sure your login form uses 'email' and 'password')
-        $identity = $this->request->getPost('email'); 
+        // Accept both 'email' and 'Email' keys from the form
+        $identity = $this->request->getPost('email') ?? $this->request->getPost('Email');
         $password = $this->request->getPost('password');
+
+        // Basic validation
+        if (empty($identity) || empty($password)) {
+            return redirect()->back()->with('error', 'Please enter your email/username and password.');
+        }
 
         // Find user by email or username
         $user = $model->where('email', $identity)
