@@ -105,10 +105,16 @@
             <p>Sign in to your account</p>
         </div>
         
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-error" style="background: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+                <?= session()->getFlashdata('error') ?>
+            </div>
+        <?php endif; ?>
+        
         <form action="<?= site_url('auth/process_login') ?>" method="post">
             <div class="form-group">
-                <label for="username">Email</label>
-                <input type="text" id="username" name="username" required>
+                <label for="Email">Email Address</label>
+                <input type="email" id="Email" name="Email" required>
             </div>
             
             <div class="form-group">
@@ -116,12 +122,8 @@
                 <input type="password" id="password" name="password" required>
             </div>
             
-            <button type="submit" class="btn">Sign In</button>
+            <button type="submit" class="btn">Admin Log In</button>
         </form>
-        
-        <div class="login-footer">
-            <p>Don't have an account? <a href="<?= site_url('register') ?>">Register here</a></p>
-        </div>
     </div>
 </body>
 </html>

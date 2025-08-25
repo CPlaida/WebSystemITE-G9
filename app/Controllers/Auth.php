@@ -13,19 +13,34 @@ class Auth extends Controller
     
     public function process_login()
     {
-        // Get the input
-        $username = $this->request->getPost('Email');
+        $email = $this->request->getPost('Email');
         $password = $this->request->getPost('password');
         
-        // TODO: Add actual authentication logic here
-        // For now, just redirect to dashboard if username and password are not empty
-        if (!empty($username) && !empty($password)) {
-            // Set user session or token here
+        // Load database and query builder
+        $db = \Config\Database::connect();
+        $user = $db->table('users')
+                  ->where('email', $email)
+                  ->get()
+                  ->getRow();
+        
+        if ($user && password_verify($password, $user->password)) {
+            // Set user session
+            $session = session();
+            $userData = [
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'user_email' => $user->email,
+                'user_role' => isset($user->role) ? $user->role : 'staff',
+                'is_logged_in' => true
+            ];
+            $session->set($userData);
+            
+            // Redirect to dashboard
             return redirect()->to('/dashboard');
         }
         
         // If authentication fails, redirect back to login with error
-        return redirect()->back()->with('error', 'Invalid username or password');
+        return redirect()->back()->with('error', 'Invalid email or password');
     }
     
     public function register()
@@ -52,5 +67,15 @@ class Auth extends Controller
         // For now, just redirect to login with success message
         
         return redirect()->to('/login')->with('success', 'Registration successful! Please login with your credentials.');
+    }
+    
+    public function logout()
+    {
+        // Destroy the session
+        $session = session();
+        $session->destroy();
+        
+        // Redirect to home page with success message
+        return redirect()->to('/')->with('success', 'You have been logged out successfully.');
     }
 }
