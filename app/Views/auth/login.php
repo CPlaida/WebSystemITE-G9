@@ -122,7 +122,7 @@
                 <input type="password" id="password" name="password" required>
             </div>
             
-            <button type="submit" class="btn">Admin Log In</button>
+            <button type="submit" class="btn">Log In</button>
         </form>
     </div>
 </body>

@@ -47,6 +47,33 @@ class UserSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+            [
+                'username'   => 'accounting',
+                'email'      => 'accounting@hms.com',
+                'password'   => password_hash('password123', PASSWORD_DEFAULT),
+                'role'       => 'accounting',
+                'status'     => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'username'   => 'itstaff',
+                'email'      => 'itstaff@hms.com',
+                'password'   => password_hash('password123', PASSWORD_DEFAULT),
+                'role'       => 'itstaff',
+                'status'     => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'username'   => 'labstaff',
+                'email'      => 'labstaff@hms.com',
+                'password'   => password_hash('password123', PASSWORD_DEFAULT),
+                'role'       => 'labstaff',
+                'status'     => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ];
 
         // Using Query Builder to insert data

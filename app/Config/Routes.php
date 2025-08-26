@@ -44,5 +44,8 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 // Only doctors can see doctor dashboard
 $routes->get('/doctor/dashboard', 'Doctor::index', ['filter' => 'auth:doctor']);
 
+// Only nurses can see nurse dashboard
+$routes->get('/nurse/dashboard', 'Nurse::index', ['filter' => 'auth:nurse']);
+
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
