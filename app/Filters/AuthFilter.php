@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filters;
 
 use CodeIgniter\HTTP\RequestInterface;
@@ -9,24 +10,22 @@ class AuthFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        $session = session();
-
-        // Check if logged in
-        if (!$session->get('logged_in')) {
-            return redirect()->to('/login')->with('error', 'You must login first.');
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/login');
         }
 
-        // If role is required, check it
-        if ($arguments && !in_array($session->get('role'), $arguments)) {
-            return redirect()->to('/login')->with('error', 'Access denied.');
+        if ($arguments) {
+            $allowedRoles = is_array($arguments) ? $arguments : explode(',', $arguments);
+            $userRole = session()->get('role');
+            
+            if (!in_array($userRole, $allowedRoles)) {
+                return redirect()->to('/login')->with('error', 'Access denied.');
+            }
         }
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // nothing for now
+        // Do nothing
     }
 }
-
-
-

@@ -15,25 +15,25 @@
         <div class="overview-card">
             <div class="card-content">
                 <h3>Today's Revenue</h3>
-                <div class="card-value">₱45,200</div>
+                <div class="card-value">₱<?= number_format($todayRevenue, 2) ?></div>
             </div>
         </div>
         <div class="overview-card">
             <div class="card-content">
                 <h3>Pending Bills</h3>
-                <div class="card-value">23</div>
+                <div class="card-value"><?= count($pendingBills) ?></div>
             </div>
         </div>
         <div class="overview-card">
             <div class="card-content">
                 <h3>Insurance Claims</h3>
-                <div class="card-value">8</div>
+                <div class="card-value"><?= count($insuranceClaims) ?></div>
             </div>
         </div>
         <div class="overview-card">
             <div class="card-content">
                 <h3>Outstanding Balance</h3>
-                <div class="card-value">₱125,800</div>
+                <div class="card-value">₱<?= number_format($outstandingBalance, 2) ?></div>
             </div>
         </div>
     </div>

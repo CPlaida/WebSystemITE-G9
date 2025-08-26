@@ -44,17 +44,20 @@ class Auth extends Controller
                     'role'     => $user['role'],
                     'logged_in'=> true
                 ]);
+          
 
-                // Redirect based on role
-                if ($user['role'] === 'admin') {
-                    return redirect()->to('/admin/dashboard');
-                } elseif ($user['role'] === 'doctor') {
-                    return redirect()->to('/doctor/dashboard');
-                } elseif ($user['role'] === 'nurse') {
-                    return redirect()->to('/nurse/dashboard');
-                } else {
-                    return redirect()->to('/reception/dashboard');
-                }
+               // Redirect based on role
+            if ($user['role'] === 'admin') {
+                return redirect()->to('/admin/dashboard');
+            } elseif ($user['role'] === 'doctor') {
+                return redirect()->to('/doctor/dashboard');
+            } elseif ($user['role'] === 'nurse') {
+                return redirect()->to('/nurse/dashboard');
+            } elseif ($user['role'] === 'accounting') {
+                return redirect()->to('/accounting/dashboard');
+            } else {
+                return redirect()->to('/reception/dashboard');
+            }
             } else {
                 return redirect()->back()->with('error', 'Wrong password.');
             }

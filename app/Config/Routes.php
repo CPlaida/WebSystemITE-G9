@@ -49,3 +49,10 @@ $routes->get('/nurse/dashboard', 'Nurse::index', ['filter' => 'auth:nurse']);
 
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
+
+// Only accountants can see accountant dashboard
+$routes->get('/accounting/dashboard', 'Accountant::index', ['filter' => 'auth:accounting']);
+
+$routes->get('/accountant/dashboard', 'Accountant::index', ['filter' => 'auth:accounting']);
+
+$routes->get('/accountant', 'Accountant::index', ['filter' => 'auth:accounting']);
