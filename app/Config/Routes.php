@@ -56,3 +56,15 @@ $routes->get('/accounting/dashboard', 'Accountant::index', ['filter' => 'auth:ac
 $routes->get('/accountant/dashboard', 'Accountant::index', ['filter' => 'auth:accounting']);
 
 $routes->get('/accountant', 'Accountant::index', ['filter' => 'auth:accounting']);
+
+// Only reception can see reception dashboard
+$routes->get('/reception/dashboard', 'Reception::index', ['filter' => 'auth:receptionist']);
+
+// Only IT staff can see IT dashboard
+$routes->get('/itstaff/dashboard', 'Itstaff::index', ['filter' => 'auth:itstaff']);
+
+// Only laboratory staff can see laboratory dashboard
+$routes->get('/laboratory/dashboard', 'Laboratory::index', ['filter' => 'auth:labstaff']);
+
+// Only pharmacists can see pharmacy dashboard
+$routes->get('/pharmacy/dashboard', 'Pharmacy::index', ['filter' => 'auth:pharmacist']);

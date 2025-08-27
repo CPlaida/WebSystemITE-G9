@@ -55,6 +55,12 @@ class Auth extends Controller
                 return redirect()->to('/nurse/dashboard');
             } elseif ($user['role'] === 'accounting') {
                 return redirect()->to('/accounting/dashboard');
+            } elseif ($user['role'] === 'itstaff') {
+                return redirect()->to('/itstaff/dashboard');
+            } elseif ($user['role'] === 'labstaff') {
+                return redirect()->to('/laboratory/dashboard');
+            } elseif ($user['role'] === 'pharmacist') {
+                return redirect()->to('/pharmacy/dashboard');
             } else {
                 return redirect()->to('/reception/dashboard');
             }
