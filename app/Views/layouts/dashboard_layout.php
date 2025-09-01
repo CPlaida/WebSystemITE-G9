@@ -175,6 +175,7 @@
                 
                 <!-- Hospital Administrator - Full control, user management, reports, and branch integration -->
                 <?php if (session('user_role') === 'Hospital Administrator'): ?>
+<<<<<<< HEAD
                     <li class="nav-item expandable">
                         <a href="#" onclick="toggleSubmenu(this)">
                             <i class="fas fa-cogs"></i> <span>Administration</span>
@@ -185,6 +186,78 @@
                             <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
                             <li><a href="#"><i class="fas fa-building"></i> Branch Integration</a></li>
                             <li><a href="#"><i class="fas fa-shield-alt"></i> System Settings</a></li>
+=======
+                    <!-- Patient Management -->
+                    <li class="nav-item expandable">
+                        <a href="#" onclick="toggleSubmenu(this)">
+                            <i class="fas fa-hospital-user"></i> <span>Patients</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="<?= base_url('patients/register') ?>"><i class="fas fa-user-plus"></i> Register Patient</a></li>
+                            <li><a href="<?= base_url('patients/view') ?>"><i class="fas fa-user-edit"></i> View Patient</a></li>                        </ul>
+                    </li>
+
+                    <!-- Appointments -->
+                    <li class="nav-item expandable">
+                        <a href="#" onclick="toggleSubmenu(this)">
+                            <i class="fas fa-calendar-check"></i> <span>Appointments</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="<?= base_url('appointments/book') ?>"><i class="fas fa-plus"></i> Book Appointment</a></li>
+                            <li><a href="<?= site_url('appointments/list') ?>"><i class="fas fa-list"></i> Appointment List</a></li>
+                            <li><a href="<?= site_url('appointments/schedule') ?>"><i class="fas fa-list"></i> Staff Schedule</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Billing -->
+                    <li class="nav-item expandable">
+                        <a href="#" onclick="toggleSubmenu(this)">
+                            <i class="fas fa-file-invoice-dollar"></i> <span>Billing and Payment</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="<?= base_url('billing') ?>"><i class="fas fa-file-invoice"></i> Bill Management</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Laboratory -->
+                    <li class="nav-item expandable">
+                        <a href="#" onclick="toggleSubmenu(this)">
+                            <i class="fas fa-flask"></i> <span>Laboratory</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="<?= base_url('laboratory/request') ?>"><i class="fas fa-microscope"></i> Lab Request</a></li>
+                            <li><a href="#"><i class="fas fa-vial"></i> Test Results</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Pharmacy -->
+                    <li class="nav-item expandable">
+                        <a href="#" onclick="toggleSubmenu(this)">
+                            <i class="fas fa-pills"></i> <span>Pharmacy</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="#"><i class="fas fa-boxes"></i> Inventory Management</a></li>
+                            <li><a href="#"><i class="fas fa-prescription"></i> New Prescription</a></li>
+                            <li><a href="#"><i class="fas fa-pills"></i> Medicines</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Administration -->
+                    <li class="nav-item expandable">
+                        <a href="#" onclick="toggleSubmenu(this)">
+                            <i class="fas fa-cog"></i> <span>Administration</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="#"><i class="fas fa-users"></i> User Management</a></li>
+                            <li><a href="#"><i class="fas fa-user-md"></i> Doctors</a></li>
+                            <li><a href="#"><i class="fas fa-sliders-h"></i> System Settings</a></li>
+>>>>>>> 57646d5 (Initial commit)
                         </ul>
                     </li>
                 <?php endif; ?>
@@ -194,15 +267,24 @@
                     <li class="nav-item expandable">
                         <a href="#" onclick="toggleSubmenu(this)"><i class="fas fa-user-injured"></i> <span>Patient Records</span> <i class="fas fa-chevron-right arrow"></i></a>
                         <ul class="submenu">
+<<<<<<< HEAD
                             <li><a href="#"><i class="fas fa-list"></i> My Patients</a></li>
                             <li><a href="#"><i class="fas fa-edit"></i> Update Records</a></li>
                             <li><a href="#"><i class="fas fa-history"></i> Medical History</a></li>
+=======
+                            <li><a href="<?= base_url('appointments/book') ?>"><i class="fas fa-plus"></i> Book Appointment</a></li>
+                            <li><a href="<?= site_url('appointments/list') ?>"><i class="fas fa-list"></i> Appointment List</a></li>
+>>>>>>> 57646d5 (Initial commit)
                         </ul>
                     </li>
                     <li class="nav-item expandable">
                         <a href="#" onclick="toggleSubmenu(this)"><i class="fas fa-prescription-bottle-alt"></i> <span>Prescriptions</span> <i class="fas fa-chevron-right arrow"></i></a>
                         <ul class="submenu">
+<<<<<<< HEAD
                             <li><a href="#"><i class="fas fa-plus"></i> Create Prescription</a></li>
+=======
+                            <li><a href="2"><i class="fas fa-plus"></i> Create Prescription</a></li>
+>>>>>>> 57646d5 (Initial commit)
                             <li><a href="#"><i class="fas fa-list"></i> My Prescriptions</a></li>
                             <li><a href="#"><i class="fas fa-search"></i> Search Prescriptions</a></li>
                         </ul>

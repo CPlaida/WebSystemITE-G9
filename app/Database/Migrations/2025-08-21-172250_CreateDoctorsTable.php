@@ -11,6 +11,10 @@ class CreateDoctorsTable extends Migration
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
+<<<<<<< HEAD
+=======
+                'constraint'     => 11,
+>>>>>>> 57646d5 (Initial commit)
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
@@ -21,8 +25,13 @@ class CreateDoctorsTable extends Migration
             ],
             'user_id' => [
                 'type'       => 'INT',
+<<<<<<< HEAD
                 'unsigned'   => true,
                 'null'       => true,
+=======
+                'constraint' => 11,
+                'unsigned'   => true,
+>>>>>>> 57646d5 (Initial commit)
             ],
             'first_name' => [
                 'type'       => 'VARCHAR',
@@ -40,7 +49,10 @@ class CreateDoctorsTable extends Migration
             'phone' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 20,
+<<<<<<< HEAD
                 'null'       => true,
+=======
+>>>>>>> 57646d5 (Initial commit)
             ],
             'specialization' => [
                 'type'       => 'VARCHAR',
@@ -51,6 +63,7 @@ class CreateDoctorsTable extends Migration
                 'constraint' => 50,
                 'unique'     => true,
             ],
+<<<<<<< HEAD
             'experience_years' => [
                 'type'       => 'INT',
                 'default'    => 0,
@@ -59,16 +72,33 @@ class CreateDoctorsTable extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 200,
                 'null'       => true,
+=======
+            'department' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+            ],
+            'qualification' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+            'experience_years' => [
+                'type'       => 'INT',
+                'constraint' => 2,
+                'default'    => 0,
+>>>>>>> 57646d5 (Initial commit)
             ],
             'consultation_fee' => [
                 'type'       => 'DECIMAL',
                 'constraint' => '10,2',
                 'default'    => 0.00,
             ],
+<<<<<<< HEAD
             'schedule' => [
                 'type' => 'TEXT',
                 'null' => true,
             ],
+=======
+>>>>>>> 57646d5 (Initial commit)
             'status' => [
                 'type'       => 'ENUM',
                 'constraint' => ['active', 'inactive', 'on_leave'],
@@ -85,7 +115,11 @@ class CreateDoctorsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
+<<<<<<< HEAD
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'SET NULL');
+=======
+        $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
+>>>>>>> 57646d5 (Initial commit)
         $this->forge->createTable('doctors');
     }
 

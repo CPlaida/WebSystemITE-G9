@@ -122,7 +122,11 @@
                 <input type="password" id="password" name="password" required>
             </div>
             
+<<<<<<< HEAD
             <button type="submit" class="btn">Log In</button>
+=======
+            <button type="submit" class="btn">Admin Log In</button>
+>>>>>>> 57646d5 (Initial commit)
         </form>
     </div>
 </body>

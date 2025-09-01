@@ -16,7 +16,11 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
+<<<<<<< HEAD
     public string $baseURL = 'http://localhost/WebSystemITE-G9/public/';
+=======
+    public string $baseURL = 'http://localhost/HMS/public/';
+>>>>>>> 57646d5 (Initial commit)
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

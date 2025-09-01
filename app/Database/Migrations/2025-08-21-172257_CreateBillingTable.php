@@ -11,6 +11,10 @@ class CreateBillingTable extends Migration
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
+<<<<<<< HEAD
+=======
+                'constraint'     => 11,
+>>>>>>> 57646d5 (Initial commit)
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
@@ -21,10 +25,18 @@ class CreateBillingTable extends Migration
             ],
             'patient_id' => [
                 'type'       => 'INT',
+<<<<<<< HEAD
+=======
+                'constraint' => 11,
+>>>>>>> 57646d5 (Initial commit)
                 'unsigned'   => true,
             ],
             'appointment_id' => [
                 'type'       => 'INT',
+<<<<<<< HEAD
+=======
+                'constraint' => 11,
+>>>>>>> 57646d5 (Initial commit)
                 'unsigned'   => true,
                 'null'       => true,
             ],

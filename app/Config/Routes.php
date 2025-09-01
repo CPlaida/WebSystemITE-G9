@@ -26,6 +26,80 @@ $routes->get('dashboard', 'Dashboard::index');
 // Logout Route
 $routes->get('auth/logout', 'Auth::logout');
 
+// Dashboard Routes - No auth filter on the main dashboard
+$routes->get('dashboard', 'Dashboard::index');
+
+// Admin Dashboard
+$routes->group('admin', ['filter' => 'auth:hospital administrator'], function($routes) {
+    $routes->get('dashboard', 'Admin::index');
+});
+
+// Doctor Dashboard
+$routes->group('doctor', ['filter' => 'auth:doctor'], function($routes) {
+    $routes->get('dashboard', 'Doctor::index');
+});
+
+// Nurse Dashboard
+$routes->group('nurse', ['filter' => 'auth:nurse'], function($routes) {
+    $routes->get('dashboard', 'Nurse::index');
+    $routes->get('reports', 'Nurse::reports');
+});
+
+// Accountant Dashboard - Multiple URL patterns for compatibility
+$routes->group('accounting', ['filter' => 'auth:accountant'], function($routes) {
+    $routes->get('dashboard', 'Accountant::index');
+    $routes->get('', 'Accountant::index');
+});
+
+// Alias for accountant
+$routes->group('accountant', ['filter' => 'auth:accountant'], function($routes) {
+    $routes->get('dashboard', 'Accountant::index');
+    $routes->get('', 'Accountant::index');
+});
+
+// Reception Dashboard
+$routes->group('reception', ['filter' => 'auth:receptionist'], function($routes) {
+    $routes->get('dashboard', 'Reception::index');
+});
+
+// IT Staff Dashboard
+$routes->group('itstaff', ['filter' => 'auth:it staff'], function($routes) {
+    $routes->get('dashboard', 'Itstaff::index');
+});
+
+// Laboratory Dashboard
+$routes->group('laboratory', ['filter' => 'auth:laboratory staff'], function($routes) {
+    $routes->get('dashboard', 'Laboratory::index');
+});
+
+// Pharmacy Dashboard
+$routes->group('pharmacy', ['filter' => 'auth:pharmacist'], function($routes) {
+    $routes->get('dashboard', 'Pharmacy::index');
+});
+
+// Logout Route
+$routes->get('auth/logout', 'Auth::logout');
+
+// Patient Routes 
+$routes->get('patients/view', 'Patients::view');
+$routes->get('patients/register', 'Patients::register');
+
+// Appointment Routes
+$routes->get('appointments/book', 'Appointment::book');
+$routes->get('appointments/list', 'Appointment::index');
+$routes->get('appointments/schedule', 'Appointment::schedule');
+
+// Billing Management
+$routes->get('billing', 'Billing::index');
+$routes->get('billing/receipt/(:any)', 'Billing::receipt/$1');
+$routes->post('billing/save', 'Billing::save');
+$routes->get('billing/get/(:num)', 'Billing::get/$1');
+$routes->post('billing/update/(:num)', 'Billing::update/$1');
+$routes->post('billing/delete/(:num)', 'Billing::delete/$1');
+
+// Laboratory Routes
+$routes->get('laboratory/request', 'Laboratory::index');
+
 // Remove index.php from URL
 $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('Home');

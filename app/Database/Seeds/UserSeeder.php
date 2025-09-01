@@ -8,6 +8,7 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
+<<<<<<< HEAD
         $now = date('Y-m-d H:i:s');
 
         $users = [
@@ -82,6 +83,56 @@ class UserSeeder extends Seeder
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
+=======
+        $users = [
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'Hospital Administrator',
+            ],
+            [
+                'name' => 'Doctor User',
+                'email' => 'doctor@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'Doctor',
+            ],
+            [
+                'name' => 'Nurse User',
+                'email' => 'nurse@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'Nurse',
+            ],
+            [
+                'name' => 'Receptionist User',
+                'email' => 'receptionist@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'Receptionist',
+            ],
+            [
+                'name' => 'Lab Staff User',
+                'email' => 'lab@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'Laboratory Staff',
+            ],
+            [
+                'name' => 'Pharmacist User',
+                'email' => 'pharmacist@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'Pharmacist',
+            ],
+            [
+                'name' => 'Accountant User',
+                'email' => 'accountant@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'Accountant',
+            ],
+            [
+                'name' => 'IT Staff User',
+                'email' => 'it@hms.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'IT Staff',
+>>>>>>> 57646d5 (Initial commit)
             ],
         ];
 

@@ -7,7 +7,9 @@ use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\HTTP\Response;
 use Psr\Log\LoggerInterface;
+use Config\Services;
 
 /**
  * Class BaseController
@@ -27,6 +29,27 @@ abstract class BaseController extends Controller
      * @var CLIRequest|IncomingRequest
      */
     protected $request;
+    
+    /**
+     * Instance of Response object
+     *
+     * @var Response
+     */
+    protected $response;
+    
+    /**
+     * Instance of logger
+     *
+     * @var LoggerInterface
+     */
+    protected $logger;
+    
+    /**
+     * User role from session
+     *
+     * @var string|null
+     */
+    protected $userRole;
 
     /**
      * An array of helpers to be loaded automatically upon
@@ -50,9 +73,71 @@ abstract class BaseController extends Controller
     {
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
-
-        // Preload any models, libraries, etc, here.
-
-        // E.g.: $this->session = service('session');
+        
+        $this->response = $response;
+        $this->logger = $logger;
+        
+        // Get user role from session
+        $this->userRole = session('user_role');
+        
+        // Set default timezone
+        date_default_timezone_set('Asia/Manila');
+    }
+    
+    /**
+     * Check if user has required role
+     *
+     * @param string|array $roles Required role(s)
+     * @return bool
+     */
+    protected function hasAccess($roles): bool
+    {
+        if (empty($roles)) {
+            return true;
+        }
+        
+        $userRole = $this->userRole;
+        
+        if (is_string($roles)) {
+            return $userRole === $roles;
+        }
+        
+        if (is_array($roles)) {
+            return in_array($userRole, $roles, true);
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Show error page
+     *
+     * @param int $statusCode HTTP status code
+     * @param string $message Error message
+     * @return void
+     */
+    protected function showError(int $statusCode, string $message = ''): void
+    {
+        $errorHandler = new \App\Libraries\ErrorHandler(
+            config('Exceptions'),
+            $this->request,
+            $this->response
+        );
+        
+        $errorHandler->handle(
+            new \Exception($message, $statusCode),
+            $statusCode,
+            $message
+        );
+    }
+    
+    /**
+     * Check if request is AJAX
+     *
+     * @return bool
+     */
+    protected function isAjax(): bool
+    {
+        return $this->request->isAJAX();
     }
 }

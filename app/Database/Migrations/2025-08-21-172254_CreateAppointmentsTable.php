@@ -11,7 +11,12 @@ class CreateAppointmentsTable extends Migration
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
+<<<<<<< HEAD
                 'unsigned'       => true, 
+=======
+                'constraint'     => 11,
+                'unsigned'       => true, // must match patients/doctors table
+>>>>>>> 57646d5 (Initial commit)
                 'auto_increment' => true,
             ],
             'appointment_id' => [
@@ -21,11 +26,21 @@ class CreateAppointmentsTable extends Migration
             ],
             'patient_id' => [
                 'type'       => 'INT',
+<<<<<<< HEAD
                 'unsigned'   => true, 
             ],
             'doctor_id' => [
                 'type'       => 'INT',
                 'unsigned'   => true, 
+=======
+                'constraint' => 11,
+                'unsigned'   => true, // match patients.id
+            ],
+            'doctor_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true, // match doctors.id
+>>>>>>> 57646d5 (Initial commit)
             ],
             'appointment_date' => [
                 'type' => 'DATE',

@@ -11,11 +11,19 @@ class CreateSchedulingTable extends Migration
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
+<<<<<<< HEAD
+=======
+                'constraint'     => 11,
+>>>>>>> 57646d5 (Initial commit)
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
             'doctor_id' => [
                 'type'       => 'INT',
+<<<<<<< HEAD
+=======
+                'constraint' => 11,
+>>>>>>> 57646d5 (Initial commit)
                 'unsigned'   => true,
             ],
             'day_of_week' => [
