@@ -1,0 +1,95 @@
+CRITICAL - 2025-09-03 02:27:44 --> ParseError: syntax error, unexpected identifier "admin", expecting ")"
+[Method: GET, Route: admin/dashboard]
+in APPPATH\Views\layouts\dashboard_layout.php on line 178.
+ 1 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 2 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layouts/dashboard_layout', [], true)
+ 3 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/dashboard', [], true)
+ 4 APPPATH\Controllers\Admin.php(26): view('admin/dashboard', [...])
+ 5 APPPATH\Controllers\Admin.php(10): App\Controllers\Admin->dashboard()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-03 02:58:54 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(25): view('admin/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-03 03:01:00 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(25): view('admin/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-03 03:01:43 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(25): view('admin/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-03 03:01:44 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(25): view('admin/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-03 03:01:58 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(25): view('admin/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-03 03:02:50 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(25): view('admin/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-03 03:16:25 --> Error: Class "App\Models\BillingModel" not found
+[Method: GET, Route: billing]
+in APPPATH\Controllers\Billing.php on line 14.
+ 1 SYSTEMPATH\CodeIgniter.php(903): App\Controllers\Billing->__construct()
+ 2 SYSTEMPATH\CodeIgniter.php(498): CodeIgniter\CodeIgniter->createController()
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
