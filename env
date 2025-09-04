@@ -39,7 +39,7 @@ encryption.key = base64:SomeRandomKeyHere1234567890abcdef=
 # SESSION
 #--------------------------------------------------------------------
 session.driver = 'CodeIgniter\Session\Handlers\FileHandler'
-session.savePath = writable/sessions
+session.savePath = writable/session
 
 #--------------------------------------------------------------------
 # LOGGER

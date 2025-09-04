@@ -68,3 +68,44 @@ $routes->get('/laboratory/dashboard', 'Laboratory::index', ['filter' => 'auth:la
 
 // Only pharmacists can see pharmacy dashboard
 $routes->get('/pharmacy/dashboard', 'Pharmacy::index', ['filter' => 'auth:pharmacist']);
+
+// Frontend Patient Routes
+$routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes) {
+    $routes->get('register', 'Patients::register');
+    $routes->get('view', 'Patients::view');
+});
+
+// Appointment Routes
+$routes->get('appointments/book', 'Appointment::book');
+$routes->get('appointments/list', 'Appointment::index');
+$routes->get('appointments/schedule', 'Appointment::schedule');
+
+// Billing Management
+$routes->get('billing', 'Billing::index');
+$routes->get('billing/receipt/(:any)', 'Billing::receipt/$1');
+$routes->post('billing/save', 'Billing::save');
+$routes->get('billing/get/(:num)', 'Billing::get/$1');
+$routes->post('billing/update/(:num)', 'Billing::update/$1');
+$routes->post('billing/delete/(:num)', 'Billing::delete/$1');
+
+
+// Laboratory Routes
+$routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,admin']);
+// Laboratory: Test Results
+$routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,admin']);
+$routes->get('laboratory/testresult/view/(:num)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,admin']);
+$routes->match(['get', 'post'], 'laboratory/testresult/add/(:num)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,admin']);
+// Pharmacy Routes
+$routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes) {
+    $routes->get('inventory', 'Pharmacy::inventory');
+    $routes->get('prescriptions/new', 'Pharmacy::new');
+    $routes->get('medicines', 'Pharmacy::medicines');
+});
+
+// Administration Routes
+$routes->group('admin', ['namespace' => 'App\\Controllers'], function($routes) {
+    $routes->get('users', 'Admin::users');
+    $routes->get('doctors', 'Admin::doctors');
+    $routes->get('settings', 'Admin::settings');
+    
+});
