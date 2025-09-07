@@ -19,32 +19,30 @@
             --success-color: #28a745;
             --warning-color: #ffc107;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            --border-radius-sm: 4px;
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
             --border-radius: 6px;
-            --border-radius-lg: 8px;
+            --border-radius-lg: 12px;
             --transition: all 0.2s ease;
         }
         
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f5f7fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
             color: var(--text-color);
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
         }
         
         .container {
-            max-width: 1000px;
-            width: 100%;
+            max-width: 900px;
             margin: 0 auto;
             background: var(--white);
             border-radius: var(--border-radius-lg);
@@ -53,7 +51,7 @@
         }
         
         .header {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: var(--white);
             padding: 1.5rem 2rem;
             display: flex;
@@ -67,7 +65,7 @@
         .back-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
             padding: 0.5rem 1rem;
             background: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -98,7 +96,7 @@
         }
         
         .form-container {
-            padding: 0 2rem 2rem;
+            padding: 2rem;
         }
         
         .form-section {
@@ -107,12 +105,13 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
         }
         
         .section-title {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--dark-gray);
+            color: var(--primary-color);
             margin-bottom: 1.25rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border-color);
@@ -121,15 +120,19 @@
             gap: 8px;
         }
         
+        .section-title i {
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+        
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
         
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
         
         .form-label {
@@ -145,21 +148,37 @@
             color: var(--error-color);
         }
         
-        .form-control, .form-select {
+        .input-group {
+            display: flex;
             width: 100%;
-            padding: 0.65rem 1rem;
+        }
+        
+        .input-group-text {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0.75rem;
+            background: #f8f9fa;
             border: 1px solid #ced4da;
-            border-radius: var(--border-radius);
+            border-right: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .form-control, .form-select {
+            flex: 1;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
             font-size: 0.95rem;
             transition: var(--transition);
-            background-color: var(--white);
-            color: var(--text-color);
+            background: var(--white);
         }
         
         .form-control:focus, .form-select:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
         }
         
         .form-control[readonly] {
@@ -168,50 +187,24 @@
         }
         
         textarea.form-control {
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
-        }
-        
-        .input-group {
-            display: flex;
-            width: 100%;
-            position: relative;
-        }
-        
-        .input-group-text {
-            display: flex;
-            align-items: center;
-            padding: 0 1rem;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-right: none;
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
-            color: #6c757d;
-        }
-        
-        .input-group .form-control {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            position: relative;
-            flex: 1 1 auto;
-            width: 1%;
-            min-width: 0;
         }
         
         .btn {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            font-size: 1rem;
             border: none;
             border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
             cursor: pointer;
             transition: var(--transition);
-            text-decoration: none;
             text-align: center;
+            justify-content: center;
         }
         
         .btn-primary {
@@ -222,28 +215,24 @@
         .btn-primary:hover {
             background: var(--primary-hover);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+            box-shadow: var(--shadow-md);
         }
         
-        .btn-block {
-            display: block;
-            width: 100%;
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
         }
         
         .text-center {
             text-align: center;
         }
         
-        .mt-3 {
-            margin-top: 1rem;
-        }
-        
         .mt-4 {
             margin-top: 1.5rem;
-        }
-        
-        .mb-3 {
-            margin-bottom: 1rem;
         }
         
         .mb-4 {
@@ -252,6 +241,7 @@
         
         @media (max-width: 768px) {
             .container {
+                margin: 0;
                 border-radius: 0;
                 box-shadow: none;
             }
@@ -260,13 +250,11 @@
                 padding: 1rem;
                 flex-direction: column;
                 text-align: center;
-                gap: 1rem;
             }
             
             .page-title {
                 position: static;
-                order: -1;
-                width: 100%;
+                margin-top: 0.5rem;
             }
             
             .back-btn {
@@ -274,7 +262,7 @@
             }
             
             .form-container {
-                padding: 0 1rem 1.5rem;
+                padding: 1rem;
             }
             
             .form-grid {
@@ -286,14 +274,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <a href="<?= base_url('dashboard') ?>" class="back-btn">
+            <a href="<?= base_url('laboratory/dashboard') ?>" class="back-btn">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
             <h1 class="page-title">Laboratory Request</h1>
         </div>
         
         <div class="form-container">
-            <form id="labRequestForm">
+            <form id="labRequestForm" method="POST" action="<?= base_url('laboratory/request/submit') ?>">
                 <!-- Patient Information Section -->
                 <div class="form-section">
                     <h3 class="section-title">
@@ -304,7 +292,7 @@
                             <label for="patientName" class="form-label form-required">Patient Name</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="patientName" name="patientName" required 
+                                <input type="text" class="form-control" id="patientName" name="patientName" required
                                        placeholder="Enter patient's full name">
                             </div>
                         </div>
@@ -313,7 +301,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user-md"></i></span>
                                 <input type="text" class="form-control" id="doctor" name="doctor" required
-                                       placeholder="Doctor's name">
+                                       placeholder="Enter doctor's name">
                             </div>
                         </div>
                     </div>
@@ -326,39 +314,43 @@
                     </h3>
                     <div class="form-group">
                         <label for="testType" class="form-label form-required">Test Type</label>
-                        <select class="form-select" id="testType" name="testType" required>
-                            <option value="">Select a test type</option>
-                            <option value="blood">Blood Test</option>
-                            <option value="urine">Urine Analysis</option>
-                            <option value="xray">X-Ray</option>
-                            <option value="mri">MRI Scan</option>
-                            <option value="ct">CT Scan</option>
-                            <option value="ultrasound">Ultrasound</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="testNotes" class="form-label">Clinical Notes</label>
-                        <textarea class="form-control" id="testNotes" name="testNotes" 
-                                 placeholder="Enter any specific instructions or clinical notes"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="priority" class="form-label form-required">Priority</label>
-                        <div class="form-grid">
-                            <label class="radio-label">
-                                <input type="radio" name="priority" value="routine" checked> Routine
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="priority" value="urgent"> Urgent
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="priority" value="stat"> STAT
-                            </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-vial"></i></span>
+                            <select class="form-select" id="testType" name="testType" required>
+                                <option value="" disabled selected>Select test type</option>
+                                <option value="Blood Test">Blood Test</option>
+                                <option value="Urine Test">Urine Test</option>
+                                <option value="X-Ray">X-Ray</option>
+                                <option value="MRI">MRI</option>
+                                <option value="CT Scan">CT Scan</option>
+                                <option value="Ultrasound">Ultrasound</option>
+                                <option value="ECG">ECG</option>
+                                <option value="EEG">EEG</option>
+                            </select>
                         </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="priority" class="form-label form-required">Priority Level</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-exclamation-triangle"></i></span>
+                            <select class="form-select" id="priority" name="priority" required>
+                                <option value="" disabled selected>Select priority</option>
+                                <option value="Routine">Routine (Within 24-48 hours)</option>
+                                <option value="Urgent">Urgent (Within 4-6 hours)</option>
+                                <option value="Emergency">Emergency (Immediate)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes" class="form-label">Clinical Notes & Instructions</label>
+                        <textarea class="form-control" id="notes" name="notes" 
+                                 placeholder="Enter any relevant clinical notes, symptoms, or special instructions..."></textarea>
                     </div>
                 </div>
                 
+                <!-- Form Actions -->
                 <div class="form-actions text-center mt-4">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> Submit Request
@@ -372,8 +364,8 @@
         // Form validation and submission
         document.getElementById('labRequestForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            alert('Laboratory request submitted successfully!');
             // Add your form submission logic here
-            alert('Form submitted successfully!');
         });
         
         // Add any additional JavaScript functionality here

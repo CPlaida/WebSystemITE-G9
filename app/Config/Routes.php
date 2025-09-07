@@ -90,13 +90,14 @@ $routes->get('billing/get/(:num)', 'Billing::get/$1');
 $routes->post('billing/update/(:num)', 'Billing::update/$1');
 $routes->post('billing/delete/(:num)', 'Billing::delete/$1');
 
-
 // Laboratory Routes
 $routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,admin']);
 // Laboratory: Test Results
 $routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,admin']);
 $routes->get('laboratory/testresult/view/(:num)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,admin']);
 $routes->match(['get', 'post'], 'laboratory/testresult/add/(:num)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,admin']);
+$routes->get('laboratory/results', 'Laboratory::results');
+
 // Pharmacy Routes
 $routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes) {
     $routes->get('inventory', 'Pharmacy::inventory');

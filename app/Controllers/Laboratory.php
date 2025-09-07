@@ -140,4 +140,20 @@ class Laboratory extends Controller
 
         return view('admin/laboratory/AddTestResult', $data);
     }
+
+    public function results()
+    {
+        // Check if user is logged in and has appropriate role
+        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+            return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
+        }
+
+        $data = [
+            'title' => 'Laboratory Results',
+            'user' => session()->get('username'),
+            'role' => session()->get('role')
+        ];
+
+        return view('admin/laboratory/Results', $data);
+    }
 }
