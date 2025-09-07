@@ -283,9 +283,8 @@
                         <span class="arrow">›</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="#"><span class="text">Inventory Management</span></a></li>
-                        <li><a href="#"><span class="text">New Prescription</span></a></li>
-                        <li><a href="#"><span class="text">Medicines</span></a></li>
+                        <li><a href="<?= base_url('pharmacy/inventory/medicine') ?>"><span class="text">Inventory Management</span></a></li>
+                        <li><a href="<?= base_url('admin/InventoryMan/PrescriptionDispencing') ?>"><span class="text">New Prescription</span></a></li>
                     </ul>
                 </li>
 
@@ -296,9 +295,8 @@
                         <span class="arrow">›</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="#"><span class="text">User Management</span></a></li>
-                        <li><a href="#"><span class="text">Doctors</span></a></li>
-                        <li><a href="#"><span class="text">System Settings</span></a></li>
+                        <li><a href="<?= base_url('admin/Administration/ManageUser') ?>"><span class="text">User Management</span></a></li>
+                        <a href="<?= base_url('admin/Administration/RoleManagement') ?>"><span class="text">Role Management</span></a>
                     </ul>
                 </li>
             <?php endif; ?>

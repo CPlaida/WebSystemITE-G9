@@ -40,6 +40,8 @@ $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 
 // Only admin can see admin dashboard
 $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
+$routes->get('/admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
+$routes->get('/admin/Administration/RoleManagement', 'Admin::roleManagement', ['filter' => 'auth:admin']);
 
 // Only doctors can see doctor dashboard
 $routes->get('/doctor/dashboard', 'Doctor::index', ['filter' => 'auth:doctor']);
@@ -100,6 +102,7 @@ $routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes
     $routes->get('inventory', 'Pharmacy::inventory');
     $routes->get('prescriptions/new', 'Pharmacy::new');
     $routes->get('medicines', 'Pharmacy::medicines');
+    $routes->get('inventory/medicine', 'Pharmacy::medicine', ['filter' => 'auth:pharmacist,admin']);
 });
 
 // Administration Routes
@@ -107,5 +110,5 @@ $routes->group('admin', ['namespace' => 'App\\Controllers'], function($routes) {
     $routes->get('users', 'Admin::users');
     $routes->get('doctors', 'Admin::doctors');
     $routes->get('settings', 'Admin::settings');
-    
+    $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing', ['filter' => 'auth:admin']);
 });

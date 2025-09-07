@@ -26,4 +26,20 @@ class Pharmacy extends Controller
     {
         return $this->index();
     }
+
+    public function medicine()
+    {
+        // Check if user is logged in and has appropriate role
+        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
+            return redirect()->to('/login')->with('error', 'Access denied.');
+        }
+
+        $data = [
+            'title' => 'Medicine Inventory',
+            'user' => session()->get('username'),
+            'role' => session()->get('role')
+        ];
+
+        return view('admin/InventoryMan/Medicine', $data);
+    }
 }

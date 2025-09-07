@@ -125,35 +125,4 @@
             }
         }
     </style>
-
-    <!-- User Management Table -->
-    <div class="card">
-        <div class="card-header">
-            <h2>User Management</h2>
-            <button class="btn">Add New User</button>
-        </div>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Admin User</td>
-                        <td>admin@hms.com</td>
-                        <td>Administrator</td>
-                        <td><span class="status-active">Active</span></td>
-                        <td><button class="btn-sm">Edit</button> <button class="btn-sm btn-danger">Delete</button></td>
-                    </tr>
-                    <!-- Add more users here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
 <?= $this->endSection() ?>
