@@ -85,6 +85,23 @@ $routes->get('appointments/book', 'Appointment::book');
 $routes->get('appointments/list', 'Appointment::index');
 $routes->get('appointments/schedule', 'Appointment::schedule');
 
+// Appointment API Routes
+$routes->post('appointments/create', 'Appointment::create');
+$routes->get('appointments/show/(:num)', 'Appointment::show/$1');
+$routes->post('appointments/update/(:num)', 'Appointment::update/$1');
+$routes->post('appointments/cancel/(:num)', 'Appointment::cancel/$1');
+$routes->post('appointments/delete/(:num)', 'Appointment::delete/$1');
+$routes->post('appointments/complete/(:num)', 'Appointment::complete/$1');
+$routes->post('appointments/no-show/(:num)', 'Appointment::noShow/$1');
+
+// Appointment Query Routes
+$routes->get('appointments/doctor/(:num)', 'Appointment::getByDoctor/$1');
+$routes->get('appointments/patient/(:num)', 'Appointment::getByPatient/$1');
+$routes->get('appointments/today', 'Appointment::getTodays');
+$routes->get('appointments/upcoming', 'Appointment::getUpcoming');
+$routes->get('appointments/search', 'Appointment::search');
+$routes->get('appointments/stats', 'Appointment::getStats');
+
 // Billing Management
 $routes->get('billing', 'Billing::index');
 $routes->get('billing/receipt/(:any)', 'Billing::receipt/$1');

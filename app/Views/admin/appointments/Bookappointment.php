@@ -14,6 +14,7 @@
       --text-color: #212529;
       --border-color: #dee2e6;
       --error-color: #dc3545;
+      --success-color: #198754;
       --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
     
@@ -72,6 +73,25 @@
     
     .card-body {
       padding: 30px;
+    }
+    
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+    }
+    
+    .alert-success {
+      color: #0f5132;
+      background-color: #d1e7dd;
+      border-color: #badbcc;
+    }
+    
+    .alert-danger {
+      color: #842029;
+      background-color: #f8d7da;
+      border-color: #f5c2c7;
     }
     
     .form-grid {
@@ -166,7 +186,6 @@
       margin-right: 8px;
     }
     
-    /* Form Validation */
     .form-control:invalid, .form-select:invalid {
       border-color: var(--error-color);
     }
@@ -208,73 +227,96 @@
         <p>Please fill in all required fields</p>
       </div>
       <div class="card-body">
-        <form id="appointmentForm" class="needs-validation" novalidate>
+        <?php if (session()->getFlashdata('success')): ?>
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> <?= session()->getFlashdata('success') ?>
+          </div>
+        <?php endif; ?>
+        
+        <?php if (session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> <?= session()->getFlashdata('error') ?>
+          </div>
+        <?php endif; ?>
+
+        <form action="<?= base_url('appointments/create') ?>" method="POST" id="appointmentForm" class="needs-validation" novalidate>
+          <?= csrf_field() ?>
+          
           <div class="form-grid">
-            <!-- Patient Name -->
+            <!-- Patient Selection -->
             <div class="form-group">
-              <label class="form-label required-field">Patient Name</label>
-              <input type="text" class="form-control" placeholder="Enter patient name" required>
+              <label class="form-label required-field" for="patient_name">Patient</label>
+              <input type="text" name="patient_name" id="patient_name" class="form-control" 
+                     placeholder="Enter patient name" required>
               <div class="error-message">Please enter patient name</div>
             </div>
 
-            <!-- Doctor -->
+            <!-- Doctor Selection -->
             <div class="form-group">
-              <label class="form-label required-field">Doctor</label>
-              <select class="form-select" required>
+              <label class="form-label required-field" for="doctor_id">Doctor</label>
+              <select name="doctor_id" id="doctor_id" class="form-select" required>
                 <option value="">Select Doctor</option>
-                <option>Dr. John Smith</option>
-                <option>Dr. Maria Santos</option>
-                <option>Dr. Alex Cruz</option>
+                <?php if (isset($doctors) && !empty($doctors)): ?>
+                  <?php foreach ($doctors as $doctor): ?>
+                    <option value="<?= $doctor['id'] ?>">
+                      Dr. <?= esc($doctor['username']) ?> - <?= esc($doctor['email']) ?>
+                    </option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </select>
               <div class="error-message">Please select a doctor</div>
             </div>
 
             <!-- Date -->
             <div class="form-group">
-              <label class="form-label required-field">Date</label>
-              <input type="date" class="form-control" required>
+              <label class="form-label required-field" for="appointment_date">Date</label>
+              <input type="date" name="appointment_date" id="appointment_date" class="form-control" 
+                     min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d', strtotime('+1 day')) ?>" required>
               <div class="error-message">Please select a date</div>
             </div>
 
             <!-- Time -->
             <div class="form-group">
-              <label class="form-label required-field">Time</label>
-              <select class="form-select" required>
+              <label class="form-label required-field" for="appointment_time">Time</label>
+              <select name="appointment_time" id="appointment_time" class="form-select" required>
                 <option value="">Select Time</option>
-                <option>09:00 AM</option>
-                <option>10:00 AM</option>
-                <option>11:00 AM</option>
-                <option>01:00 PM</option>
-                <option>02:00 PM</option>
-                <option>03:00 PM</option>
+                <option value="08:00:00">08:00 AM</option>
+                <option value="09:00:00">09:00 AM</option>
+                <option value="10:00:00">10:00 AM</option>
+                <option value="11:00:00">11:00 AM</option>
+                <option value="13:00:00">01:00 PM</option>
+                <option value="14:00:00">02:00 PM</option>
+                <option value="15:00:00">03:00 PM</option>
+                <option value="16:00:00">04:00 PM</option>
               </select>
               <div class="error-message">Please select a time</div>
             </div>
 
             <!-- Appointment Type -->
             <div class="form-group">
-              <label class="form-label required-field">Appointment Type</label>
-              <select class="form-select" required>
+              <label class="form-label required-field" for="appointment_type">Appointment Type</label>
+              <select name="appointment_type" id="appointment_type" class="form-select" required>
                 <option value="">Select Type</option>
-                <option>Consultation</option>
-                <option>Follow-up</option>
-                <option>Lab Test</option>
-                <option>Emergency</option>
+                <option value="consultation">Consultation</option>
+                <option value="follow_up">Follow-up</option>
+                <option value="emergency">Emergency</option>
+                <option value="routine_checkup">Routine Checkup</option>
               </select>
               <div class="error-message">Please select appointment type</div>
             </div>
 
-            <!-- Notes -->
+            <!-- Reason -->
             <div class="form-group" style="grid-column: 1 / -1;">
-              <label class="form-label">Notes</label>
-              <textarea class="form-control" placeholder="Additional Notes..."></textarea>
+              <label class="form-label" for="reason">Reason for Visit</label>
+              <textarea name="reason" id="reason" class="form-control" rows="3" 
+                        placeholder="Describe the reason for this appointment..."></textarea>
             </div>
           </div>
 
           <!-- Form Actions -->
           <div class="form-actions">
-            <a href="<?= base_url('dashboard') ?>" class="btn btn-outline">
-              <i class="fas fa-arrow-left"></i> Back
+            <a href="<?= base_url('appointments/list') ?>" class="btn btn-outline">
+              <i class="fas fa-list"></i> View Appointments
             </a>
             <button type="submit" class="btn btn-primary">
               <i class="fas fa-calendar-check"></i> Book Appointment
@@ -286,25 +328,19 @@
   </div>
 
   <script>
-    // Form validation
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('appointmentForm');
       
       form.addEventListener('submit', function(event) {
-        event.preventDefault();
-        
         if (!form.checkValidity()) {
+          event.preventDefault();
           event.stopPropagation();
-        } else {
-          // Form is valid, you can submit it here
-          alert('Appointment booked successfully!');
-          // form.submit(); // Uncomment this to submit the form
         }
         
         form.classList.add('was-validated');
       }, false);
       
-      // Add real-time validation
+      // Real-time validation
       const inputs = form.querySelectorAll('input, select, textarea');
       inputs.forEach(input => {
         input.addEventListener('input', function() {
