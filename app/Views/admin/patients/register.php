@@ -216,6 +216,37 @@
       color: var(--dark-color);
     }
 
+    .alert {
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid transparent;
+      border-radius: 0.375rem;
+    }
+
+    .alert-success {
+      color: #0f5132;
+      background-color: #d1e7dd;
+      border-color: #badbcc;
+    }
+
+    .alert-danger {
+      color: #842029;
+      background-color: #f8d7da;
+      border-color: #f5c2c7;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.5;
+    }
+
+    .btn-close:hover {
+      opacity: 1;
+    }
+
     @media (max-width: 768px) {
       .form-actions {
         flex-direction: column;
@@ -236,7 +267,38 @@
         <p class="text-muted mb-0 small">Please fill in all required fields</p>
       </div>
       <div class="card-body p-4">
-        <form id="patientForm">
+        <!-- Success/Error Messages -->
+        <?php if (session()->getFlashdata('success')): ?>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <?= session()->getFlashdata('success') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <?= session()->getFlashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('errors')): ?>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Please correct the following errors:</strong>
+            <ul class="mb-0 mt-2">
+              <?php foreach (session()->getFlashdata('errors') as $error): ?>
+                <li><?= esc($error) ?></li>
+              <?php endforeach; ?>
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <?php endif; ?>
+
+        <form id="patientForm" method="POST" action="<?= base_url('patients/register') ?>">
+          <?= csrf_field() ?>
           <!-- Personal Information -->
           <div class="col-12">
             <h6 class="section-title">Personal Information</h6>
@@ -246,7 +308,7 @@
                   <label class="form-label required-field">First Name</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
-                    <input type="text" class="form-control" placeholder="Patient's First Name" required>
+                    <input type="text" name="first_name" class="form-control" placeholder="Patient's First Name" value="<?= old('first_name') ?>" required>
                   </div>
                 </div>
               </div>
@@ -255,7 +317,7 @@
                   <label class="form-label required-field">Last Name</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
-                    <input type="text" class="form-control" placeholder="Patient's Last Name" required>
+                    <input type="text" name="last_name" class="form-control" placeholder="Patient's Last Name" value="<?= old('last_name') ?>" required>
                   </div>
                 </div>
               </div>
@@ -264,7 +326,7 @@
                   <label class="form-label required-field">Date of Birth</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-calendar text-muted"></i></span>
-                    <input type="date" class="form-control" required>
+                    <input type="date" name="date_of_birth" class="form-control" value="<?= old('date_of_birth') ?>" required>
                   </div>
                 </div>
               </div>
@@ -273,11 +335,11 @@
                   <label class="form-label required-field">Gender</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-venus-mars text-muted"></i></span>
-                    <select class="form-select" required>
+                    <select name="gender" class="form-select" required>
                       <option value="">Select Gender</option>
-                      <option>Male</option>
-                      <option>Female</option>
-                      <option>Other</option>
+                      <option value="male" <?= old('gender') == 'male' ? 'selected' : '' ?>>Male</option>
+                      <option value="female" <?= old('gender') == 'female' ? 'selected' : '' ?>>Female</option>
+                      <option value="other" <?= old('gender') == 'other' ? 'selected' : '' ?>>Other</option>
                     </select>
                   </div>
                 </div>
@@ -294,7 +356,7 @@
                   <label class="form-label">Complete Address</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
-                    <input type="text" class="form-control" placeholder="House No., Street, Barangay, City/Municipality">
+                    <input type="text" name="address" class="form-control" placeholder="House No., Street, Barangay, City/Municipality" value="<?= old('address') ?>">
                   </div>
                 </div>
               </div>
@@ -303,7 +365,7 @@
                   <label class="form-label required-field">Mobile Number</label>
                   <div class="input-group">
                     <span class="input-group-text">+63</span>
-                    <input type="tel" class="form-control" placeholder="912 345 6789" required>
+                    <input type="tel" name="phone" class="form-control" placeholder="912 345 6789" value="<?= old('phone') ?>" required>
                   </div>
                 </div>
               </div>
@@ -312,7 +374,7 @@
                   <label class="form-label">Email Address</label>
                   <div class="input-group">
                     <span class="input-group-text">@</span>
-                    <input type="email" class="form-control" placeholder="patient@example.com">
+                    <input type="email" name="email" class="form-control" placeholder="patient@example.com" value="<?= old('email') ?>">
                   </div>
                 </div>
               </div>
@@ -328,29 +390,29 @@
                   <label class="form-label required-field">Patient Type</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-hospital-user text-muted"></i></span>
-                    <select class="form-select" required>
+                    <select name="patient_type" class="form-select" required>
                       <option value="">Select Type</option>
-                      <option>Inpatient</option>
-                      <option>Outpatient</option>
+                      <option value="inpatient" <?= old('patient_type') == 'inpatient' ? 'selected' : '' ?>>Inpatient</option>
+                      <option value="outpatient" <?= old('patient_type') == 'outpatient' ? 'selected' : '' ?>>Outpatient</option>
                     </select>
                   </div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label">Patient Alignment</label>
+                  <label class="form-label">Blood Type</label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-align-left text-muted"></i></span>
-                    <input type="text" class="form-control" placeholder="e.g., Left, Right, Center">
+                    <input type="text" name="blood_type" class="form-control" placeholder="e.g., A+, B-, O+, AB-" value="<?= old('blood_type') ?>">
                   </div>
                 </div>
               </div>
               <div class="col-12">
                 <div class="form-group">
-                  <label class="form-label">Known Allergies</label>
+                  <label class="form-label">Medical History & Allergies</label>
                   <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-allergies text-muted"></i></span>
-                    <input type="text" class="form-control" placeholder="List any allergies (separate with commas)">
+                    <span class="input-group-text"><i class="fas fa-notes-medical text-muted"></i></span>
+                    <textarea name="medical_history" class="form-control" rows="3" placeholder="List any known allergies, medical conditions, or relevant medical history"><?= old('medical_history') ?></textarea>
                   </div>
                 </div>
               </div>

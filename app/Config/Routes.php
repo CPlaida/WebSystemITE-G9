@@ -74,7 +74,10 @@ $routes->get('/pharmacy/dashboard', 'Pharmacy::index', ['filter' => 'auth:pharma
 // Frontend Patient Routes
 $routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes) {
     $routes->get('register', 'Patients::register');
+    $routes->post('register', 'Patients::processRegister');
     $routes->get('view', 'Patients::view');
+    $routes->get('search', 'Patients::search');
+    $routes->get('get/(:num)', 'Patients::getPatient/$1');
 });
 
 // Appointment Routes
