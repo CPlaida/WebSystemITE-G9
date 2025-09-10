@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Management | HMS</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<?= $this->extend('layouts/dashboard_layout') ?>
+
+<?= $this->section('title') ?>User Management<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
   <style>
     :root {
       --primary: #4361ee;
@@ -227,8 +225,7 @@
       background: #999;
     }
   </style>
-</head>
-<body>
+
   <div class="container">
     <div class="page-header">
       <h1 class="page-title">User Management</h1>
@@ -384,27 +381,6 @@
         </tbody>
       </table>
     </div>
-    
-    <!-- Back to Dashboard Button -->
-    <div style="margin: 2rem 0 1rem; text-align: left;">
-      <a href="<?= base_url('admin/dashboard') ?>" style="
-        display: inline-flex;
-        align-items: center;
-        padding: 0.6rem 1.2rem;
-        background-color: #f8f9fa;
-        color: #333;
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.2s ease;
-      ">
-        <i class="fas fa-arrow-left" style="margin-right: 8px; font-size: 0.9rem;"></i>
-        <span>Back to Dashboard</span>
-      </a>
-    </div>
-  </div>
-
   <!-- Modal -->
   <div class="modal" id="userModal">
     <div class="modal-content">
@@ -553,5 +529,4 @@
 
     window.onclick = function(e) { if (e.target == modal) closeModal(); }
   </script>
-</body>
-</html>
+<?= $this->endSection() ?>

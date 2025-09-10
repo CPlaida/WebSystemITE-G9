@@ -1,0 +1,88 @@
+CRITICAL - 2025-09-08 13:41:52 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: billing]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\admin\Billing & payment\billingmanagement.php(984): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\Billing & payment\\billingmanagement.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 5 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:42:10 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: billing]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\admin\Billing & payment\billingmanagement.php(984): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\Billing & payment\\billingmanagement.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 5 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:50:45 --> ParseError: syntax error, unexpected identifier "s", expecting "," or ";"
+[Method: GET, Route: billing]
+in APPPATH\Views\admin\Billing & payment\billingmanagement.php on line 320.
+ 1 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 3 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:51:22 --> ParseError: syntax error, unexpected identifier "s", expecting "," or ";"
+[Method: GET, Route: billing]
+in APPPATH\Views\admin\Billing & payment\billingmanagement.php on line 320.
+ 1 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 3 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:57:36 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/Billing & payment/receipt.php"
+[Method: GET, Route: billing/receipt/INV-2023-001]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/Billing & payment/receipt.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/receipt', [], true)
+ 3 APPPATH\Controllers\Billing.php(65): view('admin/Billing & payment/receipt', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->receipt('INV-2023-001')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:57:39 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/Billing & payment/receipt.php"
+[Method: GET, Route: billing/receipt/INV-2023-001]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/Billing & payment/receipt.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/receipt', [], true)
+ 3 APPPATH\Controllers\Billing.php(65): view('admin/Billing & payment/receipt', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->receipt('INV-2023-001')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:57:59 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/Billing & payment/receipt.php"
+[Method: GET, Route: billing/receipt/INV-2023-001]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/Billing & payment/receipt.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/receipt', [], true)
+ 3 APPPATH\Controllers\Billing.php(65): view('admin/Billing & payment/receipt', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->receipt('INV-2023-001')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

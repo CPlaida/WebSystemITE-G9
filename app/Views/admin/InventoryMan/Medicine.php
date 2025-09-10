@@ -1,194 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicine Inventory - St. Peter Hospital</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: #f4f6f9;
-            color: #333;
-        }
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding: 18px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-        }
-        .page-title {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        .btn-back {
-            padding: 10px 18px;
-            background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            transition: background 0.3s ease;
-        }
-        .btn-back:hover {
-            background: #5a6268;
-        }
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 12px rgba(0,0,0,0.15);
-        }
-        .card h3 {
-            margin-top: 0;
-            font-size: 1rem;
-            color: #7f8c8d;
-        }
-        .card .value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #3498db;
-        }
-        .action-buttons {
-            margin: 20px 0;
-        }
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        .btn-primary {
-            background: #3498db;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #2980b9;
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .form-popup {
-            margin: 20px 0;
-            padding: 25px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-        }
-        .form-popup h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-        label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #34495e;
-            margin-bottom: 5px;
-            display: inline-block;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #dcdcdc;
-            border-radius: 6px;
-            margin-top: 3px;
-            font-size: 0.95rem;
-        }
-        .form-control:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 4px rgba(52,152,219,0.3);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        th {
-            background-color: #f1f3f5;
-            font-weight: 600;
-            color: #2c3e50;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-        tr:nth-child(even) {
-            background: #fafafa;
-        }
-        tr:hover {
-            background-color: #f1f3f5;
-        }
-    </style>
-</head>
-<body>
+<?= $this->extend('layouts/dashboard_layout') ?>
+
+<?= $this->section('title') ?>Medicine Inventory<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+<?php 
+// Set the current menu item for highlighting
+$currentMenu = 'pharmacy';
+$currentSubmenu = 'inventory';
+?>
+
+<div class="main-content">
     <div class="content-wrapper">
         <div class="content-header">
             <div class="header-left">
                 <h1 class="page-title">Medicine Inventory</h1>
             </div>
-            <a href="<?= base_url('/dashboard') ?>" class="btn-back" style="
-                display: inline-flex;
-                align-items: center;
-                padding: 0.6rem 1.2rem;
-                background: rgba(255, 255, 255, 0.9);
-                color: #333;
-                border: 1px solid #dee2e6;
-                border-radius: 6px;
-                text-decoration: none;
-                font-weight: 500;
-                transition: all 0.2s ease;
-                box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            "
-            onmouseover="this.style.backgroundColor='rgba(248, 249, 250, 0.95)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';"
-            onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.9)'; this.style.boxShadow='0 1px 2px rgba(0,0,0,0.05)';"
-            >
-                <i class="fas fa-arrow-left" style="margin-right: 8px; font-size: 0.9rem;"></i>
-                Back to Dashboard
-            </a>
+            <div class="header-right">
+                <button class="btn btn-primary" onclick="toggleForm()">
+                    <i class="fas fa-plus"></i> Add New Medicine
+                </button>
+            </div>
         </div>
 
         <div class="content">
@@ -198,183 +29,482 @@
                     <div class="value" id="totalItems">0</div>
                 </div>
                 <div class="card">
-                    <h3>Low Stock Items</h3>
+                    <h3>Low Stock</h3>
                     <div class="value" id="lowStock">0</div>
                 </div>
                 <div class="card">
-                    <h3>Expiring Soon</h3>
-                    <div class="value" id="expiringSoon">0</div>
-                </div>
-                <div class="card">
-                    <h3>Inventory Value</h3>
-                    <div class="value">₱<span id="inventoryValue">0</span></div>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="toggleForm()">
-                    <i class="fas fa-plus"></i> Add New Item
-                </button>
-            </div>
-
-            <div class="search-container" style="margin: 15px 0;">
-                <input type="text" id="searchInput" placeholder="Search medicines..." style="padding: 8px 15px; border: 1px solid #ddd; border-radius: 4px; width: 300px; margin-right: 10px;">
-                <button onclick="searchMedicines()" style="padding: 8px 20px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    <i class="fas fa-search"></i> Search
-                </button>
-            </div>
-
-            <div id="form" class="form-popup" style="display: none;">
-                <h3>Add New Medicine</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-bottom: 15px;">
-                    <div>
-                        <label>Medicine Name</label>
-                        <input type="text" id="medicine" class="form-control" placeholder="Enter medicine name" required>
-                    </div>
-                    <div>
-                        <label>Quantity</label>
-                        <input type="number" id="quantity" class="form-control" placeholder="Enter quantity" required>
-                    </div>
-                    <div>
-                        <label>Category</label>
-                        <input type="text" id="category" class="form-control" placeholder="Enter category" required>
-                    </div>
-                    <div>
-                        <label>Unit Price (₱)</label>
-                        <input type="number" step="0.01" id="price" class="form-control" placeholder="Enter price" required>
-                    </div>
-                    <div>
-                        <label>Status</label>
-                        <select id="status" class="form-control" required>
-                            <option value="">Select status</option>
-                            <option value="In Stock">In Stock</option>
-                            <option value="Low Stock">Low Stock</option>
-                            <option value="Out of Stock">Out of Stock</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Expiry Date</label>
-                        <input type="date" id="expiry" class="form-control" required>
-                    </div>
-                </div>
-                <div style="margin-top:10px;">
-                    <button class="btn btn-primary" onclick="addItem()">
-                        <i class="fas fa-save"></i> Save Item
-                    </button>
-                    <button class="btn btn-secondary" onclick="toggleForm()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
+                    <h3>Out of Stock</h3>
+                    <div class="value" id="outOfStock">0</div>
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table>
+                <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Medicine</th>
-                            <th>Stock Quantity</th>
+                            <th>ID</th>
+                            <th>Medicine Name</th>
                             <th>Category</th>
-                            <th>Unit Price</th>
-                            <th>Status</th>
+                            <th>Stock</th>
+                            <th>Price</th>
                             <th>Expiry Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="inventoryTable">
-                        <!-- Items will be dynamically added here -->
+                    <tbody id="medicineTableBody">
+                        <!-- Rows will be dynamically added here -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        function toggleForm() {
-            let form = document.getElementById("form");
-            form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+<!-- Add/Edit Form Modal -->
+<div class="modal" id="medicineForm">
+    <div class="modal-content" style="max-width: 800px;">
+        <span class="close" onclick="closeForm()">&times;</span>
+        <h2>Add New Medicine(s)</h2>
+        <form id="medicineFormElement">
+            <div id="medicineEntries">
+                <!-- First row -->
+                <div class="medicine-entry">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Medicine Name *</label>
+                            <input type="text" name="medicineName[]" class="form-control" required>
+                        </div>
+                        <div class="form-group" style="flex: 1.5;">
+                            <label>Category *</label>
+                            <select name="category[]" class="form-control" required>
+                                <option value="">Select Category</option>
+                                <option value="Pain Relief">Pain Relief</option>
+                                <option value="Antibiotics">Antibiotics</option>
+                                <option value="Vitamins">Vitamins</option>
+                                <option value="Antihistamines">Antihistamines</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Stock *</label>
+                            <input type="number" name="stock[]" min="0" class="form-control" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Price (₱) *</label>
+                            <input type="number" name="price[]" min="0" step="0.01" class="form-control" required>
+                        </div>
+                        <div class="form-group" style="flex: 1.2;">
+                            <label>Expiry Date *</label>
+                            <input type="date" name="expiryDate[]" class="form-control" required>
+                        </div>
+                        <div class="form-group" style="flex: 0.5; display: flex; align-items: flex-end;">
+                            <button type="button" class="btn btn-danger" onclick="removeMedicineEntry(this)" style="padding: 8px 12px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="addMoreMedicine()">
+                    <i class="fas fa-plus"></i> Add More
+                </button>
+                <div>
+                    <button type="button" class="btn btn-secondary" onclick="closeForm()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save All</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f6f9;
+        color: #333;
+    }
+    .content-wrapper {
+        padding: 20px;
+    }
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    .page-title {
+        margin: 0;
+        font-size: 24px;
+        color: #2c3e50;
+    }
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+    .card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-3px);
+    }
+    .card h3 {
+        margin: 0 0 10px 0;
+        font-size: 16px;
+        color: #7f8c8d;
+    }
+    .card .value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .table-responsive {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        overflow: hidden;
+        padding: 20px;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    .data-table th,
+    .data-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .data-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #2c3e50;
+        padding: 12px 15px;
+    }
+    .data-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    .in-stock {
+        color: #27ae60;
+        font-weight: 500;
+    }
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+    .btn-edit, .btn-delete {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px 8px;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+    .btn-edit {
+        color: #3498db;
+    }
+    .btn-delete {
+        color: #e74c3c;
+    }
+    .btn-edit:hover, .btn-delete:hover {
+        background-color: rgba(0,0,0,0.05);
+        transform: scale(1.1);
+    }
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .modal-content {
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+    }
+    .close {
+        position: absolute;
+        right: 25px;
+        top: 15px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #7f8c8d;
+        transition: color 0.2s;
+    }
+    .close:hover {
+        color: #2c3e50;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-row {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    .form-row:hover {
+        background: #f0f0f0;
+    }
+    .form-row .form-group {
+        margin-bottom: 0;
+        flex: 1;
+        min-width: 120px;
+    }
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+    .form-control:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+    .btn i {
+        font-size: 13px;
+    }
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #2980b9;
+        transform: translateY(-1px);
+    }
+    .btn-secondary {
+        background-color: #95a5a6;
+        color: white;
+    }
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+        transform: translateY(-1px);
+    }
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+    }
+    .btn-danger:hover {
+        background-color: #c0392b;
+        transform: translateY(-1px);
+    }
+    .medicine-entry {
+        margin-bottom: 10px;
+    }
+    .main-content {
+        margin-left: 120px;
+        padding: 20px 20px;
+        transition: all 0.3s;
+    }
+</style>
+
+<script>
+    // Toggle form visibility
+    function toggleForm() {
+        const form = document.getElementById('medicineForm');
+        form.style.display = 'flex';
+        // Reset form when opening
+        document.getElementById('medicineFormElement').reset();
+        // Reset to one entry
+        const entries = document.getElementById('medicineEntries');
+        const firstEntry = entries.querySelector('.medicine-entry');
+        entries.innerHTML = '';
+        entries.appendChild(firstEntry);
+    }
+
+    function closeForm() {
+        const form = document.getElementById('medicineForm');
+        form.style.display = 'none';
+    }
+
+    // Add more medicine entry
+    function addMoreMedicine() {
+        const entries = document.getElementById('medicineEntries');
+        const newEntry = entries.querySelector('.medicine-entry').cloneNode(true);
+        // Clear input values in the new entry
+        newEntry.querySelectorAll('input').forEach(input => input.value = '');
+        newEntry.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        entries.appendChild(newEntry);
+    }
+
+    // Remove medicine entry
+    function removeMedicineEntry(button) {
+        const entries = document.getElementById('medicineEntries');
+        if (entries.children.length > 1) {
+            button.closest('.medicine-entry').remove();
+        } else {
+            // If it's the last entry, just clear the inputs
+            const entry = button.closest('.medicine-entry');
+            entry.querySelectorAll('input').forEach(input => input.value = '');
+            entry.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
         }
+    }
 
-        function addItem() {
-            let medicine = document.getElementById("medicine").value;
-            let quantity = parseInt(document.getElementById("quantity").value);
-            let category = document.getElementById("category").value;
-            let price = parseFloat(document.getElementById("price").value);
-            let status = document.getElementById("status").value;
-            let expiry = document.getElementById("expiry").value;
-
-            if (!medicine || !quantity || !category || !price || !status || !expiry) {
-                alert("Please fill all fields");
-                return;
-            }
-
-            let table = document.getElementById("inventoryTable");
-            let row = table.insertRow();
-
-            row.insertCell(0).innerText = medicine;
-            row.insertCell(1).innerText = quantity;
-            row.insertCell(2).innerText = category;
-            row.insertCell(3).innerText = "₱" + price.toFixed(2);
-            row.insertCell(4).innerText = status;
-            row.insertCell(5).innerText = expiry;
-
-            updateStats();
-
-            document.getElementById("medicine").value = "";
-            document.getElementById("quantity").value = "";
-            document.getElementById("category").value = "";
-            document.getElementById("price").value = "";
-            document.getElementById("status").value = "";
-            document.getElementById("expiry").value = "";
-            document.getElementById("form").style.display = "none";
-        }
-
-        function updateStats() {
-            let table = document.getElementById("inventoryTable");
-            let rows = table.rows;
-            let totalItems = rows.length;
-            let lowStock = 0;
-            let expiringSoon = 0;
-            let inventoryValue = 0;
-
-            let today = new Date();
-            let soon = new Date();
-            soon.setDate(today.getDate() + 30);
-
-            for (let i = 0; i < rows.length; i++) {
-                let quantity = parseInt(rows[i].cells[1].innerText);
-                let price = parseFloat(rows[i].cells[3].innerText.replace("₱",""));
-                let expiryDate = new Date(rows[i].cells[5].innerText);
-
-                inventoryValue += quantity * price;
-                if (quantity < 10) lowStock++;
-                if (expiryDate <= soon) expiringSoon++;
-            }
-
-            document.getElementById("totalItems").innerText = totalItems;
-            document.getElementById("lowStock").innerText = lowStock;
-            document.getElementById("expiringSoon").innerText = expiringSoon;
-            document.getElementById("inventoryValue").innerText = inventoryValue.toFixed(2);
-        }
-
-        function searchMedicines() {
-            const searchValue = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#inventoryTable tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchValue)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+    // Form submission
+    document.getElementById('medicineFormElement').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get all form data
+        const formData = new FormData(this);
+        const medicines = [];
+        
+        // Group form data by entry
+        const entries = formData.getAll('medicineName').length;
+        for (let i = 0; i < entries; i++) {
+            medicines.push({
+                name: formData.getAll('medicineName')[i],
+                category: formData.getAll('category')[i],
+                stock: formData.getAll('stock')[i],
+                price: formData.getAll('price')[i],
+                expiryDate: formData.getAll('expiryDate')[i]
             });
         }
-
-        // Add event listener for Enter key
-        document.getElementById('searchInput').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                searchMedicines();
+        
+        // Here you would typically send the data to the server
+        console.log('Medicines to save:', medicines);
+        
+        // For demo, just add to the table
+        const tbody = document.getElementById('medicineTableBody');
+        
+        medicines.forEach(med => {
+            if (med.name) { // Only add if name is not empty
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>MED${Math.floor(1000 + Math.random() * 9000)}</td>
+                    <td>${med.name}</td>
+                    <td>${med.category}</td>
+                    <td class="in-stock">${med.stock}</td>
+                    <td>₱${parseFloat(med.price).toFixed(2)}</td>
+                    <td>${med.expiryDate}</td>
+                    <td class="actions">
+                        <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             }
         });
-    </script>
-</body>
-</html>
+        
+        // Update stats
+        updateStats();
+        
+        // Close the form
+        closeForm();
+        
+        // Show success message
+        alert('Medicines saved successfully!');
+    });
+    
+    // Update dashboard stats
+    function updateStats() {
+        const rows = document.querySelectorAll('#medicineTableBody tr');
+        let totalItems = rows.length;
+        let lowStock = 0;
+        let outOfStock = 0;
+        
+        rows.forEach(row => {
+            const stock = parseInt(row.cells[3].textContent);
+            if (stock === 0) outOfStock++;
+            else if (stock < 10) lowStock++;
+        });
+        
+        document.getElementById('totalItems').textContent = totalItems;
+        document.getElementById('lowStock').textContent = lowStock;
+        document.getElementById('outOfStock').textContent = outOfStock;
+    }
+    
+    // Initialize with some sample data
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add sample data
+        const sampleData = [
+            { id: 'MED1001', name: 'Paracetamol 500mg', category: 'Pain Relief', stock: 150, price: 5.00, expiry: '2025-12-31' },
+            { id: 'MED1002', name: 'Amoxicillin 500mg', category: 'Antibiotics', stock: 45, price: 8.50, expiry: '2024-11-30' },
+            { id: 'MED1003', name: 'Vitamin C 500mg', category: 'Vitamins', stock: 3, price: 3.75, expiry: '2024-10-15' },
+            { id: 'MED1004', name: 'Loratadine 10mg', category: 'Antihistamines', stock: 0, price: 12.99, expiry: '2025-05-20' }
+        ];
+        
+        const tbody = document.getElementById('medicineTableBody');
+        sampleData.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.id}</td>
+                <td>${item.name}</td>
+                <td>${item.category}</td>
+                <td class="${item.stock === 0 ? 'out-of-stock' : 'in-stock'}">${item.stock}</td>
+                <td>₱${item.price.toFixed(2)}</td>
+                <td>${item.expiry}</td>
+                <td class="actions">
+                    <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                    <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        // Update stats
+        updateStats();
+    });
+</script>
+<?= $this->endSection() ?>

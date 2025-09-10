@@ -11,145 +11,75 @@ class PatientModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
-    protected $protectFields = true;
     protected $allowedFields = [
         'patient_id',
         'first_name',
         'last_name',
         'email',
         'phone',
-        'date_of_birth',
         'gender',
+        'date_of_birth',
         'address',
         'blood_type',
         'emergency_contact',
         'medical_history',
-        'status'
+        'status',
+        'created_at',
+        'updated_at'
     ];
 
-    // Dates
     protected $useTimestamps = true;
-    protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
+    protected $skipValidation = false;
 
-    // Validation
     protected $validationRules = [
         'first_name' => 'required|min_length[2]|max_length[100]',
-        'last_name' => 'required|min_length[2]|max_length[100]',
-        'phone' => 'required|min_length[10]|max_length[20]',
-        'date_of_birth' => 'required|valid_date',
+        'last_name' => 'permit_empty|max_length[100]',
+        'email' => 'permit_empty|valid_email|is_unique[patients.email,id,{id}]',
+        'phone' => 'permit_empty|max_length[20]',
         'gender' => 'required|in_list[male,female,other]',
-        'email' => 'permit_empty|valid_email|max_length[255]',
-        'address' => 'permit_empty|max_length[500]',
-        'blood_type' => 'permit_empty|max_length[5]',
-        'emergency_contact' => 'permit_empty|max_length[20]',
-        'medical_history' => 'permit_empty',
-        'status' => 'permit_empty|in_list[active,inactive]'
+        'date_of_birth' => 'required|valid_date',
+        'status' => 'in_list[active,inactive]'
     ];
 
     protected $validationMessages = [
-        'first_name' => [
-            'required' => 'First name is required',
-            'min_length' => 'First name must be at least 2 characters long',
-            'max_length' => 'First name cannot exceed 100 characters'
-        ],
-        'last_name' => [
-            'required' => 'Last name is required',
-            'min_length' => 'Last name must be at least 2 characters long',
-            'max_length' => 'Last name cannot exceed 100 characters'
-        ],
-        'phone' => [
-            'required' => 'Phone number is required',
-            'min_length' => 'Phone number must be at least 10 digits',
-            'max_length' => 'Phone number cannot exceed 20 characters'
-        ],
-        'date_of_birth' => [
-            'required' => 'Date of birth is required',
-            'valid_date' => 'Please enter a valid date'
-        ],
-        'gender' => [
-            'required' => 'Gender is required',
-            'in_list' => 'Please select a valid gender option'
-        ],
         'email' => [
-            'valid_email' => 'Please enter a valid email address'
+            'is_unique' => 'This email is already registered.'
         ]
     ];
 
-    protected $skipValidation = false;
-    protected $cleanValidationRules = true;
-
-    // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert = ['generatePatientId'];
-    protected $beforeUpdate = [];
+    protected $beforeInsert = ['generatePatientId', 'setCreatedAt'];
+    protected $beforeUpdate = ['setUpdatedAt'];
 
     /**
-     * Generate unique patient ID before inserting
+     * Generate a unique patient ID before inserting
      */
     protected function generatePatientId(array $data)
     {
-        if (!isset($data['data']['patient_id'])) {
-            $data['data']['patient_id'] = $this->createUniquePatientId();
+        if (!isset($data['data']['patient_id']) || empty($data['data']['patient_id'])) {
+            do {
+                // Format: PAT-YYYYMMDD-XXXX (where X is a random number)
+                $date = date('Ymd');
+                $random = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+                $patientId = 'PAT-' . $date . '-' . $random;
+            } while ($this->where('patient_id', $patientId)->countAllResults() > 0);
+
+            $data['data']['patient_id'] = $patientId;
         }
+
         return $data;
     }
 
-    /**
-     * Create a unique patient ID
-     */
-    private function createUniquePatientId()
+    protected function setCreatedAt(array $data)
     {
-        do {
-            // Generate patient ID in format: P-YYYYMMDD-XXXX
-            $date = date('Ymd');
-            $random = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-            $patientId = "P-{$date}-{$random}";
-        } while ($this->where('patient_id', $patientId)->first());
-
-        return $patientId;
+        $data['data']['created_at'] = date('Y-m-d H:i:s');
+        return $data;
     }
 
-    /**
-     * Get patient by patient ID
-     */
-    public function getByPatientId($patientId)
+    protected function setUpdatedAt(array $data)
     {
-        return $this->where('patient_id', $patientId)->first();
-    }
-
-    /**
-     * Get active patients
-     */
-    public function getActivePatients()
-    {
-        return $this->where('status', 'active')->findAll();
-    }
-
-    /**
-     * Search patients by name or patient ID
-     */
-    public function searchPatients($searchTerm)
-    {
-        return $this->groupStart()
-                    ->like('first_name', $searchTerm)
-                    ->orLike('last_name', $searchTerm)
-                    ->orLike('patient_id', $searchTerm)
-                    ->groupEnd()
-                    ->findAll();
-    }
-
-    /**
-     * Get patient statistics
-     */
-    public function getPatientStats()
-    {
-        return [
-            'total' => $this->countAll(),
-            'active' => $this->where('status', 'active')->countAllResults(),
-            'inactive' => $this->where('status', 'inactive')->countAllResults(),
-            'recent' => $this->orderBy('created_at', 'DESC')->limit(5)->findAll()
-        ];
+        $data['data']['updated_at'] = date('Y-m-d H:i:s');
+        return $data;
     }
 }

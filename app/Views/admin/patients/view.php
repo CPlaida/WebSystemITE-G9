@@ -1,412 +1,446 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Patient Records - HMS</title>
-  <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
+<?= $this->extend('layouts/dashboard_layout') ?>
 
-    .alert {
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border: 1px solid transparent;
-      border-radius: 0.375rem;
-    }
+<?= $this->section('title') ?>Patient Records<?= $this->endSection() ?>
 
-    .alert-success {
-      color: #0f5132;
-      background-color: #d1e7dd;
-      border-color: #badbcc;
-    }
+<?= $this->section('content') ?>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary-color: #3f37c9;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+            --border-color: #dee2e6;
+            --text-color: #333;
+            --white: #ffffff;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+            --border-radius: 6px;
+            --border-radius-lg: 12px;
+            --transition: all 0.2s ease;
+        }
+        
+        .main-content {
+            padding: 20px;
+            width: 100%;
+            margin-left: 120px;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+            min-height: calc(100vh - 56px);
+        }
 
-    .alert-danger {
-      color: #842029;
-      background-color: #f8d7da;
-      border-color: #f5c2c7;
-    }
+        .main-content.expanded {
+            margin-left: 70px;
+        }
 
-    .btn-close {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      opacity: 0.5;
-      float: right;
-    }
+        .page-header {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .btn-close:hover {
-      opacity: 1;
-    }
+        .card {
+            background: var(--white);
+            border: none;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
 
-    .badge {
-      padding: 0.25em 0.5em;
-      font-size: 0.75em;
-      font-weight: 700;
-      border-radius: 0.25rem;
-    }
+        .card-header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .badge-success {
-      color: #fff;
-      background-color: #198754;
-    }
+        .card-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
 
-    .badge-secondary {
-      color: #fff;
-      background-color: #6c757d;
-    }
+        .card-body {
+            padding: 1.5rem;
+        }
 
-    .text-center {
-      text-align: center;
-    }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
-    .text-muted {
-      color: #6c757d;
-    }
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
 
-    .btn-primary {
-      background-color: #0d6efd;
-      border-color: #0d6efd;
-      color: #fff;
-    }
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid var(--border-color);
+        }
 
-    .container {
-      max-width: 1200px;
-      margin: auto;
-    }
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid var(--border-color);
+            background-color: var(--light-gray);
+            font-weight: 600;
+            text-align: left;
+        }
 
-    .card {
-      background: #fff;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
+        .table tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
 
-    .card-header {
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .badge {
+            display: inline-block;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+        }
 
-    .card-header h5 {
-      margin: 0;
-      font-size: 18px;
-      color: #0d6efd;
-    }
+        .badge-success {
+            color: #fff;
+            background-color: var(--success-color);
+        }
 
-    .btn {
-      padding: 8px 16px;
-      border-radius: 5px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: 0.2s;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-    }
+        .badge-warning {
+            color: #000;
+            background-color: var(--warning-color);
+        }
 
-    .btn-outline {
-      background: #fff;
-      border: 1px solid #ccc;
-      color: #6c757d;
-    }
+        .btn {
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            text-decoration: none;
+        }
 
-    .btn-outline:hover {
-      background: #f1f1f1;
-    }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
 
-    .btn-view {
-      background: #28a745;
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      border: none;
-    }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: white;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
 
-    table th, table td {
-      border: 1px solid #dee2e6;
-      padding: 10px;
-      text-align: left;
-    }
+        .btn-outline-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--dark-gray);
+        }
 
-    table th {
-      background-color: #f8f9fa;
-      font-weight: 600;
-    }
+        .btn-outline-secondary:hover {
+            background-color: var(--light-gray);
+        }
 
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
+        .btn-danger {
+            background-color: var(--error-color);
+            border: 1px solid var(--error-color);
+            color: white;
+        }
 
-    .modal-content {
-      background: #fff;
-      border-radius: 8px;
-      max-width: 900px;
-      width: 95%;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      animation: fadeIn 0.3s ease-in-out;
-    }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
 
-    @keyframes fadeIn {
-      from {opacity: 0; transform: scale(0.9);}
-      to {opacity: 1; transform: scale(1);}
-    }
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+        }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
-      margin-bottom: 15px;
-    }
+        .alert-success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
 
-    .close-btn {
-      cursor: pointer;
-      font-size: 20px;
-      color: #dc3545;
-      border: none;
-      background: none;
-    }
+        .alert-danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
 
-    .ehr-container {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.5;
+            padding: 0.5rem;
+            line-height: 1;
+        }
 
-    .ehr-info {
-      flex: 1 1 30%;
-      background: #f8f9fa;
-      padding: 15px;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-    }
+        .btn-close:hover {
+            opacity: 1;
+        }
 
-    .ehr-info p {
-      margin: 10px 0;
-      font-size: 14px;
-    }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            overflow-y: auto;
+        }
 
-    .ehr-tabs {
-      flex: 1 1 65%;
-    }
+        .modal-content {
+            position: relative;
+            margin: 2rem auto;
+            max-width: 800px;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+        }
 
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .tabs button {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background: #f8f9fa;
-      cursor: pointer;
-      border-radius: 4px;
-      font-weight: 500;
-    }
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
 
-    .tabs button.active {
-      background: #0d6efd;
-      color: white;
-      border-color: #0d6efd;
-    }
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
 
-    .tab-content {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 20px;
-      background: #fff;
-      min-height: 150px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Patient List Section -->
-    <div class="card">
-      <div class="card-header">
-        <h5>Patient Records</h5>
-        <a href="<?= base_url('dashboard') ?>" class="btn btn-outline">Back to Dashboard</a>
-      </div>
-      <div class="card-body">
-        <!-- Success/Error Messages -->
-        <?php if (session()->getFlashdata('success')): ?>
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>
-            <?= session()->getFlashdata('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">×</button>
-          </div>
-        <?php endif; ?>
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            opacity: 0.5;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
 
-        <?php if (session()->getFlashdata('error')): ?>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>
-            <?= session()->getFlashdata('error') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">×</button>
-          </div>
-        <?php endif; ?>
+        .close-btn:hover {
+            opacity: 1;
+        }
 
-        <table>
-          <thead>
-            <tr>
-              <th>Patient ID</th>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Address</th>
-              <th>Gender</th>
-              <th>Date of Birth</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="patientTable">
-            <?php if (!empty($patients)): ?>
-              <?php foreach ($patients as $index => $patient): ?>
-                <tr>
-                  <td><?= esc($patient['patient_id']) ?></td>
-                  <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
-                  <td><?= esc($patient['phone']) ?></td>
-                  <td><?= esc($patient['address'] ?? 'N/A') ?></td>
-                  <td><?= esc(ucfirst($patient['gender'])) ?></td>
-                  <td><?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?></td>
-                  <td>
-                    <span class="badge <?= $patient['status'] === 'active' ? 'badge-success' : 'badge-secondary' ?>">
-                      <?= esc(ucfirst($patient['status'])) ?>
-                    </span>
-                  </td>
-                  <td>
-                    <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['patient_id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">View</button>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <tr>
-                <td colspan="8" class="text-center">
-                  <p class="text-muted">No patients registered yet.</p>
-                  <a href="<?= base_url('patients/register') ?>" class="btn btn-primary">Register First Patient</a>
-                </td>
-              </tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
 
-  <!-- Popup Modal -->
-  <div class="modal" id="ehrModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5>Electronic Health Records</h5>
-        <button class="close-btn" onclick="closeModal()">×</button>
-      </div>
-      <div class="ehr-container">
-        <div class="ehr-info">
-          <p><b>Patient ID:</b> <span id="ehrPatientId">-</span></p>
-          <p><b>Full Name:</b> <span id="ehrName">-</span></p>
-          <p><b>Mobile:</b> <span id="ehrMobile">-</span></p>
-          <p><b>Email:</b> <span id="ehrEmail">-</span></p>
-          <p><b>Address:</b> <span id="ehrAddress">-</span></p>
-          <p><b>Date of Birth:</b> <span id="ehrDOB">-</span></p>
-          <p><b>Gender:</b> <span id="ehrGender">-</span></p>
-          <p><b>Blood Type:</b> <span id="ehrBloodType">-</span></p>
-          <p><b>Emergency Contact:</b> <span id="ehrEmergencyContact">-</span></p>
-          <p><b>Medical History:</b> <span id="ehrAilment">-</span></p>
-          <p><b>Date Recorded:</b> <span id="ehrDate">-</span></p>
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">Patient Records</h1>
+            </a>
         </div>
-        <div class="ehr-tabs">
-          <div class="tabs">
-            <button class="tab-btn active" onclick="openTab(event,'prescription')">Prescription</button>
-            <button class="tab-btn" onclick="openTab(event,'vitals')">Vitals</button>
-            <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
-          </div>
-          <div id="prescription" class="tab-content">
-            <p>Prescription details will appear here...</p>
-          </div>
-          <div id="vitals" class="tab-content" style="display:none;">
-            <p>Vitals records will appear here...</p>
-          </div>
-          <div id="lab" class="tab-content" style="display:none;">
-            <p>Lab records will appear here...</p>
-          </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Patient List</h5>
+                <div class="input-group" style="max-width: 300px;">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search patients..." onkeyup="searchPatients()">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <?php if (session()->getFlashdata('success')): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <?= session()->getFlashdata('success') ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (session()->getFlashdata('error')): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <?= session()->getFlashdata('error') ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="patientsTable">
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Address</th>
+                                <th>Gender</th>
+                                <th>Date of Birth</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($patients)): ?>
+                                <?php foreach ($patients as $index => $patient): ?>
+                                    <tr>
+                                        <td><?= esc($patient['patient_id']) ?></td>
+                                        <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
+                                        <td><?= esc($patient['phone']) ?></td>
+                                        <td><?= esc($patient['address'] ?? 'N/A') ?></td>
+                                        <td><?= esc(ucfirst($patient['gender'])) ?></td>
+                                        <td><?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?></td>
+                                        <td>
+                                            <span class="badge <?= $patient['status'] === 'active' ? 'badge-success' : 'badge-secondary' ?>">
+                                                <?= esc(ucfirst($patient['status'])) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['patient_id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">View</button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="8" class="text-center">
+                                        <p class="text-muted">No patients registered yet.</p>
+                                        <a href="<?= base_url('patients/register') ?>" class="btn btn-primary">Register First Patient</a>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    function viewPatient(name, mobile, address, dob, gender, medicalHistory, patientId, email, bloodType, emergencyContact) {
-      document.getElementById("ehrName").innerText = name;
-      document.getElementById("ehrMobile").innerText = mobile;
-      document.getElementById("ehrAddress").innerText = address;
-      document.getElementById("ehrDOB").innerText = dob;
-      document.getElementById("ehrGender").innerText = gender;
-      document.getElementById("ehrAilment").innerText = medicalHistory;
-      document.getElementById("ehrDate").innerText = new Date().toLocaleDateString();
+    <!-- EHR Modal -->
+    <div class="modal" id="ehrModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Electronic Health Records</h5>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="ehrContent">
+                    <!-- EHR content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
-      // Add additional patient info
-      document.getElementById("ehrPatientId").innerText = patientId;
-      document.getElementById("ehrEmail").innerText = email;
-      document.getElementById("ehrBloodType").innerText = bloodType;
-      document.getElementById("ehrEmergencyContact").innerText = emergencyContact;
+    <script>
+        // Search functionality
+        function searchPatients() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('patientsTable');
+            const tr = table.getElementsByTagName('tr');
 
-      document.getElementById("ehrModal").style.display = "flex";
-    }
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        const txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                tr[i].style.display = found ? '' : 'none';
+            }
+        }
 
-    function closeModal() {
-      document.getElementById("ehrModal").style.display = "none";
-    }
+        // View patient
+        function viewPatient(name, mobile, address, dob, gender, medicalHistory, patientId, email, bloodType, emergencyContact) {
+            document.getElementById("ehrContent").innerHTML = `
+                <h6>Patient ID: ${patientId}</h6>
+                <p><b>Patient Name:</b> ${name}</p>
+                <p><b>Mobile:</b> ${mobile}</p>
+                <p><b>Address:</b> ${address}</p>
+                <p><b>Date of Birth:</b> ${dob}</p>
+                <p><b>Gender:</b> ${gender}</p>
+                <p><b>Medical History:</b> ${medicalHistory}</p>
+                <p><b>Email:</b> ${email}</p>
+                <p><b>Blood Type:</b> ${bloodType}</p>
+                <p><b>Emergency Contact:</b> ${emergencyContact}</p>
+            `;
+            
+            // Show modal
+            document.getElementById("ehrModal").style.display = 'block';
+        }
 
-    function openTab(evt, tabName) {
-      var content = document.getElementsByClassName("tab-content");
-      for (let i = 0; i < content.length; i++) {
-        content[i].style.display = "none";
-      }
-      var btns = document.getElementsByClassName("tab-btn");
-      for (let i = 0; i < btns.length; i++) {
-        btns[i].classList.remove("active");
-      }
-      document.getElementById(tabName).style.display = "block";
-      evt.currentTarget.classList.add("active");
-    }
+        // Close modal
+        function closeModal() {
+            document.getElementById("ehrModal").style.display = 'none';
+        }
 
-    // Close modal on outside click
-    window.onclick = function(event) {
-      let modal = document.getElementById("ehrModal");
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    }
-  </script>
-</body>
-</html>
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById("ehrModal");
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+<?= $this->endSection() ?>

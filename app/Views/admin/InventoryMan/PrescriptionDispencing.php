@@ -1,277 +1,247 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prescription Dispensing - St. Peter Hospital</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<?= $this->extend('layouts/dashboard_layout') ?>
+
+<?= $this->section('title') ?>Prescription Dispensing<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f6f8fb;
-            color: #333;
-            line-height: 1.6;
+        /* Main Content Layout */
+        .main-content {
             padding: 20px;
+            width: 100%;
+            margin-left: 120px;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+            min-height: calc(100vh - 56px);
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
+        .main-content.expanded {
+            margin-left: 70px;
         }
 
+        /* Page Header */
         .page-header {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            background: #fff;
+            padding: 15px 20px;
+            margin: -20px -20px 20px -20px;
             border-bottom: 1px solid #e0e0e0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .page-header h1 {
-            margin: 0 0 5px 0;
+            margin: 0;
             color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
+        /* Card Styling */
         .card {
             background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             margin-bottom: 20px;
+            border: none;
             overflow: hidden;
         }
 
         .card-header {
             background: #f8f9fa;
             padding: 15px 20px;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .card-header h3 {
-            margin: 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 600;
             color: #2c3e50;
-            font-size: 1.2em;
         }
 
         .card-body {
             padding: 20px;
         }
 
-        .prescription-form {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
+        /* Form Elements */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #495057;
         }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-control {
             width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        .form-control:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
 
-        .form-actions {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        /* Buttons */
         .btn {
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
-            border: none;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+        }
+
+        .btn i {
+            margin-right: 5px;
         }
 
         .btn-primary {
-            background-color: #3498db;
-            color: white;
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
         }
 
         .btn-primary:hover {
-            background-color: #2980b9;
+            background-color: #0069d9;
+            border-color: #0062cc;
         }
 
         .btn-secondary {
-            background-color: transparent;
-            color: #6c757d;
-            border: 1px solid #6c757d;
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #fff;
         }
 
         .btn-secondary:hover {
-            background-color: #f8f9fa;
-            color: #5a6268;
-            border-color: #5a6268;
+            background-color: #5a6268;
+            border-color: #545b62;
         }
 
-        /* Layout */
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+        /* Layout Utilities */
+        .d-flex {
+            display: flex;
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            body {
-                padding: 10px;
-            }
+        .justify-content-between {
+            justify-content: space-between;
         }
 
-        /* Cart Styles */
-        .cart-container {
-            margin-top: 30px;
+        .align-items-center {
+            align-items: center;
         }
-        
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Cart Section */
         .cart-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
         }
-        
-        .cart-item-details {
-            flex-grow: 1;
+
+        .cart-item:last-child {
+            border-bottom: none;
         }
-        
-        .cart-item-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .quantity-btn {
-            width: 25px;
-            height: 25px;
-            border: 1px solid #ddd;
-            background: #f8f9fa;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        
-        .cart-total {
-            text-align: right;
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-        }
-        
+
         .empty-cart {
             text-align: center;
             color: #6c757d;
             padding: 20px;
+            font-style: italic;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+
+            .main-content.expanded {
+                margin-left: 0;
+            }
         }
     </style>
-</head>
-<body>
-    <div class="container">
+
+    <div class="main-content" id="mainContent">
         <div class="page-header">
             <h1>Prescription Dispensing</h1>
-            <a href="<?= base_url('/dashboard') ?>" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>
 
-        <div class="main-content">
-            <div class="main-section">
-                <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
                     <div class="card-header">
-                        <h3>Add Medication</h3>
+                        <i class="fas fa-pills me-2"></i> Add Medication
                     </div>
                     <div class="card-body">
-                        <form id="prescriptionForm" class="prescription-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="patient">Patient Name</label>
-                                    <input type="text" id="patient" placeholder="Enter Patient Name" required>
+                        <form id="prescriptionForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="patient">Patient Name</label>
+                                        <input type="text" id="patient" class="form-control" placeholder="Enter Patient Name" required>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="doctor">Prescribing Doctor</label>
-                                    <input type="text" id="doctor" placeholder="Enter Doctor's Name" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="medication">Medication</label>
-                                    <select id="medication" required>
-                                        <option value="">Select Medication</option>
-                                        <!-- Medication options will be populated by JavaScript -->
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="quantity">Quantity</label>
-                                    <input type="number" id="quantity" min="1" value="1" required>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="doctor">Prescribing Doctor</label>
+                                        <input type="text" id="doctor" class="form-control" placeholder="Enter Doctor's Name" required>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label for="notes">Notes</label>
-                                <textarea id="notes" rows="2" placeholder="Additional instructions"></textarea>
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="medication">Medication</label>
+                                        <select id="medication" class="form-control" required>
+                                            <option value="">Select Medication</option>
+                                            <!-- Medication options will be populated by JavaScript -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="quantity">Quantity</label>
+                                        <input type="number" id="quantity" class="form-control" min="1" value="1" required>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="form-actions">
+                            <div class="form-group mb-4">
+                                <label for="notes">Notes / Instructions</label>
+                                <textarea id="notes" class="form-control" rows="2" placeholder="Additional instructions"></textarea>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end">
                                 <button type="button" id="addToCart" class="btn btn-primary">
                                     <i class="fas fa-cart-plus"></i> Add to Cart
                                 </button>
@@ -281,18 +251,18 @@
                 </div>
             </div>
             
-            <div class="cart-section">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Prescription Cart</h3>
+                        <i class="fas fa-shopping-cart me-2"></i> Prescription Cart
                     </div>
                     <div class="card-body">
-                        <div id="cartItems" class="cart-container">
+                        <div id="cartItems" class="mb-3">
                             <div class="empty-cart">No items added yet</div>
                         </div>
-                        <div class="cart-actions">
-                            <button type="button" id="checkoutBtn" class="btn btn-primary" style="width: 100%; margin-top: 15px;" disabled>
-                                Process Prescription
+                        <div class="d-grid">
+                            <button type="button" id="checkoutBtn" class="btn btn-primary" disabled>
+                                <i class="fas fa-paper-plane"></i> Process Prescription
                             </button>
                         </div>
                     </div>
@@ -301,8 +271,33 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Sidebar toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebar && mainContent) {
+                const toggleSidebar = () => {
+                    if (sidebar.classList.contains('closed')) {
+                        mainContent.classList.add('expanded');
+                    } else {
+                        mainContent.classList.remove('expanded');
+                    }
+                };
+
+                // Initial check
+                toggleSidebar();
+
+                // Add event listener for sidebar toggle
+                const toggleBtn = document.querySelector('.toggle-btn');
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', toggleSidebar);
+                }
+            }
+        });
+
+        // Your existing JavaScript code here
         $(document).ready(function() {
             let cart = [];
             
@@ -452,5 +447,4 @@
             });
         });
     </script>
-</body>
-</html>
+<?= $this->endSection() ?>

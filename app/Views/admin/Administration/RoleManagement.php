@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Role Management | HMS</title>
+<?= $this->extend('layouts/dashboard_layout') ?>
+
+<?= $this->section('title') ?>Role Management<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
   <style>
     :root {
       --primary: #4361ee;
@@ -12,13 +11,6 @@
       --dark: #343a40;
       --border-radius: 8px;
       --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    body {
-      background-color: #f0f2f5;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
     }
 
     .container {
@@ -106,8 +98,7 @@
       transform: translateY(-1px);
     }
   </style>
-</head>
-<body>
+
   <div class="container">
     <h2>Role Management</h2>
     <form id="roleForm">
@@ -158,9 +149,6 @@
         </div>
       </div>
       <div class="form-actions">
-        <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline" style="padding-left: 1rem; padding-right: 1.25rem;">
-          <i class="fas fa-arrow-left" style="margin-right: 8px; font-size: 0.9rem;"></i>
-          Back to Dashboard
         </a>
         <button type="submit" class="btn btn-primary">
           <i class="fas fa-save" style="margin-right: 8px;"></i>
@@ -176,5 +164,4 @@
       alert("Permissions updated successfully!");
     });
   </script>
-</body>
-</html>
+<?= $this->endSection() ?>

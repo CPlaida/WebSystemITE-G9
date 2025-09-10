@@ -25,7 +25,7 @@ class Billing extends BaseController
         // In a real application, you would fetch the bill from the database
         // This is a sample bill for demonstration
         $bill = [
-            'bill_number' => 'INV-' . strtoupper(uniqid()),
+            'bill_number' => $id ?? 'INV-' . strtoupper(uniqid()),
             'patient_name' => 'Juan Dela Cruz',
             'patient_address' => '123 Sample St., Sample City',
             'patient_phone' => '0912-345-6789',
@@ -62,7 +62,15 @@ class Billing extends BaseController
         //     return redirect()->back()->with('error', 'Bill not found');
         // }
 
-        return view('admin/Billing & payment/receipt', ['bill' => $bill]);
+        // Make sure the view path is correct
+        $viewPath = 'admin/Billing & payment/receipt';
+        
+        // Check if the view file exists
+        if (!is_file(APPPATH . 'Views/' . $viewPath . '.php')) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Receipt view not found');
+        }
+
+        return view($viewPath, ['bill' => $bill]);
     }
 
     public function save()

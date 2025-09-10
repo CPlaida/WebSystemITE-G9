@@ -84,6 +84,13 @@ $routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes
 $routes->get('appointments/book', 'Appointment::book');
 $routes->get('appointments/list', 'Appointment::index');
 $routes->get('appointments/schedule', 'Appointment::schedule');
+$routes->post('appointments/create', 'Appointment::create');
+$routes->get('appointments/show/(:num)', 'Appointment::show/$1');
+$routes->post('appointments/update/(:num)', 'Appointment::update/$1');
+$routes->post('appointments/cancel/(:num)', 'Appointment::cancel/$1');
+$routes->post('appointments/complete/(:num)', 'Appointment::complete/$1');
+$routes->post('appointments/no-show/(:num)', 'Appointment::noShow/$1');
+$routes->post('appointments/delete/(:num)', 'Appointment::delete/$1');
 
 // Billing Management
 $routes->get('billing', 'Billing::index');
@@ -110,9 +117,22 @@ $routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes
 });
 
 // Administration Routes
-$routes->group('admin', ['namespace' => 'App\\Controllers'], function($routes) {
+$routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {
     $routes->get('users', 'Admin::users');
     $routes->get('doctors', 'Admin::doctors');
     $routes->get('settings', 'Admin::settings');
-    $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing', ['filter' => 'auth:admin']);
+    $routes->get('billing', 'Billing::index');
+    $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
+    $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');
+    $routes->get('InventoryMan/medicine', 'Pharmacy::medicine');
+    
+    $routes->group('patients', function($routes) {
+        $routes->get('', 'Admin\Patients::index');
+        $routes->get('register', 'Admin\Patients::register');
+        $routes->post('register', 'Admin\Patients::processRegister');  
+        $routes->get('view/(:num)', 'Admin\Patients::view/$1');
+        $routes->get('edit/(:num)', 'Admin\Patients::edit/$1');
+        $routes->post('update/(:num)', 'Admin\Patients::update/$1');
+        $routes->get('delete/(:num)', 'Admin\Patients::delete/$1');
+    });
 });

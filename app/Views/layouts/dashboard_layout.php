@@ -223,7 +223,11 @@
             <div class="toggle-btn"><i class="fas fa-bars"></i></div>
         </div>
         <ul class="nav-menu">
-            <li class="nav-item"><span class="text">Dashboard</span></li>
+            <li class="nav-item">
+                <a href="<?= base_url('admin/dashboard') ?>">
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
 
             <?php $role = session()->get('role'); ?>
 
@@ -283,7 +287,7 @@
                         <span class="arrow">›</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="<?= base_url('pharmacy/inventory/medicine') ?>"><span class="text">Inventory Management</span></a></li>
+                        <li><a href="<?= base_url('admin/InventoryMan/medicine') ?>"><span class="text">Inventory Management</span></a></li>
                         <li><a href="<?= base_url('admin/InventoryMan/PrescriptionDispencing') ?>"><span class="text">New Prescription</span></a></li>
                     </ul>
                 </li>

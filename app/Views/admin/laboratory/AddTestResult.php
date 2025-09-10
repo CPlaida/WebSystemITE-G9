@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Test Result | HMS</title>
-    <link rel="stylesheet" href="<?= base_url('css/font-awesome/css/all.min.css') ?>">
+<?= $this->extend('layouts/dashboard_layout') ?>
+
+<?= $this->section('title') ?>Add Test Result<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
     <style>
         :root {
             --primary-color: #4361ee;
@@ -15,26 +13,6 @@
             --text-color: #333;
             --white: #ffffff;
             --shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--light-bg);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
         }
         
         .page-header {
@@ -52,178 +30,123 @@
             margin: 0;
         }
         
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .btn i {
-            margin-right: 8px;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            color: var(--white);
-        }
-        
-        .btn-secondary:hover {
-            opacity: 0.9;
-        }
-        
         .card {
             background: var(--white);
-            border-radius: 8px;
+            border-radius: 0.35rem;
             box-shadow: var(--shadow);
-            margin-bottom: 30px;
-            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
         }
         
         .card-header {
-            background-color: var(--light-bg);
+            padding: 1rem 1.25rem;
+            background-color: #f8f9fc;
             border-bottom: 1px solid var(--border-color);
-            padding: 15px 20px;
-        }
-        
-        .card-title {
-            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--primary-color);
-            margin: 0;
+            color: #4e73df;
         }
         
         .card-body {
-            padding: 25px;
+            padding: 1.25rem;
         }
         
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
         
-        .form-label {
+        .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
             font-weight: 500;
-            color: var(--text-color);
+            color: #5a5c69;
         }
         
-        .form-control, .form-select {
+        .form-control {
+            display: block;
             width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
             font-size: 1rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #6e707e;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #d1d3e2;
+            border-radius: 0.35rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
         
-        .form-control:focus, .form-select:focus {
-            outline: none;
+        .form-control:focus {
+            color: #6e707e;
+            background-color: #fff;
+            border-color: #bac8f3;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.35rem;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            color: #fff;
+            background-color: var(--primary-color);
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
         }
         
-        .form-control[readonly] {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
         }
         
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
+        .btn-secondary {
+            color: #fff;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
         
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-            margin: 25px 0;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-        
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        
-        thead {
-            background-color: #f8f9fa;
-        }
-        
-        th {
-            font-weight: 600;
-            color: var(--text-color);
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
         }
         
         .text-right {
             text-align: right;
         }
         
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 25px;
-        }
-        
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-                margin-top: 10px;
-            }
         }
     </style>
-</head>
-<body>
-    <div class="container">
+
+    <div class="main-content" id="mainContent">
         <div class="page-header">
             <h1 class="page-title">Add Test Result</h1>
-            <a href="<?= base_url('laboratory/testresult') ?>" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Results
-            </a>
         </div>
 
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title">Test Information</h2>
+                Test Information
             </div>
             <div class="card-body">
                 <form method="post" action="<?= base_url('laboratory/testresult/add/' . $testId) ?>">
@@ -296,5 +219,31 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+
+    <script>
+        // Sidebar toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebar && mainContent) {
+                const toggleSidebar = () => {
+                    if (sidebar.classList.contains('closed')) {
+                        mainContent.classList.add('expanded');
+                    } else {
+                        mainContent.classList.remove('expanded');
+                    }
+                };
+
+                // Initial check
+                toggleSidebar();
+
+                // Add event listener for sidebar toggle
+                const toggleBtn = document.querySelector('.toggle-btn');
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', toggleSidebar);
+                }
+            }
+        });
+    </script>
+<?= $this->endSection() ?>
