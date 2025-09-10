@@ -12,6 +12,7 @@
       --text-color: #212529;
       --border-color: #dee2e6;
       --error-color: #dc3545;
+      --success-color: #198754;
       --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
     
@@ -61,6 +62,25 @@
       font-weight: 600;
       margin: 0;
       font-size: 1.25rem;
+    }
+    
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+    }
+    
+    .alert-success {
+      color: #0f5132;
+      background-color: #d1e7dd;
+      border-color: #badbcc;
+    }
+    
+    .alert-danger {
+      color: #842029;
+      background-color: #f8d7da;
+      border-color: #f5c2c7;
     }
     
     .form-grid {
@@ -153,7 +173,6 @@
       margin-right: 8px;
     }
     
-    /* Form Validation */
     .form-control:invalid, .form-select:invalid {
       border-color: var(--error-color);
     }
@@ -214,7 +233,7 @@
         <form action="<?= base_url('appointments/create') ?>" method="POST" id="appointmentForm" class="needs-validation" novalidate>
           <?= csrf_field() ?>
           <div class="form-grid">
-            <!-- Patient Name -->
+            <!-- Patient Selection -->
             <div class="form-group">
               <label class="form-label required-field" for="patient_name">Patient Name</label>
               <input type="text" name="patient_name" id="patient_name" class="form-control" 
@@ -222,7 +241,7 @@
               <div class="error-message">Please enter patient name</div>
             </div>
 
-            <!-- Doctor -->
+            <!-- Doctor Selection -->
             <div class="form-group">
               <label class="form-label required-field" for="doctor_id">Doctor</label>
               <select name="doctor_id" id="doctor_id" class="form-select" required>
@@ -259,6 +278,7 @@
                 <option value="14:00:00" <?= old('appointment_time') == '14:00:00' ? 'selected' : '' ?>>02:00 PM</option>
                 <option value="15:00:00" <?= old('appointment_time') == '15:00:00' ? 'selected' : '' ?>>03:00 PM</option>
                 <option value="16:00:00" <?= old('appointment_time') == '16:00:00' ? 'selected' : '' ?>>04:00 PM</option>
+                <option value="17:00:00" <?= old('appointment_time') == '17:00:00' ? 'selected' : '' ?>>05:00 PM</option>
               </select>
               <div class="error-message">Please select a time</div>
             </div>
@@ -299,25 +319,19 @@
   </div>
 
   <script>
-    // Form validation
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('appointmentForm');
       
       form.addEventListener('submit', function(event) {
-        event.preventDefault();
-        
         if (!form.checkValidity()) {
+          event.preventDefault();
           event.stopPropagation();
-        } else {
-          // Form is valid, you can submit it here
-          alert('Appointment booked successfully!');
-          // form.submit(); // Uncomment this to submit the form
         }
         
         form.classList.add('was-validated');
       }, false);
       
-      // Add real-time validation
+      // Real-time validation
       const inputs = form.querySelectorAll('input, select, textarea');
       inputs.forEach(input => {
         input.addEventListener('input', function() {

@@ -49,4 +49,17 @@ class DoctorModel extends Model
     {
         return $this->getAllDoctors();
     }
+
+    /**
+     * Search doctors by username or email
+     */
+    public function searchDoctors($searchTerm)
+    {
+        return $this->where('role', 'doctor')
+                    ->groupStart()
+                    ->like('username', $searchTerm)
+                    ->orLike('email', $searchTerm)
+                    ->groupEnd()
+                    ->findAll();
+    }
 }
