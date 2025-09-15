@@ -134,7 +134,7 @@ $routes->get('laboratory/results', 'Laboratory::results');
 
 // Pharmacy Routes
 $routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes) {
-    $routes->get('inventory', 'Pharmacy::inventory');
+    $routes->get('inventory', 'Pharmacy::inventory', ['filter' => 'auth:pharmacist,admin']);
     $routes->get('prescriptions/new', 'Pharmacy::new');
     $routes->get('medicines', 'Pharmacy::medicines');
     $routes->get('inventory/medicine', 'Pharmacy::medicine', ['filter' => 'auth:pharmacist,admin']);

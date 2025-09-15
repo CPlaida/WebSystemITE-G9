@@ -9,7 +9,7 @@ class Pharmacy extends Controller
     public function index()
     {
         // Check if user is logged in and has pharmacist role
-        if (!session()->get('logged_in') || session()->get('role') !== 'pharmacist') {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'pharmacist') {
             return redirect()->to('/login')->with('error', 'Access denied.');
         }
 
@@ -30,7 +30,7 @@ class Pharmacy extends Controller
     public function medicine()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied.');
         }
 
@@ -41,5 +41,21 @@ class Pharmacy extends Controller
         ];
 
         return view('admin/InventoryMan/Medicine', $data);
+    }
+
+    public function inventory()
+    {
+        // Check if user is logged in and has appropriate role
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
+            return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
+        }
+
+        $data = [
+            'title' => 'Pharmacy Inventory',
+            'user' => session()->get('username'),
+            'role' => session()->get('role')
+        ];
+
+        return view('admin/InventoryMan/PharmacyInventory', $data);
     }
 }

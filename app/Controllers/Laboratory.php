@@ -9,7 +9,7 @@ class Laboratory extends Controller
     public function index()
     {
         // Check if user is logged in and has labstaff role
-        if (!session()->get('logged_in') || session()->get('role') !== 'labstaff') {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'labstaff') {
             return redirect()->to('/login')->with('error', 'Access denied.');
         }
 
@@ -30,7 +30,7 @@ class Laboratory extends Controller
     public function request()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -46,7 +46,7 @@ class Laboratory extends Controller
     public function testresult()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -62,7 +62,7 @@ class Laboratory extends Controller
     public function viewTestResult($id = null)
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -104,7 +104,7 @@ class Laboratory extends Controller
     public function addTestResult($id = null)
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -144,7 +144,7 @@ class Laboratory extends Controller
     public function results()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('logged_in') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
