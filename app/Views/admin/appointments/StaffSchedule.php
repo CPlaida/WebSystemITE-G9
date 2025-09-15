@@ -30,9 +30,14 @@
   .shift:hover {
     filter: brightness(95%);
   }
-  .emergency { background: #fbb6b6; } /* Red-300 */
-  .general { background: #fef9c3; } /* Yellow-200 */
-  .pediatrics { background: #bbf7d0; } /* Green-200 */
+  /* Department colors - improved medical associations */
+  .dept-emergency { background-color: #dc2626; color: white; } /* Strong red - urgent */
+  .dept-cardiology { background-color: #ef4444; color: white; } /* Heart red */
+  .dept-neurology { background-color: #3b82f6; color: white; } /* Brain blue */
+  .dept-orthopedics { background-color: #059669; color: white; } /* Bone green */
+  .dept-pediatrics { background-color: #f59e0b; color: white; } /* Child orange */
+  .dept-general { background-color: #6b7280; color: white; } /* Neutral gray */
+  
   .conflict-icon {
     position: absolute;
     top: 6px;
@@ -53,114 +58,158 @@
     border-radius: 50%;
     display: inline-block;
   }
-  .nurse-pediatrics {
-    background-color: #86efac; /* green-300 */
-  }
-  .nurse-icu {
-    background-color: #bae6fd; /* blue-200 */
-  }
-  .nurse-emergency {
-    background-color: #fbb6b6; /* red-300 */
-  }
-  .nurse-general {
-    background-color: #fef9c3; /* yellow-200 */
-  }
 </style>
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <section aria-label="Staff Schedule Section">
       <div class="flex justify-between items-center mb-5 p-6">
-        <h1 class="text-xl font-bold">Nurses Schedule</h1>
+        <h1 class="text-xl font-bold">Doctor Schedule</h1>
         <div class="flex gap-3 items-center">
           <button id="btnConflictSchedules" class="border border-gray-400 px-3 py-1 rounded hover:bg-gray-200 text-sm">Conflict schedules</button>
-          <button id="btnViewAll" class="border border-gray-400 px-3 py-1 rounded hover:bg-gray-200 text-sm">View All</button>
           <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
           <div>
-            <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>
-            <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>
-            <button type="button" data-view="month" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-r hover:bg-gray-200 text-sm">Month</button>
+            <button type="button" data-view="day" class="btn-view-mode px-3 py-2 border border-gray-300 rounded-l hover:bg-blue-50 text-sm bg-blue-600 text-white font-medium" aria-pressed="true">📅 Day</button>
+            <button type="button" data-view="week" class="btn-view-mode px-3 py-2 border-t border-b border-l border-gray-300 hover:bg-blue-50 text-sm bg-white text-gray-700">📊 Week</button>
+            <button type="button" data-view="month" class="btn-view-mode px-3 py-2 border border-gray-300 rounded-r hover:bg-blue-50 text-sm bg-white text-gray-700">🗓️ Month</button>
           </div>
         </div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="schedule-table" role="grid" aria-describedby="scheduleLegend">
-          <thead class="bg-gray-200 text-gray-700">
-            <tr>
-              <th scope="col" style="width: 14%;">DATE</th>
-              <th scope="col" style="width: 20%;">TIME</th>
-              <th scope="col" style="width: 66%;">EVENT</th>
-            </tr>
-          </thead>
-          <tbody id="scheduleBody">
-            <tr>
-              <td rowspan="4" class="bg-gray-300 font-semibold">Thu Aug 14</td>
-              <td>6:00 am - 2:00 pm</td>
-              <td>
-                <div class="shift nurse-emergency" tabindex="0" role="button" aria-label="Morning Nurse 1 Emergency shift with conflict">
-                  <strong>Morning</strong><br />
-                  <strong>Nurse 1</strong><br />
-                  Emergency
-                  <span class="conflict-icon" title="Scheduling Conflict" aria-hidden="true">&#9888;</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>10:00 am - 4:00 pm</td>
-              <td>
-                <div class="shift nurse-general" tabindex="0" role="button" aria-label="Morning Nurse 1 General shift with conflict">
-                  <strong>Morning</strong><br />
-                  <strong>Nurse 1</strong><br />
-                  General
-                  <span class="conflict-icon" title="Scheduling Conflict" aria-hidden="true">&#9888;</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>10:00 am - 4:00 pm</td>
-              <td>
-                <div class="shift nurse-pediatrics" tabindex="0" role="button" aria-label="Afternoon Nurse 4 Pediatrics shift">
-                  <strong>Afternoon</strong><br />
-                  <strong>Nurse 4</strong><br />
-                  Pediatrics
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>4:00 pm - 10:00 pm</td>
-              <td>
-                <div class="shift nurse-emergency" tabindex="0" role="button" aria-label="Night Nurse 3 Emergency shift">
-                  <strong>Night</strong><br />
-                  <strong>Nurse 3</strong><br />
-                  Emergency
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Day View -->
+      <div id="dayView" class="view-container">
+        <div class="mb-4 text-center">
+          <h2 class="text-lg font-semibold" id="dayViewTitle">Today's Schedule - <?= date('F j, Y') ?></h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <?php 
+          $todaySchedules = array_filter($schedules, function($schedule) {
+            return date('Y-m-d', strtotime($schedule['shift_date'])) === date('Y-m-d');
+          });
+          ?>
+          <?php if (!empty($todaySchedules)): ?>
+            <?php foreach ($todaySchedules as $schedule): ?>
+              <div class="shift dept-<?= strtolower($schedule['department']) ?> <?= $schedule['status'] === 'cancelled' ? 'opacity-50' : '' ?>" 
+                   data-schedule-id="<?= $schedule['id'] ?>" 
+                   tabindex="0" 
+                   role="button">
+                <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
+                <div class="text-xs opacity-75"><?= ucfirst($schedule['department']) ?> • <?= ucfirst($schedule['shift_type']) ?></div>
+                <div class="text-xs mt-1"><?= date('g:i A', strtotime($schedule['start_time'])) ?> - <?= date('g:i A', strtotime($schedule['end_time'])) ?></div>
+                <?php if ($schedule['status'] === 'cancelled'): ?>
+                  <div class="text-xs text-red-600 font-medium">(Cancelled)</div>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <div class="col-span-full text-center py-8 text-gray-500">
+              No schedules for today.
+            </div>
+          <?php endif; ?>
+        </div>
       </div>
 
-      <!-- Legend Section -->
-      <section id="scheduleLegend" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-700 select-none" aria-label="Schedule legend">
-        <div>
-          <div class="font-semibold mb-1">Nurse Departments</div>
-          <div class="legend-label"><span class="legend-dot nurse-emergency"></span> Emergency</div>
-          <div class="legend-label"><span class="legend-dot nurse-general"></span> General</div>
+      <!-- Week View -->
+      <div id="weekView" class="view-container hidden">
+        <div class="mb-4 text-center">
+          <h2 class="text-lg font-semibold">Week View - <?= date('F j', strtotime('monday this week')) ?> - <?= date('F j, Y', strtotime('sunday this week')) ?></h2>
         </div>
-        <div>
-          <div class="font-semibold mb-1">Shift Types</div>
-          <div class="legend-label"><span class="legend-dot" style="background-color: #86efac;"></span> Morning (6:00 AM - 2:00 PM)</div>
-          <div class="legend-label"><span class="legend-dot" style="background-color: #fef08a;"></span> Afternoon (10:00 AM - 4:00 PM)</div>
-          <div class="legend-label"><span class="legend-dot" style="background-color: #bae6fd;"></span> Night (4:00 PM - 10:00 PM)</div>
+        <div class="grid grid-cols-7 gap-2 text-sm">
+          <?php 
+          $weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+          for ($i = 0; $i < 7; $i++): 
+            $dayDate = date('Y-m-d', strtotime('monday this week +' . $i . ' days'));
+            $daySchedules = array_filter($schedules, function($schedule) use ($dayDate) {
+              return date('Y-m-d', strtotime($schedule['shift_date'])) === $dayDate;
+            });
+          ?>
+            <div class="border rounded-lg p-3 min-h-[200px]">
+              <div class="font-semibold text-center mb-2 text-gray-700">
+                <?= $weekDays[$i] ?>
+                <div class="text-xs text-gray-500"><?= date('M j', strtotime($dayDate)) ?></div>
+              </div>
+              <div class="space-y-1">
+                <?php foreach ($daySchedules as $schedule): ?>
+                  <div class="shift dept-<?= strtolower($schedule['department']) ?> text-xs p-1" 
+                       data-schedule-id="<?= $schedule['id'] ?>">
+                    <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
+                    <div class="opacity-75"><?= ucfirst($schedule['shift_type']) ?></div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php endfor; ?>
         </div>
-        <div>
-          <div class="font-semibold mb-1">Nurse Status</div>
-          <div><span class="w-3 h-3 inline-block rounded-full bg-green-500 mr-2"></span> Available</div>
-          <div><span class="w-3 h-3 inline-block rounded-full bg-yellow-500 mr-2"></span> On Leave</div>
-          <div><span class="w-3 h-3 inline-block rounded-full bg-red-500 mr-2"></span> On Call</div>
+      </div>
+
+      <!-- Month View -->
+      <div id="monthView" class="view-container hidden">
+        <div class="mb-4 text-center">
+          <h2 class="text-lg font-semibold">Month View - <?= date('F Y') ?></h2>
         </div>
-        <div>
-          <div class="font-semibold mb-1">Status</div>
-          <div><span class="conflict-icon" aria-hidden="true">&#9888;</span> Scheduling Conflict</div>
+        <div class="grid grid-cols-7 gap-1 text-sm">
+          <!-- Calendar headers -->
+          <?php $weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; ?>
+          <?php foreach ($weekDays as $day): ?>
+            <div class="p-2 text-center font-semibold text-gray-600 bg-gray-100"><?= $day ?></div>
+          <?php endforeach; ?>
+          
+          <!-- Calendar days -->
+          <?php 
+          $firstDay = date('Y-m-01');
+          $lastDay = date('Y-m-t');
+          $startDate = date('Y-m-d', strtotime('last sunday', strtotime($firstDay)));
+          $endDate = date('Y-m-d', strtotime('next saturday', strtotime($lastDay)));
+          
+          $currentDate = $startDate;
+          while ($currentDate <= $endDate):
+            $isCurrentMonth = date('m', strtotime($currentDate)) === date('m');
+            $daySchedules = array_filter($schedules, function($schedule) use ($currentDate) {
+              return date('Y-m-d', strtotime($schedule['shift_date'])) === $currentDate;
+            });
+          ?>
+            <div class="border min-h-[80px] p-1 <?= $isCurrentMonth ? 'bg-white' : 'bg-gray-50' ?>">
+              <div class="text-xs <?= $isCurrentMonth ? 'text-gray-900' : 'text-gray-400' ?> mb-1">
+                <?= date('j', strtotime($currentDate)) ?>
+              </div>
+              <div class="space-y-1">
+                <?php foreach (array_slice($daySchedules, 0, 2) as $schedule): ?>
+                  <div class="dept-<?= strtolower($schedule['department']) ?> text-xs p-1 rounded" 
+                       data-schedule-id="<?= $schedule['id'] ?>">
+                    <?= htmlspecialchars(substr($schedule['doctor_name'], 0, 8)) ?>
+                  </div>
+                <?php endforeach; ?>
+                <?php if (count($daySchedules) > 2): ?>
+                  <div class="text-xs text-gray-500">+<?= count($daySchedules) - 2 ?> more</div>
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php 
+            $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
+          endwhile; 
+          ?>
+        </div>
+      </div>
+
+      <!-- Legend Section - Simplified -->
+      <section id="scheduleLegend" class="p-4 bg-gray-50 border-t" aria-label="Schedule legend">
+        <div class="flex flex-wrap gap-6 text-sm">
+          <div>
+            <div class="font-semibold mb-2">Departments</div>
+            <div class="flex flex-wrap gap-2">
+              <span class="dept-emergency px-2 py-1 rounded text-xs font-medium">Emergency</span>
+              <span class="dept-cardiology px-2 py-1 rounded text-xs font-medium">Cardiology</span>
+              <span class="dept-neurology px-2 py-1 rounded text-xs font-medium">Neurology</span>
+              <span class="dept-orthopedics px-2 py-1 rounded text-xs font-medium">Orthopedics</span>
+              <span class="dept-pediatrics px-2 py-1 rounded text-xs font-medium">Pediatrics</span>
+              <span class="dept-general px-2 py-1 rounded text-xs font-medium">General</span>
+            </div>
+          </div>
+          <div>
+            <div class="font-semibold mb-2">Alerts</div>
+            <div class="text-amber-700 flex items-center gap-1">
+              <span>⚠️</span>
+              <span>Scheduling Conflict</span>
+            </div>
+          </div>
         </div>
       </section>
     </section>
@@ -189,7 +238,7 @@
         <div>
           <p class="font-bold">Emergency</p>
           <p class="text-sm">6:00 am - 2:00 pm</p>
-          <p class="text-sm font-semibold">Nurse 1</p>
+          <p class="text-sm font-semibold">Dr. Smith</p>
         </div>
       </article>
       <article class="bg-gray-200 p-3 rounded shadow-sm" tabindex="0" role="button" aria-label="Conflict: Double Booking General Nurse 1 on 2025-08-13" data-conflictid="2">
@@ -200,7 +249,7 @@
         <div>
           <p class="font-bold">General</p>
           <p class="text-sm">6:00 am - 2:00 pm</p>
-          <p class="text-sm font-semibold">Nurse 1</p>
+          <p class="text-sm font-semibold">Dr. Smith</p>
         </div>
       </article>
     </section>
@@ -302,15 +351,15 @@
         title: 'Double Booking - Emergency Shift',
         date: '2025-08-13',
         time: '6:00 am - 2:00 pm',
-        role: 'Nurse 1',
-        description: 'Nurse 1 is booked for two conflicting shifts in Emergency and General departments at the same time. Resolution required to avoid overlap.'
+        role: 'Dr. Smith',
+        description: 'Dr. Smith is booked for two conflicting shifts in Emergency and General departments at the same time. Resolution required to avoid overlap.'
       },
       2: {
         title: 'Double Booking - General Shift',
         date: '2025-08-13',
         time: '6:00 am - 2:00 pm',
-        role: 'Nurse 1',
-        description: 'Nurse 1 is booked for two conflicting shifts in General and Emergency departments at the same time. Resolution required to avoid overlap.'
+        role: 'Dr. Smith',
+        description: 'Dr. Smith is booked for two conflicting shifts in General and Emergency departments at the same time. Resolution required to avoid overlap.'
       }
     };
     const id = conflictItem.getAttribute('data-conflictid');
@@ -343,15 +392,41 @@
 
   // View mode toggle buttons
   const viewButtons = document.querySelectorAll('.btn-view-mode');
+  const dayView = document.getElementById('dayView');
+  const weekView = document.getElementById('weekView');
+  const monthView = document.getElementById('monthView');
+  
   viewButtons.forEach(btn => {
     btn.addEventListener('click', () => {
+      const viewMode = btn.getAttribute('data-view');
+      
+      // Update button states
       viewButtons.forEach(b => {
-        b.classList.remove('bg-gray-200');
+        b.classList.remove('bg-blue-600', 'text-white');
+        b.classList.add('bg-white', 'text-gray-700');
         b.setAttribute('aria-pressed', 'false');
       });
-      btn.classList.add('bg-gray-200');
+      btn.classList.remove('bg-white', 'text-gray-700');
+      btn.classList.add('bg-blue-600', 'text-white');
       btn.setAttribute('aria-pressed', 'true');
-      alert(`View mode changed to: ${btn.getAttribute('data-view')}`);
+      
+      // Hide all views
+      dayView.classList.add('hidden');
+      weekView.classList.add('hidden');
+      monthView.classList.add('hidden');
+      
+      // Show selected view
+      switch(viewMode) {
+        case 'day':
+          dayView.classList.remove('hidden');
+          break;
+        case 'week':
+          weekView.classList.remove('hidden');
+          break;
+        case 'month':
+          monthView.classList.remove('hidden');
+          break;
+      }
     });
   });
 </script>
@@ -371,13 +446,23 @@
     <form id="addShiftForm">
       <div class="mb-4">
         <label for="staffName" class="block text-sm font-medium text-gray-700 mb-1">Staff Member</label>
-        <select id="staffName" name="staffName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-          <option value="">Select staff member</option>
-          <option value="nurse1">Nurse 1 - Emergency</option>
-          <option value="nurse2">Nurse 2 - General</option>
-          <option value="nurse3">Nurse 3 - Emergency</option>
-          <option value="nurse4">Nurse 4 - General</option>
-          <option value="nurse5">Nurse 5 - Emergency</option>
+        <select id="doctorSelect" name="doctor_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <option value="">Select doctor</option>
+          <!-- Debug info -->
+          <?php if (isset($doctors)): ?>
+            <!-- Doctors variable exists, count: <?= count($doctors) ?> -->
+            <?php if (!empty($doctors)): ?>
+              <?php foreach ($doctors as $doctor): ?>
+                <option value="<?= $doctor['id'] ?>" data-name="<?= ucfirst(str_replace('dr.', '', $doctor['username'])) ?>">
+                  <?= ucfirst(str_replace('dr.', 'Dr. ', $doctor['username'])) ?>
+                </option>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <option value="">No doctors found in database</option>
+            <?php endif; ?>
+          <?php else: ?>
+            <option value="">Doctors variable not set</option>
+          <?php endif; ?>
         </select>
       </div>
       
@@ -397,12 +482,14 @@
         </div>
         
         <div>
-          <label for="shiftRole" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-          <select id="shiftRole" name="shiftRole" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            <option value="nurse_emergency">🚑 Emergency Department</option>
-            <option value="nurse_general">🏥 General Ward</option>
-            <option value="nurse_pediatrics">👶 Pediatrics</option>
-            <option value="nurse_icu">💊 Intensive Care Unit (ICU)</option>
+          <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+          <select id="department" name="department" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <option value="Emergency">🚑 Emergency Department</option>
+            <option value="General">🏥 General Medicine</option>
+            <option value="Cardiology">❤️ Cardiology</option>
+            <option value="Neurology">🧠 Neurology</option>
+            <option value="Orthopedics">🦴 Orthopedics</option>
+            <option value="Pediatrics">👶 Pediatrics</option>
           </select>
         </div>
       </div>
@@ -455,22 +542,52 @@
       e.preventDefault();
       
       // Get form values
-      const staffName = document.getElementById('staffName').value;
+      const doctorId = document.getElementById('doctorSelect').value;
+      const doctorName = document.getElementById('doctorSelect').options[document.getElementById('doctorSelect').selectedIndex].getAttribute('data-name');
       const shiftDate = document.getElementById('shiftDate').value;
       const shiftType = document.getElementById('shiftType').value;
-      const shiftRole = document.getElementById('shiftRole').value;
+      const department = document.getElementById('department').value;
       
-      // Here you would typically send this data to your server
-      console.log('Adding shift:', { staffName, shiftDate, shiftType, shiftRole });
+      // Validate form
+      if (!doctorId || !shiftDate || !shiftType || !department) {
+        alert('Please fill in all required fields.');
+        return;
+      }
       
-      // Show success message
-      alert('Shift added successfully!');
-      
-      // Close modal and reset form
-      closeModal();
-      addShiftForm.reset();
-      
-      // In a real application, you would refresh the schedule or add the new shift to the DOM
+      // Send AJAX request to add schedule
+      fetch('<?= base_url('/doctor/addSchedule') ?>', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({
+          doctor_id: doctorId,
+          doctor_name: doctorName,
+          shift_date: shiftDate,
+          shift_type: shiftType,
+          department: department
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Schedule added successfully!');
+          closeModal();
+          addShiftForm.reset();
+          // Reload the page to show the new schedule
+          window.location.reload();
+        } else {
+          alert('Error: ' + (data.message || 'Failed to add schedule'));
+          if (data.conflicts && data.conflicts.length > 0) {
+            alert('Scheduling conflict detected. Please choose a different time.');
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding the schedule.');
+      });
     });
 
     // Set minimum date to today

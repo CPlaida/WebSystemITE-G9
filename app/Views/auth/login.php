@@ -91,10 +91,20 @@
         .login-footer a {
             color: #0077b6;
             text-decoration: none;
+            margin: 0 10px;
         }
         
         .login-footer a:hover {
             text-decoration: underline;
+        }
+        
+        .back-home {
+            display: inline-block;
+            margin-top: 15px;
+            color: #666;
+        }
+        .back-home i {
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -124,6 +134,10 @@
             
             <button type="submit" class="btn">Log In</button>
         </form>
+        
+        <div class="login-footer">
+            <a href="<?= site_url() ?>"><i class=""></i> Back to Home</a>
+        </div>
     </div>
 </body>
 </html>

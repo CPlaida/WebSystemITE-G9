@@ -367,7 +367,7 @@
             <td>john.d@example.com</td>
             <td>Nurse</td>
             <td>Emergency</td>
-            <td>North</td>
+            <td>Main</td>
             <td><span class="status-badge status-active">Active</span></td>
           </tr>
           <tr>
@@ -375,8 +375,8 @@
             <td>sarah.j@example.com</td>
             <td>Receptionist</td>
             <td>Front Desk</td>
-            <td>South</td>
-            <td><span class="status-badge status-inactive">Inactive</span></td>
+            <td>Branch clinic 1</td>
+            <td><span class="status-badge status-inactive">Suspended</span></td>
           </tr>
         </tbody>
       </table>
@@ -406,27 +406,31 @@
               <option>Pharmacist</option>
               <option>Accountant</option>
               <option>IT Staff</option>
+              <option>Hospital Administration</option>
             </select>
           </div>
           <div>
             <label for="department">Department</label>
             <select id="department" required>
               <option value="">Select Department</option>
-              <option>Cardiology</option>
+              <option>Administration</option>
               <option>Pediatrics</option>
-              <option>Emergency</option>
+              <option>Emergency medicine</option>
+              <option>Internal medicine</option>
+              <option>surgery</option>
+              <option>Finance</option>
               <option>Laboratory</option>
               <option>Pharmacy</option>
+              <option>IT Depatment</option>
             </select>
           </div>
           <div>
             <label for="branch">Branch</label>
             <select id="branch" required>
               <option>Main</option>
-              <option>North</option>
-              <option>South</option>
-              <option>East</option>
-              <option>West</option>
+              <option>Branch Clinic 1</option>
+              <option>Branch Clinic 2</option>
+              <option>Upcoming branch</option>
             </select>
           </div>
           <div>
@@ -434,6 +438,7 @@
             <select id="status" required>
               <option>Active</option>
               <option>Inactive</option>
+              <option>Suspended</option>
             </select>
           </div>
         </div>

@@ -65,23 +65,12 @@ class Appointment extends BaseController
     }
     
     /**
-     * Display staff schedule
+     * Display staff schedule - redirect to doctor schedule
      */
     public function schedule()
     {
-        // Check if user is logged in and has appropriate role
-        $allowedRoles = ['admin', 'doctor', 'nurse'];
-        if (!in_array(session('role'), $allowedRoles)) {
-            return redirect()->to('login');
-        }
-
-        $data = [
-            'title' => 'Staff Schedule',
-            'active_menu' => 'appointments',
-            'todaysAppointments' => $this->appointmentModel->getTodaysAppointments()
-        ];
-        
-        return view('admin/appointments/StaffSchedule', $data);
+        // Redirect to the proper doctor scheduling page
+        return redirect()->to('/doctor/schedule');
     }
 
     /**

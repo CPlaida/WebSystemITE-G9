@@ -112,7 +112,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Description</th>
+                    <th>Service</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Amount</th>

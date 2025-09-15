@@ -40,11 +40,19 @@ $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 
 // Only admin can see admin dashboard
 $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
-$routes->get('/admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
-$routes->get('/admin/Administration/RoleManagement', 'Admin::roleManagement', ['filter' => 'auth:admin']);
+$routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
 
 // Only doctors can see doctor dashboard
 $routes->get('/doctor/dashboard', 'Doctor::index', ['filter' => 'auth:doctor']);
+
+// Doctor scheduling routes
+$routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
 
 // Only nurses can see nurse dashboard
 $routes->get('/nurse/dashboard', 'Nurse::index', ['filter' => 'auth:nurse']);
@@ -109,12 +117,11 @@ $routes->get('appointments/upcoming', 'Appointment::getUpcoming');
 $routes->get('appointments/search', 'Appointment::search');
 $routes->get('appointments/stats', 'Appointment::getStats');
 
-// Billing Management
-$routes->get('billing', 'Billing::index');
-$routes->get('billing/receipt/(:any)', 'Billing::receipt/$1');
-$routes->post('billing/save', 'Billing::save');
-$routes->get('billing/get/(:num)', 'Billing::get/$1');
-$routes->post('billing/update/(:num)', 'Billing::update/$1');
+// Billing Routes
+$routes->get('billing', 'Billing::index', ['filter' => 'auth']);
+$routes->get('billing/process', 'Billing::process', ['filter' => 'auth']);
+$routes->post('billing/save', 'Billing::save', ['filter' => 'auth']);
+$routes->get('billing/receipt/(:num)', 'Billing::receipt/$1', ['filter' => 'auth']);
 $routes->post('billing/delete/(:num)', 'Billing::delete/$1');
 
 // Laboratory Routes
@@ -138,6 +145,7 @@ $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:ad
     $routes->get('users', 'Admin::users');
     $routes->get('doctors', 'Admin::doctors');
     $routes->get('settings', 'Admin::settings');
+    $routes->get('Administration/RoleManagement', 'Admin::roleManagement');
     $routes->get('billing', 'Billing::index');
     $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
     $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');

@@ -314,6 +314,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
+                                <th>Patient ID</th>
                                 <th>Patient Name</th>
                                 <th>Test Type</th>
                                 <th>Test Date</th>
@@ -324,6 +325,7 @@
                         </thead>
                         <tbody>
                             <tr data-status="completed" data-date="2023-09-04">
+                                <td>#P-1001</td>
                                 <td>Juan Dela Cruz</td>
                                 <td>CBC</td>
                                 <td>2023-09-04</td>
@@ -334,13 +336,14 @@
                                         <a href="<?= base_url('laboratory/testresult/view/1') ?>" class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-eye"></i> View
                                         </a>
-                                        <a href="<?= base_url('laboratory/testresult/add/2') ?>" class="btn btn-outline-success btn-sm">
+                                        <a href="<?= base_url('laboratory/testresult/add/1') ?>" class="btn btn-outline-success btn-sm">
                                             <i class="fas fa-plus"></i> Add Result
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             <tr data-status="pending" data-date="2023-09-04">
+                                <td>#P-1002</td>
                                 <td>Maria Santos</td>
                                 <td>Urinalysis</td>
                                 <td>2023-09-04</td>

@@ -114,6 +114,7 @@
             <option>Pharmacist</option>
             <option>Accountant</option>
             <option>IT Staff</option>
+            <option>Hospital Administration</option>
           </select>
         </div>
         <div>
@@ -131,9 +132,9 @@
           <select id="data" required>
             <option value="">Select Access Level</option>
             <option>Full Access</option>
-            <option>Department Only</option>
-            <option>Branch Only</option>
-            <option>Read-Only</option>
+            <option>Read Only</option>
+            <option>Limited Access</option>
+            <option>No Access</option>
           </select>
         </div>
         <div>
@@ -141,10 +142,10 @@
           <select id="branch" required>
             <option value="">Select Branch</option>
             <option>Main</option>
-            <option>North</option>
-            <option>South</option>
-            <option>East</option>
-            <option>West</option>
+              <option>Branch Clinic 1</option>
+              <option>Branch Clinic 2</option>
+              <option>Upcoming branch</option>
+
           </select>
         </div>
       </div>

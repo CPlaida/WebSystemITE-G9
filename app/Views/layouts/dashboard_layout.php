@@ -253,7 +253,7 @@
                     <ul class="submenu">
                         <li><a href="<?= base_url('appointments/book') ?>"><span class="text">Book Appointment</span></a></li>
                         <li><a href="<?= site_url('appointments/list') ?>"><span class="text">Appointment List</span></a></li>
-                        <li><a href="<?= site_url('appointments/schedule') ?>"><span class="text">Staff Schedule</span></a></li>
+                        <li><a href="<?= site_url('doctor/schedule') ?>"><span class="text">Staff Schedule</span></a></li>
                     </ul>
                 </li>
 
@@ -265,6 +265,7 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="<?= base_url('billing') ?>"><span class="text">Bill Management</span></a></li>
+                        <li><a href="<?= base_url('billing/process') ?>"><span class="text">Bill Process</span></a></li>
                     </ul>
                 </li>
 
@@ -300,7 +301,7 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="<?= base_url('admin/Administration/ManageUser') ?>"><span class="text">User Management</span></a></li>
-                        <a href="<?= base_url('admin/Administration/RoleManagement') ?>"><span class="text">Role Management</span></a>
+                        <li><a href="<?= base_url('admin/Administration/RoleManagement') ?>"><span class="text">Role Management</span></a>
                     </ul>
                 </li>
             <?php endif; ?>

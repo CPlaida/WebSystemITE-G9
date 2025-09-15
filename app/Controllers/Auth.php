@@ -42,7 +42,7 @@ class Auth extends Controller
                     'user_id'  => $user['id'],
                     'username' => $user['username'],
                     'role'     => $user['role'],
-                    'logged_in'=> true
+                    'isLoggedIn'=> true
                 ]);
           
 

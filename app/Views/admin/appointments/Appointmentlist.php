@@ -69,31 +69,27 @@
       font-size: 1.25rem;
     }
     
-    .search-box {
-      position: relative;
-      width: 250px;
+    .search-container {
+      display: flex;
+      gap: 10px;
     }
-    
-    .search-box i {
-      position: absolute;
-      top: 50%;
-      left: 12px;
-      transform: translateY(-50%);
-      color: #b7b9cc;
-    }
-    
+
     .search-input {
-      width: 100%;
-      padding: 10px 15px 10px 35px;
-      border: 1px solid #d1d3e2;
+      flex: 1;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 14px;
-      transition: border-color 0.3s;
     }
-    
-    .search-input:focus {
-      outline: none;
-      border-color: var(--primary-color);
+
+    .search-button {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0 20px;
+      cursor: pointer;
+      font-weight: 500;
     }
     
     .table-container {
@@ -244,8 +240,9 @@
         gap: 15px;
       }
       
-      .search-box {
-        width: 100%;
+      .search-container {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -260,9 +257,9 @@
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Appointment List</h2>
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" class="search-input" placeholder="Search appointments...">
+        <div class="search-container">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search appointments..." onkeyup="if(event.key === 'Enter') filterAppointments()">
+          <button id="searchButton" class="search-button" onclick="filterAppointments()">Search</button>
         </div>
       </div>
       <div class="table-container">
@@ -339,22 +336,35 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const searchInput = document.querySelector('.search-input');
+    function filterAppointments() {
+      const searchInput = document.getElementById('searchInput');
+      const searchTerm = searchInput.value.toLowerCase();
       const tableRows = document.querySelectorAll('tbody tr');
       
-      if (searchInput && tableRows.length > 0) {
-        searchInput.addEventListener('input', function() {
-          const searchTerm = this.value.toLowerCase();
-          
-          tableRows.forEach(row => {
-            const rowText = row.textContent.toLowerCase();
-            if (rowText.includes(searchTerm)) {
-              row.style.display = '';
-            } else {
-              row.style.display = 'none';
-            }
-          });
+      tableRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+    
+    // Initialize event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchButton = document.getElementById('searchButton');
+      const searchInput = document.getElementById('searchInput');
+      
+      if (searchButton) {
+        searchButton.addEventListener('click', filterAppointments);
+      }
+      
+      if (searchInput) {
+        searchInput.addEventListener('keyup', function(e) {
+          if (e.key === 'Enter') {
+            filterAppointments();
+          }
         });
       }
     });

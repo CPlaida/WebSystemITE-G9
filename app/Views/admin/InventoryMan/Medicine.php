@@ -44,6 +44,7 @@ $currentSubmenu = 'inventory';
                         <tr>
                             <th>ID</th>
                             <th>Medicine Name</th>
+                            <th>Brand</th>
                             <th>Category</th>
                             <th>Stock</th>
                             <th>Price</th>
@@ -73,6 +74,10 @@ $currentSubmenu = 'inventory';
                         <div class="form-group" style="flex: 2;">
                             <label>Medicine Name *</label>
                             <input type="text" name="medicineName[]" class="form-control" required>
+                        </div>
+                        <div class="form-group" style="flex: 1.5;">
+                            <label>Brand *</label>
+                            <input type="text" name="brand[]" class="form-control" required>
                         </div>
                         <div class="form-group" style="flex: 1.5;">
                             <label>Category *</label>
@@ -415,6 +420,7 @@ $currentSubmenu = 'inventory';
         for (let i = 0; i < entries; i++) {
             medicines.push({
                 name: formData.getAll('medicineName')[i],
+                brand: formData.getAll('brand')[i],
                 category: formData.getAll('category')[i],
                 stock: formData.getAll('stock')[i],
                 price: formData.getAll('price')[i],
@@ -434,6 +440,7 @@ $currentSubmenu = 'inventory';
                 tr.innerHTML = `
                     <td>MED${Math.floor(1000 + Math.random() * 9000)}</td>
                     <td>${med.name}</td>
+                    <td>${med.brand}</td>
                     <td>${med.category}</td>
                     <td class="in-stock">${med.stock}</td>
                     <td>₱${parseFloat(med.price).toFixed(2)}</td>
@@ -465,7 +472,7 @@ $currentSubmenu = 'inventory';
         let outOfStock = 0;
         
         rows.forEach(row => {
-            const stock = parseInt(row.cells[3].textContent);
+            const stock = parseInt(row.cells[4].textContent);
             if (stock === 0) outOfStock++;
             else if (stock < 10) lowStock++;
         });
@@ -479,10 +486,10 @@ $currentSubmenu = 'inventory';
     document.addEventListener('DOMContentLoaded', function() {
         // Add sample data
         const sampleData = [
-            { id: 'MED1001', name: 'Paracetamol 500mg', category: 'Pain Relief', stock: 150, price: 5.00, expiry: '2025-12-31' },
-            { id: 'MED1002', name: 'Amoxicillin 500mg', category: 'Antibiotics', stock: 45, price: 8.50, expiry: '2024-11-30' },
-            { id: 'MED1003', name: 'Vitamin C 500mg', category: 'Vitamins', stock: 3, price: 3.75, expiry: '2024-10-15' },
-            { id: 'MED1004', name: 'Loratadine 10mg', category: 'Antihistamines', stock: 0, price: 12.99, expiry: '2025-05-20' }
+            { id: 'MED1001', name: 'Paracetamol 500mg', brand: 'Biogesic', category: 'Pain Relief', stock: 150, price: 5.00, expiry: '2025-12-31' },
+            { id: 'MED1002', name: 'Amoxicillin 500mg', brand: 'Amoxil', category: 'Antibiotics', stock: 45, price: 8.50, expiry: '2024-11-30' },
+            { id: 'MED1003', name: 'Vitamin C 500mg', brand: 'Vitacare', category: 'Vitamins', stock: 3, price: 3.75, expiry: '2024-10-15' },
+            { id: 'MED1004', name: 'Loratadine 10mg', brand: 'Loratin', category: 'Antihistamines', stock: 0, price: 12.99, expiry: '2025-05-20' }
         ];
         
         const tbody = document.getElementById('medicineTableBody');
@@ -491,6 +498,7 @@ $currentSubmenu = 'inventory';
             tr.innerHTML = `
                 <td>${item.id}</td>
                 <td>${item.name}</td>
+                <td>${item.brand}</td>
                 <td>${item.category}</td>
                 <td class="${item.stock === 0 ? 'out-of-stock' : 'in-stock'}">${item.stock}</td>
                 <td>₱${item.price.toFixed(2)}</td>
