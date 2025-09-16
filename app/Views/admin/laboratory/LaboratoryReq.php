@@ -70,7 +70,10 @@
             margin-bottom: 10px;
         }
 
-        .form-group { margin-bottom: 0.8rem; }
+        .form-group { 
+            position: relative;
+            margin-bottom: 0.8rem; 
+        }
 
         .form-label {
             display: block;
@@ -120,6 +123,35 @@
         line-height: 36px;
         
     }
+
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -131,6 +163,20 @@
             <h1 class="page-title">Laboratory Request Form</h1>
         </div>
 
+        <?php if (session()->getFlashdata('success')): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> <?= session()->getFlashdata('success') ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> <?= session()->getFlashdata('error') ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
         <div class="card">
             <div class="card-body">
                 <form id="labRequestForm" method="POST" action="<?= base_url('laboratory/request/submit') ?>">
@@ -141,42 +187,15 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label" for="patientName">Patient Name</label>
-                                <select class="form-control select2" id="patientName" name="patient_name" required>
-                                    <option value="">Search patient...</option>
-                                    <?php 
-                                    // This should be replaced with actual data from your database
-                                    $patients = [
-                                        [
-                                            'id' => 1,
-                                            'first_name' => 'Juan',
-                                            'last_name' => 'Dela Cruz',
-                                            'dob' => '1990-05-15'
-                                        ],
-                                        [
-                                            'id' => 2,
-                                            'first_name' => 'Maria',
-                                            'last_name' => 'Santos',
-                                            'dob' => '1985-10-22'
-                                        ],
-                                        [
-                                            'id' => 3,
-                                            'first_name' => 'Pedro',
-                                            'last_name' => 'Reyes',
-                                            'dob' => '1980-03-10'
-                                        ]
-                                    ];
-                                    
-                                    foreach ($patients as $patient) {
-                                        echo '<option value="' . $patient['id'] . '" data-dob="' . $patient['dob'] . '">' . 
-                                             htmlspecialchars($patient['last_name'] . ', ' . $patient['first_name']) . 
-                                             '</option>';
-                                    }
-                                    ?>
-                                </select>
+                                <input type="text" class="form-control" id="patientName" name="patient_name" 
+                                       placeholder="Enter patient name or search..." 
+                                       autocomplete="off" required>
+                                <div id="patientSuggestions" class="suggestions-dropdown" style="display: none;"></div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="patientDob">Date of Birth</label>
-                                <input type="date" class="form-control" id="patientDob" name="dob" required>
+                                <label class="form-label" for="testDate">Test Date</label>
+                                <input type="date" class="form-control" id="testDate" name="test_date" 
+                                       value="<?= old('test_date') ?: date('Y-m-d') ?>" required>
                             </div>
                         </div>
                     </div>
@@ -189,7 +208,7 @@
                             <div class="form-group">
                                 <label class="form-label" for="testType">Test Type</label>
                                 <select class="form-select" id="testType" name="test_type" required>
-                                <option value="">Select Test Type</option>
+                                    <option value="">Select Test Type</option>
                                     <option value="blood">Blood Test</option>
                                     <option value="urine">Urine Test</option>
                                     <option value="xray">X-Ray</option>
@@ -202,15 +221,16 @@
                             <div class="form-group">
                                 <label class="form-label" for="priority">Priority</label>
                                 <select class="form-select" id="priority" name="priority" required>
-                                    <option value="routine">Normal</option>
-                                    <option value="urgent">Urgent</option>
-                                    <option value="stat">Critical</option>
+                                    <option value="normal" <?= old('priority') == 'normal' ? 'selected' : '' ?>>Normal</option>
+                                    <option value="urgent" <?= old('priority') == 'urgent' ? 'selected' : '' ?>>Urgent</option>
+                                    <option value="stat" <?= old('priority') == 'stat' ? 'selected' : '' ?>>Critical</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="clinicalNotes">Clinical Notes</label>
-                            <textarea class="form-control" id="clinicalNotes" name="clinical_notes" rows="2"></textarea>
+                            <textarea class="form-control" id="clinicalNotes" name="clinical_notes" rows="2" 
+                                      placeholder="Enter clinical notes or special instructions"><?= old('clinical_notes') ?></textarea>
                         </div>
                     </div>
 
@@ -219,7 +239,7 @@
                             <i class="fas fa-undo"></i> Reset
                         </button>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Submit
+                            <i class="fas fa-paper-plane"></i> Submit Request
                         </button>
                     </div>
                 </form>
@@ -249,63 +269,132 @@
 
     <script>
     $(document).ready(function() {
-        // Initialize Select2
-        $('.select2').select2({
-            placeholder: 'Search patient...',
-            width: '100%'
+        // Patient data for autocomplete
+        const patients = [
+            { id: 1, name: 'Juan Dela Cruz', dob: '1990-05-15' },
+            { id: 2, name: 'Maria Santos', dob: '1985-10-22' },
+            { id: 3, name: 'Pedro Reyes', dob: '1980-03-10' },
+            { id: 4, name: 'Ana Garcia', dob: '1995-01-30' },
+            { id: 5, name: 'Carlos Rodriguez', dob: '1988-07-12' }
+        ];
+
+        const patientInput = $('#patientName');
+        const suggestionsDiv = $('#patientSuggestions');
+
+        // Handle input typing
+        patientInput.on('input', function() {
+            const query = $(this).val().toLowerCase().trim();
+            
+            if (query.length < 2) {
+                suggestionsDiv.hide();
+                return;
+            }
+
+            // Filter patients based on input
+            const filteredPatients = patients.filter(patient => 
+                patient.name.toLowerCase().includes(query)
+            );
+
+            if (filteredPatients.length > 0) {
+                let suggestionsHtml = '';
+                filteredPatients.forEach(patient => {
+                    suggestionsHtml += `<div class="suggestion-item" data-id="${patient.id}" data-name="${patient.name}" data-dob="${patient.dob}">
+                        ${patient.name}
+                    </div>`;
+                });
+                suggestionsDiv.html(suggestionsHtml).show();
+            } else {
+                suggestionsDiv.hide();
+            }
         });
 
-        // Update DOB when patient is selected
-        $('#patientName').on('change', function() {
-            const selectedOption = $(this).find('option:selected');
-            const dob = selectedOption.data('dob');
-            if (dob) {
+        // Handle suggestion click
+        $(document).on('click', '.suggestion-item', function() {
+            const name = $(this).data('name');
+            const dob = $(this).data('dob');
+            
+            patientInput.val(name);
+            suggestionsDiv.hide();
+            
+            // Update DOB if field exists
+            if ($('#patientDob').length) {
                 $('#patientDob').val(dob);
             }
         });
 
-        // For demo purposes - in production, you would use AJAX to load patients
-        // Example AJAX implementation:
-        /*
-        $('.select2').select2({
-            ajax: {
-                url: '<?= base_url('api/patients/search') ?>',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term,
-                        page: params.page || 1
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                        pagination: {
-                            more: (params.page * 30) < data.total_count
-                        }
-                    };
-                },
-                cache: true
-            },
-            minimumInputLength: 2,
-            templateResult: formatPatient,
-            templateSelection: formatPatientSelection
+        // Hide suggestions when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#patientName, #patientSuggestions').length) {
+                suggestionsDiv.hide();
+            }
         });
 
-        function formatPatient(patient) {
-            if (patient.loading) return patient.text;
-            return $(
-                '<div>'+patient.last_name + ', ' + patient.first_name + 
-                '<br><small class="text-muted">DOB: ' + patient.dob + '</small></div>'
-            );
-        }
+        // Handle keyboard navigation
+        patientInput.on('keydown', function(e) {
+            const suggestions = $('.suggestion-item');
+            const current = $('.suggestion-item.active');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (current.length === 0) {
+                    suggestions.first().addClass('active');
+                } else {
+                    current.removeClass('active').next().addClass('active');
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (current.length === 0) {
+                    suggestions.last().addClass('active');
+                } else {
+                    current.removeClass('active').prev().addClass('active');
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (current.length > 0) {
+                    current.click();
+                }
+            } else if (e.key === 'Escape') {
+                suggestionsDiv.hide();
+            }
+        });
 
-        function formatPatientSelection(patient) {
-            return patient.last_name + ', ' + patient.first_name;
-        }
-        */
+        // Form submission
+        $('#labRequestForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                patient_name: $('#patientName').val(),
+                test_type: $('#testType').val(),
+                priority: $('#priority').val(),
+                clinical_notes: $('#clinicalNotes').val(),
+                test_date: $('#testDate').val()
+            };
+
+            // Basic validation
+            if (!formData.patient_name || !formData.test_type) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Submit form
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        alert('Lab request submitted successfully!');
+                        $('#labRequestForm')[0].reset();
+                    } else {
+                        alert('Error: ' + (response.message || 'Failed to submit request'));
+                    }
+                },
+                error: function() {
+                    // If AJAX fails, submit normally
+                    $('#labRequestForm')[0].submit();
+                }
+            });
+        });
     });
     </script>
 <?= $this->endSection() ?>

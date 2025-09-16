@@ -133,6 +133,12 @@
             border-radius: 0.35rem;
             transition: all 0.15s ease-in-out;
             cursor: pointer;
+            text-decoration: none;
+            pointer-events: auto;
+        }
+
+        .btn:hover {
+            text-decoration: none;
         }
 
         .btn i {
@@ -148,6 +154,7 @@
         .btn-primary:hover {
             background-color: var(--primary-hover);
             border-color: var(--primary-hover);
+            color: #fff;
         }
 
         .btn-outline-primary {
@@ -254,6 +261,11 @@
         .action-buttons {
             display: flex;
             gap: 0.5rem;
+            pointer-events: auto;
+        }
+
+        .action-buttons a {
+            pointer-events: auto;
         }
 
         @media (max-width: 768px) {
@@ -314,52 +326,17 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Patient ID</th>
+                                <th>Test ID</th>
                                 <th>Patient Name</th>
                                 <th>Test Type</th>
                                 <th>Test Date</th>
                                 <th>Status</th>
-                                <th>Result</th>
+                                <th>Notes</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr data-status="completed" data-date="2023-09-04">
-                                <td>#P-1001</td>
-                                <td>Juan Dela Cruz</td>
-                                <td>CBC</td>
-                                <td>2023-09-04</td>
-                                <td><span class="status-badge status-completed">Completed</span></td>
-                                <td>Normal</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="<?= base_url('laboratory/testresult/view/1') ?>" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                        <a href="<?= base_url('laboratory/testresult/add/1') ?>" class="btn btn-outline-success btn-sm">
-                                            <i class="fas fa-plus"></i> Add Result
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr data-status="pending" data-date="2023-09-04">
-                                <td>#P-1002</td>
-                                <td>Maria Santos</td>
-                                <td>Urinalysis</td>
-                                <td>2023-09-04</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                                <td>—</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="<?= base_url('laboratory/testresult/view/2') ?>" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
-                                        <a href="<?= base_url('laboratory/testresult/add/2') ?>" class="btn btn-outline-success btn-sm">
-                                            <i class="fas fa-plus"></i> Add Result
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="testResultsTableBody">
+                            <!-- Dynamic content will be loaded here -->
                         </tbody>
                     </table>
                 </div>
@@ -454,6 +431,93 @@
                     performSearch();
                 }
             });
+
+            // Add a test row first to verify buttons work
+            const tableBody = document.getElementById('testResultsTableBody');
+            const testRow = document.createElement('tr');
+            testRow.innerHTML = `
+                <td>TEST123</td>
+                <td>Test Patient</td>
+                <td>Test Type</td>
+                <td>2025-09-16</td>
+                <td><span class="status-badge status-pending">pending</span></td>
+                <td>Test notes</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="<?= base_url('laboratory/testresult/view/TEST123') ?>" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        <a href="<?= base_url('laboratory/testresult/add/TEST123') ?>" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-plus"></i> Add Result
+                        </a>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(testRow);
+
+            // Load data from laboratory table
+            const url = '<?= base_url('laboratory/testresult/data') ?>';
+            
+            console.log('Fetching data from:', url);
+            
+            fetch(url)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data received:', data);
+                    
+                    if (!data || data.length === 0) {
+                        console.log('No data received, keeping test row');
+                        return;
+                    }
+                    
+                    // Clear test row and add real data
+                    tableBody.innerHTML = '';
+                    
+                    data.forEach((item, index) => {
+                        console.log(`Processing item ${index}:`, item);
+                        
+                        const row = document.createElement('tr');
+                        row.setAttribute('data-status', item.status || 'pending');
+                        row.setAttribute('data-date', item.test_date || '');
+                        
+                        // Simple innerHTML approach for the entire row
+                        const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (item.test_id || '');
+                        const addUrl = '<?= base_url('laboratory/testresult/add/') ?>' + (item.test_id || '');
+                        
+                        console.log('View URL:', viewUrl);
+                        console.log('Add URL:', addUrl);
+                        
+                        row.innerHTML = `
+                            <td>${item.test_id || 'N/A'}</td>
+                            <td>${item.patient_name || 'N/A'}</td>
+                            <td>${item.test_type || 'N/A'}</td>
+                            <td>${item.test_date || 'N/A'}</td>
+                            <td><span class="status-badge ${item.status === 'pending' ? 'status-pending' : 'status-completed'}">${item.status || 'pending'}</span></td>
+                            <td>${item.notes || '—'}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="${viewUrl}" class="btn btn-outline-primary btn-sm" onclick="console.log('View clicked for:', '${item.test_id}'); return true;">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="${addUrl}" class="btn btn-outline-success btn-sm" onclick="console.log('Add clicked for:', '${item.test_id}'); return true;">
+                                        <i class="fas fa-plus"></i> Add Result
+                                    </a>
+                                </div>
+                            </td>
+                        `;
+                        
+                        tableBody.appendChild(row);
+                    });
+                    
+                    console.log('Table populated with', data.length, 'rows');
+                })
+                .catch(error => {
+                    console.error('Error loading data:', error);
+                    // Keep the test row if data loading fails
+                });
         });
     </script>
 <?= $this->endSection() ?>
