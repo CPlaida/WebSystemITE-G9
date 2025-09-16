@@ -345,6 +345,8 @@
     </div>
 
     <script>
+        let allTestResults = []; // Store all loaded data for filtering
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Sidebar toggle functionality
             const sidebar = document.querySelector('.sidebar');
@@ -371,7 +373,6 @@
 
             // Filter buttons functionality
             const filterButtons = document.querySelectorAll('.filter-btn');
-            const tableRows = document.querySelectorAll('.data-table tbody tr');
             const searchInput = document.getElementById('searchInput');
             const searchButton = document.getElementById('searchBtn');
 
@@ -383,140 +384,179 @@
                     button.classList.add('active');
                     
                     const filter = button.getAttribute('data-filter');
-                    filterTable(filter);
+                    applyFilters();
                 });
             });
 
-            function filterTable(filter) {
-                const today = new Date();
-                const startOfWeek = new Date(today);
-                startOfWeek.setDate(today.getDate() - today.getDay());
+            function applyFilters() {
+                const activeFilter = document.querySelector('.filter-btn.active')?.getAttribute('data-filter') || 'all';
+                const searchTerm = searchInput.value.toLowerCase().trim();
                 
-                tableRows.forEach(row => {
-                    const status = row.getAttribute('data-status');
-                    const dateString = row.getAttribute('data-date');
-                    const rowDate = new Date(dateString);
+                let filteredData = [...allTestResults];
+                
+                // Apply status/date filters
+                if (activeFilter !== 'all') {
+                    const today = new Date();
+                    const startOfWeek = new Date(today);
+                    startOfWeek.setDate(today.getDate() - today.getDay());
                     
-                    let showRow = true;
+                    filteredData = filteredData.filter(item => {
+                        if (activeFilter === 'pending' || activeFilter === 'completed') {
+                            return (item.status || 'pending') === activeFilter;
+                        } else if (activeFilter === 'today') {
+                            const itemDate = new Date(item.test_date);
+                            return itemDate.toDateString() === today.toDateString();
+                        } else if (activeFilter === 'week') {
+                            const itemDate = new Date(item.test_date);
+                            return itemDate >= startOfWeek;
+                        }
+                        return true;
+                    });
+                }
+                
+                // Apply search filter
+                if (searchTerm) {
+                    filteredData = filteredData.filter(item => {
+                        const searchableText = [
+                            item.test_id || '',
+                            item.patient_name || '',
+                            item.test_type || '',
+                            item.notes || ''
+                        ].join(' ').toLowerCase();
+                        
+                        return searchableText.includes(searchTerm);
+                    });
+                }
+                
+                renderTable(filteredData);
+            }
+
+            function renderTable(data) {
+                const tableBody = document.getElementById('testResultsTableBody');
+                
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                                <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                                No test results found matching your criteria.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tableBody.innerHTML = '';
+                
+                data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-status', item.status || 'pending');
+                    row.setAttribute('data-date', item.test_date || '');
                     
-                    if (filter === 'all') {
-                        showRow = true;
-                    } else if (filter === 'pending' || filter === 'completed') {
-                        showRow = status === filter;
-                    } else if (filter === 'today') {
-                        showRow = rowDate.toDateString() === today.toDateString();
-                    } else if (filter === 'week') {
-                        showRow = rowDate >= startOfWeek;
-                    }
+                    const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (item.test_id || '');
+                    const addUrl = '<?= base_url('laboratory/testresult/add/') ?>' + (item.test_id || '');
                     
-                    row.style.display = showRow ? '' : 'none';
+                    row.innerHTML = `
+                        <td>${item.test_id || 'N/A'}</td>
+                        <td>${item.patient_name || 'N/A'}</td>
+                        <td>${item.test_type || 'N/A'}</td>
+                        <td>${item.test_date || 'N/A'}</td>
+                        <td><span class="status-badge ${item.status === 'pending' ? 'status-pending' : 'status-completed'}">${item.status || 'pending'}</span></td>
+                        <td>${item.notes || '—'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="${viewUrl}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="${addUrl}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-plus"></i> Add Result
+                                </a>
+                            </div>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
                 });
             }
 
             // Search functionality
             function performSearch() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const activeFilter = document.querySelector('.filter-btn.active')?.getAttribute('data-filter') || 'all';
-                
-                tableRows.forEach(row => {
-                    const rowText = row.textContent.toLowerCase();
-                    const isVisible = rowText.includes(searchTerm) && row.style.display !== 'none';
-                    row.style.display = isVisible ? '' : 'none';
-                });
+                applyFilters();
             }
 
             searchButton.addEventListener('click', performSearch);
             searchInput.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') {
                     performSearch();
+                } else {
+                    // Real-time search as user types (with debounce)
+                    clearTimeout(searchInput.searchTimeout);
+                    searchInput.searchTimeout = setTimeout(performSearch, 300);
                 }
             });
-
-            // Add a test row first to verify buttons work
-            const tableBody = document.getElementById('testResultsTableBody');
-            const testRow = document.createElement('tr');
-            testRow.innerHTML = `
-                <td>TEST123</td>
-                <td>Test Patient</td>
-                <td>Test Type</td>
-                <td>2025-09-16</td>
-                <td><span class="status-badge status-pending">pending</span></td>
-                <td>Test notes</td>
-                <td>
-                    <div class="action-buttons">
-                        <a href="<?= base_url('laboratory/testresult/view/TEST123') ?>" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                        <a href="<?= base_url('laboratory/testresult/add/TEST123') ?>" class="btn btn-outline-success btn-sm">
-                            <i class="fas fa-plus"></i> Add Result
-                        </a>
-                    </div>
-                </td>
-            `;
-            tableBody.appendChild(testRow);
 
             // Load data from laboratory table
             const url = '<?= base_url('laboratory/testresult/data') ?>';
             
             console.log('Fetching data from:', url);
             
+            // Show loading state
+            const tableBody = document.getElementById('testResultsTableBody');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+                        Loading test results...
+                    </td>
+                </tr>
+            `;
+            
             fetch(url)
                 .then(response => {
                     console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     return response.json();
                 })
                 .then(data => {
                     console.log('Data received:', data);
                     
-                    if (!data || data.length === 0) {
-                        console.log('No data received, keeping test row');
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Store data globally for filtering
+                    allTestResults = Array.isArray(data) ? data : [];
+                    
+                    if (allTestResults.length === 0) {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                                    <i class="fas fa-flask" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                                    No test results found. Create your first lab request to get started.
+                                </td>
+                            </tr>
+                        `;
                         return;
                     }
                     
-                    // Clear test row and add real data
-                    tableBody.innerHTML = '';
+                    // Render initial data
+                    renderTable(allTestResults);
                     
-                    data.forEach((item, index) => {
-                        console.log(`Processing item ${index}:`, item);
-                        
-                        const row = document.createElement('tr');
-                        row.setAttribute('data-status', item.status || 'pending');
-                        row.setAttribute('data-date', item.test_date || '');
-                        
-                        // Simple innerHTML approach for the entire row
-                        const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (item.test_id || '');
-                        const addUrl = '<?= base_url('laboratory/testresult/add/') ?>' + (item.test_id || '');
-                        
-                        console.log('View URL:', viewUrl);
-                        console.log('Add URL:', addUrl);
-                        
-                        row.innerHTML = `
-                            <td>${item.test_id || 'N/A'}</td>
-                            <td>${item.patient_name || 'N/A'}</td>
-                            <td>${item.test_type || 'N/A'}</td>
-                            <td>${item.test_date || 'N/A'}</td>
-                            <td><span class="status-badge ${item.status === 'pending' ? 'status-pending' : 'status-completed'}">${item.status || 'pending'}</span></td>
-                            <td>${item.notes || '—'}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="${viewUrl}" class="btn btn-outline-primary btn-sm" onclick="console.log('View clicked for:', '${item.test_id}'); return true;">
-                                        <i class="fas fa-eye"></i> View
-                                    </a>
-                                    <a href="${addUrl}" class="btn btn-outline-success btn-sm" onclick="console.log('Add clicked for:', '${item.test_id}'); return true;">
-                                        <i class="fas fa-plus"></i> Add Result
-                                    </a>
-                                </div>
-                            </td>
-                        `;
-                        
-                        tableBody.appendChild(row);
-                    });
-                    
-                    console.log('Table populated with', data.length, 'rows');
+                    console.log('Table populated with', allTestResults.length, 'rows');
                 })
                 .catch(error => {
                     console.error('Error loading data:', error);
-                    // Keep the test row if data loading fails
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: #dc3545;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
+                                Error loading test results: ${error.message}
+                                <br><small>Please refresh the page or contact support if the problem persists.</small>
+                            </td>
+                        </tr>
+                    `;
                 });
         });
     </script>
