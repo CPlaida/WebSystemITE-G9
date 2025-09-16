@@ -76,34 +76,84 @@
 
       <!-- Day View -->
       <div id="dayView" class="view-container">
-        <div class="mb-4 text-center">
-          <h2 class="text-lg font-semibold" id="dayViewTitle">Today's Schedule - <?= date('F j, Y') ?></h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <?php 
-          $todaySchedules = array_filter($schedules, function($schedule) {
-            return date('Y-m-d', strtotime($schedule['shift_date'])) === date('Y-m-d');
-          });
-          ?>
-          <?php if (!empty($todaySchedules)): ?>
-            <?php foreach ($todaySchedules as $schedule): ?>
-              <div class="shift dept-<?= strtolower($schedule['department']) ?> <?= $schedule['status'] === 'cancelled' ? 'opacity-50' : '' ?>" 
-                   data-schedule-id="<?= $schedule['id'] ?>" 
-                   tabindex="0" 
-                   role="button">
-                <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
-                <div class="text-xs opacity-75"><?= ucfirst($schedule['department']) ?> • <?= ucfirst($schedule['shift_type']) ?></div>
-                <div class="text-xs mt-1"><?= date('g:i A', strtotime($schedule['start_time'])) ?> - <?= date('g:i A', strtotime($schedule['end_time'])) ?></div>
-                <?php if ($schedule['status'] === 'cancelled'): ?>
-                  <div class="text-xs text-red-600 font-medium">(Cancelled)</div>
-                <?php endif; ?>
-              </div>
-            <?php endforeach; ?>
-          <?php else: ?>
-            <div class="col-span-full text-center py-8 text-gray-500">
-              No schedules for today.
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Schedule for <?= date('l, F j, Y') ?></h2>
+            <div class="flex gap-2">
+              <button class="px-3 py-1 border rounded hover:bg-gray-100 text-sm">Today</button>
+              <button class="px-2 py-1 border rounded hover:bg-gray-100">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="px-2 py-1 border rounded hover:bg-gray-100">
+                <i class="fas fa-chevron-right"></i>
+              </button>
             </div>
-          <?php endif; ?>
+          </div>
+          
+          <div class="bg-white rounded-lg border overflow-hidden">
+            <div class="grid grid-cols-12 border-b bg-gray-50">
+              <div class="col-span-3 p-3 font-medium">DATE</div>
+              <div class="col-span-3 p-3 font-medium">TIME</div>
+              <div class="col-span-6 p-3 font-medium">EVENT</div>
+            </div>
+            
+            <div class="divide-y divide-gray-200">
+            <?php
+            $groupedSchedules = [];
+            
+            // Group schedules by date
+            foreach ($schedules as $schedule) {
+                $date = date('D M j', strtotime($schedule['shift_date'] ?? ''));
+                $groupedSchedules[$date][] = $schedule;
+            }
+            
+            // If no schedules, show today's date
+            if (empty($groupedSchedules)) {
+                $groupedSchedules[date('D M j')] = [];
+            }
+            
+            foreach ($groupedSchedules as $date => $dateSchedules): 
+                $isFirst = true;
+                $rowCount = count($dateSchedules) > 0 ? count($dateSchedules) : 1;
+                ?>
+                
+                <?php foreach ($dateSchedules as $index => $schedule): ?>
+                    <div class="grid grid-cols-12 hover:bg-gray-50">
+                        <?php if ($index === 0): ?>
+                            <div class="col-span-3 p-3 border-r flex items-center" rowspan="<?= $rowCount ?>">
+                                <?= $date ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="col-span-3 p-3 border-r border-gray-100">
+                            <?= date('g:i a', strtotime($schedule['start_time'] ?? '00:00:00')) ?> - 
+                            <?= date('g:i a', strtotime($schedule['end_time'] ?? '00:00:00')) ?>
+                        </div>
+                        
+                        <div class="col-span-6 p-3">
+                            <div class="shift dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1" 
+                                 data-schedule-id="<?= $schedule['id'] ?>">
+                                <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
+                                <div class="opacity-75"><?= ucfirst($schedule['shift_type']) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                
+                <?php if (empty($dateSchedules)): ?>
+                    <div class="grid grid-cols-12 hover:bg-gray-50">
+                        <div class="col-span-3 p-3 border-r">
+                            <?= $date ?>
+                        </div>
+                        <div class="col-span-9 p-3 text-gray-400">
+                            No scheduled shifts
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+            <?php endforeach; ?>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -128,7 +178,7 @@
               </div>
               <div class="space-y-1">
                 <?php foreach ($daySchedules as $schedule): ?>
-                  <div class="shift dept-<?= strtolower($schedule['department']) ?> text-xs p-1" 
+                  <div class="shift dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1" 
                        data-schedule-id="<?= $schedule['id'] ?>">
                     <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
                     <div class="opacity-75"><?= ucfirst($schedule['shift_type']) ?></div>
@@ -172,7 +222,7 @@
               </div>
               <div class="space-y-1">
                 <?php foreach (array_slice($daySchedules, 0, 2) as $schedule): ?>
-                  <div class="dept-<?= strtolower($schedule['department']) ?> text-xs p-1 rounded" 
+                  <div class="dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1 rounded" 
                        data-schedule-id="<?= $schedule['id'] ?>">
                     <?= htmlspecialchars(substr($schedule['doctor_name'], 0, 8)) ?>
                   </div>

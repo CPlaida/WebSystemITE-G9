@@ -5,103 +5,124 @@
 <?= $this->section('content') ?>
     <style>
         :root {
-            --primary-color: #4361ee;
-            --primary-hover: #3a56d4;
-            --secondary-color: #3f37c9;
-            --light-gray: #f8f9fa;
-            --dark-gray: #343a40;
-            --border-color: #dee2e6;
-            --text-color: #333;
-            --white: #ffffff;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --border-radius: 6px;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
-            --transition: all 0.2s ease;
+            --primary-color: #4e73df;
+            --primary-hover: #2e59d9;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light: #f8f9fc;
+            --dark: #5a5c69;
+            --border-color: #e3e6f0;
+            --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            --transition: all 0.3s ease-in-out;
         }
         
+        body {
+            background-color: #f8f9fc;
+            color: #5a5c69;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+        }
+
         .main-content {
-            padding: 20px;
-            width: 100%;
-            margin-left: 120px;
-            transition: all 0.3s;
-            background-color: #f8f9fa;
-            min-height: calc(100vh - 56px);
+            padding: 1.5rem;
+            margin-left: 6.5rem;
+            transition: var(--transition);
+            min-height: 100vh;
+            padding-bottom: 2rem;
         }
 
         .main-content.expanded {
-            margin-left: 70px;
+            margin-left: 0;
         }
 
         .page-header {
-            margin-bottom: 20px;
-            padding: 15px 20px;
             background: #fff;
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
+            border-radius: 0.35rem;
+            box-shadow: var(--card-shadow);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid var(--primary-color);
         }
 
         .page-title {
-            margin: 0;
-            color: var(--text-color);
+            color: var(--dark);
+            font-weight: 700;
             font-size: 1.5rem;
-            font-weight: 600;
+            margin: 0;
+            line-height: 1.2;
         }
 
         .card {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
+            background: #fff;
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
             overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1.5rem 0.5rem rgba(0, 0, 0, 0.075);
         }
 
         .card-header {
             background-color: #f8f9fc;
-            padding: 15px 20px;
             border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+        }
+
+        .card-title {
+            color: var(--dark);
             font-weight: 600;
-            color: #4e73df;
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .card-body {
-            padding: 20px;
+            padding: 1.5rem;
         }
 
         .search-section {
-            margin-bottom: 25px;
-            padding: 20px;
             background: #fff;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
+            border-radius: 0.35rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
         }
 
         .section-title {
             color: var(--primary-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .search-container {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 15px;
-            margin-bottom: 15px;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
         .form-control {
+            display: block;
             width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.575rem 0.75rem;
             font-size: 0.9rem;
+            font-weight: 400;
             line-height: 1.5;
             color: #6e707e;
             background-color: #fff;
@@ -112,6 +133,8 @@
         }
 
         .form-control:focus {
+            color: #6e707e;
+            background-color: #fff;
             border-color: #bac8f3;
             outline: 0;
             box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
@@ -121,28 +144,22 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            line-height: 1.5;
+            font-weight: 600;
             text-align: center;
             white-space: nowrap;
             vertical-align: middle;
             user-select: none;
             border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
             border-radius: 0.35rem;
-            transition: all 0.15s ease-in-out;
+            transition: var(--transition);
             cursor: pointer;
-            text-decoration: none;
-            pointer-events: auto;
-        }
-
-        .btn:hover {
-            text-decoration: none;
         }
 
         .btn i {
-            margin-right: 5px;
+            margin-right: 0.5rem;
         }
 
         .btn-primary {
@@ -154,7 +171,14 @@
         .btn-primary:hover {
             background-color: var(--primary-hover);
             border-color: var(--primary-hover);
-            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
         }
 
         .btn-outline-primary {
@@ -165,7 +189,7 @@
 
         .btn-outline-primary:hover {
             background: var(--primary-color);
-            color: var(--white);
+            color: #fff;
         }
 
         .btn-outline-success {
@@ -176,15 +200,106 @@
 
         .btn-outline-success:hover {
             background: var(--success-color);
-            color: var(--white);
+            color: #fff;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 900px;
+            background: #fff;
+        }
+        
+        .data-table thead th {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+        
+        .data-table thead th:first-child {
+            border-top-left-radius: 0.35rem;
+        }
+        
+        .data-table thead th:last-child {
+            border-top-right-radius: 0.35rem;
+        }
+        
+        .data-table tbody td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        .data-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 0.35rem;
+        }
+        
+        .data-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 0.35rem;
         }
 
         .status-badge {
-            padding: 0.35rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 500;
             display: inline-block;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            transition: var(--transition);
         }
         
         .status-pending {
@@ -197,81 +312,15 @@
             color: #155724;
         }
 
-        .filter-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .filter-btn:hover, .filter-btn.active {
-            background: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
-        }
-
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-        }
-        
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-        
-        .data-table thead th {
-            background: var(--primary-color);
-            color: var(--white);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 500;
-        }
-        
-        .data-table tbody td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
-        
-        .data-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .data-table tbody tr:hover {
-            background-color: rgba(67, 97, 238, 0.05);
-            cursor: pointer;
-        }
-
         .action-buttons {
             display: flex;
             gap: 0.5rem;
-            pointer-events: auto;
         }
 
-        .action-buttons a {
-            pointer-events: auto;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
-                padding-top: 70px;
+                padding-top: 4rem;
             }
 
             .main-content.expanded {
@@ -279,13 +328,14 @@
             }
 
             .search-container {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
             
             .filter-section {
                 overflow-x: auto;
                 padding-bottom: 0.5rem;
                 flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
             }
             
             .action-buttons {
@@ -323,22 +373,24 @@
                 </div>
                 
                 <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Test ID</th>
-                                <th>Patient Name</th>
-                                <th>Test Type</th>
-                                <th>Test Date</th>
-                                <th>Status</th>
-                                <th>Notes</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="testResultsTableBody">
-                            <!-- Dynamic content will be loaded here -->
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Test ID</th>
+                                    <th>Patient Name</th>
+                                    <th>Test Type</th>
+                                    <th>Test Date</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="testResultsTableBody">
+                                <!-- Dynamic content will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
