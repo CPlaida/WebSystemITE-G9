@@ -228,7 +228,6 @@
             <li><a href="<?= site_url('/') ?>">Home</a></li>
             <li><a href="<?= site_url('services') ?>">Services</a></li>
             <li><a href="<?= site_url('doctors') ?>" class="active">Doctors</a></li>
-            <li><a href="<?= site_url('contact') ?>">Contact</a></li>
             <li><a href="<?= site_url('login') ?>">Login</a></li>
         </ul>
     </nav>

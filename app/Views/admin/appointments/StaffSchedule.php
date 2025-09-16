@@ -67,9 +67,9 @@
           <button id="btnConflictSchedules" class="border border-gray-400 px-3 py-1 rounded hover:bg-gray-200 text-sm">Conflict schedules</button>
           <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
           <div>
-            <button type="button" data-view="day" class="btn-view-mode px-3 py-2 border border-gray-300 rounded-l hover:bg-blue-50 text-sm bg-blue-600 text-white font-medium" aria-pressed="true">📅 Day</button>
-            <button type="button" data-view="week" class="btn-view-mode px-3 py-2 border-t border-b border-l border-gray-300 hover:bg-blue-50 text-sm bg-white text-gray-700">📊 Week</button>
-            <button type="button" data-view="month" class="btn-view-mode px-3 py-2 border border-gray-300 rounded-r hover:bg-blue-50 text-sm bg-white text-gray-700">🗓️ Month</button>
+          <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>
+            <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>
+            <button type="button" data-view="month" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-r hover:bg-gray-200 text-sm">Month</button> 
           </div>
         </div>
       </div>
