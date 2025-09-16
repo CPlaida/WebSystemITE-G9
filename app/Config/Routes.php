@@ -43,7 +43,7 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
 
 // Only doctors can see doctor dashboard
-$routes->get('/doctor/dashboard', 'Doctor::index', ['filter' => 'auth:doctor']);
+$routes->get('/doctor/dashboard', 'Doctor\Doctor::index', ['filter' => 'auth:doctor']);
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
