@@ -505,8 +505,8 @@
                     row.setAttribute('data-status', item.status || 'pending');
                     row.setAttribute('data-date', item.test_date || '');
                     
-                    const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (item.test_id || '');
-                    const addUrl = '<?= base_url('laboratory/testresult/add/') ?>' + (item.test_id || '');
+                    const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (item.id || '');
+                    const addUrl = '<?= base_url('laboratory/testresult/add/') ?>' + (item.id || '');
                     
                     row.innerHTML = `
                         <td>${item.test_id || 'N/A'}</td>

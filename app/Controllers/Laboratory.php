@@ -296,11 +296,37 @@ class Laboratory extends Controller
             $db = \Config\Database::connect();
             $builder = $db->table('laboratory');
             
-            $testResult = $builder->where('test_id', $testId)->get()->getRowArray();
+            $testResult = $builder->where('id', $testId)->get()->getRowArray();
 
             if (!$testResult) {
                 return redirect()->to('laboratory/testresult')->with('error', 'Test result not found');
             }
+
+            // Parse JSON fields if they exist
+            if (!empty($testResult['test_results'])) {
+                $testResult['results'] = json_decode($testResult['test_results'], true) ?: [];
+            } else {
+                $testResult['results'] = [];
+            }
+
+            if (!empty($testResult['normal_range'])) {
+                $testResult['normal_ranges'] = json_decode($testResult['normal_range'], true) ?: [];
+            } else {
+                $testResult['normal_ranges'] = [];
+            }
+
+            // Add patient name mapping for display
+            $testResult['patient_name'] = $testResult['test_name']; // test_name contains patient name
+            
+            // Add formatted dates
+            $testResult['formatted_test_date'] = date('F j, Y', strtotime($testResult['test_date']));
+            $testResult['formatted_test_time'] = date('g:i A', strtotime($testResult['test_time']));
+            
+            // Add priority display if exists
+            $testResult['priority_display'] = ucfirst($testResult['priority'] ?? 'normal');
+            
+            // Add status badge class
+            $testResult['status_class'] = $testResult['status'] === 'completed' ? 'badge-success' : 'badge-warning';
 
             $data = [
                 'title' => 'View Test Result',
@@ -333,22 +359,64 @@ class Laboratory extends Controller
                 $db = \Config\Database::connect();
                 $builder = $db->table('laboratory');
                 
+                // Get test parameters from form
+                $testParameters = [];
+                $normalRanges = [];
+                $parameterNames = $this->request->getPost('parameter_name') ?: [];
+                $parameterResults = $this->request->getPost('parameter_result') ?: [];
+                $parameterRanges = $this->request->getPost('parameter_range') ?: [];
+                
+                // Build test results array
+                if (is_array($parameterNames)) {
+                    foreach ($parameterNames as $index => $name) {
+                        if (!empty($name) && isset($parameterResults[$index])) {
+                            $testParameters[$name] = $parameterResults[$index];
+                            if (isset($parameterRanges[$index])) {
+                                $normalRanges[$name] = $parameterRanges[$index];
+                            }
+                        }
+                    }
+                }
+                
                 $updateData = [
-                    'test_results' => $this->request->getPost('test_results'),
-                    'normal_range' => $this->request->getPost('normal_range'),
+                    'test_results' => json_encode($testParameters),
+                    'normal_range' => json_encode($normalRanges),
+                    'interpretation' => $this->request->getPost('interpretation'),
+                    'notes' => $this->request->getPost('notes'),
+                    'technician_name' => session()->get('username'),
+                    'result_date' => date('Y-m-d'),
+                    'result_time' => date('H:i:s'),
                     'status' => 'completed',
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
 
-                $result = $builder->where('test_id', $testId)->update($updateData);
+                $result = $builder->where('id', $testId)->update($updateData);
                 
                 if ($result) {
-                    return redirect()->to('laboratory/testresult')->with('success', 'Test result added successfully');
+                    if ($this->request->isAJAX()) {
+                        return $this->response->setJSON([
+                            'success' => true,
+                            'message' => 'Test result added successfully and status updated to Completed'
+                        ]);
+                    }
+                    return redirect()->to('laboratory/testresult')->with('success', 'Test result added successfully and status updated to Completed');
                 } else {
+                    if ($this->request->isAJAX()) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Failed to add test result'
+                        ]);
+                    }
                     return redirect()->back()->with('error', 'Failed to add test result');
                 }
             } catch (\Exception $e) {
                 log_message('error', 'Failed to add test result: ' . $e->getMessage());
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Failed to add test result: ' . $e->getMessage()
+                    ]);
+                }
                 return redirect()->back()->with('error', 'Failed to add test result: ' . $e->getMessage());
             }
         }
@@ -358,7 +426,7 @@ class Laboratory extends Controller
             $db = \Config\Database::connect();
             $builder = $db->table('laboratory');
             
-            $testResult = $builder->where('test_id', $testId)->get()->getRowArray();
+            $testResult = $builder->where('id', $testId)->get()->getRowArray();
 
             if (!$testResult) {
                 return redirect()->to('laboratory/testresult')->with('error', 'Test not found');

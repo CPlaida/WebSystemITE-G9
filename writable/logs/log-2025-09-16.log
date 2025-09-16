@@ -347,3 +347,13 @@ ERROR - 2025-09-16 10:52:04 --> Failed to get test result: Undefined array key "
 ERROR - 2025-09-16 10:52:08 --> Failed to get test result: Undefined array key "patient_name"
 ERROR - 2025-09-16 10:52:11 --> Failed to load test for result entry: Undefined variable $testId
 >>>>>>> c104d442b57c6e4f1649b5faf2f2d89f92d6d323
+ERROR - 2025-09-16 13:59:20 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 14:00:56 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 14:01:02 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:03 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:05 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:06 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:07 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:59:43 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:59:48 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:59:53 --> Failed to load test for result entry: Undefined variable $testId

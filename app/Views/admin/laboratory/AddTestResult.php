@@ -149,70 +149,68 @@
                 Test Information
             </div>
             <div class="card-body">
-                <form method="post" action="<?= base_url('laboratory/testresult/add/' . $testId) ?>">
+                <form method="post" action="<?= base_url('laboratory/testresult/add/' . $testResult['id']) ?>" id="addResultForm">
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Patient Name</label>
-                            <input type="text" class="form-control" value="<?= htmlspecialchars($testDetails['patient_name']) ?>" readonly>
+                            <input type="text" class="form-control" value="<?= htmlspecialchars($testResult['test_name']) ?>" readonly>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Test Type</label>
-                            <input type="text" class="form-control" value="<?= htmlspecialchars($testDetails['test_type']) ?>" readonly>
+                            <input type="text" class="form-control" value="<?= htmlspecialchars($testResult['test_type']) ?>" readonly>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Test Date</label>
-                            <input type="text" class="form-control" value="<?= date('F j, Y', strtotime($testDetails['test_date'])) ?>" readonly>
+                            <input type="text" class="form-control" value="<?= date('F j, Y', strtotime($testResult['test_date'])) ?>" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="Pending" <?= $testDetails['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Completed">Completed</option>
-                            </select>
+                            <label class="form-label">Current Status</label>
+                            <input type="text" class="form-control" value="<?= ucfirst($testResult['status']) ?>" readonly>
                         </div>
                     </div>
 
                     <div class="test-results">
-                        <h3 style="margin-bottom: 20px; font-weight: 600;">Test Results</h3>
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Parameter</th>
-                                        <th>Result</th>
-                                        <th>Reference Range</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Parameter 1</td>
-                                        <td>
-                                            <input type="text" class="form-control" name="parameter1" style="width: 100%;">
-                                        </td>
-                                        <td>Range 1</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Parameter 2</td>
-                                        <td>
-                                            <input type="text" class="form-control" name="parameter2" style="width: 100%;">
-                                        </td>
-                                        <td>Range 2</td>
-                                    </tr>
-                                    <!-- Add more parameters as needed -->
-                                </tbody>
-                            </table>
+                        <h3 style="margin-bottom: 20px; font-weight: 600;">Test Parameters</h3>
+                        <div id="parametersContainer">
+                            <div class="parameter-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; margin-bottom: 1rem; align-items: end;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label">Parameter Name</label>
+                                    <input type="text" class="form-control" name="parameter_name[]" placeholder="e.g., Hemoglobin" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label">Result</label>
+                                    <input type="text" class="form-control" name="parameter_result[]" placeholder="e.g., 12.5" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label">Reference Range</label>
+                                    <input type="text" class="form-control" name="parameter_range[]" placeholder="e.g., 12.0-17.5 g/dL">
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-secondary" onclick="removeParameter(this)" style="margin-top: 0;">Remove</button>
+                                </div>
+                            </div>
                         </div>
+                        <button type="button" class="btn btn-outline-primary" onclick="addParameter()" style="margin-bottom: 1.5rem;">
+                            <i class="fas fa-plus"></i> Add Parameter
+                        </button>
                     </div>
 
                     <div class="form-group">
-                        <label for="notes" class="form-label">Notes</label>
+                        <label for="interpretation" class="form-label">Clinical Interpretation</label>
+                        <textarea class="form-control" id="interpretation" name="interpretation" rows="3" placeholder="Enter clinical interpretation of results..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes" class="form-label">Additional Notes</label>
                         <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter any additional notes..."></textarea>
                     </div>
 
-                    <div class="form-actions">
+                    <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <a href="<?= base_url('laboratory/testresult') ?>" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Results
+                        </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Result
+                            <i class="fas fa-save"></i> Save Result & Mark Completed
                         </button>
                     </div>
                 </form>
@@ -221,6 +219,59 @@
     </div>
 
     <script>
+        function addParameter() {
+            const container = document.getElementById('parametersContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'parameter-row';
+            newRow.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; margin-bottom: 1rem; align-items: end;';
+            
+            newRow.innerHTML = `
+                <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" class="form-control" name="parameter_name[]" placeholder="e.g., White Blood Cells" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" class="form-control" name="parameter_result[]" placeholder="e.g., 7.2" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" class="form-control" name="parameter_range[]" placeholder="e.g., 4.5-11.0 x10³/µL">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary" onclick="removeParameter(this)">Remove</button>
+                </div>
+            `;
+            
+            container.appendChild(newRow);
+        }
+
+        function removeParameter(button) {
+            const container = document.getElementById('parametersContainer');
+            if (container.children.length > 1) {
+                button.closest('.parameter-row').remove();
+            } else {
+                alert('At least one parameter is required.');
+            }
+        }
+
+        // Form submission handling
+        document.getElementById('addResultForm').addEventListener('submit', function(e) {
+            const parameterNames = document.querySelectorAll('input[name="parameter_name[]"]');
+            const parameterResults = document.querySelectorAll('input[name="parameter_result[]"]');
+            
+            let hasValidParameters = false;
+            for (let i = 0; i < parameterNames.length; i++) {
+                if (parameterNames[i].value.trim() && parameterResults[i].value.trim()) {
+                    hasValidParameters = true;
+                    break;
+                }
+            }
+            
+            if (!hasValidParameters) {
+                e.preventDefault();
+                alert('Please enter at least one parameter with name and result.');
+                return false;
+            }
+        });
+
         // Sidebar toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.querySelector('.sidebar');
