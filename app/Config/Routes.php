@@ -43,16 +43,19 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
 
 // Only doctors can see doctor dashboard
-$routes->get('/doctor/dashboard', 'Doctor::index', ['filter' => 'auth:doctor']);
+$routes->get('/doctor/dashboard', 'Doctor\Doctor::index', ['filter' => 'auth:doctor']);
 
 // Doctor scheduling routes
-$routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
-$routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
-$routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
-$routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
-$routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
-$routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
-$routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
+$routes->get('doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
+$routes->get('doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
+$routes->get('doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
+$routes->post('doctor/getAvailableDoctors', 'Doctor\Doctor::getAvailableDoctors', ['filter' => 'auth:admin,doctor']);
+$routes->get('doctor/getWorkloadDistribution', 'Doctor\Doctor::getWorkloadDistribution', ['filter' => 'auth:admin,doctor']);
+$routes->get('doctor/exportToPDF', 'Doctor\Doctor::exportToPDF', ['filter' => 'auth:admin,doctor']);
 
 // Only nurses can see nurse dashboard
 $routes->get('/nurse/dashboard', 'Nurse::index', ['filter' => 'auth:nurse']);

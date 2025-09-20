@@ -38,6 +38,28 @@
   .dept-pediatrics { background-color: #f59e0b; color: white; } /* Child orange */
   .dept-general { background-color: #6b7280; color: white; } /* Neutral gray */
   
+  /* Shift type colors - NEW */
+  .shift-morning { border-left: 4px solid #10b981; } /* Green */
+  .shift-afternoon { border-left: 4px solid #f59e0b; } /* Orange */
+  .shift-night { border-left: 4px solid #8b5cf6; } /* Purple */
+  
+  /* Filter and control styles */
+  .filter-container {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .workload-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
   .conflict-icon {
     position: absolute;
     top: 6px;
@@ -64,12 +86,53 @@
       <div class="flex justify-between items-center mb-5 p-6">
         <h1 class="text-xl font-bold">Doctor Schedule</h1>
         <div class="flex gap-3 items-center">
-          <button id="btnConflictSchedules" class="border border-gray-400 px-3 py-1 rounded hover:bg-gray-200 text-sm">Conflict schedules</button>
+          <button id="btnWorkloadReport" class="border border-blue-400 px-3 py-1 rounded hover:bg-blue-50 text-sm text-blue-600">📊 Workload Report</button>
+          <button id="btnExportPDF" class="border border-green-400 px-3 py-1 rounded hover:bg-green-50 text-sm text-green-600">📄 Export PDF</button>
+          <button id="btnConflictSchedules" class="border border-red-400 px-3 py-1 rounded hover:bg-red-50 text-sm text-red-600">⚠️ Conflicts</button>
           <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
           <div>
-            <button type="button" data-view="day" class="btn-view-mode px-3 py-2 border border-gray-300 rounded-l hover:bg-blue-50 text-sm bg-blue-600 text-white font-medium" aria-pressed="true">📅 Day</button>
-            <button type="button" data-view="week" class="btn-view-mode px-3 py-2 border-t border-b border-l border-gray-300 hover:bg-blue-50 text-sm bg-white text-gray-700">📊 Week</button>
-            <button type="button" data-view="month" class="btn-view-mode px-3 py-2 border border-gray-300 rounded-r hover:bg-blue-50 text-sm bg-white text-gray-700">🗓️ Month</button>
+          <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>
+            <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>
+            <button type="button" data-view="month" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-r hover:bg-gray-200 text-sm">Month</button> 
+          </div>
+        </div>
+      </div>
+      
+      <!-- Enhanced Filters and Controls -->
+      <div class="filter-container mx-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Doctor</label>
+            <select id="filterDoctor" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+              <option value="">All Doctors</option>
+              <?php foreach ($doctors as $doctor): ?>
+                <option value="<?= $doctor['id'] ?>"><?= htmlspecialchars($doctor['username']) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Department</label>
+            <select id="filterDepartment" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+              <option value="">All Departments</option>
+              <option value="Emergency">Emergency</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Neurology">Neurology</option>
+              <option value="Orthopedics">Orthopedics</option>
+              <option value="Pediatrics">Pediatrics</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Shift Type</label>
+            <select id="filterShiftType" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+              <option value="">All Shifts</option>
+              <option value="morning">🌅 Morning (6AM-2PM)</option>
+              <option value="afternoon">🌞 Afternoon (2PM-10PM)</option>
+              <option value="night">🌙 Night (10PM-6AM)</option>
+            </select>
+          </div>
+          <div>
+            <button id="btnClearFilters" class="w-full bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-3 py-2 text-sm">Clear Filters</button>
           </div>
         </div>
       </div>
@@ -87,12 +150,22 @@
           ?>
           <?php if (!empty($todaySchedules)): ?>
             <?php foreach ($todaySchedules as $schedule): ?>
-              <div class="shift dept-<?= strtolower($schedule['department']) ?> <?= $schedule['status'] === 'cancelled' ? 'opacity-50' : '' ?>" 
+              <div class="shift dept-<?= strtolower($schedule['department']) ?> shift-<?= $schedule['shift_type'] ?> <?= $schedule['status'] === 'cancelled' ? 'opacity-50' : '' ?>" 
                    data-schedule-id="<?= $schedule['id'] ?>" 
+                   data-doctor-id="<?= $schedule['doctor_id'] ?>"
+                   data-department="<?= $schedule['department'] ?>"
+                   data-shift-type="<?= $schedule['shift_type'] ?>"
                    tabindex="0" 
                    role="button">
                 <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
-                <div class="text-xs opacity-75"><?= ucfirst($schedule['department']) ?> • <?= ucfirst($schedule['shift_type']) ?></div>
+                <div class="text-xs opacity-75">
+                  <?= ucfirst($schedule['department']) ?> • 
+                  <?php 
+                    $shiftIcons = ['morning' => '🌅', 'afternoon' => '🌞', 'night' => '🌙'];
+                    echo $shiftIcons[$schedule['shift_type']] ?? '';
+                  ?>
+                  <?= ucfirst($schedule['shift_type']) ?>
+                </div>
                 <div class="text-xs mt-1"><?= date('g:i A', strtotime($schedule['start_time'])) ?> - <?= date('g:i A', strtotime($schedule['end_time'])) ?></div>
                 <?php if ($schedule['status'] === 'cancelled'): ?>
                   <div class="text-xs text-red-600 font-medium">(Cancelled)</div>
@@ -212,17 +285,15 @@
           </div>
         </div>
       </section>
-    </section>
-  </div>
-</div>
 
-<!-- Modal: Conflict Schedule Detected -->
-<div id="conflictModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="conflictModalTitle">
-  <div class="bg-white max-w-md w-full rounded-lg shadow-lg p-6 relative">
-    <header class="flex justify-between items-center mb-4">
-      <h2 id="conflictModalTitle" class="text-lg font-bold">Conflicts Schedule Detected</h2>
-      <button aria-label="Close conflict modal" id="closeConflictModal" class="text-gray-600 hover:text-gray-900 text-xl font-bold">&times;</button>
-    </header>
+      <!-- Modal: Conflict Schedule Detected -->
+      <div id="conflictModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="conflictModalTitle">
+        <div class="bg-white max-w-md w-full rounded-lg shadow-lg p-6 relative">
+          <header class="flex justify-between items-center mb-4">
+            <h2 id="conflictModalTitle" class="text-lg font-bold">Conflicts Schedule Detected</h2>
+            <button aria-label="Close conflict modal" id="closeConflictModal" class="text-gray-600 hover:text-gray-900 text-xl font-bold">&times;</button>
+          </header>
+
     <nav class="inline-flex border border-gray-300 rounded overflow-hidden mb-4" role="tablist" aria-label="Conflict tab navigation">
       <button role="tab" aria-selected="true" aria-controls="conflictListPanel" id="conflictListTab" tabindex="0"
         class="px-4 py-2 bg-gray-100 font-semibold border-r border-gray-300 focus:outline-none focus:ring focus:ring-indigo-400 transition">Conflict List</button>
@@ -476,8 +547,8 @@
           <label for="shiftType" class="block text-sm font-medium text-gray-700 mb-1">Shift Type</label>
           <select id="shiftType" name="shiftType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             <option value="morning">Morning (6:00 AM - 2:00 PM)</option>
-            <option value="afternoon">Afternoon (10:00 AM - 4:00 PM)</option>
-            <option value="night">Night (4:00 PM - 10:00 PM)</option>
+            <option value="afternoon">Afternoon (2:00 PM - 10:00 PM)</option>
+            <option value="night">Night (10:00 PM - 6:00 AM)</option>
           </select>
         </div>
         
@@ -578,9 +649,10 @@
           // Reload the page to show the new schedule
           window.location.reload();
         } else {
-          alert('Error: ' + (data.message || 'Failed to add schedule'));
           if (data.conflicts && data.conflicts.length > 0) {
             alert('Scheduling conflict detected. Please choose a different time.');
+          } else {
+            alert('Error: ' + (data.message || 'Failed to add schedule'));
           }
         }
       })
@@ -593,6 +665,271 @@
     // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('shiftDate').min = today;
+
+    // Enhanced functionality for filters and workload tracking
+    initializeEnhancedFeatures();
   });
+
+  // Enhanced Features Implementation
+  function initializeEnhancedFeatures() {
+    // Filter functionality
+    const filterDoctor = document.getElementById('filterDoctor');
+    const filterDepartment = document.getElementById('filterDepartment');
+    const filterShiftType = document.getElementById('filterShiftType');
+    const btnClearFilters = document.getElementById('btnClearFilters');
+
+    // Apply filters
+    function applyFilters() {
+      const shifts = document.querySelectorAll('.shift');
+      const doctorFilter = filterDoctor.value;
+      const departmentFilter = filterDepartment.value;
+      const shiftTypeFilter = filterShiftType.value;
+
+      shifts.forEach(shift => {
+        const doctorId = shift.getAttribute('data-doctor-id');
+        const department = shift.getAttribute('data-department');
+        const shiftType = shift.getAttribute('data-shift-type');
+
+        const matchesDoctor = !doctorFilter || doctorId === doctorFilter;
+        const matchesDepartment = !departmentFilter || department === departmentFilter;
+        const matchesShiftType = !shiftTypeFilter || shiftType === shiftTypeFilter;
+
+        if (matchesDoctor && matchesDepartment && matchesShiftType) {
+          shift.style.display = 'block';
+        } else {
+          shift.style.display = 'none';
+        }
+      });
+    }
+
+    // Attach filter event listeners
+    filterDoctor.addEventListener('change', applyFilters);
+    filterDepartment.addEventListener('change', applyFilters);
+    filterShiftType.addEventListener('change', applyFilters);
+
+    // Clear filters
+    btnClearFilters.addEventListener('click', function() {
+      filterDoctor.value = '';
+      filterDepartment.value = '';
+      filterShiftType.value = '';
+      applyFilters();
+    });
+
+    // Workload Report functionality
+    const btnWorkloadReport = document.getElementById('btnWorkloadReport');
+    btnWorkloadReport.addEventListener('click', function() {
+      showWorkloadReport();
+    });
+
+    // Export PDF functionality
+    const btnExportPDF = document.getElementById('btnExportPDF');
+    btnExportPDF.addEventListener('click', function() {
+      const currentDate = new Date();
+      const startDate = currentDate.getFullYear() + '-' + 
+                       String(currentDate.getMonth() + 1).padStart(2, '0') + '-01';
+      const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+                     .toISOString().split('T')[0];
+      
+      window.open(`<?= base_url('/doctor/exportToPDF') ?>?start_date=${startDate}&end_date=${endDate}`, '_blank');
+    });
+
+    // Enhanced doctor dropdown with availability checking
+    const doctorSelect = document.getElementById('doctorSelect');
+    const shiftDateInput = document.getElementById('shiftDate');
+    const shiftTypeSelect = document.getElementById('shiftType');
+
+    function updateAvailableDoctors() {
+      const selectedDate = shiftDateInput.value;
+      const selectedShiftType = shiftTypeSelect.value;
+
+      if (selectedDate && selectedShiftType) {
+        fetch('<?= base_url('/doctor/getAvailableDoctors') ?>', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: new URLSearchParams({
+            shift_date: selectedDate,
+            shift_type: selectedShiftType
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            updateDoctorDropdown(data.doctors);
+          }
+        })
+        .catch(error => console.error('Error fetching available doctors:', error));
+      }
+    }
+
+    function updateDoctorDropdown(availableDoctors) {
+      const currentValue = doctorSelect.value;
+      const options = doctorSelect.querySelectorAll('option:not(:first-child)');
+      
+      options.forEach(option => {
+        const doctorId = option.value;
+        const isAvailable = availableDoctors.some(doctor => doctor.id == doctorId);
+        
+        if (isAvailable) {
+          option.disabled = false;
+          option.style.color = '';
+          option.textContent = option.textContent.replace(' (Unavailable)', '');
+        } else {
+          option.disabled = true;
+          option.style.color = '#999';
+          if (!option.textContent.includes('(Unavailable)')) {
+            option.textContent += ' (Unavailable)';
+          }
+        }
+      });
+
+      // Reset selection if current doctor is unavailable
+      if (currentValue && doctorSelect.querySelector(`option[value="${currentValue}"]`).disabled) {
+        doctorSelect.value = '';
+      }
+    }
+
+    shiftDateInput.addEventListener('change', function() {
+      updateAvailableDoctors();
+      updateAvailableShiftTypes();
+    });
+    shiftTypeSelect.addEventListener('change', updateAvailableDoctors);
+
+    // Add time validation for shift types
+    function updateAvailableShiftTypes() {
+      const selectedDate = shiftDateInput.value;
+      const today = new Date().toISOString().split('T')[0];
+      const currentTime = new Date();
+      const currentHour = currentTime.getHours();
+      
+      const shiftOptions = shiftTypeSelect.querySelectorAll('option');
+      
+      // If selected date is today, check current time
+      if (selectedDate === today) {
+        shiftOptions.forEach(option => {
+          const shiftType = option.value;
+          let shouldDisable = false;
+          
+          switch(shiftType) {
+            case 'morning':
+              // Morning shift starts at 6 AM, disable if current time is past 6 AM
+              shouldDisable = currentHour >= 6;
+              break;
+            case 'afternoon':
+              // Afternoon shift starts at 2 PM (14:00), disable if current time is past 2 PM
+              shouldDisable = currentHour >= 14;
+              break;
+            case 'night':
+              // Night shift starts at 10 PM (22:00), disable if current time is past 10 PM
+              shouldDisable = currentHour >= 22;
+              break;
+          }
+          
+          if (shouldDisable) {
+            option.disabled = true;
+            option.style.color = '#999';
+            if (!option.textContent.includes('(Past Time)')) {
+              option.textContent = option.textContent.replace(' (Past Time)', '') + ' (Past Time)';
+            }
+          } else {
+            option.disabled = false;
+            option.style.color = '';
+            option.textContent = option.textContent.replace(' (Past Time)', '');
+          }
+        });
+        
+        // Reset selection if current shift type is disabled
+        if (shiftTypeSelect.value && shiftTypeSelect.querySelector(`option[value="${shiftTypeSelect.value}"]`).disabled) {
+          shiftTypeSelect.value = '';
+        }
+      } else {
+        // For future dates, enable all shift types
+        shiftOptions.forEach(option => {
+          if (option.value) {
+            option.disabled = false;
+            option.style.color = '';
+            option.textContent = option.textContent.replace(' (Past Time)', '');
+          }
+        });
+      }
+    }
+
+    // Initialize shift type validation on page load
+    updateAvailableShiftTypes();
+  }
+
+  // Workload Report Modal
+  function showWorkloadReport() {
+    fetch('<?= base_url('/doctor/getWorkloadDistribution') ?>')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          displayWorkloadModal(data.workload);
+        }
+      })
+      .catch(error => console.error('Error fetching workload data:', error));
+  }
+
+  function displayWorkloadModal(workloadData) {
+    const modalHTML = `
+      <div id="workloadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white max-w-4xl w-full rounded-lg shadow-xl p-6 relative max-h-96 overflow-y-auto">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">📊 Monthly Workload Distribution</h3>
+            <button onclick="closeWorkloadModal()" class="text-gray-500 hover:text-gray-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Shifts</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">🌅 Morning</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">🌞 Afternoon</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">🌙 Night</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Workload</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                ${workloadData.map(doctor => `
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${doctor.doctor_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.shift_count}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.morning_shifts}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.afternoon_shifts}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.night_shifts}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                          <div class="bg-blue-600 h-2 rounded-full" style="width: ${Math.min(100, (doctor.shift_count / 20) * 100)}%"></div>
+                        </div>
+                        <span class="text-xs text-gray-500">${doctor.shift_count}/20</span>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+
+  function closeWorkloadModal() {
+    const modal = document.getElementById('workloadModal');
+    if (modal) {
+      modal.remove();
+    }
+  }
 </script>
 <?= $this->endSection() ?>

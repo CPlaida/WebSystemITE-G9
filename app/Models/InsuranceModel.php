@@ -6,9 +6,9 @@ use CodeIgniter\Model;
 
 class InsuranceModel extends Model
 {
-    protected $table = 'insurance_claims';
+    protected $table = 'insurance';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['patient_id', 'claim_amount', 'status', 'claim_date', 'created_at', 'updated_at'];
+    protected $allowedFields = ['patient_id', 'claim_number', 'amount', 'status', 'provider', 'created_at', 'updated_at'];
     protected $useTimestamps = true;
 
     public function getPendingClaims()

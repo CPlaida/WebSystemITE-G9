@@ -107,6 +107,33 @@ class Doctor extends BaseController
             // Debug logging
             log_message('debug', 'Add Schedule Data: ' . json_encode($data));
 
+            // Time validation - prevent adding past shifts for today
+            if ($data['shift_date'] === date('Y-m-d')) {
+                $currentHour = (int)date('H');
+                $shiftStartHours = [
+                    'morning' => 6,
+                    'afternoon' => 14,
+                    'night' => 22
+                ];
+                
+                if (isset($shiftStartHours[$data['shift_type']]) && $currentHour >= $shiftStartHours[$data['shift_type']]) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Cannot add ' . $data['shift_type'] . ' shift for today as the start time has already passed.'
+                    ]);
+                }
+            }
+
+            // Additional validation for consecutive night shifts
+            if ($data['shift_type'] === 'night') {
+                if (!$this->doctorScheduleModel->canWorkConsecutiveNights($data['doctor_id'], $data['shift_date'])) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Doctor cannot work consecutive night shifts. Please choose a different doctor or date.'
+                    ]);
+                }
+            }
+
             // Validate required fields
             if (empty($data['doctor_id']) || empty($data['shift_date']) || empty($data['shift_type'])) {
                 return $this->response->setJSON([
@@ -301,5 +328,71 @@ class Doctor extends BaseController
             'success' => true,
             'doctors' => $doctors
         ]);
+    }
+
+    /**
+     * Get available doctors for a specific date and shift type
+     */
+    public function getAvailableDoctors()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
+        }
+
+        $shiftDate = $this->request->getPost('shift_date');
+        $shiftType = $this->request->getPost('shift_type');
+
+        $availableDoctors = $this->doctorScheduleModel->getAvailableDoctors($shiftDate, $shiftType);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'doctors' => $availableDoctors
+        ]);
+    }
+
+    /**
+     * Get workload distribution for fairness tracking
+     */
+    public function getWorkloadDistribution()
+    {
+        $month = $this->request->getGet('month') ?? date('m');
+        $year = $this->request->getGet('year') ?? date('Y');
+
+        $workload = $this->doctorScheduleModel->getWorkloadDistribution($month, $year);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'workload' => $workload
+        ]);
+    }
+
+    /**
+     * Export schedule to PDF
+     */
+    public function exportToPDF()
+    {
+        $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
+        $endDate = $this->request->getGet('end_date') ?? date('Y-m-t');
+        
+        $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($startDate, $endDate);
+        
+        // Group schedules by date for better PDF layout
+        $groupedSchedules = [];
+        foreach ($schedules as $schedule) {
+            $date = $schedule['shift_date'];
+            if (!isset($groupedSchedules[$date])) {
+                $groupedSchedules[$date] = [];
+            }
+            $groupedSchedules[$date][] = $schedule;
+        }
+        
+        $data = [
+            'schedules' => $groupedSchedules,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'generated_at' => date('Y-m-d H:i:s')
+        ];
+        
+        return view('doctor/schedule_pdf', $data);
     }
 }

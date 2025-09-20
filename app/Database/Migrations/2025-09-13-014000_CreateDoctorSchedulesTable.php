@@ -32,6 +32,37 @@ class CreateDoctorSchedulesTable extends Migration
                 'type'       => 'ENUM',
                 'constraint' => ['morning', 'afternoon', 'night'],
             ],
+            'preferred_days' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
+                'comment' => 'JSON array of preferred working days'
+            ],
+            'is_available' => [
+                'type' => 'BOOLEAN',
+                'default' => true,
+            ],
+            'consecutive_nights' => [
+                'type' => 'INT',
+                'constraint' => 2,
+                'default' => 0,
+                'comment' => 'Track consecutive night shifts'
+            ],
+            'monthly_shift_count' => [
+                'type' => 'INT',
+                'constraint' => 3,
+                'default' => 0,
+            ],
+            'swap_request_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => true,
+            ],
+            'is_on_leave' => [
+                'type' => 'BOOLEAN',
+                'default' => false,
+            ],
             'shift_date' => [
                 'type' => 'DATE',
             ],

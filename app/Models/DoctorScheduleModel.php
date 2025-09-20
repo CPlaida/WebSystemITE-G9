@@ -21,7 +21,13 @@ class DoctorScheduleModel extends Model
         'start_time',
         'end_time',
         'status',
-        'notes'
+        'notes',
+        'preferred_days',
+        'is_available',
+        'consecutive_nights',
+        'monthly_shift_count',
+        'swap_request_id',
+        'is_on_leave'
     ];
 
     protected $useTimestamps = true;
@@ -170,17 +176,120 @@ class DoctorScheduleModel extends Model
     }
 
     /**
-     * Get shift time ranges based on shift type
+     * Get shift time ranges based on shift type - Standard 8-hour templates
      */
     public function getShiftTimes($shiftType)
     {
         $times = [
-            'morning' => ['06:00:00', '14:00:00'],
-            'afternoon' => ['10:00:00', '16:00:00'],
-            'night' => ['16:00:00', '22:00:00']
+            'morning' => ['06:00:00', '14:00:00'],   // 6 AM - 2 PM
+            'afternoon' => ['14:00:00', '22:00:00'], // 2 PM - 10 PM
+            'night' => ['22:00:00', '06:00:00']     // 10 PM - 6 AM
         ];
         
         return $times[$shiftType] ?? ['08:00:00', '16:00:00'];
+    }
+
+    /**
+     * Check if doctor can work consecutive night shifts
+     */
+    public function canWorkConsecutiveNights($doctorId, $shiftDate)
+    {
+        // Get previous day's schedule
+        $previousDate = date('Y-m-d', strtotime($shiftDate . ' -1 day'));
+        $previousShift = $this->where('doctor_id', $doctorId)
+                             ->where('shift_date', $previousDate)
+                             ->where('shift_type', 'night')
+                             ->where('status !=', 'cancelled')
+                             ->first();
+        
+        return !$previousShift; // Can work if no night shift previous day
+    }
+
+    /**
+     * Get doctor's monthly shift count
+     */
+    public function getMonthlyShiftCount($doctorId, $month = null, $year = null)
+    {
+        $month = $month ?? date('m');
+        $year = $year ?? date('Y');
+        
+        $startDate = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01';
+        $endDate = date('Y-m-t', strtotime($startDate));
+        
+        return $this->where('doctor_id', $doctorId)
+                   ->where('shift_date >=', $startDate)
+                   ->where('shift_date <=', $endDate)
+                   ->where('status !=', 'cancelled')
+                   ->countAllResults();
+    }
+
+    /**
+     * Get available doctors for a specific date and shift type
+     */
+    public function getAvailableDoctors($shiftDate, $shiftType)
+    {
+        $dayOfWeek = strtolower(date('l', strtotime($shiftDate)));
+        
+        // Get all doctors not already scheduled for this date/time
+        $scheduledDoctors = $this->select('doctor_id')
+                               ->where('shift_date', $shiftDate)
+                               ->where('status !=', 'cancelled')
+                               ->findColumn('doctor_id');
+        
+        $userModel = new \App\Models\UserModel();
+        $query = $userModel->where('role', 'doctor')
+                          ->where('is_available', true)
+                          ->where('is_on_leave', false);
+        
+        if (!empty($scheduledDoctors)) {
+            $query->whereNotIn('id', $scheduledDoctors);
+        }
+        
+        // Additional check for night shift consecutive rule
+        if ($shiftType === 'night') {
+            $availableDoctors = [];
+            $allDoctors = $query->findAll();
+            
+            foreach ($allDoctors as $doctor) {
+                if ($this->canWorkConsecutiveNights($doctor['id'], $shiftDate)) {
+                    $availableDoctors[] = $doctor;
+                }
+            }
+            
+            return $availableDoctors;
+        }
+        
+        return $query->findAll();
+    }
+
+    /**
+     * Get workload distribution for fairness tracking
+     */
+    public function getWorkloadDistribution($month = null, $year = null)
+    {
+        $month = $month ?? date('m');
+        $year = $year ?? date('Y');
+        
+        $startDate = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01';
+        $endDate = date('Y-m-t', strtotime($startDate));
+        
+        $sql = "SELECT 
+                    u.id,
+                    u.username as doctor_name,
+                    COUNT(ds.id) as shift_count,
+                    SUM(CASE WHEN ds.shift_type = 'night' THEN 1 ELSE 0 END) as night_shifts,
+                    SUM(CASE WHEN ds.shift_type = 'morning' THEN 1 ELSE 0 END) as morning_shifts,
+                    SUM(CASE WHEN ds.shift_type = 'afternoon' THEN 1 ELSE 0 END) as afternoon_shifts
+                FROM users u
+                LEFT JOIN doctor_schedules ds ON u.id = ds.doctor_id 
+                    AND ds.shift_date >= ? 
+                    AND ds.shift_date <= ?
+                    AND ds.status != 'cancelled'
+                WHERE u.role = 'doctor'
+                GROUP BY u.id, u.username
+                ORDER BY shift_count DESC";
+        
+        return $this->db->query($sql, [$startDate, $endDate])->getResultArray();
     }
 
     /**

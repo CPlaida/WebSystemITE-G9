@@ -12,7 +12,7 @@ class Accountant extends Controller
     public function index()
     {
         // Check if user is logged in and has accounting role
-        if (!session()->get('logged_in') || session()->get('role') !== 'accounting') {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'accounting') {
             return redirect()->to('/login')->with('error', 'Access denied.');
         }
         // Load dashboard data
