@@ -1,13 +1,11 @@
 <?= $this->extend('layouts/dashboard_layout') ?>
 
-<?= $this->section('title') ?>
-    Doctor Dashboard
-<?= $this->endSection() ?>
+<?= $this->section('title') ?><?= $this->endSection() ?>
 
 
 <?= $this->section('content') ?>
-    <div class="dashboard-header">
-        <h1>Doctor Dashboard</h1>
+    <div class="dashboard-header" style="margin-bottom: 30px; padding: 20px 0; border-bottom: 1px solid #e0e0e0;">
+        <h1 style="font-size: 24px; color: #333; margin: 0; font-weight: 600;">Doctor's Dashboard</h1>
     </div>
 
     <!-- Overview Cards -->
@@ -90,13 +88,4 @@
             }
         }
     </style>
-
-    <!-- Recent Patients Table -->
-    <div class="card">
-        <div class="card-header">
-            <h2>Recent Patients</h2>
-            <button class="btn">View All</button>
-        </div>
-        <!-- Table here -->
-    </div>
 <?= $this->endSection() ?>

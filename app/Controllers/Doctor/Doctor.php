@@ -107,19 +107,34 @@ class Doctor extends BaseController
             // Debug logging
             log_message('debug', 'Add Schedule Data: ' . json_encode($data));
 
-            // Time validation - prevent adding past shifts for today
-            if ($data['shift_date'] === date('Y-m-d')) {
-                $currentHour = (int)date('H');
+            // Time validation - prevent adding shifts in the past
+            // Use Asia/Manila timezone explicitly to match local environment
+            $tz = new \DateTimeZone('Asia/Manila');
+            $now = new \DateTime('now', $tz);
+            $today = $now->format('Y-m-d');
+            $currentHour = (int)$now->format('H');
+
+            // If selected date is in the past, block outright
+            if (strtotime($data['shift_date']) < strtotime($today)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Cannot add a shift in the past date.'
+                ]);
+            }
+
+            // If selected date is today, block if shift start time already passed
+            if ($data['shift_date'] === $today) {
                 $shiftStartHours = [
-                    'morning' => 6,
-                    'afternoon' => 14,
-                    'night' => 22
+                    'morning' => 6,   // 06:00
+                    'afternoon' => 14, // 14:00
+                    'night' => 22     // 22:00
                 ];
-                
-                if (isset($shiftStartHours[$data['shift_type']]) && $currentHour >= $shiftStartHours[$data['shift_type']]) {
+
+                $type = strtolower(trim($data['shift_type'] ?? ''));
+                if (isset($shiftStartHours[$type]) && $currentHour >= $shiftStartHours[$type]) {
                     return $this->response->setJSON([
                         'success' => false,
-                        'message' => 'Cannot add ' . $data['shift_type'] . ' shift for today as the start time has already passed.'
+                        'message' => 'Cannot add ' . $type . ' shift for today as the start time has already passed.'
                     ]);
                 }
             }

@@ -223,15 +223,14 @@
             <div class="toggle-btn"><i class="fas fa-bars"></i></div>
         </div>
         <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="<?= base_url('admin/dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-
             <?php $role = session()->get('role'); ?>
 
             <?php if ($role === 'admin'): ?>
+                <li class="nav-item">
+                    <a href="<?= base_url('admin/dashboard') ?>">
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
                 <!-- Patient Management -->
                 <li class="nav-item expandable">
                     <a href="#" onclick="toggleSubmenu(this)">
@@ -306,6 +305,33 @@
                 </li>
             <?php endif; ?>
 
+            <?php if ($role === 'doctor'): ?>
+                <li class="nav-item">
+                    <a href="<?= site_url('doctor/dashboard') ?>">
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= site_url('doctor/patients') ?>">
+                        <span class="text">Patient Records</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= site_url('doctor/prescriptions/create') ?>">
+                        <span class="text">Create Prescription</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= site_url('doctor/tests/request') ?>">
+                        <span class="text">Request Lab Test</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= site_url('doctor/appointments') ?>">
+                        <span class="text">Appointments</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <!-- Common menu items for all users -->
             <li class="nav-item"><a href="<?= site_url('auth/logout') ?>"><span class="text">Logout</span></a></li>

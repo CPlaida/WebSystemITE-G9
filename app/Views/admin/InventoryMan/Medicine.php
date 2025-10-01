@@ -63,60 +63,72 @@ $currentSubmenu = 'inventory';
 
 <!-- Add/Edit Form Modal -->
 <div class="modal" id="medicineForm">
-    <div class="modal-content" style="max-width: 800px;">
-        <span class="close" onclick="closeForm()">&times;</span>
-        <h2>Add New Medicine(s)</h2>
-        <form id="medicineFormElement">
+    <div class="modal-content" style="width: 95%; max-width: 1000px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0; font-size: 1.5rem; color: #333;">Add New Medicine(s)</h2>
+            <span class="close" onclick="closeForm()" style="font-size: 24px; cursor: pointer; color: #666;">&times;</span>
+        </div>
+        
+        <form id="medicineFormElement" style="margin: 0;">
             <div id="medicineEntries">
-                <!-- First row -->
-                <div class="medicine-entry">
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 2;">
-                            <label>Medicine Name *</label>
-                            <input type="text" name="medicineName[]" class="form-control" required>
+                <div class="medicine-entry" style="margin-bottom: 20px;">
+                    <!-- Header Row -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; padding: 10px 5px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-weight: 500; color: #495057;">Medicine Name</div>
+                        <div style="font-weight: 500; color: #495057;">Brand</div>
+                        <div style="font-weight: 500; color: #495057;">Category</div>
+                        <div style="font-weight: 500; color: #495057; text-align: center;">Stock</div>
+                        <div style="font-weight: 500; color: #495057; text-align: right;">Price (₱)</div>
+                        <div style="font-weight: 500; color: #495057;">Expiry Date</div>
+                        <div></div>
+                    </div>
+                    
+                    <!-- Data Row -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; align-items: center; padding: 5px;">
+                        <div>
+                            <input type="text" name="medicineName[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
-                        <div class="form-group" style="flex: 1.5;">
-                            <label>Brand *</label>
-                            <input type="text" name="brand[]" class="form-control" required>
+                        <div>
+                            <input type="text" name="brand[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
-                        <div class="form-group" style="flex: 1.5;">
-                            <label>Category *</label>
-                            <select name="category[]" class="form-control" required>
-                                <option value="">Select Category</option>
+                        <div>
+                            <select name="category[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; background-color: #fff;">
+                                <option value="">Select</option>
                                 <option value="Pain Relief">Pain Relief</option>
                                 <option value="Antibiotics">Antibiotics</option>
                                 <option value="Vitamins">Vitamins</option>
                                 <option value="Antihistamines">Antihistamines</option>
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Stock *</label>
-                            <input type="number" name="stock[]" min="0" class="form-control" required>
+                        <div>
+                            <input type="number" name="stock[]" min="0" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: center;">
                         </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Price (₱) *</label>
-                            <input type="number" name="price[]" min="0" step="0.01" class="form-control" required>
+                        <div>
+                            <input type="number" name="price[]" min="0" step="0.01" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: right;">
                         </div>
-                        <div class="form-group" style="flex: 1.2;">
-                            <label>Expiry Date *</label>
-                            <input type="date" name="expiryDate[]" class="form-control" required>
+                        <div>
+                            <input type="date" name="expiryDate[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
-                        <div class="form-group" style="flex: 0.5; display: flex; align-items: flex-end;">
-                            <button type="button" class="btn btn-danger" onclick="removeMedicineEntry(this)" style="padding: 8px 12px;">
-                                <i class="fas fa-times"></i>
+                        <div style="display: flex; justify-content: center;">
+                            <button type="button" onclick="removeMedicineEntry(this)" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 18px; padding: 0 8px;">
+                                ×
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="addMoreMedicine()">
-                    <i class="fas fa-plus"></i> Add More
+            <div style="display: flex; justify-content: space-between; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                <button type="button" onclick="addMoreMedicine()" style="background: #6c757d; color: white; border: none; border-radius: 4px; padding: 8px 15px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px;">
+                    <i class="fas fa-plus" style="font-size: 12px;"></i> Add More
                 </button>
-                <div>
-                    <button type="button" class="btn btn-secondary" onclick="closeForm()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save All</button>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" onclick="closeForm()" style="background: #6c757d; color: white; border: none; border-radius: 4px; padding: 8px 20px; cursor: pointer; font-size: 14px;">
+                        Cancel
+                    </button>
+                    <button type="submit" style="background: #007bff; color: white; border: none; border-radius: 4px; padding: 8px 20px; cursor: pointer; font-size: 14px;">
+                        Save All
+                    </button>
                 </div>
             </div>
         </form>
@@ -362,6 +374,55 @@ $currentSubmenu = 'inventory';
         margin-left: 120px;
         padding: 20px 20px;
         transition: all 0.3s;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .modal-content {
+            width: 98% !important;
+            margin: 10px;
+        }
+        
+        .medicine-entry > div:first-child,
+        .medicine-entry > div:last-child {
+            grid-template-columns: 1fr 1fr 1fr !important;
+        }
+        
+        .medicine-entry > div:first-child > div:nth-child(6),
+        .medicine-entry > div:last-child > div:nth-child(6) {
+            grid-column: 1 / span 3;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .medicine-entry > div:first-child,
+        .medicine-entry > div:last-child {
+            grid-template-columns: 1fr 1fr !important;
+        }
+        
+        .medicine-entry > div:first-child > div,
+        .medicine-entry > div:last-child > div {
+            grid-column: auto !important;
+        }
     }
 </style>
 

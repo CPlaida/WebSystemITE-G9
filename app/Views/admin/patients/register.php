@@ -323,7 +323,6 @@
                                 <span class="input-group-text">+63</span>
                                 <input type="tel" name="emergency_contact" class="form-control" placeholder="912 345 6789 (Emergency)" value="<?= old('emergency_contact') ?>">
                             </div>
-                            <small class="text-muted">A phone number we can call in case of emergency.</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Email Address</label>

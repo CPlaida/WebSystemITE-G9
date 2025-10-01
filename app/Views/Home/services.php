@@ -207,8 +207,8 @@
         <nav>
             <ul>
             <li><a href="<?= site_url('/') ?>">Home</a></li>
-            <li><a href="<?= site_url('services') ?>">Services</a></li>
-            <li><a href="<?= site_url('doctors') ?>" class="active">Doctors</a></li>
+            <li><a href="<?= site_url('services') ?>" class="active">Services</a></li>
+            <li><a href="<?= site_url('doctors') ?>">Doctors</a></li>
             <li><a href="<?= site_url('login') ?>">Login</a></li>
             </ul>
         </nav>

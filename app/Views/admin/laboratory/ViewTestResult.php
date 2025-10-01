@@ -293,37 +293,80 @@
 
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title">Test Information</h2>
-                <span class="badge <?= $testResult['status'] === 'Completed' ? 'badge-success' : 'badge-warning' ?>">
-                    <?= $testResult['status'] ?>
+                <h2 class="card-title">Lab Request Information</h2>
+                <span class="badge <?= $testResult['status_class'] ?>">
+                    <?= ucfirst($testResult['status']) ?>
                 </span>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="info-group">
-                            <div class="info-label">Test Name</div>
-                            <div class="info-value"><?= htmlspecialchars($testResult['test_name']) ?></div>
+                            <div class="info-label">Request ID</div>
+                            <div class="info-value"><?= htmlspecialchars($testResult['test_id'] ?? 'N/A') ?></div>
                         </div>
                         
                         <div class="info-group">
                             <div class="info-label">Patient Name</div>
                             <div class="info-value"><?= htmlspecialchars($testResult['patient_name']) ?></div>
                         </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Test Type</div>
+                            <div class="info-value"><?= htmlspecialchars($testResult['test_type']) ?></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Priority</div>
+                            <div class="info-value">
+                                <span class="badge <?= strtolower($testResult['priority_display']) === 'urgent' ? 'badge-warning' : 'badge-success' ?>">
+                                    <?= $testResult['priority_display'] ?>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="info-group">
                             <div class="info-label">Test Date</div>
-                            <div class="info-value"><?= date('F j, Y', strtotime($testResult['test_date'])) ?></div>
+                            <div class="info-value"><?= $testResult['formatted_test_date'] ?></div>
                         </div>
                         
+                        <div class="info-group">
+                            <div class="info-label">Test Time</div>
+                            <div class="info-value"><?= $testResult['formatted_test_time'] ?></div>
+                        </div>
+
+                        <?php if (!empty($testResult['result_date'])): ?>
                         <div class="info-group">
                             <div class="info-label">Result Date</div>
                             <div class="info-value"><?= date('F j, Y', strtotime($testResult['result_date'])) ?></div>
                         </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($testResult['technician_name'])): ?>
+                        <div class="info-group">
+                            <div class="info-label">Technician</div>
+                            <div class="info-value"><?= htmlspecialchars($testResult['technician_name']) ?></div>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
 
+                <?php if (!empty($testResult['notes'])): ?>
+                <div class="info-group">
+                    <div class="section-title">Clinical Notes</div>
+                    <div class="info-value"><?= nl2br(htmlspecialchars($testResult['notes'])) ?></div>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php if (!empty($testResult['results']) && is_array($testResult['results'])): ?>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Test Results</h2>
+            </div>
+            <div class="card-body">
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
@@ -334,32 +377,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
-                            $ranges = [
-                                'Hemoglobin' => '12.0 - 17.5 g/dL',
-                                'Hematocrit' => '36% - 50%',
-                                'White Blood Cells' => '4.5 - 11.0 x 10³/µL',
-                                'Red Blood Cells' => '4.2 - 5.9 x 10⁶/µL',
-                                'Platelets' => '150 - 450 x 10³/µL'
-                            ];
-                            
-                            foreach ($testResult['results'] as $parameter => $result): 
-                                $range = $ranges[$parameter] ?? 'N/A';
+                            <?php foreach ($testResult['results'] as $parameter => $result): 
+                                $range = $testResult['normal_ranges'][$parameter] ?? 'N/A';
                             ?>
                             <tr>
                                 <td><?= htmlspecialchars($parameter) ?></td>
                                 <td><?= htmlspecialchars($result) ?></td>
-                                <td><?= $range ?></td>
+                                <td><?= htmlspecialchars($range) ?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
 
-                <?php if (!empty($testResult['notes'])): ?>
+                <?php if (!empty($testResult['interpretation'])): ?>
                 <div class="info-group">
-                    <div class="section-title">Notes</div>
-                    <div class="info-value"><?= nl2br(htmlspecialchars($testResult['notes'])) ?></div>
+                    <div class="section-title">Clinical Interpretation</div>
+                    <div class="info-value"><?= nl2br(htmlspecialchars($testResult['interpretation'])) ?></div>
                 </div>
                 <?php endif; ?>
             </div>
@@ -369,6 +403,25 @@
                 </button>
             </div>
         </div>
+        <?php else: ?>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Test Results</h2>
+            </div>
+            <div class="card-body">
+                <div class="info-group">
+                    <div class="info-value" style="text-align: center; color: #6c757d; font-style: italic;">
+                        No test results available yet. Results will appear here once the test is completed.
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer no-print">
+                <a href="<?= base_url('laboratory/testresult/add/' . $testResult['id']) ?>" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Test Results
+                </a>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 
     <script>
