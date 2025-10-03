@@ -249,6 +249,19 @@
                     </div>
                 </div>
                 
+                <!-- Payment Method Selection -->
+                <div class="form-group mt-3">
+                    <label for="payment_method">Payment Method</label>
+                    <select id="payment_method" name="payment_method" class="form-control" required>
+                        <option value="">Select payment method</option>
+                        <option value="cash">Cash</option>
+                        <option value="insurance">Insurance</option>
+                    </select>
+                </div>
+                
+                <!-- Payment Details (will be shown based on selection) -->
+                <div id="payment_details" class="mt-2"></div>
+                
                 <button class="btn btn-primary btn-block mt-3" id="checkoutBtn">
                     <i class="fas fa-check-circle"></i> Checkout
                 </button>
@@ -375,6 +388,40 @@ $(document).ready(function() {
         updateCart();
     });
     
+    // Handle payment method change
+    $('#payment_method').on('change', function() {
+        const paymentMethod = $(this).val();
+        const $paymentDetails = $('#payment_details');
+        
+        // Clear previous payment details
+        $paymentDetails.empty();
+        
+        if (paymentMethod === 'cash') {
+            $paymentDetails.html(`
+                <div class="alert alert-info p-2">
+                    <i class="fas fa-money-bill-wave"></i> Please prepare cash payment
+                </div>
+            `);
+        } else if (paymentMethod === 'insurance') {
+            $paymentDetails.html(`
+                <div class="form-group">
+                    <label for="insurance_provider">Insurance Provider</label>
+                    <select id="insurance_provider" name="insurance_provider" class="form-control form-control-sm" required>
+                        <option value="">Select insurance provider</option>
+                        <option value="philhealth">PhilHealth</option>
+                        <option value="hmi">HMI</option>
+                        <option value="maxicare">Maxicare</option>
+                        <option value="intellicare">Intellicare</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="insurance_id">Insurance ID</label>
+                    <input type="text" id="insurance_id" name="insurance_id" class="form-control form-control-sm" required>
+                </div>
+            `);
+        }
+    });
+    
     // Handle checkout button
     $('#checkoutBtn').on('click', function() {
         if (cart.length === 0) {
@@ -382,8 +429,53 @@ $(document).ready(function() {
             return;
         }
         
+        const paymentMethod = $('#payment_method').val();
+        if (!paymentMethod) {
+            alert('Please select a payment method');
+            return;
+        }
+        
+        if (paymentMethod === 'insurance') {
+            const provider = $('#insurance_provider').val();
+            const insuranceId = $('#insurance_id').val();
+            
+            if (!provider) {
+                alert('Please select an insurance provider');
+                return;
+            }
+            
+            if (!insuranceId) {
+                alert('Please enter your insurance ID');
+                return;
+            }
+        }
+        
+        // Prepare data for submission
+        const orderData = {
+            patientId: $('#patientSelect').val(),
+            patientName: $('#patientSelect option:selected').text(),
+            items: cart,
+            payment: {
+                method: paymentMethod,
+                provider: paymentMethod === 'insurance' ? $('#insurance_provider').val() : null,
+                insuranceId: paymentMethod === 'insurance' ? $('#insurance_id').val() : null,
+                subtotal: parseFloat($('#subtotal').text().replace('₱', '')),
+                tax: parseFloat($('#tax').text().replace('₱', '')),
+                total: parseFloat($('#total').text().replace('₱', ''))
+            },
+            date: $('#prescriptionDate').val()
+        };
+        
+        console.log('Order data:', orderData);
+        
         // Here you would typically submit the form or make an AJAX call
-        alert('Checkout functionality would go here');
+        alert('Order submitted successfully!');
+        
+        // Reset form after submission
+        cart = [];
+        updateCart();
+        $('#payment_method').val('').trigger('change');
+        $('#patientSelect').val(null).trigger('change');
     });
 });
 </script>

@@ -279,7 +279,14 @@
                             <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar text-muted"></i></span>
-                                <input type="date" name="date_of_birth" class="form-control" value="<?= old('date_of_birth') ?>" required>
+                                <input type="date" name="date_of_birth" class="form-control" value="<?= old('date_of_birth') ?>" max="<?= date('Y-m-d') ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Age</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-hourglass-half text-muted"></i></span>
+                                <input type="number" name="age" class="form-control" placeholder="Age" min="0" max="130" readonly>
                             </div>
                         </div>
                         <div class="form-group">
@@ -318,13 +325,6 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Emergency Contact Number</label>
-                            <div class="input-group">
-                                <span class="input-group-text">+63</span>
-                                <input type="tel" name="emergency_contact" class="form-control" placeholder="912 345 6789 (Emergency)" value="<?= old('emergency_contact') ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label class="form-label">Email Address</label>
                             <div class="input-group">
                                 <span class="input-group-text">@</span>
@@ -339,18 +339,9 @@
                     <h3 class="section-title">
                         <i class="fas fa-notes-medical"></i> Medical Information
                     </h3>
+                    <!-- Auto-set as Outpatient -->
+                    <input type="hidden" name="patient_type" value="outpatient">
                     <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Patient Type <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-hospital-user text-muted"></i></span>
-                                <select name="patient_type" class="form-select" required>
-                                    <option value="">Select Type</option>
-                                    <option value="inpatient" <?= old('patient_type') == 'inpatient' ? 'selected' : '' ?>>Inpatient</option>
-                                    <option value="outpatient" <?= old('patient_type') == 'outpatient' ? 'selected' : '' ?>>Outpatient</option>
-                                </select>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label class="form-label">Blood Type</label>
                             <div class="input-group">
@@ -467,6 +458,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Date of Birth max (no future dates) and Age auto-calc
+    const dobInput = form.querySelector('input[name="date_of_birth"]');
+    const ageInput = form.querySelector('input[name="age"]');
+    if (dobInput && ageInput) {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        // Enforce max date as today (tomorrow and future are disabled)
+        dobInput.setAttribute('max', todayStr);
+
+        const updateAge = () => {
+            const val = dobInput.value;
+            if (!val) { ageInput.value = ''; return; }
+            const dob = new Date(val + 'T00:00:00');
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            ageInput.value = (age >= 0 && age <= 130) ? age : '';
+        };
+
+        dobInput.addEventListener('change', updateAge);
+        dobInput.addEventListener('input', updateAge);
+        // Initialize if pre-filled
+        updateAge();
+
+        // Clear age on form reset
+        form.addEventListener('reset', () => {
+            setTimeout(() => { ageInput.value = ''; }, 0);
+        });
+    }
+
     // Format phone number
     const phoneInput = form.querySelector('input[name="phone"]');
     

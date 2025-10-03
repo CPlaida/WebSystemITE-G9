@@ -46,16 +46,13 @@ $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' 
 $routes->get('/doctor/dashboard', 'Doctor\Doctor::index', ['filter' => 'auth:doctor']);
 
 // Doctor scheduling routes
-$routes->get('doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
-$routes->post('doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
-$routes->post('doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
-$routes->post('doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
-$routes->post('doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
-$routes->get('doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
-$routes->get('doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
-$routes->post('doctor/getAvailableDoctors', 'Doctor\Doctor::getAvailableDoctors', ['filter' => 'auth:admin,doctor']);
-$routes->get('doctor/getWorkloadDistribution', 'Doctor\Doctor::getWorkloadDistribution', ['filter' => 'auth:admin,doctor']);
-$routes->get('doctor/exportToPDF', 'Doctor\Doctor::exportToPDF', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
 
 // Only nurses can see nurse dashboard
 $routes->get('/nurse/dashboard', 'Nurse::index', ['filter' => 'auth:nurse']);
@@ -161,29 +158,29 @@ $routes->group('api/laboratory', ['namespace' => 'App\\Controllers', 'filter' =>
 // Pharmacy Routes
 $routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes) {
     $routes->get('inventory', 'Pharmacy::inventory', ['filter' => 'auth:pharmacist,admin']);
-    $routes->get('prescriptions/new', 'Pharmacy::new');
     $routes->get('medicines', 'Pharmacy::medicines');
     $routes->get('inventory/medicine', 'Pharmacy::medicine', ['filter' => 'auth:pharmacist,admin']);
 });
 
 // Administration Routes
-$routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {
-    $routes->get('users', 'Admin::users');
-    $routes->get('doctors', 'Admin::doctors');
-    $routes->get('settings', 'Admin::settings');
-    $routes->get('Administration/RoleManagement', 'Admin::roleManagement');
-    $routes->get('billing', 'Billing::index');
-    $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
-    $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');
-    $routes->get('InventoryMan/medicine', 'Pharmacy::medicine');
-    
-    $routes->group('patients', function($routes) {
-        $routes->get('', 'Admin\Patients::index');
-        $routes->get('register', 'Admin\Patients::register');
-        $routes->post('register', 'Admin\Patients::processRegister');  
-        $routes->get('view/(:num)', 'Admin\Patients::view/$1');
-        $routes->get('edit/(:num)', 'Admin\Patients::edit/$1');
-        $routes->post('update/(:num)', 'Admin\Patients::update/$1');
-        $routes->get('delete/(:num)', 'Admin\Patients::delete/$1');
+    $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {
+        $routes->get('users', 'Admin::users');
+        $routes->get('doctors', 'Admin::doctors');
+        $routes->get('settings', 'Admin::settings');
+        $routes->get('Administration/RoleManagement', 'Admin::roleManagement');
+        $routes->get('billing', 'Billing::index');
+        $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
+        $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');
+        $routes->get('InventoryMan/medicine', 'Pharmacy::medicine');
+        
+        $routes->group('patients', function($routes) {
+            $routes->get('', 'Admin\Patients::index');
+            $routes->get('register', 'Admin\Patients::register');
+            $routes->get('inpatient', 'Admin\Patients::inpatient');
+            $routes->post('register', 'Admin\Patients::processRegister');  
+            $routes->get('view/(:num)', 'Admin\Patients::view/$1');
+            $routes->get('edit/(:num)', 'Admin\Patients::edit/$1');
+            $routes->post('update/(:num)', 'Admin\Patients::update/$1');
+            $routes->get('delete/(:num)', 'Admin\Patients::delete/$1');
+        });
     });
-});

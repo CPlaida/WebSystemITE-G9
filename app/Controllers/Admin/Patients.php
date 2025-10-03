@@ -101,6 +101,16 @@ class Patients extends BaseController
         return view('admin/patients/index', $data);
     }
 
+    public function inpatient()
+    {
+        $data = [
+            'title' => 'Register Inpatient',
+            'validation' => \Config\Services::validation()
+        ];
+        
+        return view('admin/patients/Inpatient', $data);
+    }
+
     public function view($id = null)
     {
         $patient = $this->patientModel->find($id);

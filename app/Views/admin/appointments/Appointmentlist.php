@@ -250,7 +250,7 @@
   <div class="container">
     <div class="header">
       <h1 class="page-title">
-        <i class="fas fa-calendar-day"></i> Today's Appointments
+        <i class=""></i> Today's Appointments
       </h1>
     </div>
 

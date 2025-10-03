@@ -209,7 +209,7 @@
   <div class="container">
     <div class="header">
       <h1 class="page-title">
-        <i class="fas fa-calendar-plus"></i> Book Appointment
+        <i class=""></i> Book Appointment
       </h1>
     </div>
     
@@ -233,12 +233,19 @@
         <form action="<?= base_url('appointments/create') ?>" method="POST" id="appointmentForm" class="needs-validation" novalidate>
           <?= csrf_field() ?>
           <div class="form-grid">
-            <!-- Patient Selection -->
+            <!-- Patient Selection (Searchable Dropdown via datalist) -->
             <div class="form-group">
               <label class="form-label required-field" for="patient_name">Patient Name</label>
-              <input type="text" name="patient_name" id="patient_name" class="form-control" 
-                     placeholder="Enter patient name" value="<?= old('patient_name') ?>" required>
-              <div class="error-message">Please enter patient name</div>
+              <input type="text" list="patients_list" name="patient_name" id="patient_name" class="form-control"
+                     placeholder="Search patient by name..." value="<?= old('patient_name') ?>" required>
+              <datalist id="patients_list">
+                <?php if (isset($patients) && !empty($patients)): ?>
+                  <?php foreach ($patients as $p): ?>
+                    <option value="<?= esc($p['first_name'] . ' ' . $p['last_name']) ?>"></option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+              </datalist>
+              <div class="error-message">Please select or enter patient name</div>
             </div>
 
             <!-- Doctor Selection -->
@@ -307,10 +314,10 @@
           <!-- Form Actions -->
           <div class="form-actions">
             <a href="<?= base_url('appointments/list') ?>" class="btn btn-outline">
-              <i class="fas fa-list"></i> View Appointments
+              <i class=""></i> View Appointments
             </a>
             <button type="submit" class="btn btn-primary">
-              <i class="fas fa-calendar-check"></i> Book Appointment
+              <i class=""></i> Book Appointment
             </button>
           </div>
         </form>
