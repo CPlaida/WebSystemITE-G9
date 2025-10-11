@@ -46,24 +46,8 @@ class Auth extends Controller
                 ]);
           
 
-               // Redirect based on role
-            if ($user['role'] === 'admin') {
-                return redirect()->to('/admin/dashboard');
-            } elseif ($user['role'] === 'doctor') {
-                return redirect()->to('/doctor/dashboard');
-            } elseif ($user['role'] === 'nurse') {
-                return redirect()->to('/nurse/dashboard');
-            } elseif ($user['role'] === 'accounting') {
-                return redirect()->to('/accounting/dashboard');
-            } elseif ($user['role'] === 'itstaff') {
-                return redirect()->to('/itstaff/dashboard');
-            } elseif ($user['role'] === 'labstaff') {
-                return redirect()->to('/laboratory/dashboard');
-            } elseif ($user['role'] === 'pharmacist') {
-                return redirect()->to('/pharmacy/dashboard');
-            } else {
-                return redirect()->to('/reception/dashboard');
-            }
+                // Redirect to unified dashboard
+                return redirect()->to('/dashboard');
             } else {
                 return redirect()->back()->with('error', 'Wrong password.');
             }
