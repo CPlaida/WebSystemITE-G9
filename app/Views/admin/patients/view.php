@@ -358,7 +358,7 @@
             <?php if (!empty($patients)): ?>
               <?php foreach ($patients as $index => $patient): ?>
                 <tr>
-                  <td><?= esc($patient['patient_id']) ?></td>
+                  <td><?= esc($patient['id']) ?></td>
                   <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
                   <td><?= esc($patient['phone']) ?></td>
                   <td><?= esc($patient['address'] ?? 'N/A') ?></td>
@@ -371,7 +371,7 @@
                   </td>
                   <td>
                     <div class="action-buttons">
-                      <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['patient_id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">
+                      <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">
                         <i class="fas fa-eye"></i> View
                       </button>
                     </div>

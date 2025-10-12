@@ -22,6 +22,7 @@ class CreateLaboratoryTable extends Migration
             'patient_id' => [
                 'type'       => 'INT',
                 'unsigned'   => true,
+                'null'       => true,
             ],
             'doctor_id' => [
                 'type'       => 'INT',
@@ -36,6 +37,11 @@ class CreateLaboratoryTable extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
             ],
+            'priority' => [
+                'type'       => 'ENUM',
+                'constraint' => ['normal', 'urgent', 'stat'],
+                'default'    => 'normal',
+            ],
             'test_date' => [
                 'type' => 'DATE',
             ],
@@ -49,6 +55,23 @@ class CreateLaboratoryTable extends Migration
             ],
             'normal_range' => [
                 'type' => 'TEXT',
+                'null' => true,
+            ],
+            'interpretation' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+            'technician_name' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => true,
+            ],
+            'result_date' => [
+                'type' => 'DATE',
+                'null' => true,
+            ],
+            'result_time' => [
+                'type' => 'TIME',
                 'null' => true,
             ],
             'status' => [
@@ -75,8 +98,6 @@ class CreateLaboratoryTable extends Migration
             ],
         ]);
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('patient_id', 'patients', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('doctor_id', 'doctors', 'id', 'SET NULL', 'CASCADE');
         $this->forge->createTable('laboratory');
     }
 

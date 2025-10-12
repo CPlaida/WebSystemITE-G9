@@ -40,7 +40,7 @@
             data-conflict-count="<?= $conflictCount ?>"
             <?php if ($conflictCount===0): ?>disabled<?php endif; ?>
           >⚠️ Conflicts (<?= $conflictCount ?>)</button>
-          <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
+          <button id="btnAddShift" onclick="openAddShift()" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
           <div>
           <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>
             <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>
@@ -538,6 +538,15 @@
 </div>
 
 <script>
+  // Fallback opener so the button works even if listeners fail to bind
+  function openAddShift() {
+    const addShiftModal = document.getElementById('addShiftModal');
+    if (addShiftModal) {
+      addShiftModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
   // Add Shift Modal Functionality
   document.addEventListener('DOMContentLoaded', function() {
     const addShiftModal = document.getElementById('addShiftModal');
@@ -700,26 +709,6 @@
       .catch(error => console.error('Error fetching workload data:', error));
   }
 
-  function displayWorkloadModal(workloadData) {
-    const modalHTML = `
-      <div id="workloadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white max-w-4xl w-full rounded-lg shadow-xl p-6 relative max-h-96 overflow-y-auto">
-          <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold">📊 Monthly Workload Distribution</h3>
-              <button onclick="closeWorkloadModal()" class="text-gray-500 hover:text-gray-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-            
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-        if (data.success) {
-          displayWorkloadModal(data.workload);
-        }
-      })
       .catch(error => console.error('Error fetching workload data:', error));
   }
 

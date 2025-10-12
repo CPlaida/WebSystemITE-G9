@@ -80,7 +80,7 @@ class Patients extends BaseController
             if ($patientId) {
                 $patient = $this->patientModel->find($patientId);
                 return redirect()->to('patients/view')
-                               ->with('success', 'Patient registered successfully! Patient ID: ' . $patient['patient_id']);
+                               ->with('success', 'Patient registered successfully! Patient ID: ' . $patient['id']);
             } else {
                 return redirect()->back()
                                ->withInput()

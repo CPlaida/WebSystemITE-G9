@@ -12,7 +12,6 @@ class PatientModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $allowedFields = [
-        'patient_id',
         'first_name',
         'last_name',
         'email',
@@ -49,7 +48,7 @@ class PatientModel extends Model
         ]
     ];
 
-    protected $beforeInsert = ['generatePatientId', 'setCreatedAt'];
+    protected $beforeInsert = ['setCreatedAt'];
     protected $beforeUpdate = ['setUpdatedAt'];
 
     /**
@@ -57,17 +56,7 @@ class PatientModel extends Model
      */
     protected function generatePatientId(array $data)
     {
-        if (!isset($data['data']['patient_id']) || empty($data['data']['patient_id'])) {
-            do {
-                // Format: PAT-YYYYMMDD-XXXX (where X is a random number)
-                $date = date('Ymd');
-                $random = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-                $patientId = 'PAT-' . $date . '-' . $random;
-            } while ($this->where('patient_id', $patientId)->countAllResults() > 0);
-
-            $data['data']['patient_id'] = $patientId;
-        }
-
+        // No-op: legacy patient_id removed from schema
         return $data;
     }
 
