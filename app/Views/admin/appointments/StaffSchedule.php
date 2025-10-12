@@ -709,9 +709,6 @@
       .catch(error => console.error('Error fetching workload data:', error));
   }
 
-      .catch(error => console.error('Error fetching workload data:', error));
-  }
-
   function displayWorkloadModal(workloadData) {
     const modalHTML = `
       <div id="workloadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
