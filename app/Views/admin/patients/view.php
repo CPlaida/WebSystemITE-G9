@@ -341,7 +341,20 @@
           </div>
         <?php endif; ?>
 
-        <table>
+        <?php 
+        // Group patients by type (assuming there's a 'type' field in the patients table)
+        $inpatients = array_filter($patients, function($patient) {
+            return ($patient['type'] ?? 'outpatient') === 'inpatient';
+        });
+        
+        $outpatients = array_filter($patients, function($patient) {
+            return ($patient['type'] ?? 'outpatient') === 'outpatient';
+        });
+        ?>
+
+        <!-- Inpatients Section -->
+        <h3 class="mt-4 mb-3">Inpatients</h3>
+        <table class="mb-5">
           <thead>
             <tr>
               <th>Patient ID</th>
@@ -354,11 +367,11 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody id="patientTable">
-            <?php if (!empty($patients)): ?>
-              <?php foreach ($patients as $index => $patient): ?>
+          <tbody id="inpatientTable">
+            <?php if (!empty($inpatients)): ?>
+              <?php foreach ($inpatients as $patient): ?>
                 <tr>
-                  <td><?= esc($patient['id']) ?></td>
+                  <td><?= esc($patient['patient_id']) ?></td>
                   <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
                   <td><?= esc($patient['phone']) ?></td>
                   <td><?= esc($patient['address'] ?? 'N/A') ?></td>
@@ -381,8 +394,56 @@
             <?php else: ?>
               <tr>
                 <td colspan="8" class="text-center">
-                  <p class="text-muted">No patients registered yet.</p>
-                  <a href="<?= base_url('patients/register') ?>" class="btn btn-primary">Register First Patient</a>
+                  <p class="text-muted">No inpatients found.</p>
+                </td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+
+        <!-- Outpatients Section -->
+        <h3 class="mt-5 mb-3">Outpatients</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Patient ID</th>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Address</th>
+              <th>Gender</th>
+              <th>Date of Birth</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="outpatientTable">
+            <?php if (!empty($outpatients)): ?>
+              <?php foreach ($outpatients as $patient): ?>
+                <tr>
+                  <td><?= esc($patient['patient_id'] ?? $patient['id']) ?></td>
+                  <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
+                  <td><?= esc($patient['phone']) ?></td>
+                  <td><?= esc($patient['address'] ?? 'N/A') ?></td>
+                  <td><?= esc(ucfirst($patient['gender'])) ?></td>
+                  <td><?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?></td>
+                  <td>
+                    <span class="badge <?= $patient['status'] === 'active' ? 'badge-success' : 'badge-secondary' ?>">
+                      <?= esc(ucfirst($patient['status'])) ?>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="8" class="text-center">
+                  <p class="text-muted">No outpatients found.</p>
                 </td>
               </tr>
             <?php endif; ?>

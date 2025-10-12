@@ -346,7 +346,28 @@
                             <label class="form-label">Blood Type</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-tint text-muted"></i></span>
-                                <input type="text" name="blood_type" class="form-control" placeholder="e.g., A+, B-, O+, AB-" value="<?= old('blood_type') ?>">
+                                <select name="blood_type" class="form-select">
+                                    <option value="">Select Blood Type</option>
+                                    <option value="A+" <?= old('blood_type') == 'A+' ? 'selected' : '' ?>>A+</option>
+                                    <option value="A-" <?= old('blood_type') == 'A-' ? 'selected' : '' ?>>A-</option>
+                                    <option value="B+" <?= old('blood_type') == 'B+' ? 'selected' : '' ?>>B+</option>
+                                    <option value="B-" <?= old('blood_type') == 'B-' ? 'selected' : '' ?>>B-</option>
+                                    <option value="AB+" <?= old('blood_type') == 'AB+' ? 'selected' : '' ?>>AB+</option>
+                                    <option value="AB-" <?= old('blood_type') == 'AB-' ? 'selected' : '' ?>>AB-</option>
+                                    <option value="O+" <?= old('blood_type') == 'O+' ? 'selected' : '' ?>>O+</option>
+                                    <option value="O-" <?= old('blood_type') == 'O-' ? 'selected' : '' ?>>O-</option>
+                                    <option value="A1+" <?= old('blood_type') == 'A1+' ? 'selected' : '' ?>>A1+</option>
+                                    <option value="A1-" <?= old('blood_type') == 'A1-' ? 'selected' : '' ?>>A1-</option>
+                                    <option value="A1B+" <?= old('blood_type') == 'A1B+' ? 'selected' : '' ?>>A1B+</option>
+                                    <option value="A1B-" <?= old('blood_type') == 'A1B-' ? 'selected' : '' ?>>A1B-</option>
+                                    <option value="A2+" <?= old('blood_type') == 'A2+' ? 'selected' : '' ?>>A2+</option>
+                                    <option value="A2-" <?= old('blood_type') == 'A2-' ? 'selected' : '' ?>>A2-</option>
+                                    <option value="A2B+" <?= old('blood_type') == 'A2B+' ? 'selected' : '' ?>>A2B+</option>
+                                    <option value="A2B-" <?= old('blood_type') == 'A2B-' ? 'selected' : '' ?>>A2B-</option>
+                                    <option value="Bombay (Oh)" <?= old('blood_type') == 'Bombay (Oh)' ? 'selected' : '' ?>>Bombay (Oh)</option>
+                                    <option value="Hh (Bombay)" <?= old('blood_type') == 'Hh (Bombay)' ? 'selected' : '' ?>>Hh (Bombay)</option>
+                                    <option value="Rh null (Golden Blood)" <?= old('blood_type') == 'Rh null (Golden Blood)' ? 'selected' : '' ?>>Rh null (Golden Blood)</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -459,8 +480,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Date of Birth max (no future dates) and Age auto-calc
-    const dobInput = form.querySelector('input[name="date_of_birth"]');
-    const ageInput = form.querySelector('input[name="age"]');
+    const dobInput = document.querySelector('input[name="date_of_birth"]');
+    const ageInput = document.querySelector('input[name="age"]');
+    
     if (dobInput && ageInput) {
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
@@ -469,7 +491,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const updateAge = () => {
             const val = dobInput.value;
-            if (!val) { ageInput.value = ''; return; }
+            if (!val) { 
+                ageInput.value = ''; 
+                return; 
+            }
             const dob = new Date(val + 'T00:00:00');
             let age = today.getFullYear() - dob.getFullYear();
             const m = today.getMonth() - dob.getMonth();
@@ -483,31 +508,32 @@ document.addEventListener('DOMContentLoaded', function() {
         dobInput.addEventListener('input', updateAge);
         // Initialize if pre-filled
         updateAge();
-
-        // Clear age on form reset
-        form.addEventListener('reset', () => {
-            setTimeout(() => { ageInput.value = ''; }, 0);
-        });
     }
 
     // Format phone number
-    const phoneInput = form.querySelector('input[name="phone"]');
+    const phoneInput = document.querySelector('input[name="phone"]');
     
     const formatPhoneNumber = (input) => {
-        // Remove all non-digit characters except the first digit if it's a plus sign
+        // Remove all non-digit characters
         let phoneNumber = input.value.replace(/\D/g, '');
         
-        // Format the phone number
+        // Format the phone number as XXX XXX XXXX
         if (phoneNumber.length > 0) {
-            phoneNumber = phoneNumber.match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-            phoneNumber = !phoneNumber[2] ? phoneNumber[1] : 
-                        phoneNumber[1] + ' ' + phoneNumber[2] + (phoneNumber[3] ? ' ' + phoneNumber[3] : '');
+            phoneNumber = phoneNumber.substring(0, 10); // Limit to 10 digits
+            
+            if (phoneNumber.length > 6) {
+                phoneNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1 $2 $3');
+            } else if (phoneNumber.length > 3) {
+                phoneNumber = phoneNumber.replace(/(\d{3})(\d{1,3})/, '$1 $2');
+            }
         }
         
         input.value = phoneNumber;
     };
     
-    phoneInput.addEventListener('input', () => formatPhoneNumber(phoneInput));
+    if (phoneInput) {
+        phoneInput.addEventListener('input', (e) => formatPhoneNumber(e.target));
+    }
 });
 </script>
 <?= $this->endSection() ?>
