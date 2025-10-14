@@ -111,10 +111,6 @@
         color: white;
     }
 
-    .btn-delete {
-        background-color: #e74c3c;
-        color: white;
-    }
 
     .btn-view {
         background-color: #2ecc71;
@@ -168,27 +164,29 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-xl font-bold">Billing Management</h1>
             <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search bills...">
-                <button id="searchButton" class="search-button">Search</button>
+                <form method="get" action="<?= base_url('billing') ?>" style="display:flex; gap:10px; width:100%">
+                    <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="search-input" placeholder="Search by Invoice # or Patient...">
+                    <button id="searchButton" class="search-button" type="submit">Search</button>
+                </form>
             </div>
         </div>
 
         <div class="summary">
             <div class="box">
                 <h3>Total Revenue</h3>
-                <p>₱45,890.00</p>
+                <p>₱<?= number_format($totals['totalRevenue'] ?? 0, 2) ?></p>
             </div>
             <div class="box">
                 <h3>Pending Bills</h3>
-                <p>12</p>
+                <p><?= (int)($totals['pendingCount'] ?? 0) ?></p>
             </div>
             <div class="box">
                 <h3>Paid This Month</h3>
-                <p>₱28,750.00</p>
+                <p>₱<?= number_format($totals['paidThisMonth'] ?? 0, 2) ?></p>
             </div>
             <div class="box">
                 <h3>Outstanding</h3>
-                <p>₱5,340.00</p>
+                <p>₱<?= number_format($totals['outstanding'] ?? 0, 2) ?></p>
             </div>
         </div>
 
@@ -206,66 +204,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>#INV-2023-001</td>
-                        <td>Juan Dela Cruz</td>
-                        <td>2023-11-15</td>
-                        <td>Consultation</td>
-                        <td>₱500.00</td>
-                        <td><span class="status-paid">Paid</span></td>
-                        <td class="action-buttons">
-                            <a href="<?= base_url('admin/billing/receipt/1') ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
-                            <a href="#" class="btn btn-edit">Edit</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#INV-2023-002</td>
-                        <td>Maria Santos</td>
-                        <td>2023-11-16</td>
-                        <td>Consultation</td>
-                        <td>₱500.00</td>
-                        <td><span class="status-pending">Pending</span></td>
-                        <td class="action-buttons">
-                            <a href="<?= base_url('admin/billing/receipt/2') ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
-                            <a href="#" class="btn btn-edit">Edit</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#INV-2023-003</td>
-                        <td>Pedro Reyes</td>
-                        <td>2023-11-17</td>
-                        <td>Consultation</td>
-                        <td>₱500.00</td>
-                        <td><span class="status-paid">Paid</span></td>
-                        <td class="action-buttons">
-                            <a href="<?= base_url('admin/billing/receipt/3') ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
-                            <a href="#" class="btn btn-edit">Edit</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#INV-2023-004</td>
-                        <td>Ana Martinez</td>
-                        <td>2023-11-18</td>
-                        <td>Consultation</td>
-                        <td>₱500.00</td>
-                        <td><span class="status-pending">Pending</span></td>
-                        <td class="action-buttons">
-                            <a href="<?= base_url('admin/billing/receipt/4') ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
-                            <a href="#" class="btn btn-edit">Edit</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>#INV-2023-005</td>
-                        <td>Jose Garcia</td>
-                        <td>2023-11-19</td>
-                        <td>Consultation</td>
-                        <td>₱500.00</td>
-                        <td><span class="status-paid">Paid</span></td>
-                        <td class="action-buttons">
-                            <a href="<?= base_url('admin/billing/receipt/5') ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
-                            <a href="#" class="btn btn-edit">Edit</a>
-                        </td>
-                    </tr>
+                    <?php if (!empty($bills)): ?>
+                        <?php foreach ($bills as $bill): ?>
+                            <tr data-id="<?= (int)$bill['id'] ?>">
+                                <td>#<?= esc($bill['bill_id']) ?></td>
+                                <td><?= esc($bill['patient_name'] ?? 'N/A') ?></td>
+                                <td><?= esc($bill['bill_date'] ?? '') ?></td>
+                                <td><?= esc($bill['service_name'] ?? '—') ?></td>
+                                <td>₱<?= number_format((float)($bill['final_amount'] ?? 0), 2) ?></td>
+                                <td>
+                                    <?php $ps = strtolower($bill['payment_status'] ?? 'pending'); ?>
+                                    <span class="<?= $ps === 'paid' ? 'status-paid' : 'status-pending' ?>">
+                                        <?= ucfirst($ps) ?>
+                                    </span>
+                                </td>
+                                <td class="action-buttons">
+                                    <a href="<?= base_url('billing/show/' . (int)$bill['id']) ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
+                                    <button type="button" class="btn btn-edit" data-action="edit">Edit</button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="7" style="text-align:center">No bills found</td></tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -276,69 +237,62 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Search functionality
-    document.getElementById('searchButton').addEventListener('click', filterBills);
-    document.getElementById('searchInput').addEventListener('keyup', function(e) {
-        if (e.key === 'Enter') {
-            filterBills();
-        }
-    });
-
-    function filterBills() {
-        const input = document.getElementById('searchInput').value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-        
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(input) ? '' : 'none';
-        });
-    }
-
-    // Handle edit actions
     document.addEventListener('click', function(e) {
-        if (e.target.closest('.btn-edit')) {
-            editBill(e.target.closest('.btn-edit'));
+        const editBtn = e.target.closest('button[data-action="edit"]');
+        if (editBtn) {
+            const tr = editBtn.closest('tr');
+            const id = tr?.dataset?.id;
+            if (!id) return;
+            fetch('<?= base_url('billing/edit/') ?>' + id)
+                .then(r => r.json())
+                .then(data => openEditModal(data))
+                .catch(() => Swal.fire('Error', 'Failed to load bill', 'error'));
         }
     });
 
-    function editBill(button) {
-        const row = button.closest('tr');
-        const cells = row.cells;
-        const billNumber = cells[0].textContent;
-        
-        // In a real application, you would open an edit form/modal here
+    function openEditModal(bill) {
+        const content = `
+            <div style="display:grid; grid-template-columns: 160px 1fr; gap: 12px 16px; align-items: center; text-align:left;">
+                <label style="margin:0; color:#374151; font-weight:600;">Invoice #</label>
+                <input type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${bill.bill_id || ''}" disabled>
+
+                <label style="margin:0; color:#374151; font-weight:600;">Patient</label>
+                <div>
+                    <input id="em_patient_id" type="number" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${bill.patient_id || ''}" disabled title="Patient is fixed for this bill">
+                    <div style="font-size:12px; color:#6b7280; margin-top:6px;">Current: ${bill.patient_name || 'N/A'}</div>
+                </div>
+
+                <label style="margin:0; color:#374151; font-weight:600;">Amount</label>
+                <input id="em_final_amount" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.final_amount || 0}">
+
+                <label style="margin:0; color:#374151; font-weight:600;">Status</label>
+                <select id="em_payment_status" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;">
+                    ${['pending','partial','paid','overdue'].map(s => `<option value="${s}" ${String(bill.payment_status||'').toLowerCase()===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+                </select>
+
+                <label style="margin:0; color:#374151; font-weight:600;">Bill Date</label>
+                <input id="em_bill_date" type="date" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.bill_date || ''}">
+
+            </div>`;
+
         Swal.fire({
             title: 'Edit Bill',
-            text: `Edit bill ${billNumber}`,
-            html: `
-                <div class="text-left">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Patient Name</label>
-                        <input type="text" class="w-full px-3 py-2 border rounded" value="${cells[1].textContent}">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Amount</label>
-                        <input type="text" class="w-full px-3 py-2 border rounded" value="${cells[4].textContent}">
-                    </div>
-                </div>
-            `,
+            html: content,
+            width: 650,
             showCancelButton: true,
             confirmButtonText: 'Save Changes',
-            cancelButtonText: 'Cancel',
-            showLoaderOnConfirm: true,
+            focusConfirm: false,
             preConfirm: () => {
-                // In a real application, you would save the changes here
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve();
-                    }, 1000);
-                });
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire('Success!', 'Bill has been updated.', 'success');
+                const fd = new FormData();
+                fd.append('final_amount', document.getElementById('em_final_amount').value);
+                fd.append('payment_status', document.getElementById('em_payment_status').value);
+                fd.append('bill_date', document.getElementById('em_bill_date').value);
+                return fetch('<?= base_url('billing/update/') ?>' + bill.id, { method: 'POST', body: fd })
+                    .then(r => r.ok ? r.json() : r.json().then(err => Promise.reject(err)))
+                    .catch(err => { Swal.showValidationMessage(err.errors ? Object.values(err.errors).join('<br>') : 'Update failed'); });
             }
+        }).then(res => {
+            if (res.isConfirmed) location.reload();
         });
     }
 </script>

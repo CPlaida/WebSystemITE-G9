@@ -11,6 +11,25 @@ class PatientModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
+
+    /**
+     * Search patients by name and return minimal fields for autocomplete.
+     */
+    public function searchPatients(string $term): array
+    {
+        $term = trim($term);
+        if ($term === '') return [];
+        $builder = $this->builder();
+        $builder->select("id, CONCAT(first_name, ' ', COALESCE(last_name, '')) AS name");
+        $builder->groupStart()
+            ->like('first_name', $term)
+            ->orLike('last_name', $term)
+            ->groupEnd();
+        $builder->orderBy('first_name', 'ASC');
+        $builder->limit(10);
+        return $builder->get()->getResultArray();
+    }
+
     protected $allowedFields = [
         'first_name',
         'last_name',

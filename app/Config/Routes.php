@@ -79,12 +79,20 @@ $routes->get('appointments/upcoming', 'Appointment::getUpcoming');
 $routes->get('appointments/search', 'Appointment::search');
 $routes->get('appointments/stats', 'Appointment::getStats');
 
+
 // Billing Routes
 $routes->get('billing', 'Billing::index', ['filter' => 'auth']);
 $routes->get('billing/process', 'Billing::process', ['filter' => 'auth']);
 $routes->post('billing/save', 'Billing::save', ['filter' => 'auth']);
-$routes->get('billing/receipt/(:num)', 'Billing::receipt/$1', ['filter' => 'auth']);
-$routes->post('billing/delete/(:num)', 'Billing::delete/$1');
+// New normalized Billing routes
+$routes->post('billing/store', 'Billing::store', ['filter' => 'auth']);
+// New: store header + items in a single transaction
+$routes->post('billing/store-with-items', 'Billing::storeWithItems', ['filter' => 'auth']);
+$routes->get('billing/edit/(:num)', 'Billing::edit/$1', ['filter' => 'auth']);
+$routes->post('billing/update/(:num)', 'Billing::update/$1', ['filter' => 'auth']);
+$routes->get('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth']);
+$routes->post('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth']);
+$routes->get('billing/show/(:num)', 'Billing::show/$1', ['filter' => 'auth']);
 
 // Laboratory Routes
 $routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,admin']);
