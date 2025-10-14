@@ -236,19 +236,22 @@ class DoctorScheduleModel extends Model
                                ->where('status !=', 'cancelled')
                                ->findColumn('doctor_id');
         
-        $userModel = new \App\Models\UserModel();
-        $query = $userModel->where('role', 'doctor')
-                          ->where('is_available', true)
-                          ->where('is_on_leave', false);
+        // Select doctors via roles table join (users.role column no longer exists)
+        $query = $this->db->table('users u')
+                          ->select('u.*')
+                          ->join('roles r', 'u.role_id = r.id', 'left')
+                          ->where('r.name', 'doctor')
+                          ->where('u.is_available', true)
+                          ->where('u.is_on_leave', false);
         
         if (!empty($scheduledDoctors)) {
-            $query->whereNotIn('id', $scheduledDoctors);
+            $query->whereNotIn('u.id', $scheduledDoctors);
         }
         
         // Additional check for night shift consecutive rule
         if ($shiftType === 'night') {
             $availableDoctors = [];
-            $allDoctors = $query->findAll();
+            $allDoctors = $query->get()->getResultArray();
             
             foreach ($allDoctors as $doctor) {
                 if ($this->canWorkConsecutiveNights($doctor['id'], $shiftDate)) {
@@ -259,7 +262,7 @@ class DoctorScheduleModel extends Model
             return $availableDoctors;
         }
         
-        return $query->findAll();
+        return $query->get()->getResultArray();
     }
 
     /**
@@ -281,11 +284,12 @@ class DoctorScheduleModel extends Model
                     SUM(CASE WHEN ds.shift_type = 'morning' THEN 1 ELSE 0 END) as morning_shifts,
                     SUM(CASE WHEN ds.shift_type = 'afternoon' THEN 1 ELSE 0 END) as afternoon_shifts
                 FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
                 LEFT JOIN doctor_schedules ds ON u.id = ds.doctor_id 
                     AND ds.shift_date >= ? 
                     AND ds.shift_date <= ?
                     AND ds.status != 'cancelled'
-                WHERE u.role = 'doctor'
+                WHERE r.name = 'doctor'
                 GROUP BY u.id, u.username
                 ORDER BY shift_count DESC";
         
@@ -302,6 +306,40 @@ class DoctorScheduleModel extends Model
             $times = $this->getShiftTimes($data['shift_type']);
             $data['start_time'] = $times[0];
             $data['end_time'] = $times[1];
+        }
+
+        // Enforce past-time rules at the model layer as well
+        if (!empty($data['shift_date'])) {
+            $tz = new \DateTimeZone('Asia/Manila');
+            $now = new \DateTime('now', $tz);
+            $today = $now->format('Y-m-d');
+
+            // Block past dates outright
+            if (strtotime($data['shift_date']) < strtotime($today)) {
+                return [
+                    'success' => false,
+                    'message' => 'Cannot add a shift in the past date.'
+                ];
+            }
+
+            // If today, block if start already passed
+            if ($data['shift_date'] === $today && !empty($data['shift_type'])) {
+                $startMap = [
+                    'morning' => '06:00:00',
+                    'afternoon' => '14:00:00',
+                    'night' => '22:00:00'
+                ];
+                $type = strtolower(trim($data['shift_type']));
+                if (isset($startMap[$type])) {
+                    $shiftStart = new \DateTime($data['shift_date'] . ' ' . $startMap[$type], $tz);
+                    if ($now >= $shiftStart) {
+                        return [
+                            'success' => false,
+                            'message' => 'Cannot add ' . $type . ' shift for today as the start time has already passed.'
+                        ];
+                    }
+                }
+            }
         }
         
         // Check for conflicts before inserting

@@ -10,8 +10,7 @@ class DoctorSeeder extends Seeder
     {
         $doctors = [
             [
-                'doctor_id' => 'DOC001',
-                'user_id' => null,
+                'username' => 'dr.smith',
                 'first_name' => 'John',
                 'last_name' => 'Smith',
                 'email' => 'john.smith@hospital.com',
@@ -21,14 +20,11 @@ class DoctorSeeder extends Seeder
                 'experience_years' => 15,
                 'qualification' => 'MD, MBBS',
                 'consultation_fee' => 150.00,
-                'schedule' => 'Mon-Fri: 9:00 AM - 5:00 PM',
+                'schedule' => 'Mon-Fri: 09:00-17:00',
                 'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'doctor_id' => 'DOC002',
-                'user_id' => null,
+                'username' => 'dr.johnson',
                 'first_name' => 'Sarah',
                 'last_name' => 'Johnson',
                 'email' => 'sarah.johnson@hospital.com',
@@ -38,14 +34,11 @@ class DoctorSeeder extends Seeder
                 'experience_years' => 12,
                 'qualification' => 'MD, Cardiology Specialist',
                 'consultation_fee' => 200.00,
-                'schedule' => 'Mon-Wed-Fri: 10:00 AM - 6:00 PM',
+                'schedule' => 'Mon-Wed-Fri: 10:00-18:00',
                 'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'doctor_id' => 'DOC003',
-                'user_id' => null,
+                'username' => 'dr.brown',
                 'first_name' => 'Michael',
                 'last_name' => 'Brown',
                 'email' => 'michael.brown@hospital.com',
@@ -55,52 +48,96 @@ class DoctorSeeder extends Seeder
                 'experience_years' => 8,
                 'qualification' => 'MD, Pediatrics',
                 'consultation_fee' => 120.00,
-                'schedule' => 'Tue-Thu-Sat: 8:00 AM - 4:00 PM',
+                'schedule' => 'Tue-Thu-Sat: 08:00-16:00',
                 'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
             ],
-            [
-                'doctor_id' => 'DOC004',
-                'user_id' => null,
-                'first_name' => 'Emily',
-                'last_name' => 'Davis',
-                'email' => 'emily.davis@hospital.com',
-                'phone' => '+1234567893',
-                'specialization' => 'Dermatology',
-                'license_number' => 'LIC001237',
-                'experience_years' => 10,
-                'qualification' => 'MD, Dermatology Specialist',
-                'consultation_fee' => 180.00,
-                'schedule' => 'Mon-Thu: 11:00 AM - 7:00 PM',
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'doctor_id' => 'DOC005',
-                'user_id' => null,
-                'first_name' => 'Robert',
-                'last_name' => 'Wilson',
-                'email' => 'robert.wilson@hospital.com',
-                'phone' => '+1234567894',
-                'specialization' => 'Orthopedics',
-                'license_number' => 'LIC001238',
-                'experience_years' => 20,
-                'qualification' => 'MD, Orthopedic Surgeon',
-                'consultation_fee' => 250.00,
-                'schedule' => 'Mon-Wed-Fri: 9:00 AM - 3:00 PM',
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]
         ];
 
-        // Insert doctors
-        foreach ($doctors as $doctor) {
-            $this->db->table('doctors')->insert($doctor);
+        $now = date('Y-m-d H:i:s');
+
+        $this->db->transStart();
+
+        // Ensure 'doctor' role exists and get its ID
+        $roleQuery = $this->db->table('roles')->where('name', 'doctor')->get();
+        $roleRow = $roleQuery ? $roleQuery->getRowArray() : null;
+        if (!$roleRow) {
+            $this->db->table('roles')->insert(['name' => 'doctor']);
+            $doctorRoleId = $this->db->insertID();
+        } else {
+            $doctorRoleId = (int)$roleRow['id'];
         }
 
-        echo "Inserted " . count($doctors) . " sample doctors.\n";
+        $createdUsers = 0;
+        $updatedUsers = 0;
+        $upsertedDoctors = 0;
+        $hasDoctorsTable = $this->db->tableExists('doctors');
+
+        foreach ($doctors as $doc) {
+            // Find-or-create user by email
+            $user = $this->db->table('users')->where('email', $doc['email'])->get();
+            $userRow = $user ? $user->getRowArray() : null;
+
+            if (!$userRow) {
+                $this->db->table('users')->insert([
+                    'username'   => $doc['username'],
+                    'email'      => $doc['email'],
+                    'password'   => password_hash('doctor123', PASSWORD_DEFAULT),
+                    'role_id'    => $doctorRoleId,
+                    'status'     => 'active',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+                $userId = (int)$this->db->insertID();
+                $createdUsers++;
+            } else {
+                $userId = (int)$userRow['id'];
+                if ((int)($userRow['role_id'] ?? 0) !== $doctorRoleId) {
+                    $this->db->table('users')->where('id', $userId)->update([
+                        'role_id' => $doctorRoleId,
+                        'updated_at' => $now,
+                    ]);
+                    $updatedUsers++;
+                }
+            }
+
+            // Upsert doctor profile if table exists
+            if ($hasDoctorsTable) {
+                $profile = [
+                    'user_id'          => $userId,
+                    'first_name'       => $doc['first_name'],
+                    'last_name'        => $doc['last_name'],
+                    'email'            => $doc['email'],
+                    'phone'            => $doc['phone'],
+                    'specialization'   => $doc['specialization'],
+                    'license_number'   => $doc['license_number'],
+                    'experience_years' => $doc['experience_years'],
+                    'qualification'    => $doc['qualification'],
+                    'consultation_fee' => $doc['consultation_fee'],
+                    'schedule'         => $doc['schedule'],
+                    'status'           => $doc['status'],
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
+                ];
+
+                // Match by email first (or fallback to user_id)
+                $existing = $this->db->table('doctors')->where('email', $doc['email'])->get();
+                $existingRow = $existing ? $existing->getRowArray() : null;
+
+                if ($existingRow) {
+                    $this->db->table('doctors')->where('id', $existingRow['id'])->update($profile);
+                } else {
+                    $this->db->table('doctors')->insert($profile);
+                }
+                $upsertedDoctors++;
+            }
+        }
+
+        $this->db->transComplete();
+
+        $status = $this->db->transStatus() ? 'committed' : 'rolled back';
+        if (!$hasDoctorsTable) {
+            echo "Note: 'doctors' table not found. Skipped doctor profile upserts." . PHP_EOL;
+        }
+        echo "Doctor seeding {$status}. Users created: {$createdUsers}, users updated: {$updatedUsers}, doctor profiles upserted: {$upsertedDoctors}." . PHP_EOL;
     }
 }

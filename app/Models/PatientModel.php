@@ -7,12 +7,11 @@ use CodeIgniter\Model;
 class PatientModel extends Model
 {
     protected $table = 'patients';
-    protected $primaryKey = 'patient_id';
-    protected $useAutoIncrement = false;
+    protected $primaryKey = 'id';
+    protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $allowedFields = [
-        'patient_id',
         'first_name',
         'last_name',
         'email',
@@ -20,6 +19,7 @@ class PatientModel extends Model
         'gender',
         'date_of_birth',
         'address',
+        'type',
         'blood_type',
         'emergency_contact',
         'medical_history',
@@ -34,32 +34,18 @@ class PatientModel extends Model
     protected $skipValidation = false;
 
     protected $validationRules = [
-        'first_name' => 'required|min_length[2]|max_length[100]',
-        'last_name' => 'permit_empty|max_length[100]',
-        'email' => 'permit_empty|valid_email|is_unique[patients.email,patient_id,{patient_id}]',
+        'first_name' => "required|min_length[2]|max_length[100]|regex_match[/^[A-Za-z\s\-\'\.]+$/]",
+        'last_name' => "permit_empty|max_length[100]|regex_match[/^[A-Za-z\s\-\'\.]+$/]",
+        'email' => 'permit_empty|valid_email|is_unique[patients.email,id,{id}]',
         'phone' => 'permit_empty|max_length[20]',
         'gender' => 'required|in_list[male,female,other]',
         'date_of_birth' => 'required|valid_date',
-        'status' => 'in_list[active,inactive]',
-        'patient_id' => 'is_unique[patients.patient_id]'
+        'type' => 'permit_empty|in_list[inpatient,outpatient]',
+        'status' => 'in_list[active,inactive]'
     ];
 
-    protected $beforeInsert = ['generatePatientId', 'setCreatedAt'];
+    protected $beforeInsert = ['setCreatedAt'];
     protected $beforeUpdate = ['setUpdatedAt'];
-
-    protected function generatePatientId(array $data)
-    {
-        if (!isset($data['data']['patient_id']) || empty($data['data']['patient_id'])) {
-            do {
-                // Generate a random 8-character alphanumeric ID
-                $randomId = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
-                // Format as XXXX-XXXX
-                $data['data']['patient_id'] = substr($randomId, 0, 4) . '-' . substr($randomId, 4, 4);
-            } while ($this->where('patient_id', $data['data']['patient_id'])->countAllResults() > 0);
-        }
-
-        return $data;
-    }
 
     protected $validationMessages = [
         'email' => [
@@ -82,3 +68,4 @@ class PatientModel extends Model
         return $data;
     }
 }
+

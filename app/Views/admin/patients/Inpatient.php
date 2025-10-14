@@ -48,6 +48,7 @@
 
       <form id="inpatientForm" method="POST" action="<?= base_url('admin/patients/register') ?>">
         <?= csrf_field() ?>
+        <input type="hidden" name="type" value="inpatient">
 
         <!-- Personal Information -->
         <div class="form-section">

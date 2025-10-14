@@ -371,7 +371,7 @@
             <?php if (!empty($inpatients)): ?>
               <?php foreach ($inpatients as $patient): ?>
                 <tr>
-                  <td><?= esc($patient['patient_id']) ?></td>
+                  <td><?= esc($patient['id']) ?></td>
                   <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
                   <td><?= esc($patient['phone']) ?></td>
                   <td><?= esc($patient['address'] ?? 'N/A') ?></td>
@@ -420,7 +420,7 @@
             <?php if (!empty($outpatients)): ?>
               <?php foreach ($outpatients as $patient): ?>
                 <tr>
-                  <td><?= esc($patient['patient_id'] ?? $patient['id']) ?></td>
+                  <td><?= esc($patient['id']) ?></td>
                   <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
                   <td><?= esc($patient['phone']) ?></td>
                   <td><?= esc($patient['address'] ?? 'N/A') ?></td>

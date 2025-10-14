@@ -14,11 +14,6 @@ class CreateAppointmentsTable extends Migration
                 'unsigned'       => true, 
                 'auto_increment' => true,
             ],
-            'appointment_id' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 20,
-                'unique'     => true,
-            ],
             'patient_id' => [
                 'type'       => 'INT',
                 'unsigned'   => true, 
@@ -63,7 +58,7 @@ class CreateAppointmentsTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('patient_id', 'patients', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('doctor_id', 'users', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('doctor_id', 'doctors', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('appointments');
     }
 

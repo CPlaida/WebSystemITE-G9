@@ -10,12 +10,18 @@ class UserSeeder extends Seeder
     {
         $now = date('Y-m-d H:i:s');
 
+        // Resolve role IDs by role name
+        $roleIdByName = function (string $name) {
+            $row = $this->db->table('roles')->where('name', $name)->get()->getRowArray();
+            return $row ? (int) $row['id'] : null;
+        };
+
         $users = [
             [
                 'username'   => 'admin',
                 'email'      => 'admin@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'admin',
+                'role_id'    => $roleIdByName('admin'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -24,7 +30,7 @@ class UserSeeder extends Seeder
                 'username'   => 'doctor',
                 'email'      => 'doctor@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'doctor',
+                'role_id'    => $roleIdByName('doctor'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -33,7 +39,7 @@ class UserSeeder extends Seeder
                 'username'   => 'nurse',
                 'email'      => 'nurse@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'nurse',
+                'role_id'    => $roleIdByName('nurse'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -42,7 +48,7 @@ class UserSeeder extends Seeder
                 'username'   => 'reception',
                 'email'      => 'receptionist@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'receptionist',
+                'role_id'    => $roleIdByName('receptionist'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -51,7 +57,7 @@ class UserSeeder extends Seeder
                 'username'   => 'accounting',
                 'email'      => 'accounting@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'accounting',
+                'role_id'    => $roleIdByName('accounting'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -60,7 +66,7 @@ class UserSeeder extends Seeder
                 'username'   => 'itstaff',
                 'email'      => 'itstaff@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'itstaff',
+                'role_id'    => $roleIdByName('itstaff'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -69,7 +75,7 @@ class UserSeeder extends Seeder
                 'username'   => 'laboratory',
                 'email'      => 'laboratory@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'labstaff',
+                'role_id'    => $roleIdByName('labstaff'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -78,7 +84,7 @@ class UserSeeder extends Seeder
                 'username'   => 'pharmacy',
                 'email'      => 'pharmacist@hms.com',
                 'password'   => password_hash('password123', PASSWORD_DEFAULT),
-                'role'       => 'pharmacist',
+                'role_id'    => $roleIdByName('pharmacist'),
                 'status'     => 'active',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -89,3 +95,4 @@ class UserSeeder extends Seeder
         $this->db->table('users')->insertBatch($users);
     }
 }
+

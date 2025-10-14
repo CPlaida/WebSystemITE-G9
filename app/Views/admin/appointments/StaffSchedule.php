@@ -32,15 +32,7 @@
       <div class="flex justify-between items-center mb-5 p-6">
         <h1 class="text-xl font-bold">Doctor Schedule</h1>
         <div class="flex gap-3 items-center">
-          <button id="btnWorkloadReport" class="border border-blue-400 px-3 py-1 rounded hover:bg-blue-50 text-sm text-blue-600">📊 Workload Report</button>
-          <?php $conflictCount = isset($conflicts) ? count($conflicts) : 0; ?>
-          <button 
-            id="btnConflictSchedules"
-            class="border border-red-400 px-3 py-1 rounded hover:bg-red-50 text-sm text-red-600 <?php if($conflictCount===0) echo 'opacity-50 cursor-not-allowed'; ?>"
-            data-conflict-count="<?= $conflictCount ?>"
-            <?php if ($conflictCount===0): ?>disabled<?php endif; ?>
-          >⚠️ Conflicts (<?= $conflictCount ?>)</button>
-          <button id="btnAddShift" onclick="openAddShift()" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
+          <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
           <div>
           <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>
             <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>
@@ -477,6 +469,7 @@
     </div>
     
     <form id="addShiftForm">
+      <div id="addShiftError" class="text-red-600 text-sm mb-2 hidden"></div>
       <div class="mb-4">
         <label for="staffName" class="block text-sm font-medium text-gray-700 mb-1">Staff Member</label>
         <select id="doctorSelect" name="doctor_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -484,7 +477,7 @@
           <?php if (isset($doctors)): ?>
             <?php if (!empty($doctors)): ?>
               <?php foreach ($doctors as $doctor): ?>
-                <option value="<?= $doctor['id'] ?>" data-name="<?= ucfirst(str_replace('dr.', '', $doctor['username'])) ?>">
+                <option value="<?= $doctor['doctor_id'] ?>" data-name="<?= ucfirst(str_replace('dr.', '', $doctor['username'])) ?>">
                   <?= ucfirst(str_replace('dr.', 'Dr. ', $doctor['username'])) ?>
                 </option>
               <?php endforeach; ?>
@@ -538,15 +531,6 @@
 </div>
 
 <script>
-  // Fallback opener so the button works even if listeners fail to bind
-  function openAddShift() {
-    const addShiftModal = document.getElementById('addShiftModal');
-    if (addShiftModal) {
-      addShiftModal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-  }
-
   // Add Shift Modal Functionality
   document.addEventListener('DOMContentLoaded', function() {
     const addShiftModal = document.getElementById('addShiftModal');
@@ -554,7 +538,6 @@
     const closeAddShiftModal = document.getElementById('closeAddShiftModal');
     const cancelAddShift = document.getElementById('cancelAddShift');
     const addShiftForm = document.getElementById('addShiftForm');
-    const btnWorkloadReport = document.getElementById('btnWorkloadReport');
 
     // Open modal
     btnAddShift.addEventListener('click', function() {
@@ -571,10 +554,6 @@
     closeAddShiftModal.addEventListener('click', closeModal);
     cancelAddShift.addEventListener('click', closeModal);
 
-    // Open workload report modal
-    if (btnWorkloadReport) {
-      btnWorkloadReport.addEventListener('click', showWorkloadReport);
-    }
 
     // Close modal when clicking outside
     addShiftModal.addEventListener('click', function(e) {
@@ -593,11 +572,24 @@
       const shiftDate = document.getElementById('shiftDate').value;
       const shiftType = document.getElementById('shiftType').value;
       const department = document.getElementById('department').value;
-      
+
       // Validate form
       if (!doctorId || !shiftDate || !shiftType || !department) {
-        alert('Please fill in all required fields.');
+        showAddShiftError('Please fill in all required fields.');
         return;
+      }
+
+      // Client-side guard: prevent past-time submission for today
+      hideAddShiftError();
+      const now = new Date();
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (shiftDate === todayStr) {
+        const currentHour = now.getHours();
+        const pastMap = { morning: 6, afternoon: 14, night: 22 };
+        if (pastMap[shiftType] !== undefined && currentHour >= pastMap[shiftType]) {
+          showAddShiftError('Selected shift time has already passed today. Please choose a future shift.');
+          return;
+        }
       }
       
       // Send AJAX request to add schedule
@@ -625,15 +617,18 @@
           window.location.reload();
         } else {
           if (data.conflicts && data.conflicts.length > 0) {
-            alert('Scheduling conflict detected. Please choose a different time.');
+            showAddShiftError('Scheduling conflict detected. Please choose a different time.');
+          } else if ((data.message || '').toLowerCase().includes('past date')) {
+            // Do not alert; show inline guidance instead
+            showAddShiftError('Selected shift time has already passed today. Please choose a future shift.');
           } else {
-            alert('Error: ' + (data.message || 'Failed to add schedule'));
+            showAddShiftError(data.message || 'Failed to add schedule');
           }
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while adding the schedule.');
+        showAddShiftError('An error occurred while adding the schedule.');
       });
     });
 
@@ -692,81 +687,23 @@
       }
     }
 
+    // Inline error helpers
+    function showAddShiftError(msg) {
+      const el = document.getElementById('addShiftError');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+    function hideAddShiftError() {
+      const el = document.getElementById('addShiftError');
+      if (!el) return;
+      el.textContent = '';
+      el.classList.add('hidden');
+    }
+
     // Initialize and bind
     updateShiftTypeOptions();
     shiftDateEl.addEventListener('change', updateShiftTypeOptions);
   });
-
-  // Workload Report Modal
-  function showWorkloadReport() {
-    fetch('<?= base_url('/doctor/getWorkloadDistribution') ?>')
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          displayWorkloadModal(data.workload);
-        }
-      })
-      .catch(error => console.error('Error fetching workload data:', error));
-  }
-
-  function displayWorkloadModal(workloadData) {
-    const modalHTML = `
-      <div id="workloadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white max-w-4xl w-full rounded-lg shadow-xl p-6 relative max-h-96 overflow-y-auto">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">📊 Monthly Workload Distribution</h3>
-            <button onclick="closeWorkloadModal()" class="text-gray-500 hover:text-gray-700">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-          
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Shifts</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">🌅 Morning</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">🌞 Afternoon</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">🌙 Night</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Workload</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                ${workloadData.map(doctor => `
-                  <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${doctor.doctor_name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.shift_count}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.morning_shifts}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.afternoon_shifts}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${doctor.night_shifts}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="flex items-center">
-                        <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div class="bg-blue-600 h-2 rounded-full" style="width: ${Math.min(100, (doctor.shift_count / 20) * 100)}%"></div>
-                        </div>
-                        <span class="text-xs text-gray-500">${doctor.shift_count}/20</span>
-                      </div>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-  }
-
-  function closeWorkloadModal() {
-    const modal = document.getElementById('workloadModal');
-    if (modal) {
-      modal.remove();
-    }
-  }
 </script>
 <?= $this->endSection() ?>

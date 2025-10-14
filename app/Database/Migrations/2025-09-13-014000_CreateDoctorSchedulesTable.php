@@ -94,6 +94,7 @@ class CreateDoctorSchedulesTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addKey('doctor_id');
         $this->forge->addKey('shift_date');
+        $this->forge->addForeignKey('doctor_id', 'doctors', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('doctor_schedules');
     }
 

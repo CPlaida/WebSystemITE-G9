@@ -14,26 +14,6 @@ class Doctor extends BaseController
         $this->doctorScheduleModel = new DoctorScheduleModel();
     }
 
-    public function index()
-    {
-        return $this->dashboard();
-    }
-
-    public function dashboard()
-    {
-        $userModel = new UserModel();
-
-        // Example counts specific for doctors (you can customize)
-        $data['totalPatients'] = $userModel->where('role', 'patient')->countAllResults();
-
-        // Latest 5 patients (example, depends on your table data)
-        $data['latestPatients'] = $userModel->where('role', 'patient')
-                                            ->orderBy('created_at', 'DESC')
-                                            ->findAll(5);
-
-        return view('doctor/dashboard', $data);
-    }
-
     /**
      * Display the doctor scheduling interface
      */
@@ -45,7 +25,7 @@ class Doctor extends BaseController
         }
 
         $userRole = session()->get('role');
-        if (!in_array($userRole, ['Hospital Administrator', 'admin', 'doctor'])) {
+        if (!in_array($userRole, ['admin', 'doctor'])) {
             return redirect()->to('/dashboard')->with('error', 'Access denied. Insufficient permissions.');
         }
 
@@ -56,9 +36,13 @@ class Doctor extends BaseController
         // Get schedules for the date range
         $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($startDate, $endDate);
         
-        // Get all doctors for the dropdown
+        // Get all doctors for the dropdown (use doctors.id to satisfy FK doctor_schedules.doctor_id -> doctors.id)
         $userModel = new UserModel();
-        $doctors = $userModel->where('role', 'doctor')->findAll();
+        $doctors = $userModel->select('doctors.id AS doctor_id, users.id AS user_id, users.username, doctors.first_name, doctors.last_name')
+                             ->join('roles r', 'users.role_id = r.id', 'left')
+                             ->join('doctors', 'doctors.user_id = users.id', 'left')
+                             ->where('r.name', 'doctor')
+                             ->findAll();
         
         // Debug: Log the doctors data
         log_message('debug', 'Doctors found: ' . count($doctors));
@@ -87,7 +71,7 @@ class Doctor extends BaseController
     public function addSchedule()
     {
         if (!$this->request->isAJAX()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request']);
         }
 
         try {
@@ -116,33 +100,35 @@ class Doctor extends BaseController
 
             // If selected date is in the past, block outright
             if (strtotime($data['shift_date']) < strtotime($today)) {
-                return $this->response->setJSON([
+                return $this->response->setStatusCode(400)->setJSON([
                     'success' => false,
                     'message' => 'Cannot add a shift in the past date.'
                 ]);
             }
 
-            // If selected date is today, block if shift start time already passed
+            // If selected date is today, block if shift start time already passed (exact DateTime check)
             if ($data['shift_date'] === $today) {
-                $shiftStartHours = [
-                    'morning' => 6,   // 06:00
-                    'afternoon' => 14, // 14:00
-                    'night' => 22     // 22:00
+                $shiftStartMap = [
+                    'morning' => '06:00:00',
+                    'afternoon' => '14:00:00',
+                    'night' => '22:00:00'
                 ];
-
                 $type = strtolower(trim($data['shift_type'] ?? ''));
-                if (isset($shiftStartHours[$type]) && $currentHour >= $shiftStartHours[$type]) {
-                    return $this->response->setJSON([
-                        'success' => false,
-                        'message' => 'Cannot add ' . $type . ' shift for today as the start time has already passed.'
-                    ]);
+                if (isset($shiftStartMap[$type])) {
+                    $shiftStart = new \DateTime($data['shift_date'] . ' ' . $shiftStartMap[$type], $tz);
+                    if ($now >= $shiftStart) {
+                        return $this->response->setStatusCode(400)->setJSON([
+                            'success' => false,
+                            'message' => 'Cannot add ' . $type . ' shift for today as the start time has already passed.'
+                        ]);
+                    }
                 }
             }
 
             // Additional validation for consecutive night shifts
             if ($data['shift_type'] === 'night') {
                 if (!$this->doctorScheduleModel->canWorkConsecutiveNights($data['doctor_id'], $data['shift_date'])) {
-                    return $this->response->setJSON([
+                    return $this->response->setStatusCode(400)->setJSON([
                         'success' => false,
                         'message' => 'Doctor cannot work consecutive night shifts. Please choose a different doctor or date.'
                     ]);
@@ -151,7 +137,7 @@ class Doctor extends BaseController
 
             // Validate required fields
             if (empty($data['doctor_id']) || empty($data['shift_date']) || empty($data['shift_type'])) {
-                return $this->response->setJSON([
+                return $this->response->setStatusCode(400)->setJSON([
                     'success' => false, 
                     'message' => 'Missing required fields: doctor_id, shift_date, or shift_type'
                 ]);
@@ -159,7 +145,7 @@ class Doctor extends BaseController
 
             // Check if DoctorScheduleModel exists and is loaded
             if (!$this->doctorScheduleModel) {
-                return $this->response->setJSON([
+                return $this->response->setStatusCode(500)->setJSON([
                     'success' => false, 
                     'message' => 'DoctorScheduleModel not loaded'
                 ]);
@@ -172,7 +158,7 @@ class Doctor extends BaseController
             return $this->response->setJSON($result);
         } catch (\Exception $e) {
             log_message('error', 'Add Schedule Error: ' . $e->getMessage());
-            return $this->response->setJSON([
+            return $this->response->setStatusCode(500)->setJSON([
                 'success' => false, 
                 'message' => 'Database error: ' . $e->getMessage()
             ]);
@@ -185,7 +171,11 @@ class Doctor extends BaseController
     public function updateSchedule($id)
     {
         if (!$this->request->isAJAX()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request']);
+        }
+
+        if (!is_numeric($id) || (int)$id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid schedule id']);
         }
 
         $data = [
@@ -211,7 +201,7 @@ class Doctor extends BaseController
             );
             
             if (!empty($conflicts)) {
-                return $this->response->setJSON([
+                return $this->response->setStatusCode(409)->setJSON([
                     'success' => false,
                     'message' => 'Scheduling conflict detected',
                     'conflicts' => $conflicts
@@ -227,7 +217,7 @@ class Doctor extends BaseController
                 'message' => 'Schedule updated successfully'
             ]);
         } else {
-            return $this->response->setJSON([
+            return $this->response->setStatusCode(400)->setJSON([
                 'success' => false,
                 'message' => 'Failed to update schedule',
                 'errors' => $this->doctorScheduleModel->errors()
@@ -241,7 +231,11 @@ class Doctor extends BaseController
     public function deleteSchedule($id)
     {
         if (!$this->request->isAJAX()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request']);
+        }
+
+        if (!is_numeric($id) || (int)$id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid schedule id']);
         }
 
         $result = $this->doctorScheduleModel->delete($id);
@@ -252,7 +246,7 @@ class Doctor extends BaseController
                 'message' => 'Schedule deleted successfully'
             ]);
         } else {
-            return $this->response->setJSON([
+            return $this->response->setStatusCode(400)->setJSON([
                 'success' => false,
                 'message' => 'Failed to delete schedule'
             ]);
@@ -335,79 +329,12 @@ class Doctor extends BaseController
         }
 
         $userModel = new UserModel();
-        $doctors = $userModel->select('id, username, email')
-                            ->where('role', 'doctor')
-                            ->findAll();
+        $doctors = $userModel->select('doctors.id AS doctor_id, users.username, users.email, doctors.first_name, doctors.last_name')
+                             ->join('roles r', 'users.role_id = r.id', 'left')
+                             ->join('doctors', 'doctors.user_id = users.id', 'left')
+                             ->where('r.name', 'doctor')
+                             ->findAll();
 
-        return $this->response->setJSON([
-            'success' => true,
-            'doctors' => $doctors
-        ]);
-    }
-
-    /**
-     * Get available doctors for a specific date and shift type
-     */
-    public function getAvailableDoctors()
-    {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
-        }
-
-        $shiftDate = $this->request->getPost('shift_date');
-        $shiftType = $this->request->getPost('shift_type');
-
-        $availableDoctors = $this->doctorScheduleModel->getAvailableDoctors($shiftDate, $shiftType);
-
-        return $this->response->setJSON([
-            'success' => true,
-            'doctors' => $availableDoctors
-        ]);
-    }
-
-    /**
-     * Get workload distribution for fairness tracking
-     */
-    public function getWorkloadDistribution()
-    {
-        $month = $this->request->getGet('month') ?? date('m');
-        $year = $this->request->getGet('year') ?? date('Y');
-
-        $workload = $this->doctorScheduleModel->getWorkloadDistribution($month, $year);
-
-        return $this->response->setJSON([
-            'success' => true,
-            'workload' => $workload
-        ]);
-    }
-
-    /**
-     * Export schedule to PDF
-     */
-    public function exportToPDF()
-    {
-        $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
-        $endDate = $this->request->getGet('end_date') ?? date('Y-m-t');
-        
-        $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($startDate, $endDate);
-        
-        // Group schedules by date for better PDF layout
-        $groupedSchedules = [];
-        foreach ($schedules as $schedule) {
-            $date = $schedule['shift_date'];
-            if (!isset($groupedSchedules[$date])) {
-                $groupedSchedules[$date] = [];
-            }
-            $groupedSchedules[$date][] = $schedule;
-        }
-        
-        $data = [
-            'schedules' => $groupedSchedules,
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'generated_at' => date('Y-m-d H:i:s')
-        ];
-        
-        return view('doctor/schedule_pdf', $data);
+        return $this->response->setJSON(['success' => true, 'doctors' => $doctors]);
     }
 }

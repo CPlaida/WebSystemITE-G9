@@ -66,6 +66,7 @@ class Patients extends BaseController
             'gender' => $this->request->getPost('gender'),
             'date_of_birth' => $this->request->getPost('date_of_birth'),
             'address' => $this->request->getPost('address'),
+            'type' => $this->request->getPost('type') ?? 'outpatient',
             'blood_type' => $this->request->getPost('blood_type'),
             'emergency_contact' => $this->request->getPost('emergency_contact'),
             'medical_history' => $this->request->getPost('medical_history'),

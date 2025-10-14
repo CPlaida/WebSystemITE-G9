@@ -11,11 +11,16 @@ class Dashboard extends BaseController
             return redirect()->to('/login');
         }
 
-        // Get user role and username from session
-        $userRole = session()->get('role') ?? 'guest';
+        // Use role from session only; DB now enforces role_id on login
+        $userRole = session()->get('role') ?: 'guest';
         $username = session()->get('username') ?? 'User';
 
-        // Initialize dashboard data with default values
+        $data = $this->buildDashboardData($userRole, $username);
+        return view('auth/dashboard', $data);
+    }
+
+    private function buildDashboardData(string $userRole, string $username): array
+    {
         $data = [
             'userRole' => $userRole,
             'username' => $username,
@@ -39,15 +44,13 @@ class Dashboard extends BaseController
             ]
         ];
 
-        // Load necessary models
         $appointmentModel = new \App\Models\AppointmentModel();
         $patientModel = new \App\Models\PatientModel();
         $billingModel = new \App\Models\BillingModel();
         $prescriptionModel = new \App\Models\PrescriptionModel();
-        $labTestModel = new \App\Models\LabRequestModel(); // Using LabRequestModel instead of LabTestModel
+        $labTestModel = new \App\Models\LabRequestModel();
 
         try {
-            // Get counts based on user role
             if (in_array($userRole, ['admin', 'receptionist', 'nurse', 'doctor'])) {
                 $data['appointmentsCount'] = $appointmentModel->where('date', date('Y-m-d'))->countAllResults();
                 $data['patientsCount'] = $patientModel->countAllResults();
@@ -76,10 +79,9 @@ class Dashboard extends BaseController
                 $data['labTestsCount'] = $labTestModel->where('status', 'pending')->countAllResults();
             }
         } catch (\Exception $e) {
-            // Log the error but don't break the dashboard
             log_message('error', 'Error loading dashboard data: ' . $e->getMessage());
         }
 
-        return view('auth/dashboard', $data);
+        return $data;
     }
 }

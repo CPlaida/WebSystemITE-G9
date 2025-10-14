@@ -340,7 +340,7 @@
                         <i class="fas fa-notes-medical"></i> Medical Information
                     </h3>
                     <!-- Auto-set as Outpatient -->
-                    <input type="hidden" name="patient_type" value="outpatient">
+                    <input type="hidden" name="type" value="outpatient">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Blood Type</label>

@@ -94,7 +94,9 @@ class AppointmentModel extends Model
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id AND u.role = "doctor"', 'left');
+        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->where('r.name', 'doctor');
         $builder->orderBy('a.appointment_date', 'DESC');
         $builder->orderBy('a.appointment_time', 'ASC');
         
@@ -117,7 +119,9 @@ class AppointmentModel extends Model
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id AND u.role = "doctor"', 'left');
+        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->where('r.name', 'doctor');
         $builder->where('a.appointment_date >=', $startDate);
         $builder->where('a.appointment_date <=', $endDate);
         $builder->orderBy('a.appointment_date', 'ASC');
@@ -158,7 +162,9 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          u.username as doctor_name, 
                          u.email as doctor_email');
-        $builder->join('users u', 'a.doctor_id = u.id AND u.role = "doctor"', 'left');
+        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->where('r.name', 'doctor');
         $builder->where('a.patient_id', $patientId);
         $builder->orderBy('a.appointment_date', 'DESC');
         $builder->orderBy('a.appointment_time', 'ASC');
@@ -178,7 +184,9 @@ class AppointmentModel extends Model
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id AND u.role = "doctor"', 'left');
+        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->where('r.name', 'doctor');
         $builder->where('a.status', $status);
         $builder->orderBy('a.appointment_date', 'ASC');
         $builder->orderBy('a.appointment_time', 'ASC');
@@ -206,7 +214,9 @@ class AppointmentModel extends Model
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id AND u.role = "doctor"', 'left');
+        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->where('r.name', 'doctor');
         $builder->where('a.appointment_date >=', date('Y-m-d'));
         $builder->whereIn('a.status', ['scheduled', 'confirmed']);
         $builder->orderBy('a.appointment_date', 'ASC');
@@ -284,7 +294,9 @@ class AppointmentModel extends Model
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id AND u.role = "doctor"', 'left');
+        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->where('r.name', 'doctor');
         
         $builder->groupStart();
         $builder->like('a.appointment_id', $searchTerm);

@@ -29,10 +29,11 @@ class CreateUserTable extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 255,
             ],
-            'role' => [
-                'type'       => 'ENUM',
-                'constraint' => ['admin', 'doctor', 'nurse', 'receptionist', 'accounting', 'itstaff', 'labstaff', 'pharmacist'],
-                'default'    => 'receptionist',
+            'role_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'null'       => true,
             ],
             'status' => [
                 'type'       => 'ENUM',
@@ -49,8 +50,9 @@ class CreateUserTable extends Migration
             ],
         ]);
 
-        $this->forge->addKey('id', true); // PRIMARY KEY
-        $this->forge->createTable('users', true); // true = IF NOT EXISTS
+        $this->forge->addKey('id', true);
+        $this->forge->addForeignKey('role_id', 'roles', 'id', 'CASCADE', 'SET NULL');
+        $this->forge->createTable('users', true);
     }
 
     public function down()

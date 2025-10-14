@@ -14,11 +14,6 @@ class CreatePatientsTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'patient_id' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 20,
-                'unique'     => true,
-            ],
             'first_name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
@@ -46,6 +41,11 @@ class CreatePatientsTable extends Migration
             'address' => [
                 'type'       => 'TEXT',
                 'null'       => true,
+            ],
+            'type' => [
+                'type'       => 'ENUM',
+                'constraint' => ['inpatient', 'outpatient'],
+                'default'    => 'outpatient',
             ],
             'blood_type' => [
                 'type'       => 'VARCHAR',
@@ -76,6 +76,7 @@ class CreatePatientsTable extends Migration
             ],
         ]);
         $this->forge->addKey('id', true);
+        $this->forge->addKey('type');
         $this->forge->createTable('patients');
     }
 

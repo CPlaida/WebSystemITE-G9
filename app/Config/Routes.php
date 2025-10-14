@@ -18,12 +18,6 @@ $routes->get('login', 'Auth::login');
 $routes->post('auth/process_login', 'Auth::process_login');
 $routes->get('register', 'Auth::register');
 $routes->post('auth/process_register', 'Auth::process_register');
-$routes->get('logout', 'Auth::logout');
-
-// Dashboard Route
-$routes->get('dashboard', 'Dashboard::index');
-
-// Logout Route
 $routes->get('auth/logout', 'Auth::logout');
 
 // Remove index.php from URL
@@ -35,49 +29,26 @@ $routes->set404Override();
 $routes->setAutoRoute(false);
 
 // Role Routes
-// Only logged-in users can see this
+// Only logged-in users can see this (unified dashboard)
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 
-// Only admin can see admin dashboard
+// Backward-compatibility: legacy admin dashboard URL(admin dashboard page diffrent sa unified okii)
 $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
+
+// Admin management pages (not dashboards)
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
 
-// Only doctors can see doctor dashboard
-$routes->get('/doctor/dashboard', 'Doctor\Doctor::index', ['filter' => 'auth:doctor']);
-
 // Doctor scheduling routes
-$routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor,Hospital Administrator']);
-$routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor,Hospital Administrator']);
-$routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor,Hospital Administrator']);
-$routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor,Hospital Administrator']);
-$routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor,Hospital Administrator']);
-$routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor,Hospital Administrator']);
-$routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor,Hospital Administrator']);
-
-// Only nurses can see nurse dashboard
-$routes->get('/nurse/dashboard', 'Nurse::index', ['filter' => 'auth:nurse']);
+$routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
 
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
-
-// Only accountants can see accountant dashboard
-$routes->get('/accounting/dashboard', 'Accountant::index', ['filter' => 'auth:accounting']);
-
-$routes->get('/accountant/dashboard', 'Accountant::index', ['filter' => 'auth:accounting']);
-
-$routes->get('/accountant', 'Accountant::index', ['filter' => 'auth:accounting']);
-
-// Only reception can see reception dashboard
-$routes->get('/reception/dashboard', 'Reception::index', ['filter' => 'auth:receptionist']);
-
-// Only IT staff can see IT dashboard
-$routes->get('/itstaff/dashboard', 'Itstaff::index', ['filter' => 'auth:itstaff']);
-
-// Only laboratory staff can see laboratory dashboard
-$routes->get('/laboratory/dashboard', 'Laboratory::index', ['filter' => 'auth:labstaff']);
-
-// Only pharmacists can see pharmacy dashboard
-$routes->get('/pharmacy/dashboard', 'Pharmacy::index', ['filter' => 'auth:pharmacist']);
 
 // Frontend Patient Routes
 $routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes) {
@@ -99,15 +70,6 @@ $routes->post('appointments/cancel/(:num)', 'Appointment::cancel/$1');
 $routes->post('appointments/complete/(:num)', 'Appointment::complete/$1');
 $routes->post('appointments/no-show/(:num)', 'Appointment::noShow/$1');
 $routes->post('appointments/delete/(:num)', 'Appointment::delete/$1');
-
-// Appointment API Routes
-$routes->post('appointments/create', 'Appointment::create');
-$routes->get('appointments/show/(:num)', 'Appointment::show/$1');
-$routes->post('appointments/update/(:num)', 'Appointment::update/$1');
-$routes->post('appointments/cancel/(:num)', 'Appointment::cancel/$1');
-$routes->post('appointments/delete/(:num)', 'Appointment::delete/$1');
-$routes->post('appointments/complete/(:num)', 'Appointment::complete/$1');
-$routes->post('appointments/no-show/(:num)', 'Appointment::noShow/$1');
 
 // Appointment Query Routes
 $routes->get('appointments/doctor/(:num)', 'Appointment::getByDoctor/$1');
@@ -164,14 +126,11 @@ $routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes
 
 // Administration Routes
     $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {
-        $routes->get('users', 'Admin::users');
-        $routes->get('doctors', 'Admin::doctors');
-        $routes->get('settings', 'Admin::settings');
+        // Unified dashboard is handled via Admin::index (already routed at /admin/dashboard)
         $routes->get('Administration/RoleManagement', 'Admin::roleManagement');
         $routes->get('billing', 'Billing::index');
         $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
-        $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');
-        $routes->get('InventoryMan/medicine', 'Pharmacy::medicine');
+        // Removed InventoryMan routes due to missing controller
         
         $routes->group('patients', function($routes) {
             $routes->get('', 'Admin\Patients::index');

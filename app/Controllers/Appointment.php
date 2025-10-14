@@ -51,8 +51,13 @@ class Appointment extends BaseController
             return redirect()->to('login');
         }
 
-        // Get doctors from users table
-        $doctors = $this->userModel->where('role', 'doctor')->where('status', 'active')->findAll();
+        // Get doctors from users table via roles join (users.role removed)
+        $doctors = $this->userModel
+            ->select('users.*')
+            ->join('roles r', 'users.role_id = r.id', 'left')
+            ->where('r.name', 'doctor')
+            ->where('users.status', 'active')
+            ->findAll();
 
         $data = [
             'title' => 'Book Appointment',
@@ -225,6 +230,10 @@ class Appointment extends BaseController
      */
     public function show($id)
     {
+        // Validate ID
+        if (!is_numeric($id) || (int) $id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
         if (!in_array(session('role'), $allowedRoles)) {
@@ -240,7 +249,9 @@ class Appointment extends BaseController
                      users.username as doctor_name, 
                      users.email as doctor_email')
             ->join('patients', 'patients.id = appointments.patient_id', 'left')
-            ->join('users', 'users.id = appointments.doctor_id AND users.role = "doctor"', 'left')
+            ->join('users', 'users.id = appointments.doctor_id', 'left')
+            ->join('roles r', 'users.role_id = r.id', 'left')
+            ->where('r.name', 'doctor')
             ->where('appointments.id', $id)
             ->first();
 
@@ -271,6 +282,10 @@ class Appointment extends BaseController
      */
     public function update($id)
     {
+        // Validate ID
+        if (!is_numeric($id) || (int) $id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
         if (!in_array(session('role'), $allowedRoles)) {
@@ -347,6 +362,10 @@ class Appointment extends BaseController
      */
     public function cancel($id)
     {
+        // Validate ID
+        if (!is_numeric($id) || (int) $id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
         if (!in_array(session('role'), $allowedRoles)) {
@@ -373,6 +392,10 @@ class Appointment extends BaseController
      */
     public function complete($id)
     {
+        // Validate ID
+        if (!is_numeric($id) || (int) $id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'doctor', 'nurse'];
         if (!in_array(session('role'), $allowedRoles)) {
@@ -399,6 +422,10 @@ class Appointment extends BaseController
      */
     public function noShow($id)
     {
+        // Validate ID
+        if (!is_numeric($id) || (int) $id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'nurse', 'receptionist'];
         if (!in_array(session('role'), $allowedRoles)) {
@@ -425,6 +452,10 @@ class Appointment extends BaseController
      */
     public function getByDoctor($doctorId)
     {
+        // Validate ID
+        if (!is_numeric($doctorId) || (int) $doctorId <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid doctor id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
         if (!in_array(session('role'), $allowedRoles)) {
@@ -445,6 +476,10 @@ class Appointment extends BaseController
      */
     public function getByPatient($patientId)
     {
+        // Validate ID
+        if (!is_numeric($patientId) || (int) $patientId <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid patient id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
         if (!in_array(session('role'), $allowedRoles)) {
@@ -552,6 +587,10 @@ class Appointment extends BaseController
      */
     public function delete($id)
     {
+        // Validate ID
+        if (!is_numeric($id) || (int) $id <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
+        }
         // Check if user is logged in and has appropriate role
         $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
         if (!in_array(session('role'), $allowedRoles)) {

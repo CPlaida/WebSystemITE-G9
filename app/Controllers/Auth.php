@@ -17,16 +17,18 @@ class Auth extends Controller
         $session = session();
         $model = new UserModel();
 
-        // Accept both 'email' and 'Email' keys from the form
         $identity = $this->request->getPost('email') ?? $this->request->getPost('Email');
         $password = $this->request->getPost('password');
 
-        // Basic validation
+        $identity = trim((string) $identity);
+        if (filter_var($identity, FILTER_VALIDATE_EMAIL)) {
+            $identity = strtolower($identity);
+        }
+
         if (empty($identity) || empty($password)) {
             return redirect()->back()->with('error', 'Please enter your email/username and password.');
         }
 
-        // Find user by email or username
         $user = $model->where('email', $identity)
                       ->orWhere('username', $identity)
                       ->first();
@@ -37,16 +39,22 @@ class Auth extends Controller
             }
 
             if (password_verify($password, $user['password'])) {
-                // Set session
+                $db = \Config\Database::connect();
+                $roleRow = null;
+                if (!empty($user['role_id'])) {
+                    $roleRow = $db->table('roles')->where('id', $user['role_id'])->get()->getRowArray();
+                }
+                $roleName = $roleRow['name'] ?? null;
+                if (empty($roleName)) {
+                    return redirect()->back()->with('error', 'No role assigned to this account. Please contact admin.');
+                }
                 $session->set([
                     'user_id'  => $user['id'],
                     'username' => $user['username'],
-                    'role'     => $user['role'],
+                    'role'     => $roleName,
                     'isLoggedIn'=> true
                 ]);
-          
-
-                // Redirect to unified dashboard
+                session()->regenerate();
                 return redirect()->to('/dashboard');
             } else {
                 return redirect()->back()->with('error', 'Wrong password.');
@@ -64,12 +72,22 @@ class Auth extends Controller
     public function process_register()
     {
         $model = new UserModel();
+        $db = \Config\Database::connect();
+        $postedRoleId = $this->request->getPost('role_id');
+        $postedRoleName = $this->request->getPost('role');
+        $resolvedRoleId = null;
+        if (!empty($postedRoleId)) {
+            $resolvedRoleId = (int) $postedRoleId;
+        } elseif (!empty($postedRoleName)) {
+            $roleRow = $db->table('roles')->where('name', $postedRoleName)->get()->getRowArray();
+            $resolvedRoleId = $roleRow['id'] ?? null;
+        }
 
         $data = [
             'username' => $this->request->getPost('username'),
             'email'    => $this->request->getPost('email'),
             'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'role'     => $this->request->getPost('role') ?? 'receptionist',
+            'role_id'  => $resolvedRoleId,
             'status'   => 'active',
             'created_at' => date('Y-m-d H:i:s')
         ];
@@ -85,20 +103,5 @@ class Auth extends Controller
         return redirect()->to('/login');
     }
 
-    public function dashboard(){
-
-        $userRole = session()->get('role');
-        
-        // Redirect based on role
-        switch ($userRole) {
-            case 'admin':
-                return redirect()->to('/admin/dashboard');
-            case 'doctor':
-                return redirect()->to('/doctor/dashboard');
-            case 'nurse':
-                return redirect()->to('/nurse/dashboard');
-            default:
-                return redirect()->to('/reception/dashboard');
-        }
-    }
+    
 }
