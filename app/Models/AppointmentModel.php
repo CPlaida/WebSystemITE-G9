@@ -13,7 +13,6 @@ class AppointmentModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'appointment_id',
         'patient_id', 
         'doctor_id',
         'appointment_date',
@@ -65,21 +64,8 @@ class AppointmentModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
+    // Callbacks (none needed when using only numeric id)
     protected $allowCallbacks = true;
-    protected $beforeInsert = ['generateAppointmentId'];
-    protected $beforeUpdate = [];
-
-    /**
-     * Generate unique appointment ID before insert
-     */
-    protected function generateAppointmentId(array $data)
-    {
-        if (!isset($data['data']['appointment_id'])) {
-            $data['data']['appointment_id'] = 'APT' . date('Ymd') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        }
-        return $data;
-    }
 
     /**
      * Get all appointments with patient and doctor details
@@ -299,7 +285,7 @@ class AppointmentModel extends Model
         $builder->where('r.name', 'doctor');
         
         $builder->groupStart();
-        $builder->like('a.appointment_id', $searchTerm);
+        $builder->like('a.id', $searchTerm);
         $builder->orLike('p.first_name', $searchTerm);
         $builder->orLike('p.last_name', $searchTerm);
         $builder->orLike('u.username', $searchTerm);

@@ -10,7 +10,6 @@ class AppointmentSeeder extends Seeder
     {
         $appointments = [
             [
-                'appointment_id' => 'APT20250908001',
                 'patient_id' => 1,
                 'doctor_id' => 1,
                 'appointment_date' => date('Y-m-d'),
@@ -23,7 +22,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250908002',
                 'patient_id' => 2,
                 'doctor_id' => 1,
                 'appointment_date' => date('Y-m-d'),
@@ -36,7 +34,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250908003',
                 'patient_id' => 3,
                 'doctor_id' => 2,
                 'appointment_date' => date('Y-m-d'),
@@ -49,7 +46,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250908004',
                 'patient_id' => 4,
                 'doctor_id' => 2,
                 'appointment_date' => date('Y-m-d', strtotime('+1 day')),
@@ -62,7 +58,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250908005',
                 'patient_id' => 5,
                 'doctor_id' => 1,
                 'appointment_date' => date('Y-m-d', strtotime('+1 day')),
@@ -75,7 +70,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250907001',
                 'patient_id' => 1,
                 'doctor_id' => 1,
                 'appointment_date' => date('Y-m-d', strtotime('-1 day')),
@@ -88,7 +82,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250907002',
                 'patient_id' => 6,
                 'doctor_id' => 2,
                 'appointment_date' => date('Y-m-d', strtotime('-1 day')),
@@ -101,7 +94,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250906001',
                 'patient_id' => 7,
                 'doctor_id' => 1,
                 'appointment_date' => date('Y-m-d', strtotime('-2 days')),
@@ -114,7 +106,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-2 days'))
             ],
             [
-                'appointment_id' => 'APT20250906002',
                 'patient_id' => 8,
                 'doctor_id' => 2,
                 'appointment_date' => date('Y-m-d', strtotime('-2 days')),
@@ -127,7 +118,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-2 days'))
             ],
             [
-                'appointment_id' => 'APT20250909001',
                 'patient_id' => 2,
                 'doctor_id' => 1,
                 'appointment_date' => date('Y-m-d', strtotime('+2 days')),
@@ -140,7 +130,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250909002',
                 'patient_id' => 9,
                 'doctor_id' => 2,
                 'appointment_date' => date('Y-m-d', strtotime('+2 days')),
@@ -153,7 +142,6 @@ class AppointmentSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
-                'appointment_id' => 'APT20250910001',
                 'patient_id' => 10,
                 'doctor_id' => 1,
                 'appointment_date' => date('Y-m-d', strtotime('+3 days')),

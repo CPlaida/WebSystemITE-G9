@@ -144,10 +144,7 @@
       color: #0f5132;
     }
     
-    .status-pending {
-      background-color: #fff3cd;
-      color: #664d03;
-    }
+    
 
     .status-scheduled {
       background-color: #cff4fc;
@@ -250,7 +247,7 @@
   <div class="container">
     <div class="header">
       <h1 class="page-title">
-        <i class=""></i> Today's Appointments
+        Today's Appointments
       </h1>
     </div>
 
@@ -258,8 +255,8 @@
       <div class="card-header">
         <h2 class="card-title">Appointment List</h2>
         <div class="search-container">
-          <input type="text" id="searchInput" class="search-input" placeholder="Search appointments..." onkeyup="if(event.key === 'Enter') filterAppointments()">
-          <button id="searchButton" class="search-button" onclick="filterAppointments()">Search</button>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search appointments...">
+          <button id="searchButton" class="search-button">Search</button>
         </div>
       </div>
       <div class="table-container">
@@ -381,10 +378,7 @@
           'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
         },
-        body: JSON.stringify({
-          status: status,
-          <?= csrf_token() ?>: '<?= csrf_hash() ?>'
-        })
+        body: JSON.stringify({ status: status })
       })
       .then(response => response.json())
       .then(data => {
@@ -415,9 +409,7 @@
           'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
         },
-        body: JSON.stringify({
-          <?= csrf_token() ?>: '<?= csrf_hash() ?>'
-        })
+        body: JSON.stringify({})
       })
       .then(response => response.json())
       .then(data => {
@@ -495,7 +487,7 @@
             </div>
             <div class="modal-body">
               <div style="display: grid; gap: 15px;">
-                <div><strong>Appointment ID:</strong> ${appointment.appointment_id}</div>
+                <div><strong>Appointment ID:</strong> ${appointment.id}</div>
                 <div><strong>Patient:</strong> ${appointment.patient_name || 'N/A'}</div>
                 <div><strong>Doctor:</strong> ${appointment.doctor_name || 'N/A'}</div>
                 <div><strong>Date:</strong> ${new Date(appointment.appointment_date).toLocaleDateString()}</div>
@@ -507,7 +499,7 @@
               </div>
             </div>
             <div class="modal-footer" style="margin-top: 20px; text-align: right; border-top: 1px solid #eee; padding-top: 15px;">
-              <button onclick="closeModal()" class="btn" style="background: #6c757d; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+              <button onclick="closeModal()" style="background: #6c757d; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Close</button>
             </div>
           </div>
         </div>

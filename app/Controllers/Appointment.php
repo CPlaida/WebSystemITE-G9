@@ -198,19 +198,14 @@ class Appointment extends BaseController
         $appointmentId = $this->appointmentModel->insert($data);
 
         if ($appointmentId) {
-            // Get the appointment details for success message
-            $appointment = $this->appointmentModel->find($appointmentId);
-            $appointmentIdGenerated = $appointment['appointment_id'] ?? 'APT' . date('Ymd') . str_pad($appointmentId, 3, '0', STR_PAD_LEFT);
-            
             // For web requests, redirect to appointment list with success
             if (!$this->request->isAJAX()) {
-                return redirect()->to('appointments/list')->with('success', "Appointment booked successfully! Appointment ID: {$appointmentIdGenerated}");
+                return redirect()->to('appointments/list')->with('success', "Appointment booked successfully! Appointment ID: {$appointmentId}");
             }
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Appointment created successfully',
-                'appointment_id' => $appointmentId,
-                'appointment_code' => $appointmentIdGenerated
+                'appointment_id' => $appointmentId
             ]);
         } else {
             // For web requests, redirect back with error

@@ -58,7 +58,7 @@ class CreateAppointmentsTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('patient_id', 'patients', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('doctor_id', 'doctors', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('doctor_id', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('appointments');
     }
 
