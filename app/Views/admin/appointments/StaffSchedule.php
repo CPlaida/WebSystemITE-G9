@@ -287,12 +287,15 @@
   // Schedule shifts clickable
   const shifts = document.querySelectorAll('.shift');
 
-  btnConflictSchedules.addEventListener('click', () => {
-    const count = parseInt(btnConflictSchedules.getAttribute('data-conflict-count') || '0', 10);
-    if (count > 0) {
-      openConflictModal();
-    }
-  });
+  // Attach listener only if the button exists to avoid runtime errors
+  if (btnConflictSchedules) {
+    btnConflictSchedules.addEventListener('click', () => {
+      const count = parseInt(btnConflictSchedules.getAttribute('data-conflict-count') || '0', 10);
+      if (count > 0) {
+        openConflictModal();
+      }
+    });
+  }
 
   btnCloseConflict.addEventListener('click', closeConflictModal);
   closeConflictModalBtn.addEventListener('click', closeConflictModal);
