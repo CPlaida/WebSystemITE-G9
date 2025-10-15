@@ -207,7 +207,7 @@
                     <?php if (!empty($bills)): ?>
                         <?php foreach ($bills as $bill): ?>
                             <tr data-id="<?= (int)$bill['id'] ?>">
-                                <td>#<?= esc($bill['bill_id']) ?></td>
+                                <td>#<?= 'INV-' . str_pad((string)$bill['id'], 6, '0', STR_PAD_LEFT) ?></td>
                                 <td><?= esc($bill['patient_name'] ?? 'N/A') ?></td>
                                 <td><?= esc($bill['bill_date'] ?? '') ?></td>
                                 <td><?= esc($bill['service_name'] ?? '—') ?></td>
@@ -254,7 +254,7 @@
         const content = `
             <div style="display:grid; grid-template-columns: 160px 1fr; gap: 12px 16px; align-items: center; text-align:left;">
                 <label style="margin:0; color:#374151; font-weight:600;">Invoice #</label>
-                <input type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${bill.bill_id || ''}" disabled>
+                <input type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${('INV-' + String(bill.id).padStart(6, '0'))}" disabled>
 
                 <label style="margin:0; color:#374151; font-weight:600;">Patient</label>
                 <div>

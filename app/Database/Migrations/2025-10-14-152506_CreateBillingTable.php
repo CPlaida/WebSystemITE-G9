@@ -11,7 +11,6 @@ class CreateBillingTable extends Migration
         // Billing header table
         $this->forge->addField([
             'id'               => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
-            'bill_id'          => ['type' => 'VARCHAR', 'constraint' => 20, 'unique' => true],
             'patient_id'       => ['type' => 'INT', 'unsigned' => true],
             'appointment_id'   => ['type' => 'INT', 'unsigned' => true, 'null' => true],
             // Keep the column; we will add FK later when services table exists

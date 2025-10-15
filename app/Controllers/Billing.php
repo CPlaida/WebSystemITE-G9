@@ -15,10 +15,6 @@ class Billing extends BaseController
         helper(['form', 'url']);
     }
 
-    private function generateInvoiceNumber(): string
-    {
-        return 'INV-' . date('Ymd') . '-' . substr(strtoupper(bin2hex(random_bytes(3))), 0, 6);
-    }
 
     private function hasField(string $table, string $field): bool
     {
@@ -108,7 +104,6 @@ class Billing extends BaseController
         $computedFinal = ($computedTotal - $discount) + $tax;
 
         $payload = [
-            'bill_id' => $this->generateInvoiceNumber(),
             'patient_id' => (int) $this->request->getPost('patient_id'),
             'service_id' => $this->request->getPost('service_id') ? (int) $this->request->getPost('service_id') : null,
             'consultation_fee' => $consultation,
@@ -194,8 +189,8 @@ class Billing extends BaseController
         $tax = isset($bill['tax']) ? (float)$bill['tax'] : round($subtotal * 0.12, 2);
         $total = isset($bill['final_amount']) ? (float)$bill['final_amount'] : ($subtotal + $tax);
 
-        // Provide aliases used by receipt view
-        $bill['bill_number'] = $bill['bill_id'] ?? ('INV-' . str_pad((string)$id, 6, '0', STR_PAD_LEFT));
+        // Provide aliases used by receipt view (derived from numeric id)
+        $bill['bill_number'] = 'INV-' . str_pad((string)$id, 6, '0', STR_PAD_LEFT);
         $bill['date_issued'] = $bill['bill_date'] ?? date('Y-m-d');
         $bill['status'] = $bill['payment_status'] ?? 'pending';
         $bill['items'] = $items;
@@ -334,7 +329,6 @@ class Billing extends BaseController
         $db->transBegin();
         try {
             $payload = [
-                'bill_id' => $this->generateInvoiceNumber(),
                 'patient_id' => (int)$this->request->getPost('patient_id'),
                 'total_amount' => $subtotal,
                 'tax' => $tax,

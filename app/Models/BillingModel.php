@@ -27,7 +27,6 @@ class BillingModel extends Model
 
     // Keep original columns from existing migration. We will map normalized names at the controller/view level.
     protected $allowedFields = [
-        'bill_id',            // invoice_number equivalent
         'patient_id',
         'appointment_id',
         'consultation_fee',
@@ -77,7 +76,7 @@ class BillingModel extends Model
         $builder = $this->withRelations();
         if ($term) {
             $builder->groupStart()
-                ->like('b.bill_id', $term)
+                ->like('b.id', $term)
                 ->orLike('p.first_name', $term)
                 ->orLike('p.last_name', $term)
             ->groupEnd();

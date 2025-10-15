@@ -1083,3 +1083,16 @@ Stack trace:
 #11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #12 {main}
 ERROR - 2025-10-14 15:48:46 --> Error loading dashboard data: Table 'hms_g9.prescriptions' doesn't exist
+CRITICAL - 2025-10-14 15:56:11 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/3]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(341): CodeIgniter\Model->update('3', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('3')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
