@@ -37,7 +37,7 @@ class Appointment extends BaseController
             'appointments' => $this->appointmentModel->getAppointmentsWithDetails()
         ];
         
-        return view('admin/appointments/Appointmentlist', $data);
+        return view('Roles/admin/appointments/Appointmentlist', $data);
     }
 
     /**
@@ -66,7 +66,7 @@ class Appointment extends BaseController
             'doctors' => $doctors
         ];
         
-        return view('admin/appointments/Bookappointment', $data);
+        return view('Roles/admin/appointments/Bookappointment', $data);
     }
     
     /**

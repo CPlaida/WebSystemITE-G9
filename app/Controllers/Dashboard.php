@@ -25,6 +25,7 @@ class Dashboard extends BaseController
         $monthStart = date('Y-m-01');
         $monthEnd = date('Y-m-t');
 
+        // Default data structure
         $data = [
             'userRole' => $userRole,
             'username' => $username,
@@ -36,6 +37,8 @@ class Dashboard extends BaseController
             'paidThisMonth' => 0.0,
             'outstanding' => 0.0,
             'pendingBills' => 0,
+            'insuranceClaims' => 0,
+            'outstandingBalance' => 0.0,
             'prescriptionsCount' => 0,
             'labTestsCount' => 0,
             'labStats' => [],
@@ -46,17 +49,37 @@ class Dashboard extends BaseController
                 'doctor' => 'Doctor',
                 'nurse' => 'Nurse',
                 'accounting' => 'Accounting',
+                'lab_staff' => 'Laboratory Staff',
                 'itstaff' => 'IT Staff',
-                'labstaff' => 'Laboratory Staff',
                 'pharmacist' => 'Pharmacist',
                 'receptionist' => 'Receptionist'
-            ]
+            ],
+            // Lab staff specific data
+            'pendingTests' => [],
+            'completedToday' => 0,
+            'monthlyTests' => 0
         ];
 
-        // Instantiate models (where available)
-        $appointmentModel = new \App\Models\AppointmentModel();
-        $patientModel = new \App\Models\PatientModel();
-        $billingModel = new \App\Models\BillingModel();
+        // If user is lab staff, load lab-specific data
+        if ($userRole === 'lab_staff') {
+            // In a real application, you would fetch these from your database
+            // For example:
+            // $labTestModel = new \App\Models\LabTestModel();
+            // $data['pendingTests'] = $labTestModel->where('status', 'pending')->findAll();
+            // $data['completedToday'] = $labTestModel->where('status', 'completed')
+            //     ->where('DATE(completed_at)', $today)
+            //     ->countAllResults();
+            // $data['monthlyTests'] = $labTestModel->where('created_at >=', $monthStart)
+            //     ->where('created_at <=', $monthEnd)
+            //     ->countAllResults();
+            
+            // For now, we'll set some dummy data
+            $data['pendingTests'] = [];
+            $data['completedToday'] = 0;
+            $data['monthlyTests'] = 0;
+        }
+
+        return $data;
 
         // Optional models (may not exist in all setups)
         $prescriptionModel = class_exists('App\\Models\\PrescriptionModel') ? new \App\Models\PrescriptionModel() : null;

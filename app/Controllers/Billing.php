@@ -52,7 +52,7 @@ class Billing extends BaseController
         $term = $this->request->getGet('q');
         $bills = $this->billingModel->getList($term);
         $totals = $this->billingModel->getTotals();
-        return view('admin/Billing & payment/billingmanagement', [
+        return view('Roles/admin/Billing & payment/billingmanagement', [
             'bills' => $bills,
             'totals' => $totals,
             'query' => (string)($term ?? ''),
@@ -67,7 +67,7 @@ class Billing extends BaseController
             'validation' => \Config\Services::validation()
         ];
         
-        return view('admin/Billing & payment/bill_process', $data);
+        return view('Roles/admin/Billing & payment/bill_process', $data);
     }
     
     public function save()

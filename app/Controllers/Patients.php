@@ -115,7 +115,7 @@ class Patients extends BaseController
             'patients' => $patients
         ];
 
-        return view('admin/patients/view', $data);
+        return view('Roles/admin/patients/view', $data);
     }
 
     public function search()

@@ -12,6 +12,6 @@ class InventoryMan extends BaseController
             'title' => 'Prescription Dispensing'
         ];
         
-        return view('admin/InventoryMan/PrescriptionDispencing', $data);
+        return view('Roles/admin/pharmacy/PrescriptionDispencing', $data);
     }
 }

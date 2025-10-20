@@ -62,7 +62,7 @@ class Doctor extends BaseController
             'conflicts' => $this->doctorScheduleModel->getAllConflicts()
         ];
 
-        return view('admin/appointments/StaffSchedule', $data);
+        return view('Roles/admin/appointments/StaffSchedule', $data);
     }
 
     /**

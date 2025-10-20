@@ -15,7 +15,7 @@ class Admin extends BaseController
         $data = [
             'title' => 'User Management',
         ];
-        return view('admin/Administration/ManageUser', $data);
+        return view('Roles/admin/Administration/ManageUser', $data);
     }
 
     public function roleManagement()
@@ -23,6 +23,6 @@ class Admin extends BaseController
         $data = [
             'title' => 'Role Management',
         ];
-        return view('admin/Administration/RoleManagement', $data);
+        return view('Roles/admin/Administration/RoleManagement', $data);
     }
 }

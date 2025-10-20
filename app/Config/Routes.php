@@ -125,12 +125,17 @@ $routes->group('api/laboratory', ['namespace' => 'App\\Controllers', 'filter' =>
     $routes->get('stats', 'Laboratory::getStats');
 });
 
-// Pharmacy Routes
-$routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes) {
-    $routes->get('inventory', 'Pharmacy::inventory', ['filter' => 'auth:pharmacist,admin']);
+// Pharmacy Routes under admin
+$routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth:pharmacist,admin'], function($routes) {
+    $routes->get('inventory', 'Pharmacy::inventory');
+    $routes->get('transactions', 'Pharmacy::transactions');
+    $routes->get('transaction/(:any)', 'Pharmacy::viewTransaction/$1');
     $routes->get('medicines', 'Pharmacy::medicines');
-    $routes->get('inventory/medicine', 'Pharmacy::medicine', ['filter' => 'auth:pharmacist,admin']);
+    $routes->get('inventory/medicine', 'Pharmacy::medicine');  // Access via /admin/pharmacy/inventory/medicine
 });
+
+// Route for admin inventory medicine
+$routes->get('admin/inventory/medicine', 'Pharmacy::medicine', ['filter' => 'auth:pharmacist,admin']);
 
 // Administration Routes
     $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {
@@ -138,7 +143,9 @@ $routes->group('pharmacy', ['namespace' => 'App\\Controllers'], function($routes
         $routes->get('Administration/RoleManagement', 'Admin::roleManagement');
         $routes->get('billing', 'Billing::index');
         $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
-        // Removed InventoryMan routes due to missing controller
+        
+        // Inventory Management Routes
+        $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');
         
         $routes->group('patients', function($routes) {
             $routes->get('', 'Admin\Patients::index');

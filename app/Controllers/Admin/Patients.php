@@ -22,7 +22,7 @@ class Patients extends BaseController
             'validation' => \Config\Services::validation()
         ];
         
-        return view('admin/patients/register', $data);
+        return view('Roles/admin/patients/register', $data);
     }
 
     public function processRegister()
@@ -99,7 +99,7 @@ class Patients extends BaseController
             'patients' => $this->patientModel->findAll()
         ];
         
-        return view('admin/patients/index', $data);
+        return view('Roles/admin/patients/index', $data);
     }
 
     public function inpatient()
@@ -109,7 +109,7 @@ class Patients extends BaseController
             'validation' => \Config\Services::validation()
         ];
         
-        return view('admin/patients/Inpatient', $data);
+        return view('Roles/admin/patients/Inpatient', $data);
     }
 
     public function view($id = null)
@@ -125,6 +125,6 @@ class Patients extends BaseController
             'patient' => $patient
         ];
         
-        return view('admin/patients/view', $data);
+        return view('Roles/admin/patients/view', $data);
     }
 }

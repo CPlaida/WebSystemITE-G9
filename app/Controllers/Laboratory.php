@@ -51,7 +51,7 @@ class Laboratory extends Controller
             'role' => session()->get('role')
         ];
 
-        return view('admin/laboratory/LaboratoryReq', $data);
+        return view('Roles/admin/laboratory/LaboratoryReq', $data);
     }
 
     /**
@@ -225,7 +225,7 @@ class Laboratory extends Controller
             'role' => session()->get('role')
         ];
 
-        return view('admin/laboratory/TestResult', $data);
+        return view('Roles/admin/laboratory/TestResult', $data);
     }
 
     /**
