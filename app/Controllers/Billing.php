@@ -198,7 +198,7 @@ class Billing extends BaseController
         $bill['tax'] = $tax;
         $bill['total'] = $total;
 
-        return view('admin/Billing & payment/receipt', ['bill' => $bill]);
+        return view('Roles/admin/Billing & payment/receipt', ['bill' => $bill]);
     }
 
     public function get($id)
