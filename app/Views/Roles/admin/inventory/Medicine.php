@@ -70,6 +70,9 @@ $currentSubmenu = 'inventory';
         </div>
         
         <form id="medicineFormElement" style="margin: 0;">
+            <!-- Autocomplete suggestion lists -->
+            <datalist id="medicineNamesList"></datalist>
+            <datalist id="brandList"></datalist>
             <div id="medicineEntries">
                 <div class="medicine-entry" style="margin-bottom: 20px;">
                     <!-- Header Row -->
@@ -86,10 +89,10 @@ $currentSubmenu = 'inventory';
                     <!-- Data Row -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; align-items: center; padding: 5px;">
                         <div>
-                            <input type="text" name="medicineName[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                            <input type="text" name="medicineName[]" list="medicineNamesList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
                         <div>
-                            <input type="text" name="brand[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                            <input type="text" name="brand[]" list="brandList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
                         <div>
                             <select name="category[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; background-color: #fff;">
@@ -438,6 +441,10 @@ $currentSubmenu = 'inventory';
         const firstEntry = entries.querySelector('.medicine-entry');
         entries.innerHTML = '';
         entries.appendChild(firstEntry);
+        // Refresh suggestions each time modal opens
+        if (typeof refreshAutocompleteLists === 'function') {
+            refreshAutocompleteLists();
+        }
     }
 
     function closeForm() {
@@ -543,6 +550,45 @@ $currentSubmenu = 'inventory';
         document.getElementById('outOfStock').textContent = outOfStock;
     }
     
+    // --- Autocomplete helpers ---
+    const defaultMedicineNames = [
+        'Paracetamol 500mg','Amoxicillin 500mg','Vitamin C 500mg','Loratadine 10mg',
+        'Ibuprofen 200mg','Metformin 500mg','Amlodipine 5mg','Omeprazole 20mg'
+    ];
+    const defaultBrands = [
+        'Biogesic','Amoxil','Vitacare','Loratin','Pfizer','Unilab','RiteMed','GSK'
+    ];
+
+    function uniqueSorted(arr) {
+        return Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+    }
+
+    function gatherFromTable() {
+        const rows = document.querySelectorAll('#medicineTableBody tr');
+        const names = [];
+        const brands = [];
+        rows.forEach(r => {
+            const tds = r.querySelectorAll('td');
+            if (tds[1]) names.push(tds[1].textContent.trim());
+            if (tds[2]) brands.push(tds[2].textContent.trim());
+        });
+        return { names: uniqueSorted(names), brands: uniqueSorted(brands) };
+    }
+
+    function renderDatalist(listId, values) {
+        const dl = document.getElementById(listId);
+        if (!dl) return;
+        dl.innerHTML = values.map(v => `<option value="${v.replace(/"/g,'&quot;')}"></option>`).join('');
+    }
+
+    function refreshAutocompleteLists() {
+        const fromTable = gatherFromTable();
+        const names = uniqueSorted(defaultMedicineNames.concat(fromTable.names));
+        const brands = uniqueSorted(defaultBrands.concat(fromTable.brands));
+        renderDatalist('medicineNamesList', names);
+        renderDatalist('brandList', brands);
+    }
+    
     // Initialize with some sample data
     document.addEventListener('DOMContentLoaded', function() {
         // Add sample data
@@ -574,6 +620,9 @@ $currentSubmenu = 'inventory';
         
         // Update stats
         updateStats();
+
+        // Initialize autocomplete options after table is populated
+        refreshAutocompleteLists();
     });
 </script>
 <?= $this->endSection() ?>

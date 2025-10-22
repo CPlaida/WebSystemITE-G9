@@ -245,3 +245,79 @@ Stack trace:
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
 ERROR - 2025-10-21 14:35:40 --> Failed to get test results data: Table 'hms_g9.laboratory' doesn't exist
+CRITICAL - 2025-10-21 16:27:44 --> ErrorException: Undefined variable $patients
+[Method: GET, Route: receptionist/patients/view]
+in APPPATH\Views\Roles\Reception\patients\view.php on line 346.
+ 1 APPPATH\Views\Roles\Reception\patients\view.php(346): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $patients', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\Reception\\patients\\view.php', 346)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\Reception\\patients\\view.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Router\RouteCollection.php(1149): CodeIgniter\View\View->render('Roles/Reception/patients/view', null)
+ 5 SYSTEMPATH\CodeIgniter.php(875): CodeIgniter\Router\RouteCollection::CodeIgniter\Router\{closure}()
+ 6 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-21 16:36:22 --> ErrorException: Undefined variable $schedules
+[Method: GET, Route: nurse/appointments/staff-schedule]
+in APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php on line 71.
+ 1 APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php(71): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $schedules', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php', 71)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Router\RouteCollection.php(1149): CodeIgniter\View\View->render('Roles/nurse/appointments/StaffSchedule', null)
+ 5 SYSTEMPATH\CodeIgniter.php(875): CodeIgniter\Router\RouteCollection::CodeIgniter\Router\{closure}()
+ 6 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-21 16:38:26 --> ErrorException: Undefined variable $schedules
+[Method: GET, Route: nurse/appointments/staff-schedule]
+in APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php on line 71.
+ 1 APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php(71): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $schedules', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php', 71)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Router\RouteCollection.php(1149): CodeIgniter\View\View->render('Roles/nurse/appointments/StaffSchedule', null)
+ 5 SYSTEMPATH\CodeIgniter.php(875): CodeIgniter\Router\RouteCollection::CodeIgniter\Router\{closure}()
+ 6 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-21 16:38:27 --> ErrorException: Undefined variable $schedules
+[Method: GET, Route: nurse/appointments/staff-schedule]
+in APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php on line 71.
+ 1 APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php(71): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $schedules', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php', 71)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Router\RouteCollection.php(1149): CodeIgniter\View\View->render('Roles/nurse/appointments/StaffSchedule', null)
+ 5 SYSTEMPATH\CodeIgniter.php(875): CodeIgniter\Router\RouteCollection::CodeIgniter\Router\{closure}()
+ 6 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-21 16:38:59 --> ErrorException: Undefined variable $schedules
+[Method: GET, Route: nurse/appointments/staff-schedule]
+in APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php on line 71.
+ 1 APPPATH\Views\Roles\nurse\appointments\StaffSchedule.php(71): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $schedules', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php', 71)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\nurse\\appointments\\StaffSchedule.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Router\RouteCollection.php(1149): CodeIgniter\View\View->render('Roles/nurse/appointments/StaffSchedule', null)
+ 5 SYSTEMPATH\CodeIgniter.php(875): CodeIgniter\Router\RouteCollection::CodeIgniter\Router\{closure}()
+ 6 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-21 16:46:28 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/nurse/appointments/StaffSchedule.php"
+[Method: GET, Route: nurse/appointments/staff-schedule]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/nurse/appointments/StaffSchedule.php')
+ 2 SYSTEMPATH\Router\RouteCollection.php(1149): CodeIgniter\View\View->render('Roles/nurse/appointments/StaffSchedule', null)
+ 3 SYSTEMPATH\CodeIgniter.php(875): CodeIgniter\Router\RouteCollection::CodeIgniter\Router\{closure}()
+ 4 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
