@@ -31,6 +31,10 @@ $routes->setAutoRoute(false);
 // Role Routes
 // Only logged-in users can see this (unified dashboard)
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
+// Convenience role-specific dashboards (reuse unified dashboard)
+$routes->get('doctor/dashboard', 'Dashboard::index', ['filter' => 'auth:doctor,admin']);
+$routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
+$routes->get('receptionist/dashboard', 'Dashboard::index', ['filter' => 'auth:receptionist,admin']);
 
 // Backward-compatibility: legacy admin dashboard URL(admin dashboard page diffrent sa unified okii)
 $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
@@ -46,6 +50,8 @@ $routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1
 $routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
 $routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
 $routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
+// Doctor app shortcuts
+$routes->get('doctor/appointments', 'Appointment::index', ['filter' => 'auth:doctor,admin']);
 
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
@@ -138,3 +144,38 @@ $routes->get('admin/inventory/medicine', 'Pharmacy::medicine', ['filter' => 'aut
             $routes->get('delete/(:num)', 'Admin\Patients::delete/$1');
         });
     });
+
+// Receptionist Routes (directly to views)
+$routes->view('receptionist/dashboard', 'Roles/Reception/dashboard', ['filter' => 'auth:receptionist,admin']);
+
+$routes->group('receptionist/appointments', ['namespace' => 'App\\Views', 'filter' => 'auth:receptionist,admin'], function($routes) {
+    $routes->view('list', 'Roles/Reception/appointments/Appointmentlist');
+    $routes->view('book', 'Roles/Reception/appointments/Bookappointment');
+    $routes->view('staff-schedule', 'Roles/Reception/appointments/StaffSchedule');
+});
+
+$routes->group('receptionist/patients', ['namespace' => 'App\\Views', 'filter' => 'auth:receptionist,admin'], function($routes) {
+    $routes->view('register', 'Roles/Reception/patients/register');
+    $routes->view('inpatient', 'Roles/Reception/patients/Inpatient');
+    $routes->view('view', 'Roles/Reception/patients/view');
+});
+
+// Nurse Routes (directly to views)
+$routes->group('nurse/appointments', ['namespace' => 'App\\Views', 'filter' => 'auth:nurse,admin'], function($routes) {
+    $routes->view('list', 'Roles/nurse/appointments/Appointmentlist');
+    $routes->view('staff-schedule', 'Roles/nurse/appointments/StaffSchedule');
+});
+
+$routes->group('nurse/patients', ['namespace' => 'App\\Views', 'filter' => 'auth:nurse,admin'], function($routes) {
+    $routes->view('view', 'Roles/nurse/patients/view');
+});
+
+$routes->group('nurse/laboratory', ['namespace' => 'App\\Views', 'filter' => 'auth:nurse,admin'], function($routes) {
+    $routes->view('request', 'Roles/nurse/laboratory/LaboratoryReq');
+    $routes->view('testresult', 'Roles/nurse/laboratory/TestResult');
+});
+
+// Doctor Routes (directly to views)
+$routes->group('doctor/patients', ['namespace' => 'App\\Views', 'filter' => 'auth:doctor,admin'], function($routes) {
+    $routes->view('view', 'Roles/doctor/patients/view');
+});
