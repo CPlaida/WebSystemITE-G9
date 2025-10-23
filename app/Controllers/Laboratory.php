@@ -17,27 +17,6 @@ class Laboratory extends Controller
         $this->testResultModel = new TestResultModel();
     }
 
-    public function index()
-    {
-        // Check if user is logged in and has labstaff role
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'labstaff') {
-            return redirect()->to('/login')->with('error', 'Access denied.');
-        }
-
-        $data = [
-            'title' => 'Laboratory Dashboard',
-            'user' => session()->get('username'),
-            'role' => session()->get('role')
-        ];
-
-        return view('Lab_staff/lab_staff', $data);
-    }
-
-    public function dashboard()
-    {
-        return $this->index();
-    }
-
     public function request()
     {
         // Check if user is logged in and has appropriate role
@@ -54,9 +33,7 @@ class Laboratory extends Controller
         return view('Roles/admin/laboratory/LaboratoryReq', $data);
     }
 
-    /**
-     * Submit lab request
-     */
+    /*Submit lab request */
     public function submitRequest()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
@@ -78,29 +55,20 @@ class Laboratory extends Controller
         $priority = $this->request->getPost('priority');
         $clinicalNotes = $this->request->getPost('clinical_notes');
 
-        // Handle patient name - if it's an ID from select, get the name
-        if (is_numeric($patientName)) {
-            // If patient_name is an ID, convert to actual name
-            $patients = [
-                1 => 'Juan Dela Cruz',
-                2 => 'Maria Santos', 
-                3 => 'Pedro Reyes'
-            ];
-            $patientName = $patients[$patientName] ?? 'Unknown Patient';
-        }
+        // patient_name is expected to be the actual name from the form
 
         // Simple data array without foreign key dependencies
         $data = [
             'test_name' => $patientName,
             'test_type' => $testType,
+            'priority' => $priority,
             'test_date' => date('Y-m-d'),
             'test_time' => date('H:i:s'),
             'status' => 'pending',
             'notes' => $clinicalNotes
         ];
 
-        // Debug: Log the data being submitted
-        log_message('debug', 'Lab request data: ' . json_encode($data));
+        // Data prepared for insertion
 
         // Validate required fields manually
         $errors = [];
@@ -120,96 +88,46 @@ class Laboratory extends Controller
         }
 
         try {
-            // Insert directly into database without foreign key constraints
+            // Insert directly into database
             $db = \Config\Database::connect();
-            
-            // First, let's check if we need to disable foreign key checks temporarily
-            $db->query('SET foreign_key_checks = 0');
-            
             $builder = $db->table('laboratory');
             
-            // Add test_id and timestamps
-            $data['test_id'] = 'TEST' . date('Ymd') . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            // Add timestamps
             $data['created_at'] = date('Y-m-d H:i:s');
             $data['updated_at'] = date('Y-m-d H:i:s');
             
-            // Remove any potential patient_id that might be causing issues
-            unset($data['patient_id']);
-            
             $insertResult = $builder->insert($data);
             
-            // Re-enable foreign key checks
-            $db->query('SET foreign_key_checks = 1');
-            
             if ($insertResult) {
-                // Get the inserted record
+                // Get the inserted numeric ID
                 $insertId = $db->insertID();
                 
-                log_message('debug', 'Lab request created successfully with ID: ' . $insertId);
-
                 // Check if it's an API call or form submission
                 if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
                     return $this->response->setJSON([
-                        'success' => true, 
+                        'success' => true,
                         'message' => 'Lab request submitted successfully',
-                        'test_id' => $data['test_id']
+                        // Compatibility: expose numeric id under test_id key for existing UI
+                        'test_id' => (string) $insertId,
+                        'id' => (int) $insertId,
                     ]);
                 } else {
                     // For form submissions, redirect to test results page
-                    return redirect()->to('laboratory/testresult')->with('success', 'Lab request submitted successfully. Test ID: ' . $data['test_id']);
+                    return redirect()->to('laboratory/testresult')->with('success', 'Lab request submitted successfully. Request ID: ' . $insertId);
                 }
             } else {
                 throw new \Exception('Failed to insert lab request');
             }
         } catch (\Exception $e) {
-            // Make sure to re-enable foreign key checks even if there's an error
-            try {
-                $db = \Config\Database::connect();
-                $db->query('SET foreign_key_checks = 1');
-            } catch (\Exception $fkException) {
-                log_message('error', 'Failed to re-enable foreign key checks: ' . $fkException->getMessage());
-            }
-            
             log_message('error', 'Lab request creation failed: ' . $e->getMessage());
-            
             if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
                 return $this->response->setJSON([
                     'success' => false, 
                     'message' => 'Failed to create lab request: ' . $e->getMessage()
                 ]);
-            } else {
-                return redirect()->back()->withInput()->with('error', 'Failed to create lab request: ' . $e->getMessage());
             }
+            return redirect()->back()->withInput()->with('error', 'Failed to create lab request: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Get lab requests
-     */
-    public function getRequests()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
-        }
-
-        $filters = [
-            'status' => $this->request->getGet('status'),
-            'priority' => $this->request->getGet('priority'),
-            'test_type' => $this->request->getGet('test_type'),
-            'patient_name' => $this->request->getGet('patient_name'),
-            'date_from' => $this->request->getGet('date_from'),
-            'date_to' => $this->request->getGet('date_to')
-        ];
-
-        // Remove null values
-        $filters = array_filter($filters);
-
-        $requests = $this->labRequestModel->getRequests($filters);
-
-        return $this->response->setJSON([
-            'success' => true,
-            'data' => $requests
-        ]);
     }
 
     public function testresult()
@@ -229,34 +147,6 @@ class Laboratory extends Controller
     }
 
     /**
-     * Get test results
-     */
-    public function getTestResults()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
-        }
-
-        $filters = [
-            'status' => $this->request->getGet('status'),
-            'test_type' => $this->request->getGet('test_type'),
-            'patient_name' => $this->request->getGet('patient_name'),
-            'date_from' => $this->request->getGet('date_from'),
-            'date_to' => $this->request->getGet('date_to')
-        ];
-
-        // Remove null values
-        $filters = array_filter($filters);
-
-        $results = $this->testResultModel->getResults($filters);
-
-        return $this->response->setJSON([
-            'success' => true,
-            'data' => $results
-        ]);
-    }
-
-    /**
      * Get test results data for TestResult view
      */
     public function getTestResultsData()
@@ -268,8 +158,9 @@ class Laboratory extends Controller
         try {
             $db = \Config\Database::connect();
             $builder = $db->table('laboratory');
-            
-            $results = $builder->select('id, test_id, test_name as patient_name, test_type, test_date, status, notes')
+
+            // test_id column removed; expose numeric id as test_id for UI compatibility
+            $results = $builder->select('id, id as test_id, test_name as patient_name, test_type, test_date, status, notes')
                               ->orderBy('created_at', 'DESC')
                               ->get()
                               ->getResultArray();
@@ -317,13 +208,15 @@ class Laboratory extends Controller
 
             // Add patient name mapping for display
             $testResult['patient_name'] = $testResult['test_name']; // test_name contains patient name
+            // Expose numeric id as test_id for display consistency
+            $testResult['test_id'] = $testResult['id'];
             
             // Add formatted dates
             $testResult['formatted_test_date'] = date('F j, Y', strtotime($testResult['test_date']));
-            $testResult['formatted_test_time'] = date('g:i A', strtotime($testResult['test_time']));
+            $testResult['formatted_test_time'] = !empty($testResult['test_time']) ? date('g:i A', strtotime($testResult['test_time'])) : '—';
             
             // Add priority display if exists
-            $testResult['priority_display'] = ucfirst($testResult['priority'] ?? 'normal');
+            $testResult['priority_display'] = ucfirst($testResult['priority'] ?? 'routine');
             
             // Add status badge class
             $testResult['status_class'] = $testResult['status'] === 'completed' ? 'badge-success' : 'badge-warning';
@@ -335,7 +228,7 @@ class Laboratory extends Controller
                 'testResult' => $testResult
             ];
 
-            return view('admin/laboratory/ViewTestResult', $data);
+            return view('Roles/admin/laboratory/ViewTestResult', $data);
         } catch (\Exception $e) {
             log_message('error', 'Failed to get test result: ' . $e->getMessage());
             return redirect()->to('laboratory/testresult')->with('error', 'Failed to load test result');
@@ -381,11 +274,7 @@ class Laboratory extends Controller
                 $updateData = [
                     'test_results' => json_encode($testParameters),
                     'normal_range' => json_encode($normalRanges),
-                    'interpretation' => $this->request->getPost('interpretation'),
                     'notes' => $this->request->getPost('notes'),
-                    'technician_name' => session()->get('username'),
-                    'result_date' => date('Y-m-d'),
-                    'result_time' => date('H:i:s'),
                     'status' => 'completed',
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
@@ -439,112 +328,14 @@ class Laboratory extends Controller
                 'testResult' => $testResult
             ];
 
-            return view('admin/laboratory/AddTestResult', $data);
+            return view('Roles/admin/laboratory/AddTestResult', $data);
         } catch (\Exception $e) {
             log_message('error', 'Failed to load test for result entry: ' . $e->getMessage());
             return redirect()->to('laboratory/testresult')->with('error', 'Failed to load test');
         }
     }
 
-    /**
-     * Save test result via API
-     */
-    public function saveTestResult()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
-        }
+                
 
-        if ($this->request->getMethod() !== 'post') {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request method']);
-        }
-
-        $id = $this->request->getPost('test_id');
-        $resultData = [
-            'results' => $this->request->getPost('results') ?: [],
-            'normal_ranges' => $this->request->getPost('normal_ranges') ?: [],
-            'abnormal_flags' => $this->request->getPost('abnormal_flags') ?: [],
-            'interpretation' => $this->request->getPost('interpretation'),
-            'notes' => $this->request->getPost('notes'),
-            'critical_values' => $this->request->getPost('critical_values') ?: []
-        ];
-
-        if ($this->testResultModel->addResultData($id, $resultData)) {
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Test result saved successfully'
-            ]);
-        } else {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Failed to save test result',
-                'errors' => $this->testResultModel->errors()
-            ]);
-        }
-    }
-
-    /**
-     * Search functionality
-     */
-    public function search()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
-        }
-
-        $query = $this->request->getGet('q');
-        $type = $this->request->getGet('type') ?: 'both'; // requests, results, or both
-
-        $data = [];
-
-        if ($type === 'requests' || $type === 'both') {
-            $data['requests'] = $this->labRequestModel->searchRequests($query);
-        }
-
-        if ($type === 'results' || $type === 'both') {
-            $data['results'] = $this->testResultModel->searchResults($query);
-        }
-
-        return $this->response->setJSON([
-            'success' => true,
-            'data' => $data
-        ]);
-    }
-
-    /**
-     * Get statistics
-     */
-    public function getStats()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
-        }
-
-        $requestStats = $this->labRequestModel->getStats();
-        $resultStats = $this->testResultModel->getStats();
-
-        return $this->response->setJSON([
-            'success' => true,
-            'data' => [
-                'requests' => $requestStats,
-                'results' => $resultStats
-            ]
-        ]);
-    }
-
-    public function results()
-    {
-        // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
-            return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
-        }
-
-        $data = [
-            'title' => 'Laboratory Results',
-            'user' => session()->get('username'),
-            'role' => session()->get('role')
-        ];
-
-        return view('admin/laboratory/Results', $data);
-    }
+    
 }

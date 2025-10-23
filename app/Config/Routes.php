@@ -101,29 +101,9 @@ $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter
 $routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,admin']);
 $routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,admin']);
 $routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,admin']);
-$routes->get('laboratory/results', 'Laboratory::results');
 $routes->get('laboratory/testresult/data', 'Laboratory::getTestResultsData');
 
-// Laboratory API Routes
-$routes->group('api/laboratory', ['namespace' => 'App\\Controllers', 'filter' => 'auth:labstaff,admin'], function($routes) {
-    // Lab Request API endpoints
-    $routes->post('request/submit', 'Laboratory::submitRequest');
-    $routes->get('requests', 'Laboratory::getRequests');
-    $routes->get('requests/pending', 'Laboratory::getRequests');
-    $routes->get('requests/urgent', 'Laboratory::getRequests');
-    $routes->get('requests/today', 'Laboratory::getRequests');
-    
-    // Test Result API endpoints
-    $routes->get('results', 'Laboratory::getTestResults');
-    $routes->post('results/save', 'Laboratory::saveTestResult');
-    $routes->get('results/pending', 'Laboratory::getTestResults');
-    $routes->get('results/completed', 'Laboratory::getTestResults');
-    $routes->get('results/critical', 'Laboratory::getTestResults');
-    
-    // Search and Statistics
-    $routes->get('search', 'Laboratory::search');
-    $routes->get('stats', 'Laboratory::getStats');
-});
+// Laboratory API Routes (removed)
 
 // Pharmacy Routes under admin
 $routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth:pharmacist,admin'], function($routes) {
