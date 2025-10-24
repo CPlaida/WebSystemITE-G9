@@ -189,15 +189,18 @@ body {
 .main-content {
     flex: 1;
     margin-left: 250px;
-    padding: 30px;
+    padding: 20px 16px 20px 30px;
     background: #f0f2f5;
     transition: var(--transition);
     min-height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
+    width: calc(100vw - 250px);
 }
 
 .main-content.zoomed {
     margin-left: 70px;
+    width: calc(100vw - 70px);
 }
 
 /* Dashboard Styles */

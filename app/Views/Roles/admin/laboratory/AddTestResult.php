@@ -4,6 +4,31 @@
 
 <?= $this->section('content') ?>
     <style>
+        /* Page-specific: make content full-width inside main-content */
+        #mainContent {
+            padding: 0 !important;
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        /* Ensure parameter grid doesn't overflow and create horizontal gap */
+        .parameter-row {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto !important;
+        }
+
+        /* Ensure card aligns closer to sidebar on this page */
+        #mainContent .card {
+            margin: 0 0 1rem 0 !important;
+            width: 100% !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+        }
+
+        /* Tighten internal padding so content starts at the very edge */
+        #mainContent .card-header { padding: 10px 0 10px 0 !important; }
+        #mainContent .card-body { padding: 10px 0 12px 0 !important; }
+        #mainContent .page-header { margin: 0 0 10px 0 !important; padding: 0 !important; }
+
         :root {
             --primary-color: #4361ee;
             --primary-hover: #3a56d4;
@@ -19,7 +44,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
             gap: 15px;
         }
@@ -34,12 +59,12 @@
             background: var(--white);
             border-radius: 0.35rem;
             box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             border: 1px solid var(--border-color);
         }
         
         .card-header {
-            padding: 1rem 1.25rem;
+            padding: 0.75rem 1rem;
             background-color: #f8f9fc;
             border-bottom: 1px solid var(--border-color);
             font-weight: 600;
@@ -47,22 +72,22 @@
         }
         
         .card-body {
-            padding: 1.25rem;
+            padding: 1rem;
         }
         
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            gap: 1rem;
         }
         
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.75rem;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
             font-weight: 500;
             color: #5a5c69;
         }
@@ -70,7 +95,7 @@
         .form-control {
             display: block;
             width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.45rem 0.65rem;
             font-size: 1rem;
             font-weight: 400;
             line-height: 1.5;
@@ -98,7 +123,7 @@
             vertical-align: middle;
             user-select: none;
             border: 1px solid transparent;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.85rem;
             font-size: 1rem;
             line-height: 1.5;
             border-radius: 0.35rem;
@@ -172,7 +197,7 @@
                     <div class="test-results">
                         <h3 style="margin-bottom: 20px; font-weight: 600;">Test Parameters</h3>
                         <div id="parametersContainer">
-                            <div class="parameter-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; margin-bottom: 1rem; align-items: end;">
+                            <div class="parameter-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 0.75rem; margin-bottom: 0.75rem; align-items: end;">
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label class="form-label">Parameter Name</label>
                                     <input type="text" class="form-control" name="parameter_name[]" placeholder="e.g., Hemoglobin" required>
@@ -190,8 +215,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-outline-primary" onclick="addParameter()" style="margin-bottom: 1.5rem;">
-                            <i class="fas fa-plus"></i> Add Parameter
+                        <button type="button" class="btn btn-outline-primary" onclick="addParameter()" style="margin-bottom: 0.75rem;">
+                            <i class="fas fa-plus"></i>Add Parameter
                         </button>
                     </div>
 
@@ -207,10 +232,10 @@
 
                     <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
                         <a href="<?= base_url('laboratory/testresult') ?>" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Back to Results
+                            <i class="fas fa-arrow-left"></i>Back to Results
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Result & Mark Completed
+                            <i class="fas fa-save"></i>Save Result & Mark Completed
                         </button>
                     </div>
                 </form>
@@ -223,7 +248,7 @@
             const container = document.getElementById('parametersContainer');
             const newRow = document.createElement('div');
             newRow.className = 'parameter-row';
-            newRow.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; margin-bottom: 1rem; align-items: end;';
+            newRow.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 0.75rem; margin-bottom: 0.75rem; align-items: end;';
             
             newRow.innerHTML = `
                 <div class="form-group" style="margin-bottom: 0;">

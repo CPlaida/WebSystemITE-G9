@@ -117,7 +117,7 @@
     }
 
     .btn-view {
-        background-color: #2ecc71;
+        background-color: #4e73df;
         color: white;
     }
 
@@ -163,9 +163,8 @@
                         <td>3 items</td>
                         <td>₱1,500.00</td>
                         <td class="action-buttons">
-                            <button onclick="viewTransaction('TRX-001')" class="btn btn-view">
-                                <i class="fas fa-eye"></i> View
-                            </button>
+                            <button onclick="viewTransaction('TRX-001')" class="btn btn-view">View</button>
+
                             <button onclick="printTransaction('TRX-001')" class="btn btn-print">
                                 <i class="fas fa-print"></i> Print
                             </button>
@@ -178,9 +177,8 @@
                         <td>5 items</td>
                         <td>₱2,300.00</td>
                         <td class="action-buttons">
-                            <button onclick="viewTransaction('TRX-002')" class="btn btn-view">
-                                <i class="fas fa-eye"></i> View
-                            </button>
+                            <button onclick="viewTransaction('TRX-002')" class="btn btn-view">View</button>
+
                             <button onclick="printTransaction('TRX-002')" class="btn btn-print">
                                 <i class="fas fa-print"></i> Print
                             </button>

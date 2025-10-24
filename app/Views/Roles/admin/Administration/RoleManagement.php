@@ -15,10 +15,10 @@
 
     .container {
       background: #fff;
-      padding: 20px;
-      margin: 2rem auto;
-      width: 90%;
-      max-width: 800px;
+      padding: 24px 24px 20px;
+      margin: 1rem 0;
+      width: 100%;
+      max-width: none;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
     }
@@ -27,13 +27,14 @@
       font-size: 1.3rem;
       font-weight: bold;
       margin-bottom: 1.2rem;
-      color: var(--dark);
+      color: var(white);
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px 24px;
+      align-items: start;
     }
 
     label {
@@ -54,12 +55,13 @@
     }
 
     .form-actions {
-      margin-top: 25px;
+      margin-top: 20px;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
-      padding-top: 20px;
+      padding-top: 16px;
       border-top: 1px solid #eee;
+      gap: 12px;
     }
 
     .btn {
@@ -91,6 +93,16 @@
     .btn-primary {
       background: var(--primary);
       color: white;
+    }
+
+    @media (max-width: 992px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .container {
+        padding: 20px 16px;
+      }
     }
 
     .btn-primary:hover {
@@ -151,10 +163,7 @@
       </div>
       <div class="form-actions">
         </a>
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-save" style="margin-right: 8px;"></i>
-          Update Permission
-        </button>
+        <button type="submit" class="btn btn-primary">Update Permission</button>
       </div>
     </form>
   </div>

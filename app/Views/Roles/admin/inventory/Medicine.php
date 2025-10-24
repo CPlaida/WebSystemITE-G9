@@ -227,22 +227,26 @@ $currentSubmenu = 'inventory';
         gap: 10px;
     }
     .btn-edit, .btn-delete {
-        background: none;
         border: none;
         cursor: pointer;
-        padding: 5px 8px;
-        border-radius: 4px;
-        transition: all 0.2s;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+        font-weight: 600;
+        color: #fff;
+        text-decoration: none;
     }
     .btn-edit {
-        color: #3498db;
+        background-color: #3498db; /* blue */
+    }
+    .btn-edit:hover {
+        background-color: #2980b9;
     }
     .btn-delete {
-        color: #e74c3c;
+        background-color: #e74c3c; /* red */
     }
-    .btn-edit:hover, .btn-delete:hover {
-        background-color: rgba(0,0,0,0.05);
-        transform: scale(1.1);
+    .btn-delete:hover {
+        background-color: #c0392b;
     }
     /* Modal Styles */
     .modal {
@@ -514,8 +518,8 @@ $currentSubmenu = 'inventory';
                     <td>₱${parseFloat(med.price).toFixed(2)}</td>
                     <td>${med.expiryDate}</td>
                     <td class="actions">
-                        <button class="btn-edit"><i class="fas fa-edit"></i></button>
-                        <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                        <button class="btn-edit">Edit</button>
+                        <button class="btn-delete">Delete</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -611,8 +615,8 @@ $currentSubmenu = 'inventory';
                 <td>₱${item.price.toFixed(2)}</td>
                 <td>${item.expiry}</td>
                 <td class="actions">
-                    <button class="btn-edit"><i class="fas fa-edit"></i></button>
-                    <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                    <button class="btn-edit">Edit</button>
+                    <button class="btn-delete">Delete</button>
                 </td>
             `;
             tbody.appendChild(tr);

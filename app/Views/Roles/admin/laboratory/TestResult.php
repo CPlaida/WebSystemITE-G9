@@ -39,15 +39,15 @@
         }
 
         .page-header {
-            background: #fff;
-            border-radius: 0.35rem;
-            box-shadow: var(--card-shadow);
-            padding: 1.25rem 1.5rem;
-            margin-bottom: 1.5rem;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0 0 1rem 0;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-left: 4px solid var(--primary-color);
+            border-left: none;
         }
 
         .page-title {
@@ -61,7 +61,7 @@
         .card {
             background: #fff;
             border: none;
-            border-radius: 0.35rem;
+            border-radius: 0.5rem;
             box-shadow: var(--card-shadow);
             margin-bottom: 1.5rem;
             overflow: hidden;
@@ -69,14 +69,18 @@
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0.5rem 1.5rem 0.5rem rgba(0, 0, 0, 0.075);
+            transform: none;
+            box-shadow: none;
         }
 
         .card-header {
             background-color: #f8f9fc;
             border-bottom: 1px solid var(--border-color);
             padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
         }
 
         .card-title {
@@ -90,15 +94,11 @@
         }
 
         .card-body {
-            padding: 1.5rem;
+            padding: 1.25rem 1.5rem;
         }
 
         .search-section {
-            background: #fff;
-            border-radius: 0.35rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--card-shadow);
+            display: none;
         }
 
         .section-title {
@@ -115,6 +115,52 @@
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .header-actions .search-input {
+            width: 260px;
+        }
+
+        /* Search bar specific styles (match reference design) */
+        .search-input {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.625rem 0.875rem;
+            font-size: 0.95rem;
+            color: #374151;
+            background-color: #fff;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-input:focus {
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.08);
+            outline: none;
+        }
+
+        .search-button {
+            background-color: #223043;
+            border-color: #223043;
+            color: #fff;
+            border-radius: 12px;
+            padding: 0.625rem 1rem;
+            font-weight: 700;
+        }
+
+        .search-button:hover {
+            background-color: #1b2736;
+            border-color: #1b2736;
+            transform: translateY(-1px);
         }
 
         .form-control {
@@ -156,6 +202,16 @@
             border-radius: 0.35rem;
             transition: var(--transition);
             cursor: pointer;
+        }
+
+        .btn,
+        .btn:hover,
+        .btn:focus,
+        .btn:active,
+        .action-buttons a,
+        .action-buttons a:hover,
+        .action-buttons a:focus {
+            text-decoration: none !important;
         }
 
         .btn i {
@@ -206,35 +262,40 @@
         .filter-section {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            gap: 0.75rem;
+            margin: 0 0 0.75rem 0;
+            align-items: center;
         }
         
         .filter-btn {
-            padding: 0.5rem 1rem;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
+            padding: 0.4rem 0.9rem;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
             font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--secondary-color);
+            font-weight: 600;
+            color: #6b7280;
             cursor: pointer;
             transition: var(--transition);
         }
         
-        .filter-btn:hover, .filter-btn.active {
+        .filter-btn:hover {
+            border-color: #d1d5db;
+        }
+
+        .filter-btn.active {
             background: var(--primary-color);
             color: #fff;
             border-color: var(--primary-color);
-            transform: translateY(-1px);
+            box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.12);
         }
 
         .table-container {
             width: 100%;
             overflow-x: auto;
-            margin: 1.5rem 0;
-            border-radius: 0.35rem;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
         }
         
         .data-table {
@@ -242,7 +303,7 @@
             border-collapse: separate;
             border-spacing: 0;
             min-width: 900px;
-            background: #fff;
+            background: transparent;
         }
         
         .data-table thead th {
@@ -258,11 +319,11 @@
         }
         
         .data-table thead th:first-child {
-            border-top-left-radius: 0.35rem;
+            border-top-left-radius: 0;
         }
         
         .data-table thead th:last-child {
-            border-top-right-radius: 0.35rem;
+            border-top-right-radius: 0;
         }
         
         .data-table tbody td {
@@ -282,11 +343,11 @@
         }
 
         .data-table tbody tr:last-child td:first-child {
-            border-bottom-left-radius: 0.35rem;
+            border-bottom-left-radius: 0;
         }
         
         .data-table tbody tr:last-child td:last-child {
-            border-bottom-right-radius: 0.35rem;
+            border-bottom-right-radius: 0;
         }
 
         .status-badge {
@@ -315,6 +376,21 @@
         .action-buttons {
             display: flex;
             gap: 0.5rem;
+        }
+
+        /* Ensure table action buttons are always clickable above any overlapping elements */
+        .action-buttons a,
+        .action-buttons .btn {
+            position: relative;
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        .table-container,
+        .table-container .table-responsive,
+        .data-table {
+            position: relative;
+            z-index: 1;
         }
 
         @media (max-width: 992px) {
@@ -351,27 +427,22 @@
         </div>
 
         <div class="card">
-            <div class="card-body">
-                <div class="search-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-search"></i> Search & Filter
-                    </h3>
-                    <div class="search-container">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search by patient name, test type, or ID...">
-                        <button class="btn btn-primary" id="searchBtn">
-                            <i class="fas fa-search"></i> Search
-                        </button>
-                    </div>
-                    
-                    <div class="filter-section">
-                        <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="pending">Pending</button>
-                        <button class="filter-btn" data-filter="completed">Completed</button>
-                        <button class="filter-btn" data-filter="today">Today</button>
-                        <button class="filter-btn" data-filter="week">This Week</button>
-                    </div>
+            <div class="card-header">
+                <h3 class="card-title">Test Results</h3>
+                <div class="header-actions">
+                    <input type="text" class="form-control search-input" id="searchInput" placeholder="Search patients...">
+                    <button class="btn search-button" id="searchBtn">Search</button>
                 </div>
-                
+            </div>
+            <div class="card-body">
+                <div class="filter-section">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="today">Today</button>
+                    <button class="filter-btn" data-filter="week">This Week</button>
+                </div>
+
                 <div class="table-container">
                     <div class="table-responsive">
                         <table class="data-table">
@@ -505,8 +576,13 @@
                     row.setAttribute('data-status', item.status || 'pending');
                     row.setAttribute('data-date', item.test_date || '');
                     
-                    const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (item.id || '');
-                    const addUrl = '<?= base_url('laboratory/testresult/add/') ?>' + (item.id || '');
+                    const identifier = item.id || item.test_id || '';
+                    const viewUrl = identifier
+                        ? '<?= base_url('laboratory/testresult/view/') ?>' + identifier
+                        : '<?= base_url('laboratory/testresult/view') ?>';
+                    const addUrl = identifier
+                        ? '<?= base_url('laboratory/testresult/add/') ?>' + identifier
+                        : '<?= base_url('laboratory/testresult/add') ?>';
                     
                     row.innerHTML = `
                         <td>${item.test_id || 'N/A'}</td>
@@ -517,12 +593,8 @@
                         <td>${item.notes || '—'}</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="${viewUrl}" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-                                <a href="${addUrl}" class="btn btn-outline-success btn-sm">
-                                    <i class="fas fa-plus"></i> Add Result
-                                </a>
+                                <a href="${viewUrl}" class="btn btn-primary btn-sm" role="button">View</a>
+                                <a href="${addUrl}" class="btn btn-primary btn-sm" role="button">Add Result</a>
                             </div>
                         </td>
                     `;
