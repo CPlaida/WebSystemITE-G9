@@ -3,30 +3,7 @@
 <?= $this->section('title') ?>Staff Schedule & Shift Management<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  /* Custom styles */
-  .shift {
-    border-radius: 4px;
-    margin-bottom: 6px;
-    padding: 6px 10px;
-    cursor: pointer;
-    display: inline-block;
-    width: 100%;
-    position: relative;
-  }
-  .shift:hover {
-    filter: brightness(95%);
-  }
-  /* Department colors - improved medical associations */
-  .dept-emergency { background-color: #dc2626; color: white; } /* Strong red - urgent */
-  .dept-cardiology { background-color: #ef4444; color: white; } /* Heart red */
-  .dept-neurology { background-color: #3b82f6; color: white; } /* Brain blue */
-  .dept-orthopedics { background-color: #059669; color: white; } /* Bone green */
-  .dept-pediatrics { background-color: #f59e0b; color: white; } /* Child orange */
-  .dept-general { background-color: #6b7280; color: white; } /* Neutral gray */
-  
-</style>
+ 
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <section aria-label="Staff Schedule Section">
       <div class="flex justify-between items-center mb-5 p-6">

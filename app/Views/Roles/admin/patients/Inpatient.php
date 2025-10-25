@@ -3,28 +3,6 @@
 <?= $this->section('title') ?>Inpatient Registration<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<style>
- /* Simplified styles aligned with register.php */
- .main-content { padding: 15px; margin-left: 120px; background-color: #f8f9fa; min-height: 100vh; }
- .page-header { margin: 0 0 15px; padding: 12px 15px; background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
- .page-title { margin: 0; font-size: 1.3rem; font-weight: 600; color: #333; }
- .card { background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 15px; border: 1px solid #eee; }
- .card-body { padding: 15px; }
- .form-section { margin-bottom: 15px; padding: 15px; background: #fff; border-radius: 6px; border: 1px solid #eee; }
- .section-title { color: #4361ee; margin: 0 0 15px; padding-bottom: 8px; border-bottom: 1px solid #eee; font-size: 1.1rem; }
- .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 15px; margin-bottom: 10px; }
- .form-group { margin-bottom: 10px; }
- .form-label { display: block; margin-bottom: .3rem; font-size: .85rem; color: #555; font-weight: 500; }
- .input-group { display: flex; align-items: center; }
- .input-group-text { padding: .5rem .75rem; font-size: .9rem; background: #f8f9fa; border: 1px solid #ddd; border-right: none; border-radius: 4px 0 0 4px; color: #555; }
- .form-control, .form-select { padding: .5rem .75rem; font-size: .9rem; border: 1px solid #ddd; border-radius: 4px; width: 100%; }
- .btn { padding: .5rem 1rem; font-size: .9rem; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: .5rem; }
- .btn-primary { background: #4361ee; color: #fff; border: 1px solid #3a56d4; }
- .btn-outline-secondary { background: #fff; color: #333; border: 1px solid #ddd; }
- .text-danger { color: #dc3545; }
- @media (max-width: 992px) { .main-content { margin-left: 0; padding: 10px; } .form-row { grid-template-columns: 1fr; } }
-</style>
-
 <div class="main-content" id="mainContent">
   <div class="page-header">
     <h1 class="page-title">Inpatient Registration</h1>
