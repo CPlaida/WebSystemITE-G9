@@ -56,16 +56,10 @@ class Medicine extends Controller
             }
         }
 
-        $baseCount = $model->countAll();
-
         foreach ($names as $index => $name) {
             if (trim((string)$name) === '') continue;
 
-            $seq = $baseCount + $index + 1;
-            $medicine_id = 'MEDI' . str_pad((string)$seq, 4, '0', STR_PAD_LEFT);
-
             $data = [
-                'medicine_id' => $medicine_id,
                 'name' => $name,
                 'brand' => $brands[$index] ?? null,
                 'category' => $categories[$index] ?? null,
