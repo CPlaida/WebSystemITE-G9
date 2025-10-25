@@ -8,6 +8,10 @@ class CreateLaboratoryTable extends Migration
 {
     public function up()
     {
+        if ($this->db->tableExists('laboratory')) {
+            return; // Table already exists; make migration idempotent
+        }
+
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
@@ -79,11 +83,11 @@ class CreateLaboratoryTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('patient_id', 'patients', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('doctor_id', 'doctors', 'id', 'SET NULL', 'CASCADE');
-        $this->forge->createTable('laboratory');
+        $this->forge->createTable('laboratory', true);
     }
 
     public function down()
     {
-        $this->forge->dropTable('laboratory');
+        $this->forge->dropTable('laboratory', true);
     }
 }

@@ -109,7 +109,14 @@ $routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1
 $routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,admin']);
 $routes->get('laboratory/testresult/data', 'Laboratory::getTestResultsData');
 
-// Laboratory API Routes (removed)
+ //Medicine Routes
+$routes->get('/medicines', 'Medicine::index');
+$routes->post('/medicines/store', 'Medicine::store');
+$routes->get('/medicines/edit/(:num)', 'Medicine::edit/$1');
+$routes->post('/medicines/update/(:num)', 'Medicine::update/$1');
+$routes->get('/medicines/delete/(:num)', 'Medicine::delete/$1');
+ // Sidebar alias
+$routes->get('admin/inventory/medicine', 'Medicine::index');
 
 // Pharmacy Routes under admin
 $routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth:pharmacist,admin'], function($routes) {
@@ -117,11 +124,11 @@ $routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' =>
     $routes->get('transactions', 'Pharmacy::transactions');
     $routes->get('transaction/(:any)', 'Pharmacy::viewTransaction/$1');
     $routes->get('medicines', 'Pharmacy::medicines');
-    $routes->get('inventory/medicine', 'Pharmacy::medicine');  // Access via /admin/pharmacy/inventory/medicine
+    $routes->get('inventory/medicine', 'Medicine::index');  // Access via /admin/pharmacy/inventory/medicine
 });
 
 // Route for admin inventory medicine
-$routes->get('admin/inventory/medicine', 'Pharmacy::medicine', ['filter' => 'auth:pharmacist,admin']);
+$routes->get('admin/inventory/medicine', 'Medicine::index', ['filter' => 'auth:pharmacist,admin']);
 
 // Administration Routes
     $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {

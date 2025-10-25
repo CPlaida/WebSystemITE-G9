@@ -23,18 +23,21 @@ $currentSubmenu = 'inventory';
         </div>
 
         <div class="content">
+            <?php $errorFlash = session()->getFlashdata('error'); ?>
+            <?php $errorMsg = session()->getFlashdata('error') ?? ''; ?>
+            <!-- Error modal is shown later after DOMContentLoaded using ERROR_MSG -->
             <div class="card-container">
                 <div class="card">
                     <h3>Total Items</h3>
-                    <div class="value" id="totalItems">0</div>
+                    <div class="value" id="totalItems"><?php if (isset($total)) { echo (int)$total; } ?></div>
                 </div>
                 <div class="card">
                     <h3>Low Stock</h3>
-                    <div class="value" id="lowStock">0</div>
+                    <div class="value" id="lowStock"><?php if (isset($low_stock)) { echo (int)$low_stock; } ?></div>
                 </div>
                 <div class="card">
                     <h3>Out of Stock</h3>
-                    <div class="value" id="outOfStock">0</div>
+                    <div class="value" id="outOfStock"><?php if (isset($out_stock)) { echo (int)$out_stock; } ?></div>
                 </div>
             </div>
 
@@ -53,7 +56,23 @@ $currentSubmenu = 'inventory';
                         </tr>
                     </thead>
                     <tbody id="medicineTableBody">
-                        <!-- Rows will be dynamically added here -->
+                        <?php if (!empty($medicines)) : ?>
+                            <?php foreach ($medicines as $m): ?>
+                                <tr>
+                                    <td><?= esc($m['medicine_id']) ?></td>
+                                    <td><?= esc($m['name']) ?></td>
+                                    <td><?= esc($m['brand']) ?></td>
+                                    <td><?= esc($m['category']) ?></td>
+                                    <td class="<?= ((int)$m['stock'] === 0 ? 'out-of-stock' : 'in-stock') ?>"><?= (int)$m['stock'] ?></td>
+                                    <td>₱<?= number_format((float)$m['price'], 2) ?></td>
+                                    <td><?= esc($m['expiry_date']) ?></td>
+                                    <td class="actions">
+                                        <a class="btn-edit" href="<?= base_url('medicines/edit/' . $m['id']) ?>">Edit</a>
+                                        <a class="btn-delete" href="<?= base_url('medicines/delete/' . $m['id']) ?>" onclick="return confirm('Delete this medicine?')">Delete</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -61,15 +80,34 @@ $currentSubmenu = 'inventory';
     </div>
 </div>
 
-<!-- Add/Edit Form Modal -->
-<div class="modal" id="medicineForm">
-    <div class="modal-content" style="width: 95%; max-width: 1000px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="margin: 0; font-size: 1.5rem; color: #333;">Add New Medicine(s)</h2>
-            <span class="close" onclick="closeForm()" style="font-size: 24px; cursor: pointer; color: #666;">&times;</span>
+<!-- Error Modal -->
+<div class="modal" id="errorModal" role="dialog" aria-modal="true" aria-labelledby="errorTitle" style="z-index: 2000;">
+    <div class="modal-content" style="max-width: 420px; text-align: center; padding: 30px 24px;">
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: #ffe5e8; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="#e74c3c" stroke-width="2" fill="none"/>
+                <path d="M8 8l8 8M16 8l-8 8" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/>
+            </svg>
         </div>
-        
-        <form id="medicineFormElement" style="margin: 0;">
+        <h3 id="errorTitle" style="margin: 0 0 10px; font-size: 22px; color: #2c3e50;">Error</h3>
+        <div id="errorModalBody" style="color: #6b7280; font-size: 14px; margin-bottom: 18px;"></div>
+        <button type="button" id="errorOkBtn" style="background: #e74c3c; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-weight: 600; cursor: pointer;">OK</button>
+    </div>
+</div>
+
+<!-- Add/Edit Form Modal -->
+    <?php $isEdit = isset($edit_medicine) && is_array($edit_medicine); ?>
+    <div class="modal" id="medicineForm">
+        <div class="modal-content" style="width: 95%; max-width: 1000px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; font-size: 1.5rem; color: #333;">
+                    <?= $isEdit ? 'Edit Medicine' : 'Add New Medicine(s)' ?>
+                </h2>
+                <span class="close" onclick="closeForm()" style="font-size: 24px; cursor: pointer; color: #666;">&times;</span>
+            </div>
+            
+            <form id="medicineFormElement" style="margin: 0;" method="post" action="<?= $isEdit ? base_url('medicines/update/' . $edit_medicine['id']) : base_url('medicines/store') ?>">
+                <?= csrf_field() ?>
             <!-- Autocomplete suggestion lists -->
             <datalist id="medicineNamesList"></datalist>
             <datalist id="brandList"></datalist>
@@ -89,31 +127,31 @@ $currentSubmenu = 'inventory';
                     <!-- Data Row -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; align-items: center; padding: 5px;">
                         <div>
-                            <input type="text" name="medicineName[]" list="medicineNamesList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                            <input type="text" name="<?= $isEdit ? 'name' : 'name[]' ?>" value="<?= $isEdit ? esc($edit_medicine['name']) : '' ?>" list="medicineNamesList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
                         <div>
-                            <input type="text" name="brand[]" list="brandList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                            <input type="text" name="<?= $isEdit ? 'brand' : 'brand[]' ?>" value="<?= $isEdit ? esc($edit_medicine['brand']) : '' ?>" list="brandList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
                         <div>
-                            <select name="category[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; background-color: #fff;">
+                            <select name="<?= $isEdit ? 'category' : 'category[]' ?>" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; background-color: #fff;">
                                 <option value="">Select</option>
-                                <option value="Pain Relief">Pain Relief</option>
-                                <option value="Antibiotics">Antibiotics</option>
-                                <option value="Vitamins">Vitamins</option>
-                                <option value="Antihistamines">Antihistamines</option>
+                                <?php $categories = ['Pain Relief','Antibiotics','Vitamins','Antihistamines']; ?>
+                                <?php foreach ($categories as $c): ?>
+                                    <option value="<?= $c ?>" <?= $isEdit && $edit_medicine['category'] === $c ? 'selected' : '' ?>><?= $c ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div>
-                            <input type="number" name="stock[]" min="0" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: center;">
+                            <input type="number" name="<?= $isEdit ? 'stock' : 'stock[]' ?>" value="<?= $isEdit ? (int)$edit_medicine['stock'] : '' ?>" min="0" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: center;">
                         </div>
                         <div>
-                            <input type="number" name="price[]" min="0" step="0.01" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: right;">
+                            <input type="number" name="<?= $isEdit ? 'price' : 'price[]' ?>" value="<?= $isEdit ? (float)$edit_medicine['price'] : '' ?>" min="0" step="0.01" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: right;">
                         </div>
                         <div>
-                            <input type="date" name="expiryDate[]" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                            <input type="date" name="<?= $isEdit ? 'expiry_date' : 'expiry_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['expiry_date']) : '' ?>" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
                         <div style="display: flex; justify-content: center;">
-                            <button type="button" onclick="removeMedicineEntry(this)" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 18px; padding: 0 8px;">
+                            <button type="button" onclick="removeMedicineEntry(this)" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 18px; padding: 0 8px;" <?= $isEdit ? 'disabled style="opacity:.3;cursor:not-allowed;background:none;border:none;color:#ccc;"' : '' ?>>
                                 ×
                             </button>
                         </div>
@@ -122,15 +160,17 @@ $currentSubmenu = 'inventory';
             </div>
             
             <div style="display: flex; justify-content: space-between; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                <?php if (!$isEdit): ?>
                 <button type="button" onclick="addMoreMedicine()" style="background: #6c757d; color: white; border: none; border-radius: 4px; padding: 8px 15px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px;">
                     <i class="fas fa-plus" style="font-size: 12px;"></i> Add More
                 </button>
+                <?php endif; ?>
                 <div style="display: flex; gap: 10px;">
                     <button type="button" onclick="closeForm()" style="background: #6c757d; color: white; border: none; border-radius: 4px; padding: 8px 20px; cursor: pointer; font-size: 14px;">
                         Cancel
                     </button>
                     <button type="submit" style="background: #007bff; color: white; border: none; border-radius: 4px; padding: 8px 20px; cursor: pointer; font-size: 14px;">
-                        Save All
+                        <?= $isEdit ? 'Update' : 'Save All' ?>
                     </button>
                 </div>
             </div>
@@ -272,6 +312,7 @@ $currentSubmenu = 'inventory';
         max-height: 90vh;
         overflow-y: auto;
         position: relative;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
     .close {
         position: absolute;
@@ -434,17 +475,34 @@ $currentSubmenu = 'inventory';
 </style>
 
 <script>
+    // Page mode flags from PHP (edit vs add)
+    const IS_EDIT = <?= isset($isEdit) && $isEdit ? 'true' : 'false' ?>;
+    const OPEN_ADD = <?= isset($open_add_modal) && $open_add_modal ? 'true' : 'false' ?>;
+    const ADD_URL = '<?= base_url('medicines?add=1') ?>';
+    const LIST_URL = '<?= base_url('medicines') ?>';
+    const ERROR_MSG = <?= json_encode(isset($errorFlash) ? (string)$errorFlash : '') ?>;
+
     // Toggle form visibility
     function toggleForm() {
+        // If current page was rendered in edit mode, reload in add mode to reset DOM
+        if (IS_EDIT) {
+            window.location.href = ADD_URL;
+            return;
+        }
         const form = document.getElementById('medicineForm');
         form.style.display = 'flex';
         // Reset form when opening
-        document.getElementById('medicineFormElement').reset();
+        const formEl = document.getElementById('medicineFormElement');
+        if (formEl) formEl.reset();
         // Reset to one entry
         const entries = document.getElementById('medicineEntries');
-        const firstEntry = entries.querySelector('.medicine-entry');
-        entries.innerHTML = '';
-        entries.appendChild(firstEntry);
+        if (entries) {
+            const firstEntry = entries.querySelector('.medicine-entry');
+            if (firstEntry) {
+                entries.innerHTML = '';
+                entries.appendChild(firstEntry);
+            }
+        }
         // Refresh suggestions each time modal opens
         if (typeof refreshAutocompleteLists === 'function') {
             refreshAutocompleteLists();
@@ -453,6 +511,11 @@ $currentSubmenu = 'inventory';
 
     function closeForm() {
         const form = document.getElementById('medicineForm');
+        if (IS_EDIT) {
+            // Leaving edit mode should clear the edit state
+            window.location.href = LIST_URL;
+            return;
+        }
         form.style.display = 'none';
     }
 
@@ -479,80 +542,9 @@ $currentSubmenu = 'inventory';
         }
     }
 
-    // Form submission
-    document.getElementById('medicineFormElement').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get all form data
-        const formData = new FormData(this);
-        const medicines = [];
-        
-        // Group form data by entry
-        const entries = formData.getAll('medicineName').length;
-        for (let i = 0; i < entries; i++) {
-            medicines.push({
-                name: formData.getAll('medicineName')[i],
-                brand: formData.getAll('brand')[i],
-                category: formData.getAll('category')[i],
-                stock: formData.getAll('stock')[i],
-                price: formData.getAll('price')[i],
-                expiryDate: formData.getAll('expiryDate')[i]
-            });
-        }
-        
-        // Here you would typically send the data to the server
-        console.log('Medicines to save:', medicines);
-        
-        // For demo, just add to the table
-        const tbody = document.getElementById('medicineTableBody');
-        
-        medicines.forEach(med => {
-            if (med.name) { // Only add if name is not empty
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>MED${Math.floor(1000 + Math.random() * 9000)}</td>
-                    <td>${med.name}</td>
-                    <td>${med.brand}</td>
-                    <td>${med.category}</td>
-                    <td class="in-stock">${med.stock}</td>
-                    <td>₱${parseFloat(med.price).toFixed(2)}</td>
-                    <td>${med.expiryDate}</td>
-                    <td class="actions">
-                        <button class="btn-edit">Edit</button>
-                        <button class="btn-delete">Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            }
-        });
-        
-        // Update stats
-        updateStats();
-        
-        // Close the form
-        closeForm();
-        
-        // Show success message
-        alert('Medicines saved successfully!');
-    });
+    // Let the form submit normally to the backend. No client-side interception.
     
-    // Update dashboard stats
-    function updateStats() {
-        const rows = document.querySelectorAll('#medicineTableBody tr');
-        let totalItems = rows.length;
-        let lowStock = 0;
-        let outOfStock = 0;
-        
-        rows.forEach(row => {
-            const stock = parseInt(row.cells[4].textContent);
-            if (stock === 0) outOfStock++;
-            else if (stock < 10) lowStock++;
-        });
-        
-        document.getElementById('totalItems').textContent = totalItems;
-        document.getElementById('lowStock').textContent = lowStock;
-        document.getElementById('outOfStock').textContent = outOfStock;
-    }
+    // Stats are rendered from PHP variables on page load.
     
     // --- Autocomplete helpers ---
     const defaultMedicineNames = [
@@ -593,40 +585,29 @@ $currentSubmenu = 'inventory';
         renderDatalist('brandList', brands);
     }
     
-    // Initialize with some sample data
+    // Initialize autocomplete options after table is populated
     document.addEventListener('DOMContentLoaded', function() {
-        // Add sample data
-        const sampleData = [
-            { id: 'MED1001', name: 'Paracetamol 500mg', brand: 'Biogesic', category: 'Pain Relief', stock: 150, price: 5.00, expiry: '2025-12-31' },
-            { id: 'MED1002', name: 'Amoxicillin 500mg', brand: 'Amoxil', category: 'Antibiotics', stock: 45, price: 8.50, expiry: '2024-11-30' },
-            { id: 'MED1003', name: 'Vitamin C 500mg', brand: 'Vitacare', category: 'Vitamins', stock: 3, price: 3.75, expiry: '2024-10-15' },
-            { id: 'MED1004', name: 'Loratadine 10mg', brand: 'Loratin', category: 'Antihistamines', stock: 0, price: 12.99, expiry: '2025-05-20' }
-        ];
-        
-        const tbody = document.getElementById('medicineTableBody');
-        sampleData.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${item.id}</td>
-                <td>${item.name}</td>
-                <td>${item.brand}</td>
-                <td>${item.category}</td>
-                <td class="${item.stock === 0 ? 'out-of-stock' : 'in-stock'}">${item.stock}</td>
-                <td>₱${item.price.toFixed(2)}</td>
-                <td>${item.expiry}</td>
-                <td class="actions">
-                    <button class="btn-edit">Edit</button>
-                    <button class="btn-delete">Delete</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-        
-        // Update stats
-        updateStats();
-
-        // Initialize autocomplete options after table is populated
         refreshAutocompleteLists();
+
+        <?php if (isset($isEdit) && $isEdit): ?>
+            const form = document.getElementById('medicineForm');
+            form.style.display = 'flex';
+        <?php endif; ?>
+        <?php if (isset($open_add_modal) && $open_add_modal): ?>
+            const formAdd = document.getElementById('medicineForm');
+            formAdd.style.display = 'flex';
+        <?php endif; ?>
+
+        if (ERROR_MSG) {
+            const modal = document.getElementById('errorModal');
+            const body = document.getElementById('errorModalBody');
+            const ok = document.getElementById('errorOkBtn');
+            body.innerHTML = 'Please fix the following errors:<br><ul style="text-align:left;margin:8px 0 0 18px;"><li>' + ERROR_MSG + '</li></ul>';
+            // Ensure modal is above any other overlay and visible
+            modal.style.display = 'flex';
+            modal.style.zIndex = 2000;
+            ok.onclick = function() { modal.style.display = 'none'; };
+        }
     });
 </script>
 <?= $this->endSection() ?>
