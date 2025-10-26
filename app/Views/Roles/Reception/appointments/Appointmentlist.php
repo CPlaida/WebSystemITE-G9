@@ -65,9 +65,6 @@
                           Cancel
                         </button>
                       <?php endif; ?>
-                      <button onclick="deleteAppointment(<?= $appointment['id'] ?>)" class="btn-action btn-danger" title="Delete">
-                        Delete
-                      </button>
                     </div>
                   </td>
                 </tr>
@@ -135,11 +132,11 @@
       fetch(`<?= base_url('appointments/update/') ?>${appointmentId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
           'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
         },
-        body: JSON.stringify({ status: status })
+        body: new URLSearchParams({ status: status })
       })
       .then(response => response.json())
       .then(data => {
@@ -158,36 +155,6 @@
       });
     }
 
-    function deleteAppointment(appointmentId) {
-      if (!confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
-        return;
-      }
-
-      fetch(`<?= base_url('appointments/delete/') ?>${appointmentId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
-        },
-        body: JSON.stringify({})
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showMessage('Appointment deleted successfully', 'success');
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        } else {
-          showMessage(data.message || 'Failed to delete appointment', 'error');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        showMessage('An error occurred while deleting the appointment', 'error');
-      });
-    }
 
     function viewDetails(appointmentId) {
       fetch(`<?= base_url('appointments/show/') ?>${appointmentId}`, {

@@ -46,6 +46,8 @@ class Patients extends BaseController
             'address' => 'permit_empty|string|max_length[255]',
             'blood_type' => 'permit_empty|string|max_length[10]',
             'emergency_contact' => 'permit_empty|string|max_length[100]',
+            'insurance_provider' => 'permit_empty|string|max_length[255]',
+            'insurance_number' => 'permit_empty|string|max_length[100]',
             'medical_history' => 'permit_empty|string'
         ];
 
@@ -69,6 +71,8 @@ class Patients extends BaseController
             'type' => $this->request->getPost('type') ?? 'outpatient',
             'blood_type' => $this->request->getPost('blood_type'),
             'emergency_contact' => $this->request->getPost('emergency_contact'),
+            'insurance_provider' => $this->request->getPost('insurance_provider'),
+            'insurance_number' => $this->request->getPost('insurance_number'),
             'medical_history' => $this->request->getPost('medical_history'),
             'status' => 'active',
             'created_at' => date('Y-m-d H:i:s')

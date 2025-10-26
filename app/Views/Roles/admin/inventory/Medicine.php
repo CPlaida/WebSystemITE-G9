@@ -58,7 +58,7 @@ $currentSubmenu = 'inventory';
                     <?php if (!empty($medicines)) : ?>
                         <?php foreach ($medicines as $m): ?>
                             <tr>
-                                <td><?= esc($m['medicine_id']) ?></td>
+                                <td><?= (int)$m['id'] ?></td>
                                 <td><?= esc($m['name']) ?></td>
                                 <td><?= esc($m['brand']) ?></td>
                                 <td><?= esc($m['category']) ?></td>
@@ -66,8 +66,8 @@ $currentSubmenu = 'inventory';
                                 <td>₱<?= number_format((float)$m['price'], 2) ?></td>
                                 <td><?= esc($m['expiry_date']) ?></td>
                                 <td class="actions">
-                                    <a class="btn-edit" href="<?= base_url('medicines/edit/' . $m['id']) ?>">Edit</a>
-                                    <a class="btn-delete" href="<?= base_url('medicines/delete/' . $m['id']) ?>" onclick="return confirm('Delete this medicine?')">Delete</a>
+                                    <a class="medicine-btn-edit" href="<?= base_url('medicines/edit/' . $m['id']) ?>">Edit</a>
+                                    <a class="medicine-btn-delete" href="<?= base_url('medicines/delete/' . $m['id']) ?>" onclick="return confirm('Delete this medicine?')">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

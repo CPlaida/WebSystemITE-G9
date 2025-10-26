@@ -12,12 +12,6 @@ class CreateMedicinesTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'medicine_id' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 10,
-                'null'       => false,
-                'unique'     => true,
-            ],
             'name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,

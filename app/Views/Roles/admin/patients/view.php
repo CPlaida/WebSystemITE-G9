@@ -74,7 +74,7 @@
                   </td>
                   <td>
                     <div class="action-buttons">
-                      <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">View</button>
+                      <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>','<?= esc($patient['insurance_provider'] ?? 'N/A') ?>','<?= esc($patient['insurance_number'] ?? 'N/A') ?>')">View</button>
                     </div>
                   </td>
                 </tr>
@@ -156,7 +156,8 @@
           <p><b>Date of Birth:</b> <span id="ehrDOB">-</span></p>
           <p><b>Gender:</b> <span id="ehrGender">-</span></p>
           <p><b>Blood Type:</b> <span id="ehrBloodType">-</span></p>
-          <p><b>Emergency Contact:</b> <span id="ehrEmergencyContact">-</span></p>
+          <p><b>Insurance Provider:</b> <span id="ehrInsuranceProvider">-</span></p>
+          <p><b>Insurance No.:</b> <span id="ehrInsuranceNumber">-</span></p>
           <p><b>Medical History:</b> <span id="ehrAilment">-</span></p>
           <p><b>Date Recorded:</b> <span id="ehrDate">-</span></p>
         </div>
@@ -181,7 +182,7 @@
   </div>
 
   <script>
-    function viewPatient(name, mobile, address, dob, gender, medicalHistory, patientId, email, bloodType, emergencyContact) {
+    function viewPatient(name, mobile, address, dob, gender, medicalHistory, patientId, email, bloodType, emergencyContact, insuranceProvider, insuranceNumber) {
       document.getElementById("ehrName").innerText = name;
       document.getElementById("ehrMobile").innerText = mobile;
       document.getElementById("ehrAddress").innerText = address;
@@ -194,7 +195,8 @@
       document.getElementById("ehrPatientId").innerText = patientId;
       document.getElementById("ehrEmail").innerText = email;
       document.getElementById("ehrBloodType").innerText = bloodType;
-      document.getElementById("ehrEmergencyContact").innerText = emergencyContact;
+      document.getElementById("ehrInsuranceProvider").innerText = insuranceProvider || 'N/A';
+      document.getElementById("ehrInsuranceNumber").innerText = insuranceNumber || 'N/A';
 
       document.getElementById("ehrModal").style.display = "flex";
     }

@@ -41,6 +41,8 @@ class PatientModel extends Model
         'type',
         'blood_type',
         'emergency_contact',
+        'insurance_provider',
+        'insurance_number',
         'medical_history',
         'status',
         'created_at',
@@ -60,6 +62,8 @@ class PatientModel extends Model
         'gender' => 'required|in_list[male,female,other]',
         'date_of_birth' => 'required|valid_date',
         'type' => 'permit_empty|in_list[inpatient,outpatient]',
+        'insurance_provider' => 'permit_empty|string|max_length[255]',
+        'insurance_number' => 'permit_empty|string|max_length[100]',
         'status' => 'in_list[active,inactive]'
     ];
 
