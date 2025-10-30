@@ -225,18 +225,26 @@ function updateTotals() {
 const paymentMethod = document.getElementById('payment_method');
 const paymentDetails = document.getElementById('payment_details');
 if (paymentMethod && paymentDetails) {
-    paymentMethod.addEventListener('change', function() {
-        const method = this.value;
+    function renderPaymentDetails(method){
         paymentDetails.innerHTML = '';
         if (method === 'insurance') {
             paymentDetails.innerHTML = `
                 <div class="form-group">
                     <label for="insurance_provider">Insurance Provider</label>
-                    <input type="text" id="insurance_provider" name="insurance_provider" class="form-control">
+                    <select id="insurance_provider" name="insurance_provider" class="form-control">
+                        <option value="">Select insurance provider</option>
+                        <option value="philhealth">PhilHealth</option>
+                        <option value="hmi">HMI</option>
+                        <option value="maxicare">Maxicare</option>
+                        <option value="intellicare">Intellicare</option>
+                    </select>
                 </div>
             `;
         }
-    });
+    }
+    paymentMethod.addEventListener('change', function(){ renderPaymentDetails(this.value); });
+    // Render once on load (keeps UI consistent when default is cash)
+    renderPaymentDetails(paymentMethod.value);
 }
 
 // On submit, ensure a selected patient and at least one valid item
@@ -260,12 +268,24 @@ document.getElementById('billForm')?.addEventListener('submit', function(e) {
         alert('Please add at least one bill item (service, quantity, price).');
         return;
     }
+    // Require insurance details when needed
+    const method = document.getElementById('payment_method')?.value;
+    if (method === 'insurance') {
+        const provider = document.getElementById('insurance_provider')?.value?.trim();
+        if (!provider) {
+            e.preventDefault();
+            alert('Please select an insurance provider.');
+            document.getElementById('insurance_provider')?.focus();
+            return;
+        }
+    }
 });
 
 // Initialize with one row
 (function initFirstRow(){
     document.getElementById('addItem')?.click();
 })();
+
 </script>
 
 <?= $this->endSection() ?>

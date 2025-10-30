@@ -11,26 +11,28 @@ class PrescriptionModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
+
     protected $allowedFields = [
         'patient_id',
-        'doctor_id',
-        'medication',
-        'dosage',
-        'instructions',
-        'date_prescribed',
-        'status'
+        'date',
+        'payment_method',
+        'subtotal',
+        'tax',
+        'total_amount',
+        'created_at',
+        'updated_at'
     ];
-    
+
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
-    protected $deletedField = 'deleted_at';
-    
+
     protected $validationRules = [
         'patient_id' => 'required|numeric',
-        'doctor_id' => 'required|numeric',
-        'medication' => 'required',
-        'dosage' => 'required',
-        'status' => 'required|in_list[pending,completed,cancelled]'
+        'date' => 'required|valid_date',
+        'payment_method' => 'required|in_list[cash,insurance]',
+        'subtotal' => 'required|decimal',
+        'tax' => 'required|decimal',
+        'total_amount' => 'required|decimal'
     ];
 }

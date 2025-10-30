@@ -121,14 +121,45 @@ $routes->get('admin/inventory/medicine', 'Medicine::index');
 // Pharmacy Routes under admin
 $routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth:pharmacist,admin'], function($routes) {
     $routes->get('inventory', 'Pharmacy::inventory');
+    $routes->get('prescription-dispensing', 'Pharmacy::prescriptionDispensing');
     $routes->get('transactions', 'Pharmacy::transactions');
     $routes->get('transaction/(:any)', 'Pharmacy::viewTransaction/$1');
     $routes->get('medicines', 'Pharmacy::medicines');
     $routes->get('inventory/medicine', 'Medicine::index');  // Access via /admin/pharmacy/inventory/medicine
 });
 
-// Route for admin inventory medicine
-$routes->get('admin/inventory/medicine', 'Medicine::index', ['filter' => 'auth:pharmacist,admin']);
+// Pharmacy API Routes
+$routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($routes) {
+    // Patient and Medication lookup
+    $routes->get('patients', 'Pharmacy::getPatients');
+    $routes->get('medications', 'Pharmacy::getMedications');
+    $routes->get('medication/(:num)', 'Pharmacy::getMedication/$1');
+    
+    // Transaction management
+    $routes->post('transaction/create', 'Pharmacy::createTransaction');
+    $routes->get('transactions', 'Pharmacy::getAllTransactions');
+    $routes->get('transaction/(:num)', 'Pharmacy::getTransactionDetails/$1');
+    
+    // Statistics
+    $routes->get('stats', 'Pharmacy::getStats');
+
+    // Expiry endpoints
+    $routes->get('medicines/expiring-soon', 'Pharmacy::getExpiringMedicines');
+    $routes->get('medicines/expired', 'Pharmacy::getExpiredMedicines');
+});
+
+$routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransaction/$1');
+
+    // View routes
+    $routes->get('admin/InventoryMan/PrescriptionDispensing', 'PrescriptionController::index', ['filter' => 'auth:pharmacist,admin']);
+
+    // Transaction pages
+    $routes->get('admin/pharmacy/transactions', 'TransactionController::index', ['filter' => 'auth:pharmacist,admin']);
+    $routes->get('admin/pharmacy/transaction/view/(:num)', 'TransactionController::view/$1', ['filter' => 'auth:pharmacist,admin']);
+    $routes->get('admin/pharmacy/transaction/print/(:num)', 'TransactionController::print/$1', ['filter' => 'auth:pharmacist,admin']);
+
+    // Route for admin inventory medicine
+    $routes->get('admin/inventory/medicine', 'Medicine::index', ['filter' => 'auth:pharmacist,admin']);
 
 // Administration Routes
     $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {

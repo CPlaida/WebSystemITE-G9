@@ -1,13 +1,28 @@
-<?php $this->extend('partials/header') ?>
-
-<?= $this->section('title') ?>Receipt #<?= $bill['bill_number'] ?? 'N/A' ?><?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt #<?= $bill['bill_number'] ?? 'N/A' ?> - St. Peter Hospital</title>
+    <link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
     <div class="receipt-page">
-        <div class="action-buttons no-print" style="margin-bottom: 10px;">
-            <a href="<?= base_url('billing') ?>" class="btn btn-back">Back to Billing</a>
+        <div class="action-buttons no-print">
+            <a href="<?= base_url('billing') ?>" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Billing
+            </a>
             <button onclick="window.print()" class="btn btn-print">
-                <i class="bi bi-printer"></i> Print Receipt
+                <i class="fas fa-print"></i> Print Receipt
             </button>
         </div>
 
@@ -70,4 +85,5 @@
             </div>
         </div>
     </div>
-<?= $this->endSection() ?>
+</body>
+</html>

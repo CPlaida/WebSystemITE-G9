@@ -5,6 +5,7 @@
 <?= $this->section('content') ?>
 <!-- Add Select2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>" />
 
 <div class="prescription-container">
     <!-- Main Content -->
@@ -17,15 +18,12 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="patientSelect">Patient Name</label>
-                            <select class="form-control" id="patientSelect" required>
-                                <option></option> <!-- Empty option for Select2 placeholder -->
-                                <option value="1">Juan Dela Cruz</option>
-                                <option value="2">Maria Santos</option>
-                                <option value="3">Pedro Reyes</option>
-                                <option value="4">Ana Martinez</option>
-                                <option value="5">Jose Gonzales</option>
-                            </select>
+                            <label for="patientInput">Patient Name</label>
+                            <div class="patient-autocomplete">
+                                <input type="text" class="form-control" id="patientInput" placeholder="Type patient name" autocomplete="off" required>
+                                <div id="patientSuggestions" class="autocomplete-menu" hidden></div>
+                                <input type="hidden" id="patientId">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -39,17 +37,7 @@
                 <div class="form-group">
                     <label for="medicationSelect">Select Medication</label>
                     <select class="form-control" id="medicationSelect" style="width: 100%;">
-                        <option></option> <!-- Empty option for placeholder -->
-                        <option value="1">Paracetamol 500mg</option>
-                        <option value="2">Amoxicillin 500mg</option>
-                        <option value="3">Losartan 50mg</option>
-                        <option value="4">Metformin 500mg</option>
-                        <option value="5">Omeprazole 20mg</option>
-                        <option value="6">Amlodipine 10mg</option>
-                        <option value="7">Cetirizine 10mg</option>
-                        <option value="8">Salbutamol 2mg/5ml</option>
-                        <option value="9">Mefenamic Acid 500mg</option>
-                        <option value="10">Vitamin C 500mg</option>
+                        <option></option>
                     </select>
                 </div>
                 
@@ -93,18 +81,17 @@
                     </div>
                 </div>
                 
-                <!-- Payment Method Selection -->
+                <!-- Payment -->
                 <div class="form-group mt-3">
-                    <label for="payment_method">Payment Method</label>
-                    <select id="payment_method" name="payment_method" class="form-control" required>
-                        <option value="">Select payment method</option>
-                        <option value="cash">Cash</option>
-                        <option value="insurance">Insurance</option>
-                    </select>
+                    <label for="amount_received" style="font-weight:600;">Amount Received</label>
+                    <div style="display:flex; align-items:stretch;">
+                        <span style="background:#f3f4f6; border:1px solid #e5e7eb; border-right:0; color:#374151; padding:8px 10px; border-radius:6px 0 0 6px; font-weight:600;">₱</span>
+                        <input type="number" id="amount_received" class="form-control" min="0" step="0.01" placeholder="Enter cash received" style="border-radius:0 6px 6px 0; text-align:left;">
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:6px;">
+                        <span id="change_badge" style="background:#eafaf1; color:#0f7a43; border:1px solid #b7f0cf; padding:4px 10px; border-radius:9999px; font-weight:600; font-size:12px;">Change: ₱0.00</span>
+                    </div>
                 </div>
-                
-                <!-- Payment Details (will be shown based on selection) -->
-                <div id="payment_details" class="mt-2"></div>
                 
                 <button class="btn btn-primary btn-block mt-3" id="checkoutBtn">
                     <i class="fas fa-check-circle"></i> Checkout
@@ -118,45 +105,192 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Initialize Select2 for patient dropdown
-    $('#patientSelect').select2({
-        placeholder: 'Search and select a patient',
-        allowClear: true,
+    // Base URL helper
+   const API_BASE = '<?= site_url('api/pharmacy') ?>';
+
+    let patientList = [];
+    let activeIndex = -1;
+    function debounce(fn, wait){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a), wait); } }
+
+    function renderPatientSuggestions(list){
+        const $menu = $('#patientSuggestions');
+
+        // Ensure wrapper context and menu styled as a card
+        $('.patient-autocomplete').css({ position: 'relative' });
+        $menu.css({
+            position: 'absolute',
+            top: 'calc(100% + 4px)',
+            left: 0,
+            right: 0,
+            zIndex: 2000,
+            background: '#fff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '10px',
+            boxShadow: '0 10px 24px rgba(17, 24, 39, 0.10)',
+            padding: '6px 0',
+            maxHeight: '320px',
+            overflowY: 'auto',
+            display: 'block'
+        });
+
+        $menu.empty();
+        activeIndex = -1;
+
+        if (!list || list.length === 0){
+            $menu.attr('hidden', true);
+            return;
+        }
+
+        list.forEach((p,i)=>{
+            $menu.append(
+                `<div class="autocomplete-item" data-index="${i}" data-id="${p.id}" data-name="${p.name}" style="
+                    display:flex;align-items:center;justify-content:space-between;
+                    padding:12px 14px;font-size:15px;line-height:1.3;color:#111827;cursor:pointer;background:#fff;text-align:left;
+                    border-bottom: 1px solid #eef2f7;
+                ">
+                    <span>${p.name}</span>
+                </div>`
+            );
+        });
+
+        // Add hover styles inline for reliability
+        // Add dividers and hover behavior inline
+        $menu.find('.autocomplete-item + .autocomplete-item').css('border-top','1px solid #eef2f7');
+        $menu.off('mouseenter mouseleave', '.autocomplete-item')
+             .on('mouseenter', '.autocomplete-item', function(){ $(this).css('background', '#f5f7fb'); })
+             .on('mouseleave', '.autocomplete-item', function(){ $(this).css('background', '#fff'); });
+
+        $menu.removeAttr('hidden');
+    }
+
+    const fetchPatients = debounce(function(q){
+        if (!q || q.length < 1){ $('#patientSuggestions').attr('hidden', true).empty(); return; }
+        fetch(API_BASE + '/patients?term=' + encodeURIComponent(q))
+            .then(r=>r.json())
+            .then(list=>{ patientList = list || []; renderPatientSuggestions(patientList); })
+            .catch(()=>{ $('#patientSuggestions').attr('hidden', true).empty(); });
+    },200);
+
+    $('#patientInput').on('input', function(){
+        $('#patientId').val('');
+        const v = this.value.trim();
+        fetchPatients(v);
+    });
+
+    $(document).on('mousedown', '#patientSuggestions .autocomplete-item', function(e){
+        const name = $(this).data('name');
+        const id = Number($(this).data('id')) || 0;
+        $('#patientInput').val(name);
+        $('#patientId').val(id);
+        $('#patientSuggestions').attr('hidden', true).empty();
+    });
+
+    $('#patientInput').on('keydown', function(e){
+        const $items = $('#patientSuggestions .autocomplete-item');
+        if ($items.length === 0) return;
+        if (e.key === 'ArrowDown'){ e.preventDefault(); activeIndex = (activeIndex + 1) % $items.length; $items.removeClass('active').eq(activeIndex).addClass('active'); }
+        else if (e.key === 'ArrowUp'){ e.preventDefault(); activeIndex = (activeIndex - 1 + $items.length) % $items.length; $items.removeClass('active').eq(activeIndex).addClass('active'); }
+        else if (e.key === 'Enter'){ if (activeIndex >= 0){ e.preventDefault(); $items.eq(activeIndex).trigger('mousedown'); } }
+        else if (e.key === 'Escape'){ $('#patientSuggestions').attr('hidden', true).empty(); }
+    });
+
+    $(document).on('click', function(e){
+        if (!$(e.target).closest('.patient-autocomplete').length){ $('#patientSuggestions').attr('hidden', true).empty(); }
     });
     
-    // Initialize Select2 for medication dropdown
+    // Initialize Select2 for medication dropdown with AJAX
     $('#medicationSelect').select2({
         placeholder: 'Select a medication',
         allowClear: true,
+        ajax: {
+            url: API_BASE + '/medications',
+            dataType: 'json',
+            delay: 200,
+            data: params => ({ term: params.term || '' }),
+            processResults: data => ({
+                results: (data || [])
+                    .filter(m => Number(m.stock) > 0)
+                    .map(m => ({
+                        id: m.id,
+                        text: `${m.name}${m.brand ? ' (' + m.brand + ')' : ''}`,
+                        name: m.name,
+                        price: parseFloat(m.price),
+                        stock: m.stock
+                    }))
+            }),
+            transport: function (params, success, failure) {
+                const request = $.ajax(params);
+                request.then(success);
+                request.fail((jqXHR) => { console.error('Medications load failed', jqXHR.responseText); failure(jqXHR); });
+                return request;
+            }
+        },
+        minimumInputLength: 0,
+        width: '100%'
+    }).on('select2:open', function() {
+        const searchField = document.querySelector('.select2-container--open .select2-search__field');
+        if (searchField) {
+            searchField.value = '';
+            const e = new Event('input', { bubbles: true });
+            searchField.dispatchEvent(e);
+        }
+    }).on('select2:select', function(e) {
+        const data = e.params.data || {};
+        const stock = Number(data.stock || 0);
+        // Reflect stock limit in quantity input
+        $('#quantity').attr('min', 1).attr('max', Math.max(stock, 1));
+        if (stock <= 0) {
+            alert('Selected medicine is out of stock.');
+        }
     });
     
     let cart = [];
     
     // Handle add to cart button click
     $('#addToCartBtn').on('click', function() {
-        const medicationId = $('#medicationSelect').val();
-        const medicationName = $('#medicationSelect option:selected').text();
-        const quantity = $('#quantity').val();
+        const selected = $('#medicationSelect').select2('data')[0];
+        const medicationId = selected?.id;
+        const medicationName = selected?.name || selected?.text || '';
+        const price = Number(selected?.price || 0);
+        const quantity = Number($('#quantity').val());
+        const stock = Number(selected?.stock || 0);
         
         if (!medicationId || !quantity) {
             alert('Please select a medication and quantity');
             return;
         }
+        if (quantity <= 0) {
+            alert('Quantity must be at least 1');
+            return;
+        }
+        // Compute how many of this med already in cart
+        const inCartQty = cart.reduce((sum, i) => i.medicationId === Number(medicationId) ? sum + Number(i.quantity) : sum, 0);
+        const remaining = stock - inCartQty;
+        if (stock <= 0 || quantity > remaining) {
+            alert(`Insufficient stock. Available: ${Math.max(remaining, 0)}`);
+            return;
+        }
         
-        const item = {
-            id: Date.now(),
-            medicationId: medicationId,
-            name: medicationName,
-            quantity: quantity,
-            price: (Math.random() * 100).toFixed(2) // Random price for demo
-        };
-        
-        cart.push(item);
+        // Merge with existing item of same med if present
+        const existing = cart.find(i => i.medicationId === Number(medicationId));
+        if (existing) {
+            existing.quantity += quantity;
+        } else {
+            const item = {
+                id: Date.now(),
+                medicationId: Number(medicationId),
+                name: medicationName,
+                quantity: quantity,
+                price: price,
+                stock: stock
+            };
+            cart.push(item);
+        }
         updateCart();
         
         // Reset form
         $('#medicationSelect').val(null).trigger('change');
-        $('#quantity').val('1');
+        $('#quantity').val('1').attr('max', '');
     });
     
     // Update cart display
@@ -209,11 +343,20 @@ $(document).ready(function() {
         // Calculate total
         const total = subtotal + tax;
         $('#total').text(`₱${total.toFixed(2)}`);
+        // Refresh change preview if payment input is present
+        if (document.getElementById('amount_received')) { setTimeout(updateChange, 0); }
     }
     
     // Handle cart item actions
     $(document).on('click', '.btn-increase', function() {
         const index = $(this).data('index');
+        const item = cart[index];
+        const totalOther = cart.reduce((sum, i, idx) => (i.medicationId === item.medicationId && idx !== index) ? sum + Number(i.quantity) : sum, 0);
+        const remaining = Number(item.stock || 0) - totalOther;
+        if (item.quantity + 1 > remaining) {
+            alert('Insufficient stock for this medicine');
+            return;
+        }
         cart[index].quantity++;
         updateCart();
     });
@@ -232,39 +375,15 @@ $(document).ready(function() {
         updateCart();
     });
     
-    // Handle payment method change
-    $('#payment_method').on('change', function() {
-        const paymentMethod = $(this).val();
-        const $paymentDetails = $('#payment_details');
-        
-        // Clear previous payment details
-        $paymentDetails.empty();
-        
-        if (paymentMethod === 'cash') {
-            $paymentDetails.html(`
-                <div class="alert alert-info p-2">
-                    <i class="fas fa-money-bill-wave"></i> Please prepare cash payment
-                </div>
-            `);
-        } else if (paymentMethod === 'insurance') {
-            $paymentDetails.html(`
-                <div class="form-group">
-                    <label for="insurance_provider">Insurance Provider</label>
-                    <select id="insurance_provider" name="insurance_provider" class="form-control form-control-sm" required>
-                        <option value="">Select insurance provider</option>
-                        <option value="philhealth">PhilHealth</option>
-                        <option value="hmi">HMI</option>
-                        <option value="maxicare">Maxicare</option>
-                        <option value="intellicare">Intellicare</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="insurance_id">Insurance ID</label>
-                    <input type="text" id="insurance_id" name="insurance_id" class="form-control form-control-sm" required>
-                </div>
-            `);
-        }
-    });
+    // Change calculator for cash payment
+    const formatMoney = v => '₱' + (Number(v)||0).toFixed(2);
+    function getTotal(){ return parseFloat($('#total').text().replace('₱','')) || 0; }
+    function updateChange(){
+        const paid = parseFloat($('#amount_received').val() || '0');
+        const change = paid - getTotal();
+        $('#change_badge').text('Change: ' + formatMoney(Math.max(change,0)));
+    }
+    $(document).on('input', '#amount_received', updateChange);
     
     // Handle checkout button
     $('#checkoutBtn').on('click', function() {
@@ -273,53 +392,66 @@ $(document).ready(function() {
             return;
         }
         
-        const paymentMethod = $('#payment_method').val();
-        if (!paymentMethod) {
-            alert('Please select a payment method');
+        const paymentMethod = 'cash';
+        const amountReceived = parseFloat($('#amount_received').val() || '0');
+        const totalDue = parseFloat($('#total').text().replace('₱','')) || 0;
+        if (amountReceived < totalDue) {
+            alert('Amount received is insufficient to cover the total.');
             return;
         }
         
-        if (paymentMethod === 'insurance') {
-            const provider = $('#insurance_provider').val();
-            const insuranceId = $('#insurance_id').val();
-            
-            if (!provider) {
-                alert('Please select an insurance provider');
-                return;
-            }
-            
-            if (!insuranceId) {
-                alert('Please enter your insurance ID');
-                return;
-            }
-        }
         
+        // Validate patient selection (must match a suggestion so we have an ID)
+        const pid = Number($('#patientId').val() || 0);
+        const pname = $('#patientInput').val().trim();
+        if (!pname || pid <= 0) {
+            alert('Please select a valid patient from the suggestions.');
+            return;
+        }
+
         // Prepare data for submission
         const orderData = {
-            patientId: $('#patientSelect').val(),
-            patientName: $('#patientSelect option:selected').text(),
-            items: cart,
-            payment: {
-                method: paymentMethod,
-                provider: paymentMethod === 'insurance' ? $('#insurance_provider').val() : null,
-                insuranceId: paymentMethod === 'insurance' ? $('#insurance_id').val() : null,
-                subtotal: parseFloat($('#subtotal').text().replace('₱', '')),
-                tax: parseFloat($('#tax').text().replace('₱', '')),
-                total: parseFloat($('#total').text().replace('₱', ''))
-            },
+            patient_id: pid,
+            patient_name: pname,
+            items: cart.map(i => ({
+                medicine_id: i.medicationId,
+                medicine_name: i.name,
+                quantity: i.quantity,
+                price: Number(i.price)
+            })),
+            payment_method: paymentMethod,
+            subtotal: parseFloat($('#subtotal').text().replace('₱', '')),
+            tax: parseFloat($('#tax').text().replace('₱', '')),
+            total: parseFloat($('#total').text().replace('₱', '')),
+            amount_paid: amountReceived,
+            change: Math.max(amountReceived - (parseFloat($('#total').text().replace('₱', '')) || 0), 0),
             date: $('#prescriptionDate').val()
         };
+
         
-        console.log('Order data:', orderData);
-        
-        // Here you would typically submit the form or make an AJAX call
-        alert('Order submitted successfully!');
+        // Submit to backend
+        fetch(API_BASE + '/transaction/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        })
+        .then(res => res.json())
+        .then(resp => {
+            if (!resp.success) throw new Error(resp.message || 'Transaction failed');
+            alert(`Transaction created! #${resp.transaction_number}`);
+        })
+        .catch(err => {
+            alert('Error: ' + err.message);
+            return;
+        });
         
         // Reset form after submission
         cart = [];
         updateCart();
         $('#payment_method').val('').trigger('change');
-        $('#patientSelect').val(null).trigger('change');
+        $('#patientInput').val('');
+        $('#patientId').val('');
+        $('#patientSuggestions').attr('hidden', true).empty();
     });
 });
 </script>

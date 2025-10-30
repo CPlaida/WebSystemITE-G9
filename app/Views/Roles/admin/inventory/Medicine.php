@@ -25,6 +25,21 @@ $currentSubmenu = 'inventory';
         <?php $errorFlash = session()->getFlashdata('error'); ?>
         <?php $errorMsg = session()->getFlashdata('error') ?? ''; ?>
         <!-- Error modal is shown later after DOMContentLoaded using ERROR_MSG -->
+        <?php
+        $expired_count = 0;
+        $expiring_soon_count = 0;
+        $today = date('Y-m-d');
+        $threshold = date('Y-m-d', strtotime('+30 days'));
+        if (isset($medicines) && is_array($medicines)) {
+            foreach ($medicines as $m) {
+                $exp = isset($m['expiry_date']) ? $m['expiry_date'] : null;
+                if ($exp) {
+                    if ($exp < $today) $expired_count++;
+                    if ($exp >= $today && $exp <= $threshold) $expiring_soon_count++;
+                }
+            }
+        }
+        ?>
         <div class="card-container">
             <div class="card">
                 <h3>Total Items</h3>
@@ -37,6 +52,10 @@ $currentSubmenu = 'inventory';
             <div class="card">
                 <h3>Out of Stock</h3>
                 <div class="value" id="outOfStock"><?php if (isset($out_stock)) { echo (int)$out_stock; } ?></div>
+            </div>
+            <div class="card">
+                <h3>Expiring Soon</h3>
+                <div class="value" id="expiringSoon"><?= (int)($expiring_soon_count ?? 0) ?></div>
             </div>
         </div>
 
@@ -64,7 +83,17 @@ $currentSubmenu = 'inventory';
                                 <td><?= esc($m['category']) ?></td>
                                 <td class="<?= ((int)$m['stock'] === 0 ? 'out-of-stock' : 'in-stock') ?>"><?= (int)$m['stock'] ?></td>
                                 <td>₱<?= number_format((float)$m['price'], 2) ?></td>
-                                <td><?= esc($m['expiry_date']) ?></td>
+                                <?php
+                                    $expDate = $m['expiry_date'] ?? null;
+                                    $statusBadge = '';
+                                    if ($expDate) {
+                                        if ($expDate < $today) $statusBadge = '<span style="margin-left:8px; padding:2px 8px; border-radius:9999px; background:#fdecea; color:#b91c1c; font-size:12px; font-weight:600;">Expired</span>';
+                                        if ($expDate >= $today && $expDate <= $threshold) $statusBadge = '<span style="margin-left:8px; padding:2px 8px; border-radius:9999px; background:#fff7ed; color:#c2410c; font-size:12px; font-weight:600;">Expiring</span>';
+                                    }
+                                ?>
+                                <td data-exp="<?= esc($expDate) ?>">
+                                    <?= esc($expDate) ?><?= $statusBadge ? $statusBadge : '' ?>
+                                </td>
                                 <td class="actions">
                                     <a class="medicine-btn-edit" href="<?= base_url('medicines/edit/' . $m['id']) ?>">Edit</a>
                                     <a class="medicine-btn-delete" href="<?= base_url('medicines/delete/' . $m['id']) ?>" onclick="return confirm('Delete this medicine?')">Delete</a>
