@@ -41,6 +41,10 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 
 // Admin management pages (not dashboards)
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
+// Admin user CRUD
+$routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin']);
+$routes->post('admin/users/update/(:num)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/delete/(:num)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);

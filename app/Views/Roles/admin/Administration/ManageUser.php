@@ -7,13 +7,27 @@
     <div class="page-header">
       <h1 class="page-title">User Management</h1>
     </div>
+    <style>
+      .user-table-scroll { max-height: 420px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; }
+      .data-table thead th { position: sticky; top: 0; background: #ffffff; color: #495057; z-index: 2; border-bottom: 2px solid #dee2e6; }
+    </style>
+    <?php if (session()->getFlashdata('success')): ?>
+      <div class="alert alert-success" role="alert" style="margin-bottom:1rem;">
+        <?= esc(session()->getFlashdata('success')) ?>
+      </div>
+    <?php endif; ?>
+    <?php if (session()->getFlashdata('error')): ?>
+      <div class="alert alert-danger" role="alert" style="margin-bottom:1rem;">
+        <?= esc(session()->getFlashdata('error')) ?>
+      </div>
+    <?php endif; ?>
 
     <!-- Stats Cards -->
     <div class="stats-grid">
-      <div class="stat-card"><h3>Total Users</h3><p id="totalUsers">3</p></div>
-      <div class="stat-card"><h3>Doctors</h3><p>156</p></div>
-      <div class="stat-card"><h3>Nurses</h3><p>324</p></div>
-      <div class="stat-card"><h3>Active Today</h3><p>189</p></div>
+      <div class="stat-card"><h3>Total Users</h3><p id="totalUsers"><?= esc($stats['total'] ?? 0) ?></p></div>
+      <div class="stat-card"><h3>Doctors</h3><p><?= esc($stats['doctors'] ?? 0) ?></p></div>
+      <div class="stat-card"><h3>Nurses</h3><p><?= esc($stats['nurses'] ?? 0) ?></p></div>
+      <div class="stat-card"><h3>Active Users</h3><p><?= esc($stats['active'] ?? 0) ?></p></div>
     </div>
 
     <!-- Search and Filter Section -->
@@ -118,43 +132,39 @@
     </div>
 
     <!-- Users Table -->
-    <div class="table-responsive">
+    <div class="table-responsive user-table-scroll">
       <table class="data-table">
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Username</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Department</th>
-            <th>Branch</th>
             <th>Status</th>
+            <th style="width:150px;">Actions</th>
           </tr>
         </thead>
         <tbody id="userTable">
-          <tr>
-            <td>Dr. Maria Santos</td>
-            <td>maria.s@example.com</td>
-            <td>Doctor</td>
-            <td>Cardiology</td>
-            <td>Main</td>
-            <td><span class="status-badge status-active">Active</span></td>
-          </tr>
-          <tr>
-            <td>John Doe</td>
-            <td>john.d@example.com</td>
-            <td>Nurse</td>
-            <td>Emergency</td>
-            <td>Main</td>
-            <td><span class="status-badge status-active">Active</span></td>
-          </tr>
-          <tr>
-            <td>Sarah Johnson</td>
-            <td>sarah.j@example.com</td>
-            <td>Receptionist</td>
-            <td>Front Desk</td>
-            <td>Branch clinic 1</td>
-            <td><span class="status-badge status-inactive">Suspended</span></td>
-          </tr>
+          <?php if (!empty($users)): ?>
+            <?php foreach ($users as $u): ?>
+              <tr>
+                <td><?= esc($u['username'] ?? '') ?></td>
+                <td><?= esc($u['email'] ?? '') ?></td>
+                <td><?= esc($u['role_name'] ?? '-') ?></td>
+                <td>
+                  <?php $st = strtolower($u['status'] ?? 'active'); ?>
+                  <span class="status-badge <?= $st === 'active' ? 'status-active' : 'status-inactive' ?>"><?= esc(ucfirst($st)) ?></span>
+                </td>
+                <td>
+                  <form method="post" action="<?= base_url('admin/users/delete/' . ($u['id'] ?? 0)) ?>" style="display:inline;" onsubmit="return confirm('Delete this user?');">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="btn btn-danger" style="padding:6px 10px;">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr><td colspan="5" style="text-align:center;">No users found.</td></tr>
+          <?php endif; ?>
         </tbody>
       </table>
     </div>
@@ -162,60 +172,38 @@
   <div class="modal" id="userModal">
     <div class="modal-content">
       <h3>Add New User</h3>
-      <form id="userForm">
+      <form id="userForm" method="post" action="<?= base_url('admin/users/create') ?>">
+        <?= csrf_field() ?>
         <div class="form-grid">
           <div>
-            <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" required>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
           </div>
           <div>
             <label for="email">Email Address</label>
-            <input type="email" id="email" required>
+            <input type="email" id="email" name="email" required>
           </div>
           <div>
-            <label for="role">User Role</label>
-            <select id="role" required>
+            <label for="role_id">User Role</label>
+            <select id="role_id" name="role_id" required>
               <option value="">Select Role</option>
-              <option>Doctor</option>
-              <option>Nurse</option>
-              <option>Receptionist</option>
-              <option>Lab Staff</option>
-              <option>Pharmacist</option>
-              <option>Accountant</option>
-              <option>IT Staff</option>
-              <option>Hospital Administration</option>
+              <?php if (!empty($roles)): ?>
+                <?php foreach ($roles as $r): ?>
+                  <option value="<?= (int)$r['id'] ?>"><?= esc($r['name']) ?></option>
+                <?php endforeach; ?>
+              <?php endif; ?>
             </select>
           </div>
           <div>
-            <label for="department">Department</label>
-            <select id="department" required>
-              <option value="">Select Department</option>
-              <option>Administration</option>
-              <option>Pediatrics</option>
-              <option>Emergency medicine</option>
-              <option>Internal medicine</option>
-              <option>surgery</option>
-              <option>Finance</option>
-              <option>Laboratory</option>
-              <option>Pharmacy</option>
-              <option>IT Depatment</option>
-            </select>
-          </div>
-          <div>
-            <label for="branch">Branch</label>
-            <select id="branch" required>
-              <option>Main</option>
-              <option>Branch Clinic 1</option>
-              <option>Branch Clinic 2</option>
-              <option>Upcoming branch</option>
-            </select>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
           </div>
           <div>
             <label for="status">Status</label>
-            <select id="status" required>
-              <option>Active</option>
-              <option>Inactive</option>
-              <option>Suspended</option>
+            <select id="status" name="status" required>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
             </select>
           </div>
         </div>
@@ -234,33 +222,9 @@
     function openModal() { modal.style.display = "flex"; }
     function closeModal() { modal.style.display = "none"; }
 
-    document.getElementById("userForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const name = document.getElementById("fullName").value;
-      const email = document.getElementById("email").value;
-      const role = document.getElementById("role").value;
-      const dept = document.getElementById("department").value;
-      const branch = document.getElementById("branch").value;
-      const status = document.getElementById("status").value;
-
-      // add row
-      const table = document.getElementById("userTable");
-      const row = table.insertRow();
-      row.innerHTML = `
-        <td>${name}</td>
-        <td>${email}</td>
-        <td>${role}</td>
-        <td>${dept}</td>
-        <td>${branch}</td>
-        <td><span class="status-badge ${status === 'Active' ? 'status-active' : 'status-inactive'}">${status}</span></td>
-      `;
-
-      // update stats
-      totalUsers.textContent = parseInt(totalUsers.textContent) + 1;
-
-      closeModal();
-      document.getElementById("userForm").reset();
+    // Form posts to server; keep modal close on submit to feel responsive
+    document.getElementById("userForm").addEventListener("submit", function() {
+      setTimeout(() => { closeModal(); }, 0);
     });
 
     function filterTable() {
