@@ -326,7 +326,7 @@
             <div class="doctor-card">
                 <img src="https://scontent.fdvo1-2.fna.fbcdn.net/v/t39.30808-6/480167593_1427854074847775_6874637637756121660_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeG_akLHvI5wWby5pJz2Xxz8hprznXn2DH-GmvOdefYMfwxoLZwVonA2q85FQTcib0hzqyMi4Mf_kCZ7JZfcr7YO&_nc_ohc=ZnyeXnb810gQ7kNvwG2Lhtg&_nc_oc=AdlzWoB1Yex3mdRw-0VMUYjrPo8cEaj9_GxEExp1RFCebKcnQ0SLQzlcJ9Tm2M_aPnw&_nc_zt=23&_nc_ht=scontent.fdvo1-2.fna&_nc_gid=klV6bq-qjOe8SIu3zk2ZUw&oh=00_AfV2bntL2mWKIom3XFv6hxy0uiYGF2yMZhFg4TvxGKH8Aw&oe=68A58E5F" alt="Dr. Charles Agui" class="doctor-img">
                 <div class="doctor-info">
-                    <h3 class="doctor-name">Dr. Charles Agui</h3>
+                    <h3 class="doctor-name">Dr. Jerald Maca</h3>
                     <span class="doctor-specialty">Orthopedic Surgeon</span>
                     <p>Specializing in sports medicine and joint replacement, Dr. Agui brings 18 years of surgical expertise to our team.</p>
                     <div class="doctor-contact">
