@@ -120,6 +120,7 @@
         document.getElementById('addResultForm').addEventListener('submit', function(e) {
             const parameterNames = document.querySelectorAll('input[name="parameter_name[]"]');
             const parameterResults = document.querySelectorAll('input[name="parameter_result[]"]');
+            const submitButton = this.querySelector('button[type="submit"]');
             
             let hasValidParameters = false;
             for (let i = 0; i < parameterNames.length; i++) {
@@ -133,6 +134,12 @@
                 e.preventDefault();
                 alert('Please enter at least one parameter with name and result.');
                 return false;
+            }
+            
+            // Show loading state
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             }
         });
 

@@ -122,6 +122,16 @@
                     <li><a href="<?= site_url('doctor/schedule') ?>"><span class="text">Staff Schedule</span></a></li>
                 </ul>
             </li>
+            <!-- Laboratory (Doctor view) -->
+            <li class="nav-item expandable">
+                <a href="#" onclick="toggleSubmenu(this)">
+                    <span class="text">Laboratory</span>
+                    <span class="arrow">›</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="<?= site_url('doctor/laboratory/testresult') ?>"><span class="text">Test Results</span></a></li>
+                </ul>
+            </li>
         <?php endif; ?>
 
         <?php if ($role === 'nurse'): ?>

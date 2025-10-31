@@ -3,6 +3,8 @@
 namespace App\Controllers\Doctor;
 use App\Models\UserModel;
 use App\Models\DoctorScheduleModel;
+use App\Models\AppointmentModel;
+use App\Models\PatientModel;
 use App\Controllers\BaseController;
 
 class Doctor extends BaseController
@@ -12,6 +14,182 @@ class Doctor extends BaseController
     public function __construct()
     {
         $this->doctorScheduleModel = new DoctorScheduleModel();
+    }
+
+    public function index()
+    {
+        if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
+        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
+
+        $doctorId = (int) session()->get('user_id');
+        $today = date('Y-m-d');
+        $db = \Config\Database::connect();
+
+        $todayAppointments = $db->table('appointments')
+            ->where('doctor_id', $doctorId)
+            ->where('appointment_date', $today)
+            ->countAllResults();
+
+        $patientsSeen = $db->table('appointments')
+            ->where('doctor_id', $doctorId)
+            ->where('status', 'completed')
+            ->countAllResults();
+
+        $pendingResults = $db->table('appointments')
+            ->where('doctor_id', $doctorId)
+            ->groupStart()
+                ->where('status', 'in_progress')
+                ->orWhere('status', 'confirmed')
+            ->groupEnd()
+            ->countAllResults();
+
+        $prescriptionsCount = 0;
+        try {
+            if ($db->tableExists('prescriptions')) {
+                $fields = $db->getFieldNames('prescriptions');
+                if (in_array('doctor_id', $fields)) {
+                    $prescriptionsCount = $db->table('prescriptions')
+                        ->where('doctor_id', $doctorId)
+                        ->countAllResults();
+                }
+            }
+        } catch (\Throwable $e) {
+            $prescriptionsCount = 0;
+        }
+
+        $appointmentsModel = new AppointmentModel();
+        $upcomingAppointments = $appointmentsModel->getAppointmentsByDoctor($doctorId, $today);
+
+        return view('Roles/doctor/dashboard', [
+            'title' => 'Doctor Dashboard',
+            'todayAppointments' => $todayAppointments,
+            'patientsSeen' => $patientsSeen,
+            'pendingResults' => $pendingResults,
+            'prescriptionsCount' => $prescriptionsCount,
+            'upcomingAppointments' => $upcomingAppointments,
+        ]);
+    }
+
+    public function appointments()
+    {
+        if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
+        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
+
+        $doctorId = (int) session()->get('user_id');
+        $appointmentsModel = new AppointmentModel();
+        $list = $appointmentsModel->getAppointmentsByDoctor($doctorId);
+
+        return view('Roles/doctor/appointments/Appointmentlist', [
+            'title' => 'My Appointments',
+            'appointments' => $list,
+        ]);
+    }
+
+    // Patients page: show all patients split by type
+    public function patientsView()
+    {
+        if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
+        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
+
+        $patientModel = new PatientModel();
+        $all = $patientModel->orderBy('first_name','ASC')->findAll();
+
+        $inpatients = array_filter($all, fn($p) => ($p['type'] ?? '') === 'inpatient');
+        $outpatients = array_filter($all, fn($p) => ($p['type'] ?? '') === 'outpatient');
+
+        return view('Roles/doctor/patients/view', [
+            'title' => 'Patient Records',
+            'inpatients' => $inpatients,
+            'outpatients' => $outpatients,
+            'patients' => $all,
+        ]);
+    }
+
+    // Load existing prescription/result note for a patient (latest appointment of this doctor)
+    public function getPrescription()
+    {
+        if (!session()->get('isLoggedIn')) { return $this->response->setJSON(['success' => false, 'message' => 'Not logged in']); }
+        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized']); }
+
+        $patientId = (int) ($this->request->getGet('patient_id') ?? 0);
+        if ($patientId <= 0) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid patient']);
+        }
+
+        $doctorId = (int) session()->get('user_id');
+        $am = new AppointmentModel();
+        $row = $am->where('patient_id', $patientId)
+                  ->where('doctor_id', $doctorId)
+                  ->orderBy('appointment_date', 'DESC')
+                  ->orderBy('appointment_time', 'DESC')
+                  ->first();
+
+        return $this->response->setJSON([
+            'success' => true,
+            'note' => $row['notes'] ?? ''
+        ]);
+    }
+
+    // Save prescription/result note into the latest appointment for this patient and doctor
+    public function savePrescription()
+    {
+        if (!session()->get('isLoggedIn')) { return $this->response->setJSON(['success' => false, 'message' => 'Not logged in']); }
+        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized']); }
+        if (!$this->request->isAJAX()) { return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']); }
+
+        $patientId = (int) ($this->request->getPost('patient_id') ?? 0);
+        $note = trim((string) $this->request->getPost('note'));
+        if ($patientId <= 0) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid patient']);
+        }
+
+        $doctorId = (int) session()->get('user_id');
+        $am = new AppointmentModel();
+        $row = $am->where('patient_id', $patientId)
+                  ->where('doctor_id', $doctorId)
+                  ->orderBy('appointment_date', 'DESC')
+                  ->orderBy('appointment_time', 'DESC')
+                  ->first();
+        if (!$row) {
+            return $this->response->setJSON(['success' => false, 'message' => 'No appointment found to attach note']);
+        }
+
+        $ok = $am->update($row['id'], ['notes' => $note]);
+        return $this->response->setJSON([
+            'success' => (bool) $ok,
+            'message' => $ok ? 'Saved' : 'Failed to save'
+        ]);
+    }
+
+    // Fetch lab results related to this patient (by name) for doctor view
+    public function labResults()
+    {
+        if (!session()->get('isLoggedIn')) { return $this->response->setJSON(['success' => false, 'message' => 'Not logged in']); }
+        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized']); }
+
+        $patientId = (int) ($this->request->getGet('patient_id') ?? 0);
+        if ($patientId <= 0) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid patient']);
+        }
+
+        // Get patient name
+        $pm = new PatientModel();
+        $p = $pm->find($patientId);
+        if (!$p) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Patient not found']);
+        }
+        $fullName = trim(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? ''));
+
+        // Query laboratory table by patient name (stored in test_name column)
+        $db = \Config\Database::connect();
+        $builder = $db->table('laboratory');
+        $rows = $builder->select('id as test_id, test_type, test_date, status, notes')
+                        ->like('test_name', $fullName)
+                        ->orderBy('test_date', 'DESC')
+                        ->get()
+                        ->getResultArray();
+
+        return $this->response->setJSON(['success' => true, 'results' => $rows]);
     }
 
     /**
@@ -337,4 +515,5 @@ class Doctor extends BaseController
 
         return $this->response->setJSON(['success' => true, 'doctors' => $doctors]);
     }
+
 }

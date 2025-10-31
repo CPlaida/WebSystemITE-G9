@@ -65,9 +65,6 @@
                           Cancel
                         </button>
                       <?php endif; ?>
-                      <button onclick="deleteAppointment(<?= $appointment['id'] ?>)" class="btn-action btn-danger" title="Delete">
-                        Delete
-                      </button>
                     </div>
                   </td>
                 </tr>
@@ -132,24 +129,28 @@
         return;
       }
 
+      const form = new URLSearchParams();
+      form.append('status', status);
+      form.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
+
       fetch(`<?= base_url('appointments/update/') ?>${appointmentId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest'
         },
-        body: JSON.stringify({ status: status })
+        body: form.toString()
       })
-      .then(response => response.json())
+      .then(async (response) => {
+        // CI4 may return JSON; if not, try to parse safely
+        try { return await response.json(); } catch { return { success: response.ok }; }
+      })
       .then(data => {
-        if (data.success) {
+        if (data && data.success) {
           showMessage('Appointment status updated successfully', 'success');
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          setTimeout(() => { window.location.reload(); }, 800);
         } else {
-          showMessage(data.message || 'Failed to update appointment status', 'error');
+          showMessage((data && data.message) || 'Failed to update appointment status', 'error');
         }
       })
       .catch(error => {
@@ -158,36 +159,6 @@
       });
     }
 
-    function deleteAppointment(appointmentId) {
-      if (!confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
-        return;
-      }
-
-      fetch(`<?= base_url('appointments/delete/') ?>${appointmentId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
-        },
-        body: JSON.stringify({})
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showMessage('Appointment deleted successfully', 'success');
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        } else {
-          showMessage(data.message || 'Failed to delete appointment', 'error');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        showMessage('An error occurred while deleting the appointment', 'error');
-      });
-    }
 
     function viewDetails(appointmentId) {
       fetch(`<?= base_url('appointments/show/') ?>${appointmentId}`, {

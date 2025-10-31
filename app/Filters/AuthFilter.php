@@ -15,10 +15,17 @@ class AuthFilter implements FilterInterface
         }
 
         if ($arguments) {
-            $allowedRoles = is_array($arguments) ? $arguments : explode(',', $arguments);
+            // Normalize arguments to a flat list of roles
+            $allowedRoles = [];
+            foreach ((array) $arguments as $arg) {
+                foreach (explode(',', (string) $arg) as $part) {
+                    $part = trim($part);
+                    if ($part !== '') { $allowedRoles[] = $part; }
+                }
+            }
+
             $userRole = session()->get('role');
-            
-            if (!in_array($userRole, $allowedRoles)) {
+            if (!in_array($userRole, $allowedRoles, true)) {
                 return redirect()->to('/login')->with('error', 'Access denied.');
             }
         }

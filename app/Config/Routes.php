@@ -32,7 +32,7 @@ $routes->setAutoRoute(false);
 // Only logged-in users can see this (unified dashboard)
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 // Convenience role-specific dashboards (reuse unified dashboard)
-$routes->get('doctor/dashboard', 'Dashboard::index', ['filter' => 'auth:doctor,admin']);
+$routes->get('doctor/dashboard', 'Doctor\Doctor::index', ['filter' => 'auth:doctor,admin']);
 $routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
 $routes->get('receptionist/dashboard', 'Dashboard::index', ['filter' => 'auth:receptionist,admin']);
 
@@ -51,7 +51,7 @@ $routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' =
 $routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
 $routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
 // Doctor app shortcuts
-$routes->get('doctor/appointments', 'Appointment::index', ['filter' => 'auth:doctor,admin']);
+$routes->get('doctor/appointments', 'Doctor\Doctor::appointments', ['filter' => 'auth:doctor,admin']);
 
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
@@ -103,11 +103,15 @@ $routes->get('billing/show/(:num)', 'Billing::show/$1', ['filter' => 'auth']);
 // Laboratory Routes
 $routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,admin']);
 $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter' => 'auth:labstaff,admin']);
-// Laboratory: Test Results
-$routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,admin']);
-$routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,admin']);
-$routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,admin']);
+// Laboratory: Test Results (Lab staff/admin views)
+$routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,doctor,admin']);
+$routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
+$routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
 $routes->get('laboratory/testresult/data', 'Laboratory::getTestResultsData');
+
+// Doctor-facing lab result routes (read-only access under doctor features)
+$routes->get('doctor/laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:doctor,admin']);
+$routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:doctor,admin']);
 
  //Medicine Routes
 $routes->get('/medicines', 'Medicine::index');
@@ -148,15 +152,17 @@ $routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($ro
     $routes->get('medicines/expired', 'Pharmacy::getExpiredMedicines');
 });
 
-$routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransaction/$1');
+$routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransaction/$1', ['filter' => 'auth:pharmacist,admin']);
 
     // View routes
     $routes->get('admin/InventoryMan/PrescriptionDispensing', 'PrescriptionController::index', ['filter' => 'auth:pharmacist,admin']);
 
-    // Transaction pages
-    $routes->get('admin/pharmacy/transactions', 'TransactionController::index', ['filter' => 'auth:pharmacist,admin']);
-    $routes->get('admin/pharmacy/transaction/view/(:num)', 'TransactionController::view/$1', ['filter' => 'auth:pharmacist,admin']);
-    $routes->get('admin/pharmacy/transaction/print/(:num)', 'TransactionController::print/$1', ['filter' => 'auth:pharmacist,admin']);
+    // Transaction pages (normalized to Pharmacy controller)
+    // Duplicate routes removed to avoid conflicts and 404s from non-existent TransactionController
+    // Use existing routes:
+    // - /admin/pharmacy/transactions -> Pharmacy::transactions (defined above in admin/pharmacy group)
+    // - /admin/pharmacy/transaction/(:any) -> Pharmacy::viewTransaction/$1 (defined above)
+    // - /admin/pharmacy/transaction/print/(:num) -> Pharmacy::printTransaction/$1 (defined above)
 
     // Route for admin inventory medicine
     $routes->get('admin/inventory/medicine', 'Medicine::index', ['filter' => 'auth:pharmacist,admin']);
@@ -213,7 +219,9 @@ $routes->group('nurse/laboratory', ['namespace' => 'App\\Views', 'filter' => 'au
     $routes->view('testresult', 'Roles/nurse/laboratory/TestResult');
 });
 
-// Doctor Routes (directly to views)
-$routes->group('doctor/patients', ['namespace' => 'App\\Views', 'filter' => 'auth:doctor,admin'], function($routes) {
-    $routes->view('view', 'Roles/doctor/patients/view');
-});
+// Doctor Patients route (controller-powered to load data)
+$routes->get('doctor/patients/view', 'Doctor\Doctor::patientsView', ['filter' => 'auth:doctor,admin']);
+// Doctor EHR endpoints
+$routes->get('doctor/prescription', 'Doctor\Doctor::getPrescription', ['filter' => 'auth:doctor,admin']);
+$routes->post('doctor/prescription/save', 'Doctor\Doctor::savePrescription', ['filter' => 'auth:doctor,admin']);
+$routes->get('doctor/lab-results', 'Doctor\Doctor::labResults', ['filter' => 'auth:doctor,admin']);

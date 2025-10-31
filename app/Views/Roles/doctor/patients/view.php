@@ -173,7 +173,13 @@
             <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
           </div>
           <div id="prescription" class="tab-content">
-            <p>Prescription details will appear here...</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <textarea id="prescriptionNote" placeholder="Type prescription or result note here..." style="width:100%; min-height:140px; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
+              <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button id="savePrescriptionBtn" class="btn" style="background:#2563eb; color:#fff; border-radius:6px; padding:8px 14px;">Save</button>
+              </div>
+              <small id="prescriptionStatus" style="color:#6b7280;"></small>
+            </div>
           </div>
           <div id="vitals" class="tab-content" style="display:none;">
             <p>Vitals records will appear here...</p>
@@ -203,6 +209,14 @@
       document.getElementById("ehrEmergencyContact").innerText = emergencyContact;
 
       document.getElementById("ehrModal").style.display = "flex";
+
+      // Load existing prescription note for this patient
+      loadPrescription(patientId);
+      // Bind save handler
+      const saveBtn = document.getElementById('savePrescriptionBtn');
+      if (saveBtn) {
+        saveBtn.onclick = () => savePrescription(patientId);
+      }
     }
 
     function closeModal() {
@@ -220,6 +234,46 @@
       }
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.classList.add("active");
+    }
+
+    async function loadPrescription(patientId){
+      const status = document.getElementById('prescriptionStatus');
+      try {
+        status.textContent = 'Loading prescription...';
+        const res = await fetch(`<?= base_url('doctor/prescription') ?>?patient_id=${encodeURIComponent(patientId)}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+        if (data && data.success){
+          document.getElementById('prescriptionNote').value = data.note || '';
+          status.textContent = data.note ? 'Loaded latest note.' : 'No note yet.';
+        } else {
+          status.textContent = (data && data.message) ? data.message : 'Failed to load note';
+        }
+      } catch(e){
+        status.textContent = 'Error loading note';
+      }
+    }
+
+    async function savePrescription(patientId){
+      const note = document.getElementById('prescriptionNote').value.trim();
+      const status = document.getElementById('prescriptionStatus');
+      status.textContent = 'Saving...';
+      const form = new URLSearchParams();
+      form.append('patient_id', patientId);
+      form.append('note', note);
+      form.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
+      try {
+        const res = await fetch(`<?= base_url('doctor/prescription/save') ?>`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest' },
+          body: form.toString()
+        });
+        const data = await res.json();
+        status.textContent = (data && data.success) ? 'Saved.' : ((data && data.message) || 'Failed to save');
+      } catch(e){
+        status.textContent = 'Error saving note';
+      }
     }
 
     // Close modal on outside click

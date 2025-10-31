@@ -125,8 +125,11 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name, 
-                         p.phone as patient_phone');
+                         p.phone as patient_phone,
+                         u.username as doctor_name,
+                         u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
+        $builder->join('users u', 'a.doctor_id = u.id', 'left');
         $builder->where('a.doctor_id', $doctorId);
         
         if ($date) {
