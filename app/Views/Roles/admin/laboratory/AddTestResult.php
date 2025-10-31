@@ -13,7 +13,9 @@
                 Test Information
             </div>
             <div class="card-body">
-                <form method="post" action="<?= base_url('laboratory/testresult/add/' . $testResult['id']) ?>" id="addResultForm">
+                <form method="post" action="<?= site_url('laboratory/testresult/add') ?>" id="addResultForm">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="test_id" value="<?= (int) $testResult['id'] ?>">
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Patient Name</label>

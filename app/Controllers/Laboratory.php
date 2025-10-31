@@ -3,18 +3,15 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use App\Models\LabRequestModel;
-use App\Models\TestResultModel;
+use App\Models\LaboratoryModel;
 
 class Laboratory extends Controller
 {
-    protected $labRequestModel;
-    protected $testResultModel;
+    protected $labModel;
 
     public function __construct()
     {
-        $this->labRequestModel = new LabRequestModel();
-        $this->testResultModel = new TestResultModel();
+        $this->labModel = new LaboratoryModel();
     }
 
     public function request()
@@ -69,39 +66,15 @@ class Laboratory extends Controller
         ];
 
         // Data prepared for insertion
-
-        // Validate required fields manually
-        $errors = [];
-        if (empty($data['test_name'])) {
-            $errors[] = 'Patient name is required';
-        }
-        if (empty($data['test_type'])) {
-            $errors[] = 'Test type is required';
-        }
-
-        if (!empty($errors)) {
-            if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
-                return $this->response->setJSON(['success' => false, 'errors' => $errors]);
-            } else {
-                return redirect()->back()->withInput()->with('errors', $errors);
-            }
-        }
-
         try {
-            // Insert directly into database
-            $db = \Config\Database::connect();
-            $builder = $db->table('laboratory');
-            
             // Add timestamps
             $data['created_at'] = date('Y-m-d H:i:s');
             $data['updated_at'] = date('Y-m-d H:i:s');
+
+            // Insert via model (will run validation). Returns insert ID on success or false on failure.
+            $insertId = $this->labModel->insert($data, true);
             
-            $insertResult = $builder->insert($data);
-            
-            if ($insertResult) {
-                // Get the inserted numeric ID
-                $insertId = $db->insertID();
-                
+            if ($insertId) {
                 // Check if it's an API call or form submission
                 if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
                     return $this->response->setJSON([
@@ -116,7 +89,12 @@ class Laboratory extends Controller
                     return redirect()->to('laboratory/testresult')->with('success', 'Lab request submitted successfully. Request ID: ' . $insertId);
                 }
             } else {
-                throw new \Exception('Failed to insert lab request');
+                // Validation failed or insert error
+                $errors = $this->labModel->errors() ?: ['Failed to insert lab request'];
+                if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
+                    return $this->response->setJSON(['success' => false, 'errors' => $errors]);
+                }
+                return redirect()->back()->withInput()->with('errors', $errors);
             }
         } catch (\Exception $e) {
             log_message('error', 'Lab request creation failed: ' . $e->getMessage());
@@ -137,10 +115,22 @@ class Laboratory extends Controller
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
+        // Preload initial data so the view can render immediately even if JS fetch is delayed
+        try {
+            $initialResults = $this->labModel
+                ->select('id, id as test_id, test_name as patient_name, test_type, test_date, status, notes')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to preload test results: ' . $e->getMessage());
+            $initialResults = [];
+        }
+
         $data = [
             'title' => 'Test Results',
             'user' => session()->get('username'),
-            'role' => session()->get('role')
+            'role' => session()->get('role'),
+            'initialResults' => $initialResults,
         ];
 
         return view('Roles/admin/laboratory/TestResult', $data);
@@ -156,14 +146,11 @@ class Laboratory extends Controller
         }
 
         try {
-            $db = \Config\Database::connect();
-            $builder = $db->table('laboratory');
-
             // test_id column removed; expose numeric id as test_id for UI compatibility
-            $results = $builder->select('id, id as test_id, test_name as patient_name, test_type, test_date, status, notes')
-                              ->orderBy('created_at', 'DESC')
-                              ->get()
-                              ->getResultArray();
+            $results = $this->labModel
+                ->select('id, id as test_id, test_name as patient_name, test_type, test_date, status, notes')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
             
             return $this->response->setJSON($results);
         } catch (\Exception $e) {
@@ -179,15 +166,16 @@ class Laboratory extends Controller
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
+        // Accept test_id from POST body if route parameter is missing
+        if (empty($testId)) {
+            $testId = $this->request->getPost('test_id');
+        }
         if (empty($testId)) {
             return redirect()->to('laboratory/testresult')->with('error', 'Test ID is required');
         }
 
         try {
-            $db = \Config\Database::connect();
-            $builder = $db->table('laboratory');
-            
-            $testResult = $builder->where('id', $testId)->get()->getRowArray();
+            $testResult = $this->labModel->where('id', $testId)->first();
 
             if (!$testResult) {
                 return redirect()->to('laboratory/testresult')->with('error', 'Test result not found');
@@ -242,23 +230,25 @@ class Laboratory extends Controller
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
+        // Accept test_id from POST body if route parameter is missing
+        if (empty($testId)) {
+            $testId = $this->request->getPost('test_id');
+        }
         if (empty($testId)) {
             return redirect()->to('laboratory/testresult')->with('error', 'Test ID is required');
         }
 
         // Handle form submission
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             try {
-                $db = \Config\Database::connect();
-                $builder = $db->table('laboratory');
-                
+
                 // Get test parameters from form
                 $testParameters = [];
                 $normalRanges = [];
                 $parameterNames = $this->request->getPost('parameter_name') ?: [];
                 $parameterResults = $this->request->getPost('parameter_result') ?: [];
                 $parameterRanges = $this->request->getPost('parameter_range') ?: [];
-                
+
                 // Build test results array
                 if (is_array($parameterNames)) {
                     foreach ($parameterNames as $index => $name) {
@@ -270,17 +260,24 @@ class Laboratory extends Controller
                         }
                     }
                 }
-                
+
+                // Capture notes and (optional) interpretation from form
+                $notes = $this->request->getPost('notes');
+                $interpretation = $this->request->getPost('interpretation');
+                if ((empty($notes) || trim($notes) === '') && !empty($interpretation)) {
+                    $notes = $interpretation;
+                }
+
                 $updateData = [
                     'test_results' => json_encode($testParameters),
                     'normal_range' => json_encode($normalRanges),
-                    'notes' => $this->request->getPost('notes'),
+                    'notes' => $notes,
                     'status' => 'completed',
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
 
-                $result = $builder->where('id', $testId)->update($updateData);
-                
+                $result = $this->labModel->update($testId, $updateData);
+
                 if ($result) {
                     if ($this->request->isAJAX()) {
                         return $this->response->setJSON([
@@ -288,8 +285,11 @@ class Laboratory extends Controller
                             'message' => 'Test result added successfully and status updated to Completed'
                         ]);
                     }
-                    return redirect()->to('laboratory/testresult')->with('success', 'Test result added successfully and status updated to Completed');
+                    // Redirect to the detailed view so the user immediately sees the saved results
+                    return redirect()->to('laboratory/testresult/view/' . $testId)
+                        ->with('success', 'Test result added successfully and status updated to Completed');
                 } else {
+                    log_message('error', 'AddTestResult update failed', ['test_id' => $testId]);
                     if ($this->request->isAJAX()) {
                         return $this->response->setJSON([
                             'success' => false,
@@ -312,10 +312,7 @@ class Laboratory extends Controller
 
         // For GET request, show the add result form
         try {
-            $db = \Config\Database::connect();
-            $builder = $db->table('laboratory');
-            
-            $testResult = $builder->where('id', $testId)->get()->getRowArray();
+            $testResult = $this->labModel->find($testId);
 
             if (!$testResult) {
                 return redirect()->to('laboratory/testresult')->with('error', 'Test not found');

@@ -40,7 +40,30 @@
                                 </tr>
                             </thead>
                             <tbody id="testResultsTableBody">
-                                <!-- Dynamic content will be loaded here -->
+                                <?php if (!empty($initialResults ?? [])): ?>
+                                    <?php foreach (($initialResults ?? []) as $item): ?>
+                                        <?php
+                                            $identifier = $item['id'] ?? $item['test_id'] ?? '';
+                                            $viewUrl = $identifier ? base_url('laboratory/testresult/view/' . $identifier) : base_url('laboratory/testresult/view');
+                                            $addUrl = $identifier ? base_url('laboratory/testresult/add/' . $identifier) : base_url('laboratory/testresult/add');
+                                            $status = $item['status'] ?? 'pending';
+                                        ?>
+                                        <tr data-status="<?= esc($status) ?>" data-date="<?= esc($item['test_date'] ?? '') ?>">
+                                            <td><?= esc($item['test_id'] ?? $item['id'] ?? 'N/A') ?></td>
+                                            <td><?= esc($item['patient_name'] ?? $item['test_name'] ?? 'N/A') ?></td>
+                                            <td><?= esc($item['test_type'] ?? 'N/A') ?></td>
+                                            <td><?= esc($item['test_date'] ?? 'N/A') ?></td>
+                                            <td><span class="status-badge <?= $status === 'pending' ? 'status-pending' : 'status-completed' ?>"><?= esc($status) ?></span></td>
+                                            <td><?= esc($item['notes'] ?? '—') ?></td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <a href="<?= $viewUrl ?>" class="btn btn-primary btn-sm" role="button">View</a>
+                                                    <a href="<?= $addUrl ?>" class="btn btn-primary btn-sm" role="button">Add Result</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -50,7 +73,7 @@
     </div>
 
     <script>
-        let allTestResults = []; // Store all loaded data for filtering
+        let allTestResults = <?= isset($initialResults) ? json_encode($initialResults) : '[]' ?>; // Seed with preloaded data
         
         document.addEventListener('DOMContentLoaded', function() {
             // Sidebar toggle functionality
@@ -204,29 +227,29 @@
             // Load data from laboratory table
             const url = '<?= base_url('laboratory/testresult/data') ?>';
             
-            console.log('Fetching data from:', url);
-            
-            // Show loading state
+            // If initial results exist, render immediately; else show loading
             const tableBody = document.getElementById('testResultsTableBody');
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem;">
-                        <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
-                        Loading test results...
-                    </td>
-                </tr>
-            `;
+            if (Array.isArray(allTestResults) && allTestResults.length > 0) {
+                renderTable(allTestResults);
+            } else {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+                            Loading test results...
+                        </td>
+                    </tr>
+                `;
+            }
             
             fetch(url)
                 .then(response => {
-                    console.log('Response status:', response.status);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Data received:', data);
                     
                     if (data.error) {
                         throw new Error(data.error);
@@ -247,10 +270,8 @@
                         return;
                     }
                     
-                    // Render initial data
+                    // Refresh table with latest data
                     renderTable(allTestResults);
-                    
-                    console.log('Table populated with', allTestResults.length, 'rows');
                 })
                 .catch(error => {
                     console.error('Error loading data:', error);

@@ -79,10 +79,15 @@
                     </table>
                 </div>
 
-                <?php if (!empty($testResult['interpretation'])): ?>
+                <?php
+                    $interpretation = isset($testResult['interpretation']) && trim($testResult['interpretation']) !== ''
+                        ? $testResult['interpretation']
+                        : ($testResult['notes'] ?? '');
+                ?>
+                <?php if (!empty(trim($interpretation))): ?>
                 <div class="info-group">
                     <div class="section-title">Clinical Interpretation</div>
-                    <div class="info-value"><?= nl2br(htmlspecialchars($testResult['interpretation'])) ?></div>
+                    <div class="info-value"><?= nl2br(htmlspecialchars($interpretation)) ?></div>
                 </div>
                 <?php endif; ?>
             </div>
