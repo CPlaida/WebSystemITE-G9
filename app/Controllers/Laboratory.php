@@ -20,7 +20,7 @@ class Laboratory extends Controller
     public function request()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -133,7 +133,7 @@ class Laboratory extends Controller
     public function testresult()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -151,7 +151,7 @@ class Laboratory extends Controller
      */
     public function getTestResultsData()
     {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
             return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
         }
 
@@ -175,7 +175,7 @@ class Laboratory extends Controller
     public function viewTestResult($testId = null)
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -238,7 +238,7 @@ class Laboratory extends Controller
     public function addTestResult($testId = null)
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 

@@ -1247,6 +1247,25 @@ body.receipt-page { font-family: Arial, sans-serif; line-height: 1.6; max-width:
     }
 }
 
+/* Key–Value detail layout (shared) */
+.kv-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 768px) { .kv-grid { grid-template-columns: 1fr; } }
+.kv { display: grid !important; grid-template-columns: 180px 1fr !important; row-gap: 8px; column-gap: 12px; align-items: start; }
+.kv .k { color: #6b7280; font-weight: 600; text-align: left; }
+.kv .v { color: #111827; }
+
+/* Row separators and spacing for clearer scanning */
+.kv > .k,
+.kv > .v {
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Slight tightening of the section */
+.card-body .kv-grid { margin-top: 4px; }
+
+.section-title { font-size: 14px; font-weight: 700; color: #374151; margin: 8px 0 6px; }
+
 /* ===== Global Layout Fix: ensure main content aligns with sidebar across pages ===== */
 /* Base: when sidebar is open (250px) */
 .sidebar + .main-content,

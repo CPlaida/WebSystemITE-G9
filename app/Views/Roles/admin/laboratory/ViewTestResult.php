@@ -19,66 +19,35 @@
                 </span>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <div class="info-label">Request ID</div>
-                            <div class="info-value"><?= htmlspecialchars($testResult['test_id'] ?? 'N/A') ?></div>
-                        </div>
-                        
-                        <div class="info-group">
-                            <div class="info-label">Patient Name</div>
-                            <div class="info-value"><?= htmlspecialchars($testResult['patient_name']) ?></div>
-                        </div>
+  <div class="kv-grid">
+    <div class="kv">
+      <div class="k">Request ID</div><div class="v"><?= esc($testResult['test_id'] ?? 'N/A') ?></div>
+      <div class="k">Patient Name</div><div class="v"><?= esc($testResult['patient_name']) ?></div>
+      <div class="k">Test Type</div><div class="v"><?= esc($testResult['test_type']) ?></div>
+      <div class="k">Priority</div>
+      <div class="v">
+        <span class="badge <?= strtolower($testResult['priority_display']) === 'urgent' ? 'badge-warning' : 'badge-success' ?>">
+          <?= esc($testResult['priority_display']) ?>
+        </span>
+      </div>
+    </div>
+    <div class="kv">
+      <div class="k">Test Date</div><div class="v"><?= esc($testResult['formatted_test_date']) ?></div>
+      <div class="k">Test Time</div><div class="v"><?= esc($testResult['formatted_test_time']) ?></div>
+      <?php if (!empty($testResult['result_date'])): ?>
+      <div class="k">Result Date</div><div class="v"><?= date('F j, Y', strtotime($testResult['result_date'])) ?></div>
+      <?php endif; ?>
+      <?php if (!empty($testResult['technician_name'])): ?>
+      <div class="k">Technician</div><div class="v"><?= esc($testResult['technician_name']) ?></div>
+      <?php endif; ?>
+    </div>
+  </div>
 
-                        <div class="info-group">
-                            <div class="info-label">Test Type</div>
-                            <div class="info-value"><?= htmlspecialchars($testResult['test_type']) ?></div>
-                        </div>
-
-                        <div class="info-group">
-                            <div class="info-label">Priority</div>
-                            <div class="info-value">
-                                <span class="badge <?= strtolower($testResult['priority_display']) === 'urgent' ? 'badge-warning' : 'badge-success' ?>">
-                                    <?= $testResult['priority_display'] ?>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="info-group">
-                            <div class="info-label">Test Date</div>
-                            <div class="info-value"><?= $testResult['formatted_test_date'] ?></div>
-                        </div>
-                        
-                        <div class="info-group">
-                            <div class="info-label">Test Time</div>
-                            <div class="info-value"><?= $testResult['formatted_test_time'] ?></div>
-                        </div>
-
-                        <?php if (!empty($testResult['result_date'])): ?>
-                        <div class="info-group">
-                            <div class="info-label">Result Date</div>
-                            <div class="info-value"><?= date('F j, Y', strtotime($testResult['result_date'])) ?></div>
-                        </div>
-                        <?php endif; ?>
-
-                        <?php if (!empty($testResult['technician_name'])): ?>
-                        <div class="info-group">
-                            <div class="info-label">Technician</div>
-                            <div class="info-value"><?= htmlspecialchars($testResult['technician_name']) ?></div>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <?php if (!empty($testResult['notes'])): ?>
-                <div class="info-group">
-                    <div class="section-title">Clinical Notes</div>
-                    <div class="info-value"><?= nl2br(htmlspecialchars($testResult['notes'])) ?></div>
-                </div>
-                <?php endif; ?>
-            </div>
+  <?php if (!empty($testResult['notes'])): ?>
+  <div class="section-title">Clinical Notes</div>
+  <div class="v"><?= nl2br(esc($testResult['notes'])) ?></div>
+  <?php endif; ?>
+</div>
         </div>
 
         <?php if (!empty($testResult['results']) && is_array($testResult['results'])): ?>
