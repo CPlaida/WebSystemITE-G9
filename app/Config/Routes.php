@@ -41,10 +41,6 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 
 // Admin management pages (not dashboards)
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
-// Admin user CRUD
-$routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin']);
-$routes->post('admin/users/update/(:num)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/users/delete/(:num)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
@@ -105,7 +101,7 @@ $routes->post('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth'
 $routes->get('billing/show/(:num)', 'Billing::show/$1', ['filter' => 'auth']);
 
 // Laboratory Routes
-$routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,admin']);
+$routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,doctor,admin']);
 $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter' => 'auth:labstaff,admin']);
     // Laboratory: Test Results (Lab staff/admin views)
     $routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,doctor,admin']);
@@ -116,6 +112,7 @@ $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter
     $routes->get('laboratory/testresult/data', 'Laboratory::getTestResultsData');
 
 // Doctor-facing lab result routes (read-only access under doctor features)
+$routes->get('doctor/laboratory/request', 'Laboratory::request', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:doctor,admin']);
 

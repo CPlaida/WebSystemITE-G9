@@ -71,7 +71,6 @@ async function loadTransactions(search = '') {
                 <td>${peso(r.total_amount)}</td>
                 <td class="action-buttons">
                     <button onclick="viewTransaction(${r.id})" class="btn btn-view">View</button>
-                    <button onclick="printTransaction(${r.id})" class="btn btn-print"><i class="fas fa-print"></i> Print</button>
                 </td>
             `;
             body.appendChild(tr);
@@ -84,11 +83,6 @@ async function loadTransactions(search = '') {
 
 function viewTransaction(id) {
     window.location.href = '<?= site_url('admin/pharmacy/transaction/') ?>' + id;
-}
-
-function printTransaction(id) {
-    const w = window.open('<?= site_url('admin/pharmacy/transaction/print/') ?>' + id, '_blank', 'width=800,height=600');
-    if (w) w.focus();
 }
 
 // Search handler (submit)

@@ -129,6 +129,7 @@
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
+                    <li><a href="<?= site_url('laboratory/request') ?>"><span class="text">Lab Request</span></a></li>
                     <li><a href="<?= site_url('doctor/laboratory/testresult') ?>"><span class="text">Test Results</span></a></li>
                 </ul>
             </li>
