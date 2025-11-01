@@ -216,6 +216,91 @@ body {
     width: calc(100vw - 70px);
 }
 
+/* Flash Message Styles */
+.flash-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.flash-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+}
+
+.flash-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease-out;
+}
+
+.flash-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: white;
+}
+
+.flash-icon.flash-success {
+    background-color: #28a745;
+}
+
+.flash-icon.flash-error {
+    background-color: #dc3545;
+}
+
+.flash-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.flash-text {
+    color: #6c757d;
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.flash-card .btn {
+    min-width: 100px;
+    border-radius: 6px;
+    padding: 8px 16px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Dashboard Styles */
 .dashboard-container {
     padding: 20px;
@@ -276,6 +361,48 @@ body {
     font-size: 28px;
     font-weight: 600;
     color: #2c3e50;
+}
+
+/* Success Message Styles */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    border: 1px solid #c3e6cb;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.success-message i {
+    font-size: 20px;
+    color: #28a745;
+}
+
+.success-message .close-btn {
+    margin-left: auto;
+    cursor: pointer;
+    color: #155724;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.success-message .close-btn:hover {
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Responsive Design */
