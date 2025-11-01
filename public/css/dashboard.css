@@ -285,6 +285,192 @@ body {
     }
 }
 
+/* Accountant Dashboard Styles */
+.dashboard-header {
+    margin-bottom: 2rem;
+    padding: 1.5rem 1.5rem 0;
+}
+
+.dashboard-header h1 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+    color: #7f8c8d;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+/* Overview Cards Grid */
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1.5rem 1.5rem;
+}
+
+.overview-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    border-left: 4px solid #4361ee;
+}
+
+.overview-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.overview-card .card-content {
+    padding: 1.5rem;
+}
+
+.overview-card h3 {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+
+.overview-card .card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0.5rem 0;
+}
+
+/* Different border colors for each card */
+.overview-card:nth-child(1) { border-left-color: #4361ee; } /* Revenue */
+.overview-card:nth-child(2) { border-left-color: #f72585; } /* Pending Bills */
+.overview-card:nth-child(3) { border-left-color: #4cc9f0; } /* Insurance */
+.overview-card:nth-child(4) { border-left-color: #f8961e; } /* Outstanding */
+
+/* Recent Transactions */
+.recent-transactions {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin: 1.5rem;
+    overflow: hidden;
+}
+
+.transactions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.transactions-header h2 {
+    font-size: 1.25rem;
+    color: #2c3e50;
+    margin: 0;
+    font-weight: 600;
+}
+
+.view-all {
+    color: #4361ee;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.view-all:hover {
+    color: #3a56d4;
+    text-decoration: underline;
+}
+
+.transactions-list {
+    padding: 0.5rem 0;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-item:hover {
+    background-color: #f8f9ff;
+}
+
+.transaction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f0f4ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: #4361ee;
+    font-size: 1rem;
+}
+
+.transaction-details {
+    flex: 1;
+}
+
+.transaction-title {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.transaction-date {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.income {
+    color: #10b981;
+}
+
+.expense {
+    color: #ef4444;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-header {
+        padding: 1rem 1rem 0;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
 @media (max-width: 480px) {
     .stats-grid {
         grid-template-columns: 1fr;

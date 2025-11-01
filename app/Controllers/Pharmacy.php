@@ -46,13 +46,49 @@ class Pharmacy extends Controller
             return redirect()->to('/login')->with('error', 'Access denied.');
         }
 
+        // Load the Medicine model
+        $medicineModel = new \App\Models\MedicineModel();
+        
+        // Get all medicines
+        $medicines = $medicineModel->findAll();
+        
+        // Calculate totals
+        $total = count($medicines);
+        $low_stock = 0;
+        $today = date('Y-m-d');
+        $threshold = date('Y-m-d', strtotime('+30 days'));
+        $expired_count = 0;
+        $expiring_soon_count = 0;
+        
+        foreach ($medicines as $medicine) {
+            // Check for low stock
+            if (isset($medicine['stock']) && isset($medicine['reorder_level']) && $medicine['stock'] <= $medicine['reorder_level']) {
+                $low_stock++;
+            }
+            
+            // Check for expired/expiring medicines
+            if (isset($medicine['expiry_date'])) {
+                $exp = $medicine['expiry_date'];
+                if ($exp < $today) {
+                    $expired_count++;
+                } elseif ($exp >= $today && $exp <= $threshold) {
+                    $expiring_soon_count++;
+                }
+            }
+        }
+
         $data = [
             'title' => 'Medicine Inventory',
             'user' => session()->get('username'),
-            'role' => session()->get('role')
+            'role' => session()->get('role'),
+            'medicines' => $medicines,
+            'total' => $total,
+            'low_stock' => $low_stock,
+            'expired_count' => $expired_count,
+            'expiring_soon_count' => $expiring_soon_count
         ];
 
-        return view('Roles/admin/inventory/Medicine', $data);
+        return view('Roles/pharmacy/inventory/Medicine', $data);
     }
 
     public function prescriptionDispensing()

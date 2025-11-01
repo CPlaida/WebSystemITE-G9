@@ -18,6 +18,29 @@ class Dashboard extends BaseController
         $data = $this->buildDashboardData($userRole, $username);
         return view('auth/dashboard', $data);
     }
+    
+    /**
+     * Accountant Dashboard
+     */
+    public function accountant()
+    {
+        // Check if user is logged in and has accounting role
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'accounting') {
+            return redirect()->to('/login');
+        }
+
+        $data = [
+            'title' => 'Accountant Dashboard',
+            'name' => session()->get('name') ?? 'Accountant',
+            'todayRevenue' => 0, // You can add actual data here
+            'pendingBills' => [], // You can add actual data here
+            'insuranceClaims' => [], // Initialize empty array for insurance claims
+            'outstandingBalance' => 0, // You can add actual data here
+            'recentTransactions' => [] // You can add actual data here
+        ];
+
+        return view('Roles/Accountant/dashboard', $data);
+    }
 
     private function buildDashboardData(string $userRole, string $username): array
     {

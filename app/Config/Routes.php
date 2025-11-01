@@ -33,8 +33,30 @@ $routes->setAutoRoute(false);
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 // Convenience role-specific dashboards (reuse unified dashboard)
 $routes->get('doctor/dashboard', 'Doctor\Doctor::index', ['filter' => 'auth:doctor,admin']);
+$routes->get('doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:doctor,admin']);
+$routes->get('doctor/my-schedule', 'Doctor\DoctorScheduleController::view', ['filter' => 'auth:doctor']);
 $routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
 $routes->get('receptionist/dashboard', 'Dashboard::index', ['filter' => 'auth:receptionist,admin']);
+$routes->get('pharmacist/dashboard', 'Dashboard::index', ['filter' => 'auth:pharmacist,admin']);
+// Accountant Routes
+$routes->group('accountant', ['filter' => 'auth:accounting,admin'], function($routes) {
+    $routes->get('dashboard', 'Dashboard::accountant');
+    
+    // Billing routes
+    $routes->group('billing', function($routes) {
+        $routes->get('process', 'Accountant\Billing::process');
+        $routes->get('create', 'Accountant\Billing::create');
+    });
+    
+    // Reports routes
+    $routes->group('reports', function($routes) {
+        $routes->get('income', 'Accountant::reports/income');
+        $routes->get('expenses', 'Accountant::reports/expenses');
+        $routes->get('export-income-pdf', 'Accountant::exportIncomePdf');
+        $routes->get('export-expenses-pdf', 'Accountant::exportExpensesPdf');
+        $routes->get('export-expenses-excel', 'Accountant::exportExpensesExcel');
+    });
+});
 
 // Backward-compatibility: legacy admin dashboard URL(admin dashboard page diffrent sa unified okii)
 $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
@@ -232,3 +254,9 @@ $routes->get('doctor/patients/view', 'Doctor\Doctor::patientsView', ['filter' =>
 $routes->get('doctor/prescription', 'Doctor\Doctor::getPrescription', ['filter' => 'auth:doctor,admin']);
 $routes->post('doctor/prescription/save', 'Doctor\Doctor::savePrescription', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/lab-results', 'Doctor\Doctor::labResults', ['filter' => 'auth:doctor,admin']);
+
+// Pharmacy Routes
+$routes->group('pharmacist', ['filter' => 'auth:pharmacist,admin'], function($routes) {
+    $routes->get('inventory', 'Pharmacy::medicine');
+    $routes->get('transactions', 'Pharmacy::transactions');
+});

@@ -118,7 +118,7 @@
                 </a>
                 <ul class="submenu">
                     <li><a href="<?= site_url('doctor/appointments') ?>"><span class="text">Appointment List</span></a></li>
-                    <li><a href="<?= site_url('doctor/schedule') ?>"><span class="text">Staff Schedule</span></a></li>
+                   <li><a href="<?= site_url('doctor/my-schedule') ?>"><span class="text">Schedule</span></a></li>
                 </ul>
             </li>
             <!-- Laboratory (Doctor view) -->
@@ -128,7 +128,6 @@
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
-                    <li><a href="<?= site_url('laboratory/request') ?>"><span class="text">Lab Request</span></a></li>
                     <li><a href="<?= site_url('doctor/laboratory/testresult') ?>"><span class="text">Test Results</span></a></li>
                 </ul>
             </li>
@@ -204,7 +203,66 @@
             </li>
         <?php endif; ?>
 
+        <?php if ($role === 'accounting'): ?>
+            <li class="nav-item">
+                <a href="<?= site_url('accountant/dashboard') ?>">
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Billing -->
+            <li class="nav-item expandable">
+                <a href="#" onclick="toggleSubmenu(this)">
+                    <span class="text">Billing & Payment</span>
+                    <span class="arrow">›</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="<?= site_url('accountant/billing/process') ?>"><span class="text">Bill Process</span></a></li>
+                    <li><a href="<?= base_url('accountant/billing/create') ?>"><span class="text">Bill Management</span></a></li>
+                </ul>
+            </li>
+
+        <?php endif; ?>
+
+        <?php if ($role === 'pharmacist'): ?>
+            <li class="nav-item">
+                <a href="<?= site_url('pharmacist/dashboard') ?>">
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Prescriptions -->
+            <li class="nav-item expandable">
+                <a href="#" onclick="toggleSubmenu(this)">
+                    <span class="text">Prescriptions</span>
+                    <span class="arrow">›</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="<?= site_url('admin/pharmacy/prescription-dispensing') ?>"><span class="text">New Prescription</span></a></li>
+                </ul>
+            </li>
+
+            <!-- Inventory -->
+            <li class="nav-item">
+                <a href="<?= site_url('pharmacist/inventory') ?>">
+                    <span class="text">Inventory</span>
+                </a>
+            </li>
+
+            <!-- Transactions -->
+            <li class="nav-item">
+                <a href="<?= site_url('pharmacist/transactions') ?>">
+                    <span class="text">Transactions</span>
+                </a>
+            </li>
+
+        <?php endif; ?>
+
         <!-- Common menu items for all users -->
-        <li class="nav-item"><a href="<?= site_url('auth/logout') ?>"><span class="text">Logout</span></a></li>
+        <li class="nav-item" style="margin-top: auto;">
+            <a href="<?= site_url('auth/logout') ?>">
+                <span class="text">Logout</span>
+            </a>
+        </li>
     </ul>
 </div>
