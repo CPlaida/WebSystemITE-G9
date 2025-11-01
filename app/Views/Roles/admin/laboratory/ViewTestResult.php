@@ -10,9 +10,6 @@
                 <span class="status-pill <?= esc(strtolower($testResult['status'])) ?>">
                     <?= ucfirst($testResult['status']) ?>
                 </span>
-                <button type="button" class="btn btn-primary" onclick="window.print()">
-                    <i class="fas fa-print"></i> Print
-                </button>
             </div>
         </div>
         <div class="card-body">
@@ -88,11 +85,13 @@
                 </div>
                 <?php endif; ?>
             </div>
+            <?php if (strtolower($testResult['status']) === 'completed'): ?>
             <div class="card-footer no-print">
                 <button class="btn btn-primary" onclick="window.print()">
                     <i class="fas fa-print"></i> Print Result
                 </button>
             </div>
+            <?php endif; ?>
         </div>
         <?php else: ?>
         <div class="card">
@@ -110,9 +109,11 @@
                 <a href="<?= base_url('laboratory/testresult/add/' . $testResult['id']) ?>" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Add Test Results
                 </a>
+                <?php if (strtolower($testResult['status']) === 'completed'): ?>
                 <button type="button" class="btn btn-secondary" onclick="window.print()">
                     <i class="fas fa-print"></i> Print
                 </button>
+                <?php endif; ?>
             </div>
         </div>
         <?php endif; ?>

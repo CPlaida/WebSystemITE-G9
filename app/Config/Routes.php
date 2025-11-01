@@ -41,6 +41,11 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 
 // Admin management pages (not dashboards)
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
+// Admin user CRUD endpoints
+$routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin']);
+$routes->post('admin/users/update/(:num)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/delete/(:num)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/reset-password/(:num)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin']);
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
@@ -173,7 +178,6 @@ $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransact
 // Administration Routes
     $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {
         // Unified dashboard is handled via Admin::index (already routed at /admin/dashboard)
-        $routes->get('Administration/RoleManagement', 'Admin::roleManagement');
         $routes->get('billing', 'Billing::index');
         $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
         

@@ -90,7 +90,6 @@
                 </a>
                 <ul class="submenu">
                     <li><a href="<?= base_url('admin/Administration/ManageUser') ?>"><span class="text">User Management</span></a></li>
-                    <li><a href="<?= base_url('admin/Administration/RoleManagement') ?>"><span class="text">Role Management</span></a></li>
                 </ul>
             </li>
         <?php endif; ?>

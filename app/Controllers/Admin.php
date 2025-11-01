@@ -118,4 +118,32 @@ class Admin extends BaseController
         $model->delete((int)$id);
         return redirect()->to('/admin/Administration/ManageUser')->with('success', 'User deleted successfully.');
     }
+
+    public function resetPassword($id)
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back();
+        }
+
+        $new = trim((string) $this->request->getPost('new_password'));
+        $confirm = trim((string) $this->request->getPost('confirm_password'));
+
+        if ($new === '' || $confirm === '') {
+            return redirect()->to('/admin/Administration/ManageUser')->with('error', 'New password and confirm password are required.');
+        }
+        if ($new !== $confirm) {
+            return redirect()->to('/admin/Administration/ManageUser')->with('error', 'Passwords do not match.');
+        }
+        if (strlen($new) < 8) {
+            return redirect()->to('/admin/Administration/ManageUser')->with('error', 'Password must be at least 8 characters.');
+        }
+
+        $model = new UserModel();
+        $model->update((int)$id, [
+            'password' => password_hash($new, PASSWORD_DEFAULT),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return redirect()->to('/admin/Administration/ManageUser')->with('success', 'Password updated successfully.');
+    }
 }

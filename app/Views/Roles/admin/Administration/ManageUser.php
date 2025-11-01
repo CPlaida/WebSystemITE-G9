@@ -7,20 +7,22 @@
     <div class="page-header">
       <h1 class="page-title">User Management</h1>
     </div>
-    <style>
-      .user-table-scroll { max-height: 420px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; }
-      .data-table thead th { position: sticky; top: 0; background: #ffffff; color: #495057; z-index: 2; border-bottom: 2px solid #dee2e6; }
-    </style>
-    <?php if (session()->getFlashdata('success')): ?>
-      <div class="alert alert-success" role="alert" style="margin-bottom:1rem;">
-        <?= esc(session()->getFlashdata('success')) ?>
+    <?php 
+      $flashSuccess = session()->getFlashdata('success') ?? ''; 
+      $flashError = session()->getFlashdata('error') ?? ''; 
+      $hasFlash = !empty($flashSuccess) || !empty($flashError);
+      $isSuccess = !empty($flashSuccess);
+      $flashMsg = $flashSuccess !== '' ? $flashSuccess : $flashError;
+    ?>
+    <div id="flashBackdrop" class="flash-backdrop" style="display: <?= $hasFlash ? 'block' : 'none' ?>;"></div>
+    <div id="flashModal" class="flash-modal" role="dialog" aria-modal="true" aria-labelledby="flashTitle" style="display: <?= $hasFlash ? 'flex' : 'none' ?>;">
+      <div class="flash-card">
+        <div id="flashIcon" class="flash-icon <?= $isSuccess ? 'flash-success' : 'flash-error' ?>"><?php echo $isSuccess ? '✓' : '✕'; ?></div>
+        <div id="flashTitle" class="flash-title"><?php echo $isSuccess ? 'Success!' : 'Error'; ?></div>
+        <div id="flashMessage" class="flash-text"><?php echo esc($flashMsg); ?></div>
+        <button type="button" class="btn btn-primary" onclick="closeFlashModal()">OK</button>
       </div>
-    <?php endif; ?>
-    <?php if (session()->getFlashdata('error')): ?>
-      <div class="alert alert-danger" role="alert" style="margin-bottom:1rem;">
-        <?= esc(session()->getFlashdata('error')) ?>
-      </div>
-    <?php endif; ?>
+    </div>
 
     <!-- Stats Cards -->
     <div class="stats-grid">
@@ -107,7 +109,7 @@
         
         <!-- Add New User Button -->
         <button 
-          onclick="openModal()" 
+          onclick="openModal('add')" 
           style="
             display: flex;
             align-items: center;
@@ -155,10 +157,19 @@
                   <span class="status-badge <?= $st === 'active' ? 'status-active' : 'status-inactive' ?>"><?= esc(ucfirst($st)) ?></span>
                 </td>
                 <td>
-                  <form method="post" action="<?= base_url('admin/users/delete/' . ($u['id'] ?? 0)) ?>" style="display:inline;" onsubmit="return confirm('Delete this user?');">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-danger" style="padding:6px 10px;">Delete</button>
-                  </form>
+                  <div class="action-group">
+                    <button type="button" class="btn-action btn-edit"
+                            data-id="<?= (int)($u['id'] ?? 0) ?>"
+                            data-username="<?= esc($u['username'] ?? '', 'attr') ?>"
+                            data-email="<?= esc($u['email'] ?? '', 'attr') ?>"
+                            data-roleid="<?= (int)($u['role_id'] ?? 0) ?>"
+                            data-status="<?= esc(strtolower($u['status'] ?? 'active'), 'attr') ?>"
+                            onclick="openEdit(this)">Edit</button>
+                    <form method="post" action="<?= base_url('admin/users/delete/' . ($u['id'] ?? 0)) ?>" onsubmit="return confirm('Delete this user?');">
+                      <?= csrf_field() ?>
+                      <button type="submit" class="btn-action btn-delete">Delete</button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -171,7 +182,7 @@
   <!-- Modal -->
   <div class="modal" id="userModal">
     <div class="modal-content">
-      <h3>Add New User</h3>
+      <h3 id="userModalTitle">Add New User</h3>
       <form id="userForm" method="post" action="<?= base_url('admin/users/create') ?>">
         <?= csrf_field() ?>
         <div class="form-grid">
@@ -196,7 +207,11 @@
           </div>
           <div>
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <div class="input-group">
+              <input type="text" id="password" name="password" required style="flex:1;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="generatePassword()">Generate</button>
+            </div>
+            <small id="passwordHelp" style="color:#6c757d;"></small>
           </div>
           <div>
             <label for="status">Status</label>
@@ -209,7 +224,7 @@
         </div>
         <div class="form-actions">
           <button type="button" class="btn btn-close" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Create User</button>
+          <button type="submit" id="userFormSubmit" class="btn btn-primary">Create User</button>
         </div>
       </form>
     </div>
@@ -219,10 +234,60 @@
     const modal = document.getElementById("userModal");
     const totalUsers = document.getElementById("totalUsers");
 
-    function openModal() { modal.style.display = "flex"; }
-    function closeModal() { modal.style.display = "none"; }
+    function openModal(mode) {
+      const form = document.getElementById('userForm');
+      const title = document.getElementById('userModalTitle');
+      const password = document.getElementById('password');
+      const username = document.getElementById('username');
+      const email = document.getElementById('email');
+      const role = document.getElementById('role_id');
+      const status = document.getElementById('status');
+      const help = document.getElementById('passwordHelp');
+      const toggle = document.getElementById('togglePass');
+      title.textContent = 'Add New User';
+      form.action = '<?= base_url('admin/users/create') ?>';
+      username.value = '';
+      email.value = '';
+      role.value = '';
+      status.value = 'active';
+      password.type = 'password';
+      password.value = '';
+      password.required = true;
+      password.placeholder = '';
+      help.textContent = '';
+      document.getElementById('userFormSubmit').textContent = 'Create User';
+      modal.style.display = 'flex';
+    }
+    function openEdit(el) {
+  const form = document.getElementById('userForm');
+  const title = document.getElementById('userModalTitle');
+  const password = document.getElementById('password');
+  const username = document.getElementById('username');
+  const email = document.getElementById('email');
+  const role = document.getElementById('role_id');
+  const status = document.getElementById('status');
+  const help = document.getElementById('passwordHelp');
 
-    // Form posts to server; keep modal close on submit to feel responsive
+  const id = el.getAttribute('data-id');
+  title.textContent = 'Edit User';
+  form.action = '<?= base_url('admin/users/update') ?>' + '/' + id;
+  username.value = el.getAttribute('data-username') || '';
+  email.value = el.getAttribute('data-email') || '';
+  role.value = el.getAttribute('data-roleid') || '';
+  status.value = el.getAttribute('data-status') || 'active';
+
+  // password field is visible text now
+  password.type = 'text';
+  password.value = '';
+  password.required = false;
+  password.placeholder = 'Leave blank to keep current password';
+  help.textContent = 'Leave blank to keep current password';
+
+  document.getElementById('userFormSubmit').textContent = 'Update User';
+  document.getElementById('userModal').style.display = 'flex';
+}
+    function closeModal() { modal.style.display = 'none'; }
+
     document.getElementById("userForm").addEventListener("submit", function() {
       setTimeout(() => { closeModal(); }, 0);
     });
@@ -273,6 +338,23 @@
       }
     }
 
-    window.onclick = function(e) { if (e.target == modal) closeModal(); }
+    function generatePassword(){
+      const input = document.getElementById('password');
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*';
+      let pwd = '';
+      for(let i=0;i<12;i++){ pwd += chars[Math.floor(Math.random()*chars.length)]; }
+      input.value = pwd;
+      input.type = 'text';
+    }
+    window.onclick = function(e) { 
+      if (e.target == modal) closeModal();
+      if (e.target == document.getElementById('flashBackdrop')) closeFlashModal();
+      if (e.target == document.getElementById('flashModal')) closeFlashModal();
+    }
+
+    function closeFlashModal(){
+      document.getElementById('flashBackdrop').style.display = 'none';
+      document.getElementById('flashModal').style.display = 'none';
+    }
   </script>
 <?= $this->endSection() ?>
