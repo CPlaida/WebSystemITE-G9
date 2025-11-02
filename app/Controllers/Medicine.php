@@ -50,9 +50,13 @@ class Medicine extends Controller
         }
 
         $today = date('Y-m-d');
+        $limit = date('Y-m-d', strtotime('+30 days'));
         foreach ($expiries as $i => $exp) {
             if (!empty($exp) && $exp < $today) {
                 return redirect()->to('/medicines')->with('error', 'One or more medicines have an expiry date in the past. Please correct and try again.');
+            }
+            if (!empty($exp) && $exp <= $limit) {
+                return redirect()->to('/medicines')->with('error', 'One or more medicines are expiring within 30 days and cannot be added.');
             }
         }
 
@@ -85,8 +89,12 @@ class Medicine extends Controller
 
         $expiry = $this->request->getPost('expiry_date');
         $today = date('Y-m-d');
+        $limit = date('Y-m-d', strtotime('+30 days'));
         if (!empty($expiry) && $expiry < $today) {
             return redirect()->to('/medicines?edit=' . (int)$id)->with('error', 'Expiry date cannot be in the past.');
+        }
+        if (!empty($expiry) && $expiry <= $limit) {
+            return redirect()->to('/medicines?edit=' . (int)$id)->with('error', 'Expiry date is within 30 days and cannot be saved.');
         }
 
         $data = [

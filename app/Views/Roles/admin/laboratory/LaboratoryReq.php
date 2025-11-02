@@ -39,6 +39,7 @@
                                 <input type="text" class="form-control" id="patientName" name="patient_name" 
                                        placeholder="Enter patient name or search..." 
                                        autocomplete="off" required>
+                                <input type="hidden" id="patientId" name="patient_id" value="">
                                 <div id="patientSuggestions" class="suggestions-dropdown" style="display: none;"></div>
                             </div>
                             <div class="form-group">
@@ -118,130 +119,86 @@
 
     <script>
     $(document).ready(function() {
-        // Patient data for autocomplete
-        const patients = [
-            { id: 1, name: 'Juan Dela Cruz', dob: '1990-05-15' },
-            { id: 2, name: 'Maria Santos', dob: '1985-10-22' },
-            { id: 3, name: 'Pedro Reyes', dob: '1980-03-10' },
-            { id: 4, name: 'Ana Garcia', dob: '1995-01-30' },
-            { id: 5, name: 'Carlos Rodriguez', dob: '1988-07-12' }
-        ];
-
         const patientInput = $('#patientName');
+        const patientIdInput = $('#patientId');
         const suggestionsDiv = $('#patientSuggestions');
+        let suggestTimer = null;
 
-        // Handle input typing
-        patientInput.on('input', function() {
-            const query = $(this).val().toLowerCase().trim();
-            
-            if (query.length < 2) {
+        function renderSuggestions(items) {
+            if (!Array.isArray(items) || items.length === 0) {
                 suggestionsDiv.hide();
                 return;
             }
+            let html = '';
+            items.forEach(p => {
+                const safeName = (p.name || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                const type = p.type ? ` <small style="color:#6c757d">(${p.type})</small>` : '';
+                html += `<div class="suggestion-item" data-id="${p.id}" data-name="${safeName}">${safeName}${type}</div>`;
+            });
+            suggestionsDiv.html(html).show();
+        }
 
-            // Filter patients based on input
-            const filteredPatients = patients.filter(patient => 
-                patient.name.toLowerCase().includes(query)
-            );
+        function fetchSuggestions(q) {
+            $.getJSON('<?= base_url('laboratory/patient/suggest') ?>', { q }, function(resp){
+                if (resp && resp.success) {
+                    renderSuggestions(resp.results || []);
+                } else {
+                    suggestionsDiv.hide();
+                }
+            }).fail(function(){ suggestionsDiv.hide(); });
+        }
 
-            if (filteredPatients.length > 0) {
-                let suggestionsHtml = '';
-                filteredPatients.forEach(patient => {
-                    suggestionsHtml += `<div class="suggestion-item" data-id="${patient.id}" data-name="${patient.name}" data-dob="${patient.dob}">
-                        ${patient.name}
-                    </div>`;
-                });
-                suggestionsDiv.html(suggestionsHtml).show();
-            } else {
-                suggestionsDiv.hide();
-            }
+        patientInput.on('input', function(){
+            const q = $(this).val().trim();
+            patientIdInput.val('');
+            if (suggestTimer) clearTimeout(suggestTimer);
+            if (q.length < 2) { suggestionsDiv.hide(); return; }
+            suggestTimer = setTimeout(() => fetchSuggestions(q), 200);
         });
 
-        // Handle suggestion click
-        $(document).on('click', '.suggestion-item', function() {
+        $(document).on('click', '.suggestion-item', function(){
             const name = $(this).data('name');
-            const dob = $(this).data('dob');
-            
+            const id = $(this).data('id');
             patientInput.val(name);
+            patientIdInput.val(id);
             suggestionsDiv.hide();
-            
-            // Update DOB if field exists
-            if ($('#patientDob').length) {
-                $('#patientDob').val(dob);
-            }
         });
 
-        // Hide suggestions when clicking outside
-        $(document).on('click', function(e) {
+        $(document).on('click', function(e){
             if (!$(e.target).closest('#patientName, #patientSuggestions').length) {
                 suggestionsDiv.hide();
             }
         });
 
-        // Handle keyboard navigation
-        patientInput.on('keydown', function(e) {
-            const suggestions = $('.suggestion-item');
+        patientInput.on('keydown', function(e){
+            const items = $('.suggestion-item');
             const current = $('.suggestion-item.active');
-            
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (current.length === 0) {
-                    suggestions.first().addClass('active');
-                } else {
-                    current.removeClass('active').next().addClass('active');
-                }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (current.length === 0) {
-                    suggestions.last().addClass('active');
-                } else {
-                    current.removeClass('active').prev().addClass('active');
-                }
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (current.length > 0) {
-                    current.click();
-                }
-            } else if (e.key === 'Escape') {
-                suggestionsDiv.hide();
-            }
+            if (e.key === 'ArrowDown') { e.preventDefault(); (current.length? current.removeClass('active').next(): items.first()).addClass('active'); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); (current.length? current.removeClass('active').prev(): items.last()).addClass('active'); }
+            else if (e.key === 'Enter') { if (current.length){ e.preventDefault(); current.click(); } }
+            else if (e.key === 'Escape') { suggestionsDiv.hide(); }
         });
 
-        // Form submission
         $('#labRequestForm').on('submit', function(e) {
             e.preventDefault();
-            
             const formData = {
                 patient_name: $('#patientName').val(),
+                patient_id: $('#patientId').val(),
                 test_type: $('#testType').val(),
                 priority: $('#priority').val(),
                 clinical_notes: $('#clinicalNotes').val(),
                 test_date: $('#testDate').val()
             };
-
-            // Basic validation
-            if (!formData.patient_name || !formData.test_type) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
-            // Submit form
+            if (!formData.patient_name || !formData.test_type) { alert('Please fill in all required fields'); return; }
             $.ajax({
                 url: $(this).attr('action'),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
-                    if (response.success) {
-                        alert('Lab request submitted successfully!');
-                        $('#labRequestForm')[0].reset();
-                    } else {
-                        alert('Error: ' + (response.message || 'Failed to submit request'));
-                    }
+                    if (response.success) { alert('Lab request submitted successfully!'); $('#labRequestForm')[0].reset(); }
+                    else { alert('Error: ' + (response.message || 'Failed to submit request')); }
                 },
-                error: function() {
-                    // If AJAX fails, submit normally
-                    $('#labRequestForm')[0].submit();
-                }
+                error: function() { $('#labRequestForm')[0].submit(); }
             });
         });
     });

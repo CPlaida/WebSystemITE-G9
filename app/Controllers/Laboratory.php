@@ -159,6 +159,67 @@ class Laboratory extends Controller
         }
     }
 
+    public function patientLabRecords()
+    {
+        // Return completed lab records for EHR by patient
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin','doctor','nurse','receptionist','labstaff'])) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
+        }
+
+        $patientId = (int) ($this->request->getGet('patient_id') ?? 0);
+        $name = trim((string) ($this->request->getGet('name') ?? ''));
+
+        try {
+            $db = \Config\Database::connect();
+            $builder = $db->table('laboratory');
+            $builder->select('id, test_type, test_date, status, notes, test_name')
+                    ->where('status', 'completed')
+                    ->orderBy('test_date', 'DESC')
+                    ->limit(20);
+
+            // Build robust name filters based on patient_id and/or provided name
+            $fullName = '';
+            $first = '';
+            $last = '';
+            if ($patientId > 0 && $db->tableExists('patients')) {
+                try {
+                    $pf = $db->getFieldNames('patients');
+                    $fn = in_array('first_name',$pf) ? 'first_name' : (in_array('firstname',$pf) ? 'firstname' : null);
+                    $ln = in_array('last_name',$pf) ? 'last_name' : (in_array('lastname',$pf) ? 'lastname' : null);
+                    $nm = in_array('name',$pf) ? 'name' : (in_array('full_name',$pf) ? 'full_name' : null);
+                    $rowP = $db->table('patients')->select($nm?"$nm as name":($fn?"$fn as first_name":'') . ($ln?",".$ln." as last_name":''))
+                                   ->where('id', $patientId)->get()->getRowArray();
+                    if ($rowP) {
+                        if (!empty($rowP['name'])) { $fullName = trim($rowP['name']); }
+                        else {
+                            $first = trim((string)($rowP['first_name'] ?? ''));
+                            $last  = trim((string)($rowP['last_name'] ?? ''));
+                            $fullName = trim($first . ' ' . $last);
+                        }
+                    }
+                } catch (\Throwable $e) { /* ignore */ }
+            }
+
+            if ($name !== '' || $fullName !== '' || $first !== '' || $last !== '') {
+                $builder->groupStart();
+                if ($fullName !== '') { $builder->like('test_name', $fullName); }
+                if ($first !== '') { $builder->orLike('test_name', $first); }
+                if ($last !== '') { $builder->orLike('test_name', $last); }
+                if ($name !== '') { $builder->orLike('test_name', $name); }
+                $builder->groupEnd();
+            }
+
+            $rows = $builder->get()->getResultArray();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'records' => $rows,
+            ]);
+        } catch (\Throwable $e) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Failed to load lab records']);
+        }
+    }
+
     public function viewTestResult($testId = null)
     {
         // Check if user is logged in and has appropriate role

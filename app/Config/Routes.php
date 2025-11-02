@@ -134,11 +134,13 @@ $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter
     $routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,doctor,admin']);
     $routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
     $routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
-    // Alternate POST endpoint accepting test_id from body to avoid path-based redirects
-    $routes->post('laboratory/testresult/add', 'Laboratory::addTestResult', ['filter' => 'auth:labstaff,doctor,admin']);
     $routes->get('laboratory/testresult/data', 'Laboratory::getTestResultsData');
+    $routes->get('laboratory/patient/suggest', 'Laboratory::patientSuggest');
+    $routes->get('laboratory/patient/lab-records', 'Laboratory::patientLabRecords');
+    $routes->get('laboratory/patient/completed-lab-records', 'Laboratory::patientCompletedLabRecords');
+     $routes->post('laboratory/testresult/add', 'Laboratory::addTestResult', ['filter' => 'auth:labstaff,doctor,admin']);
 
-// Doctor-facing lab result routes (read-only access under doctor features)
+ // Doctor-facing lab result routes (read-only access under doctor features)
 $routes->get('doctor/laboratory/request', 'Laboratory::request', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:doctor,admin']);

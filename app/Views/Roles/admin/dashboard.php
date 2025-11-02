@@ -190,9 +190,33 @@ try {
         $fields = $db->getFieldData('appointments'); $dateCol=null; $statusCol=null;
         foreach ($fields as $f){ $n=strtolower($f->name ?? ''); if (in_array($n,['date','appointment_date','scheduled_at'])) $dateCol=$f->name; if ($n==='status') $statusCol=$f->name; }
         if ($dateCol){
-            $qbA=$db->table('appointments')->select('COUNT(*) AS c')->where("DATE($dateCol)", date('Y-m-d'));
-            if ($statusCol) $qbA->groupStart()->where($statusCol,'scheduled')->orWhere($statusCol,'confirmed')->orWhere($statusCol,'active')->groupEnd();
-            $row=$qbA->get()->getRowArray(); $appointmentsCount=(int)($row['c']??0);
+            // Count today's appointments using a date range to support DATE or DATETIME columns
+            $start = date('Y-m-d');
+            $end = date('Y-m-d', strtotime('+1 day'));
+            $qbA = $db->table('appointments')->select('COUNT(*) AS c')
+                      ->where("$dateCol >=", $start)
+                      ->where("$dateCol <", $end);
+            if ($statusCol) {
+                // Exclude only cancelled/no_show; count all other statuses
+                $qbA->whereNotIn($statusCol, ['cancelled','no_show']);
+            }
+            $row = $qbA->get()->getRowArray();
+            $appointmentsCount = (int)($row['c'] ?? 0);
+            if ($appointmentsCount === 0) {
+                // Fallback 1: try equality on DATE column name if common
+                $col = $dateCol ?: 'appointment_date';
+                $qbB = $db->table('appointments')->select('COUNT(*) AS c')->where($col, date('Y-m-d'));
+                if ($statusCol) { $qbB->whereNotIn($statusCol, ['cancelled','no_show']); }
+                $rowB = $qbB->get()->getRowArray();
+                $appointmentsCount = max($appointmentsCount, (int)($rowB['c'] ?? 0));
+            }
+            if ($appointmentsCount === 0) {
+                // Fallback 2: raw SQL using CURDATE() (works on MySQL/MariaDB)
+                $col = $dateCol ?: 'appointment_date';
+                $sql = "SELECT COUNT(*) AS c FROM appointments WHERE $col = CURDATE()" . ($statusCol ? " AND $statusCol NOT IN ('cancelled','no_show')" : '');
+                $rowC = $db->query($sql)->getRowArray();
+                $appointmentsCount = max($appointmentsCount, (int)($rowC['c'] ?? 0));
+            }
         }
     }
 

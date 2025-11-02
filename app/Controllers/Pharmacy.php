@@ -292,7 +292,7 @@ class Pharmacy extends Controller
         $term = (string) $this->request->getGet('term');
         
         $builder = $this->db->table('medicines');
-        $builder->select('id, name, brand, price, stock');
+        $builder->select('id, name, brand, price, stock, expiry_date');
         
         if ($term !== '') {
             $builder->groupStart()
@@ -300,6 +300,14 @@ class Pharmacy extends Controller
                     ->orLike('brand', $term)
                     ->groupEnd();
         }
+
+        // Exclude expired or expiring within 30 days from prescription selection
+        $today = date('Y-m-d');
+        $limit = date('Y-m-d', strtotime('+30 days'));
+        $builder->groupStart()
+                ->where('expiry_date >', $limit)
+                ->orWhere('expiry_date IS NULL', null, false)
+                ->groupEnd();
         
         // Show even if stock is 0 so user understands availability
         $builder->orderBy('id','DESC');
@@ -307,11 +315,19 @@ class Pharmacy extends Controller
         
         $medications = $builder->get()->getResultArray();
         
-        // Normalize types
+        // Normalize types and compute days_left until expiry
+        $today = date('Y-m-d');
         foreach ($medications as &$m) {
             if (isset($m['price'])) $m['price'] = (float)$m['price'];
             if (isset($m['stock'])) $m['stock'] = (int)$m['stock'];
             if (isset($m['id'])) $m['id'] = (int)$m['id'];
+            $m['expiry_date'] = $m['expiry_date'] ?? null;
+            if (!empty($m['expiry_date'])) {
+                $diff = (strtotime($m['expiry_date']) - strtotime($today)) / 86400;
+                $m['days_left'] = (int)ceil($diff);
+            } else {
+                $m['days_left'] = null;
+            }
         }
         
         return $this->response->setJSON($medications);
@@ -415,18 +431,25 @@ class Pharmacy extends Controller
         
         $data = $this->request->getJSON(true);
 
-        // Validate stock availability BEFORE starting transaction
+        // Validate stock availability and expiry BEFORE starting transaction
         $itemIds = array_map(fn($it) => (int)$it['medicine_id'], $data['items']);
         $uniqueIds = array_values(array_unique($itemIds));
-        $stocks = [];
+        $info = [];
         if (!empty($uniqueIds)) {
             $rows = $this->db->table('medicines')
-                ->select('id, stock, name')
+                ->select('id, stock, name, expiry_date')
                 ->whereIn('id', $uniqueIds)
                 ->get()->getResultArray();
-            foreach ($rows as $r) { $stocks[(int)$r['id']] = ['stock' => (int)$r['stock'], 'name' => $r['name']]; }
+            foreach ($rows as $r) {
+                $info[(int)$r['id']] = [
+                    'stock' => (int)($r['stock'] ?? 0),
+                    'name' => $r['name'] ?? (string)$r['id'],
+                    'expiry_date' => $r['expiry_date'] ?? null,
+                ];
+            }
         }
         $insufficient = [];
+        $expiryViolations = [];
         $requestedPerMed = [];
         foreach ($data['items'] as $it) {
             $mid = (int)$it['medicine_id'];
@@ -435,13 +458,24 @@ class Pharmacy extends Controller
             $requestedPerMed[$mid] += $qty;
         }
         foreach ($requestedPerMed as $mid => $qty) {
-            $available = isset($stocks[$mid]) ? (int)$stocks[$mid]['stock'] : 0;
+            $available = isset($info[$mid]) ? (int)$info[$mid]['stock'] : 0;
             if ($qty <= 0 || $available <= 0 || $qty > $available) {
                 $insufficient[] = [
                     'medicine_id' => $mid,
-                    'medicine_name' => $stocks[$mid]['name'] ?? (string)$mid,
+                    'medicine_name' => $info[$mid]['name'] ?? (string)$mid,
                     'requested' => $qty,
                     'available' => $available
+                ];
+            }
+            // Expiry rule: cannot dispense if expired or expiring within 30 days
+            $today = date('Y-m-d');
+            $limit = date('Y-m-d', strtotime('+30 days'));
+            $exp = $info[$mid]['expiry_date'] ?? null;
+            if ($exp && $exp <= $limit) {
+                $expiryViolations[] = [
+                    'medicine_id' => $mid,
+                    'medicine_name' => $info[$mid]['name'] ?? (string)$mid,
+                    'expiry_date' => $exp,
                 ];
             }
         }
@@ -450,6 +484,13 @@ class Pharmacy extends Controller
                 'success' => false,
                 'message' => 'Insufficient stock for one or more medicines',
                 'details' => $insufficient
+            ])->setStatusCode(400);
+        }
+        if (!empty($expiryViolations)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Cannot dispense medicines that are expired or expiring within 30 days',
+                'details' => $expiryViolations
             ])->setStatusCode(400);
         }
         

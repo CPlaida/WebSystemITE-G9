@@ -3,8 +3,6 @@
 <?= $this->section('title') ?>Today's Appointments<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  
-
   <div class="container">
     <div class="header">
       <h1 class="page-title">
@@ -80,13 +78,6 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer">
-        <?php if (isset($appointments)): ?>
-          Showing <?= count($appointments) ?> appointment(s)
-        <?php else: ?>
-          No appointments to display
-        <?php endif; ?>
-      </div>
     </div>
   </div>
 
@@ -129,28 +120,24 @@
         return;
       }
 
-      const form = new URLSearchParams();
-      form.append('status', status);
-      form.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
-
       fetch(`<?= base_url('appointments/update/') ?>${appointmentId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'X-Requested-With': 'XMLHttpRequest'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
         },
-        body: form.toString()
+        body: new URLSearchParams({ status: status })
       })
-      .then(async (response) => {
-        // CI4 may return JSON; if not, try to parse safely
-        try { return await response.json(); } catch { return { success: response.ok }; }
-      })
+      .then(response => response.json())
       .then(data => {
-        if (data && data.success) {
+        if (data.success) {
           showMessage('Appointment status updated successfully', 'success');
-          setTimeout(() => { window.location.reload(); }, 800);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         } else {
-          showMessage((data && data.message) || 'Failed to update appointment status', 'error');
+          showMessage(data.message || 'Failed to update appointment status', 'error');
         }
       })
       .catch(error => {

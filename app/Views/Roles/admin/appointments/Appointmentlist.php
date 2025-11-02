@@ -78,13 +78,6 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer">
-        <?php if (isset($appointments)): ?>
-          Showing <?= count($appointments) ?> appointment(s)
-        <?php else: ?>
-          No appointments to display
-        <?php endif; ?>
-      </div>
     </div>
   </div>
 

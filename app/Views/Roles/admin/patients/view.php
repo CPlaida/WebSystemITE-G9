@@ -174,7 +174,9 @@
             <p>Vitals records will appear here...</p>
           </div>
           <div id="lab" class="tab-content" style="display:none;">
-            <p>Lab records will appear here...</p>
+            <div id="ehrLabContainer" style="min-height:120px; padding:6px 0; color:#2c3e50; font-size:14px;">
+              <em>Loading lab records...</em>
+            </div>
           </div>
         </div>
       </div>
@@ -199,6 +201,9 @@
       document.getElementById("ehrInsuranceNumber").innerText = insuranceNumber || 'N/A';
 
       document.getElementById("ehrModal").style.display = "flex";
+
+      // Load lab records for this patient
+      loadLabRecords(patientId, name);
     }
 
     function closeModal() {
@@ -216,6 +221,46 @@
       }
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.classList.add("active");
+
+      // If opening Lab tab, refresh records for currently viewed patient
+      if (tabName === 'lab') {
+        const pid = document.getElementById('ehrPatientId').innerText.trim();
+        const pname = document.getElementById('ehrName').innerText.trim();
+        loadLabRecords(pid ? parseInt(pid) : 0, pname);
+      }
+    }
+
+    function loadLabRecords(patientId, name){
+      const cont = document.getElementById('ehrLabContainer');
+      if (!cont) return;
+      cont.innerHTML = '<em>Loading lab records...</em>';
+
+      const params = new URLSearchParams();
+      if (name) params.append('name', name);
+      if (patientId) params.append('patient_id', String(patientId));
+
+      fetch('<?= base_url('laboratory/patient/lab-records') ?>?' + params.toString(), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.success) { cont.innerHTML = '<span style="color:#dc3545">Failed to load lab records.</span>'; return; }
+        const rows = Array.isArray(data.records) ? data.records : [];
+        if (rows.length === 0) { cont.innerHTML = '<span style="color:#6c757d">No completed lab records found.</span>'; return; }
+        let html = '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse">'+
+                   '<thead><tr style="text-align:left; border-bottom:1px solid #e9ecef">'+
+                   '<th style="padding:6px 8px">Date</th><th style="padding:6px 8px">Test</th><th style="padding:6px 8px">Notes</th><th style="padding:6px 8px">Action</th></tr></thead><tbody>';
+        rows.forEach(r => {
+          const d = r.test_date ? new Date(r.test_date).toLocaleDateString() : '-';
+          const t = r.test_type || '-';
+          const n = r.notes ? String(r.notes).substring(0,120) : '—';
+          const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (r.id || '');
+          html += `<tr style="border-bottom:1px solid #f1f3f5"><td style="padding:6px 8px">${d}</td><td style="padding:6px 8px">${t}</td><td style="padding:6px 8px">${n}</td><td style="padding:6px 8px"><a href="${viewUrl}" class="btn btn-sm btn-primary">View</a></td></tr>`;
+        });
+        html += '</tbody></table></div>';
+        cont.innerHTML = html;
+      })
+      .catch(() => { cont.innerHTML = '<span style="color:#dc3545">Error loading lab records.</span>'; });
     }
 
     // Close modal on outside click

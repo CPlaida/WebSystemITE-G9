@@ -9,6 +9,11 @@ $currentMenu = 'pharmacy';
 $currentSubmenu = 'inventory';
 ?>
 
+<style>
+/* Hide the dropdown arrow shown by some browsers for inputs with datalist */
+#medicineForm input[list]::-webkit-calendar-picker-indicator { display: none !important; }
+#medicineForm input[list] { appearance: none; -webkit-appearance: none; background-image: none; }
+</style>
 <div class="content-wrapper">
     <div class="content-header">
         <div class="header-left">
@@ -138,6 +143,7 @@ $currentSubmenu = 'inventory';
             <!-- Autocomplete suggestion lists -->
             <datalist id="medicineNamesList"></datalist>
             <datalist id="brandList"></datalist>
+            <datalist id="categoryList"></datalist>
             <div id="medicineEntries">
                 <div class="medicine-entry" style="margin-bottom: 20px;">
                     <!-- Header Row -->
@@ -160,13 +166,7 @@ $currentSubmenu = 'inventory';
                             <input type="text" name="<?= $isEdit ? 'brand' : 'brand[]' ?>" value="<?= $isEdit ? esc($edit_medicine['brand']) : '' ?>" list="brandList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
                         <div>
-                            <select name="<?= $isEdit ? 'category' : 'category[]' ?>" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; background-color: #fff;">
-                                <option value="">Select</option>
-                                <?php $categories = ['Pain Relief','Antibiotics','Vitamins','Antihistamines']; ?>
-                                <?php foreach ($categories as $c): ?>
-                                    <option value="<?= $c ?>" <?= $isEdit && $edit_medicine['category'] === $c ? 'selected' : '' ?>><?= $c ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <input type="text" name="<?= $isEdit ? 'category' : 'category[]' ?>" value="<?= $isEdit ? esc($edit_medicine['category']) : '' ?>" list="categoryList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
                         <div>
                             <input type="number" name="<?= $isEdit ? 'stock' : 'stock[]' ?>" value="<?= $isEdit ? (int)$edit_medicine['stock'] : '' ?>" min="0" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: center;">
@@ -278,13 +278,9 @@ $currentSubmenu = 'inventory';
     // Stats are rendered from PHP variables on page load.
     
     // --- Autocomplete helpers ---
-    const defaultMedicineNames = [
-        'Paracetamol 500mg','Amoxicillin 500mg','Vitamin C 500mg','Loratadine 10mg',
-        'Ibuprofen 200mg','Metformin 500mg','Amlodipine 5mg','Omeprazole 20mg'
-    ];
-    const defaultBrands = [
-        'Biogesic','Amoxil','Vitacare','Loratin','Pfizer','Unilab','RiteMed','GSK'
-    ];
+    const defaultMedicineNames = [];
+    const defaultBrands = [];
+    const defaultCategories = [];
 
     function uniqueSorted(arr) {
         return Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>a.localeCompare(b));
@@ -294,12 +290,14 @@ $currentSubmenu = 'inventory';
         const rows = document.querySelectorAll('#medicineTableBody tr');
         const names = [];
         const brands = [];
+        const categories = [];
         rows.forEach(r => {
             const tds = r.querySelectorAll('td');
             if (tds[1]) names.push(tds[1].textContent.trim());
             if (tds[2]) brands.push(tds[2].textContent.trim());
+            if (tds[3]) categories.push(tds[3].textContent.trim());
         });
-        return { names: uniqueSorted(names), brands: uniqueSorted(brands) };
+        return { names: uniqueSorted(names), brands: uniqueSorted(brands), categories: uniqueSorted(categories) };
     }
 
     function renderDatalist(listId, values) {
@@ -310,11 +308,40 @@ $currentSubmenu = 'inventory';
 
     function refreshAutocompleteLists() {
         const fromTable = gatherFromTable();
-        const names = uniqueSorted(defaultMedicineNames.concat(fromTable.names));
-        const brands = uniqueSorted(defaultBrands.concat(fromTable.brands));
+        const names = uniqueSorted(fromTable.names || []);
+        const brands = uniqueSorted(fromTable.brands || []);
+        const categories = uniqueSorted(fromTable.categories || []);
         renderDatalist('medicineNamesList', names);
         renderDatalist('brandList', brands);
+        renderDatalist('categoryList', categories);
     }
+
+    function addToDatalist(listId, value){
+        const v = (value || '').trim();
+        if (!v) return;
+        const dl = document.getElementById(listId);
+        if (!dl) return;
+        const exists = Array.from(dl.options).some(o => (o.value || '').toLowerCase() === v.toLowerCase());
+        if (!exists){
+            const opt = document.createElement('option');
+            opt.value = v;
+            dl.appendChild(opt);
+        }
+    }
+
+    document.addEventListener('input', function(e){
+        const t = e.target;
+        if (!t) return;
+        if (t.matches("input[list='medicineNamesList'], input[name='name[]'], input[name='name']")){
+            addToDatalist('medicineNamesList', t.value);
+        }
+        if (t.matches("input[list='brandList'], input[name='brand[]'], input[name='brand']")){
+            addToDatalist('brandList', t.value);
+        }
+        if (t.matches("input[list='categoryList'], input[name='category[]'], input[name='category']")){
+            addToDatalist('categoryList', t.value);
+        }
+    });
     
     // Initialize autocomplete options after table is populated
     document.addEventListener('DOMContentLoaded', function() {

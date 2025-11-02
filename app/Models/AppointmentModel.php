@@ -83,7 +83,12 @@ class AppointmentModel extends Model
         $builder->join('users u', 'a.doctor_id = u.id', 'left');
         $builder->join('roles r', 'u.role_id = r.id', 'left');
         $builder->where('r.name', 'doctor');
-        $builder->orderBy('a.appointment_date', 'DESC');
+        // Status priority across lists (active first)
+        $builder->orderBy("FIELD(a.status, 'scheduled','confirmed','in_progress','completed','cancelled','no_show')", 'ASC', false);
+        // Status priority for doctor views using FIELD() to ensure consistent ordering
+        // scheduled, confirmed, in_progress first; then completed, cancelled, no_show
+        $builder->orderBy("FIELD(a.status, 'scheduled','confirmed','in_progress','completed','cancelled','no_show')", 'ASC', false);
+        $builder->orderBy('a.appointment_date', 'ASC');
         $builder->orderBy('a.appointment_time', 'ASC');
         
         if ($limit) {
@@ -110,6 +115,15 @@ class AppointmentModel extends Model
         $builder->where('r.name', 'doctor');
         $builder->where('a.appointment_date >=', $startDate);
         $builder->where('a.appointment_date <=', $endDate);
+        $statusOrder = "CASE a.status \
+            WHEN 'scheduled' THEN 0 \
+            WHEN 'confirmed' THEN 1 \
+            WHEN 'in_progress' THEN 2 \
+            WHEN 'completed' THEN 3 \
+            WHEN 'cancelled' THEN 4 \
+            WHEN 'no_show' THEN 5 \
+            ELSE 6 END";
+        $builder->orderBy($statusOrder, 'ASC', false);
         $builder->orderBy('a.appointment_date', 'ASC');
         $builder->orderBy('a.appointment_time', 'ASC');
         
@@ -117,9 +131,9 @@ class AppointmentModel extends Model
     }
 
     /**
-     * Get appointments by doctor
+     * Unified list for admin/doctor with identical ordering and optional filters
      */
-    public function getAppointmentsByDoctor($doctorId, $date = null)
+    public function getUnifiedList(?int $doctorId = null, ?string $date = null): array
     {
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
@@ -130,16 +144,28 @@ class AppointmentModel extends Model
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
         $builder->join('users u', 'a.doctor_id = u.id', 'left');
-        $builder->where('a.doctor_id', $doctorId);
-        
+
+        if ($doctorId !== null) {
+            $builder->where('a.doctor_id', (int)$doctorId);
+        }
         if ($date) {
             $builder->where('a.appointment_date', $date);
         }
-        
+
+        // Status priority identical to admin list (active first)
+        $builder->orderBy("FIELD(a.status, 'scheduled','confirmed','in_progress','completed','cancelled','no_show')", 'ASC', false);
         $builder->orderBy('a.appointment_date', 'ASC');
         $builder->orderBy('a.appointment_time', 'ASC');
-        
+
         return $builder->get()->getResultArray();
+    }
+
+    /**
+     * Get appointments by doctor (backward-compatible wrapper)
+     */
+    public function getAppointmentsByDoctor($doctorId, $date = null)
+    {
+        return $this->getUnifiedList((int)$doctorId, $date);
     }
 
     /**

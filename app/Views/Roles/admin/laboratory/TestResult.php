@@ -58,7 +58,9 @@
                                             <td>
                                                 <div class="action-buttons">
                                                     <a href="<?= $viewUrl ?>" class="btn btn-primary btn-sm" role="button">View</a>
-                                                    <a href="<?= $addUrl ?>" class="btn btn-primary btn-sm" role="button">Add Result</a>
+                                                    <?php if (strtolower((string)$status) !== 'completed'): ?>
+                                                        <a href="<?= $addUrl ?>" class="btn btn-primary btn-sm" role="button">Add Result</a>
+                                                    <?php endif; ?>
                                                 </div>
                                             </td>
                                         </tr>
@@ -189,17 +191,18 @@
                         ? '<?= base_url('laboratory/testresult/add/') ?>' + identifier
                         : '<?= base_url('laboratory/testresult/add') ?>';
                     
+                    const isCompleted = String(item.status || '').toLowerCase() === 'completed';
                     row.innerHTML = `
                         <td>${item.test_id || 'N/A'}</td>
                         <td>${item.patient_name || 'N/A'}</td>
                         <td>${item.test_type || 'N/A'}</td>
                         <td>${item.test_date || 'N/A'}</td>
-                        <td><span class="status-badge ${item.status === 'pending' ? 'status-pending' : 'status-completed'}">${item.status || 'pending'}</span></td>
+                        <td><span class="status-badge ${String(item.status).toLowerCase() === 'pending' ? 'status-pending' : 'status-completed'}">${item.status || 'pending'}</span></td>
                         <td>${item.notes || '—'}</td>
                         <td>
                             <div class="action-buttons">
                                 <a href="${viewUrl}" class="btn btn-primary btn-sm" role="button">View</a>
-                                <a href="${addUrl}" class="btn btn-primary btn-sm" role="button">Add Result</a>
+                                ${!isCompleted ? `<a href="${addUrl}" class="btn btn-primary btn-sm" role="button">Add Result</a>` : ''}
                             </div>
                         </td>
                     `;
