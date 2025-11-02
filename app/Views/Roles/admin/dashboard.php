@@ -3,10 +3,6 @@
 // Safe on-view fallback for pharmacy paid total (keeps dashboard working even if controller doesn't pass it)
 $pharmacyPaidTotal = 0.0;
 $pharmacyPaidToday = 0.0;
-// Laboratory stats safe computation
-$labPending = 0;
-$labCompletedToday = 0;
-$labThisMonth = 0;
 // Billing & patients/appointments defaults
 $todayRevenue = 0.0; $paidThisMonth = 0.0; $outstanding = 0.0; $pendingBills = 0;
 $appointmentsCount = 0; $patientsCount = 0; $activeCases = 0; $newPatientsToday = 0;
@@ -33,93 +29,6 @@ try {
         $todayB->where('DATE(date)', $today);
         $rowT = $todayB->get()->getRowArray();
         $pharmacyPaidToday = (float)($rowT['sum'] ?? 0);
-    }
-    // Laboratory (primary: lab_requests; fallback: test_results)
-    $labPending = 0; $labCompletedToday = 0; $labThisMonth = 0;
-    $today = date('Y-m-d');
-    $todayStart = $today . ' 00:00:00';
-    $tomorrowStart = date('Y-m-d', strtotime($today . ' +1 day')) . ' 00:00:00';
-    $monthStart = date('Y-m-01');
-    $nextMonthStart = date('Y-m-d', strtotime($monthStart . ' +1 month'));
-
-    if ($db->tableExists('lab_requests')) {
-        // Detect columns
-        $fields = $db->getFieldData('lab_requests');
-        $have = []; foreach ($fields as $f) { $have[strtolower($f->name ?? '')] = $f->name; }
-        $statusCol = isset($have['status']) ? $have['status'] : (isset($have['lab_status']) ? $have['lab_status'] : 'status');
-        // Completion timestamp preference
-        $completeCol = isset($have['completed_at']) ? $have['completed_at'] : (isset($have['updated_at']) ? $have['updated_at'] : (isset($have['date']) ? $have['date'] : (isset($have['created_at']) ? $have['created_at'] : null)));
-        // Creation date for monthly count
-        $createdCol = isset($have['created_at']) ? $have['created_at'] : (isset($have['date']) ? $have['date'] : (isset($have['requested_at']) ? $have['requested_at'] : null));
-
-        // Pending
-        $qbP = $db->table('lab_requests')->select('COUNT(*) AS c')
-                 ->groupStart()
-                   ->where("LOWER(TRIM($statusCol)) =", 'pending', false)
-                 ->groupEnd();
-        $row = $qbP->get()->getRowArray();
-        $labPending = (int)($row['c'] ?? 0);
-
-        // Completed Today
-        $qbC = $db->table('lab_requests')->select('COUNT(*) AS c')
-                 ->groupStart()
-                   ->where("LOWER(TRIM($statusCol)) =", 'completed', false)
-                   ->orWhere("LOWER(TRIM($statusCol)) =", 'reviewed', false)
-                 ->groupEnd();
-        if ($completeCol) { $qbC->where("$completeCol >=", $todayStart)->where("$completeCol <", $tomorrowStart); }
-        $row = $qbC->get()->getRowArray();
-        $labCompletedToday = (int)($row['c'] ?? 0);
-
-        // Tests this month
-        if ($createdCol) {
-            $qbM = $db->table('lab_requests')->select('COUNT(*) AS c')
-                     ->where("$createdCol >=", $monthStart)
-                     ->where("$createdCol <", $nextMonthStart);
-            $row = $qbM->get()->getRowArray();
-            $labThisMonth = (int)($row['c'] ?? 0);
-        }
-    }
-    if ($db->tableExists('test_results')) {
-        // Also compute from test_results and take max per metric
-        $fields = $db->getFieldData('test_results');
-        $have = []; foreach ($fields as $f) { $have[strtolower($f->name ?? '')] = $f->name; }
-        $statusCol = isset($have['status']) ? $have['status'] : 'status';
-        $dateCol = isset($have['result_date']) ? $have['result_date'] : (isset($have['test_date']) ? $have['test_date'] : (isset($have['updated_at']) ? $have['updated_at'] : (isset($have['created_at']) ? $have['created_at'] : null)));
-        $monthCol = isset($have['created_at']) ? $have['created_at'] : ($dateCol ?: null);
-
-        $trPending = 0; $trCompletedToday = 0; $trThisMonth = 0;
-        // Pending
-        $qbP = $db->table('test_results')->select('COUNT(*) AS c')
-                 ->groupStart()
-                   ->where("LOWER(TRIM($statusCol)) =", 'pending', false)
-                 ->groupEnd();
-        $row = $qbP->get()->getRowArray();
-        $trPending = (int)($row['c'] ?? 0);
-
-        // Completed Today
-        $qbC = $db->table('test_results')->select('COUNT(*) AS c')
-                 ->groupStart()
-                   ->where("LOWER(TRIM($statusCol)) =", 'completed', false)
-                   ->orWhere("LOWER(TRIM($statusCol)) =", 'reviewed', false)
-                   ->orWhere("LOWER(TRIM($statusCol)) =", 'released', false)
-                   ->orWhere("LOWER(TRIM($statusCol)) =", 'done', false)
-                 ->groupEnd();
-        if ($dateCol) { $qbC->where("$dateCol >=", $todayStart)->where("$dateCol <", $tomorrowStart); }
-        $row = $qbC->get()->getRowArray();
-        $trCompletedToday = (int)($row['c'] ?? 0);
-
-        // Tests This Month
-        if ($monthCol) {
-            $qbM = $db->table('test_results')->select('COUNT(*) AS c')
-                     ->where("$monthCol >=", $monthStart)
-                     ->where("$monthCol <", $nextMonthStart);
-            $row = $qbM->get()->getRowArray();
-            $trThisMonth = (int)($row['c'] ?? 0);
-        }
-        // Take max across sources
-        $labPending = max($labPending, $trPending);
-        $labCompletedToday = max($labCompletedToday, $trCompletedToday);
-        $labThisMonth = max($labThisMonth, $trThisMonth);
     }
     // Billing & Payments (match Billing Management) with dynamic column detection
     $todayRevenue = 0.0; $paidThisMonth = 0.0; $outstanding = 0.0; $pendingBills = 0;
@@ -323,7 +232,7 @@ try {
       <div class="kpi-value"><?= number_format((int)($newPatientsToday ?? 0)) ?></div>
     </div>
 
-    <div class="panel-card span-4">
+    <div class="panel-card span-6">
       <div class="panel-header">Billing & Payments</div>
       <div class="metric-grid">
         <div class="metric-item"><div class="metric-title">Today's Revenue</div><div class="metric-value">₱<?= number_format((float)($todayRevenue ?? 0),2) ?></div></div>
@@ -333,20 +242,11 @@ try {
       </div>
     </div>
 
-    <div class="panel-card span-4">
+    <div class="panel-card span-6">
       <div class="panel-header">Pharmacy Sales</div>
       <div class="metric-grid">
         <div class="metric-item"><div class="metric-title">Total Paid</div><div class="metric-value">₱<?= number_format((float)($pharmacyPaidTotal ?? 0),2) ?></div></div>
         <div class="metric-item"><div class="metric-title">Paid Today</div><div class="metric-value">₱<?= number_format((float)($pharmacyPaidToday ?? 0),2) ?></div></div>
-      </div>
-    </div>
-
-    <div class="panel-card span-4">
-      <div class="panel-header">Laboratory</div>
-      <div class="metric-grid">
-        <div class="metric-item"><div class="metric-title">Pending</div><div class="metric-value"><?= number_format((int)($labPending ?? (($labStats['pending'] ?? null) !== null ? $labStats['pending'] : ($labTestsCount ?? 0))),0) ?></div></div>
-        <div class="metric-item"><div class="metric-title">Completed Today</div><div class="metric-value"><?= number_format((int)($labCompletedToday ?? 0),0) ?></div></div>
-        <div class="metric-item"><div class="metric-title">Tests This Month</div><div class="metric-value"><?= number_format((int)($labThisMonth ?? 0),0) ?></div></div>
       </div>
     </div>
 
