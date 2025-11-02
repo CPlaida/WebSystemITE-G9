@@ -925,6 +925,65 @@ body {
     }
 }
 
+/* ===== Admin Dashboard Overview Cards (reference style) ===== */
+.dashboard-overview .metric-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; padding: 12px; }
+@media (max-width: 1200px) { .dashboard-overview .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (max-width: 992px) { .dashboard-overview .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+.dashboard-overview .metric-item { position: relative; background: #ffffff; border: 1px solid #e9eef7; border-radius: 14px; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08); padding: 16px 18px; }
+.dashboard-overview .metric-item:before { content: none; display: none; }
+.dashboard-overview .metric-title { font-size: .92rem; color: var(--primary-color); margin-bottom: 6px; }
+.dashboard-overview .metric-value { font-size: 1.6rem; font-weight: 700; color: #1f2937; }
+.dashboard-overview .section-label { grid-column: 1 / -1; font-weight: 700; color: #111827; margin: 4px 2px; }
+
+/* ===== Admin Layout Grid (4 small KPIs, 3 mid panels, 1 full panel) ===== */
+.admin-grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 12px; }
+.admin-grid .kpi-card, .admin-grid .panel-card { position:relative; background:#fff; border:1px solid #e9eef7; border-radius:14px; box-shadow:0 8px 18px rgba(15,23,42,.06); }
+.admin-grid .kpi-card:before, .admin-grid .panel-card:before { content: none; display: none; }
+.admin-grid .kpi-card { padding:12px 14px; min-height:84px; display:flex; flex-direction:column; justify-content:center; }
+.admin-grid .kpi-title { font-size:.9rem; color: var(--primary-color); margin:0 0 6px; font-weight:600; }
+.admin-grid .kpi-value { font-size:1.5rem; font-weight:700; color:#0f172a; line-height:1.1; }
+.admin-grid .panel-card { padding:14px 16px; }
+.admin-grid .panel-header { font-weight:700; color: var(--dark-color); margin:0 0 12px; font-size:1rem; }
+
+/* Inner panel metrics (formal, organized) */
+.admin-grid .panel-card .metric-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; padding:0; }
+.admin-grid .panel-card .metric-item { background:#fff; border:1px solid #eef2f7; border-radius:10px; padding:10px 12px; box-shadow:0 3px 8px rgba(15,23,42,.04); text-align:left; }
+.admin-grid .panel-card .metric-item:before { display:none; }
+.admin-grid .panel-card .metric-title { font-size:.85rem; color: var(--primary-color); margin:0 0 4px; font-weight:600; }
+.admin-grid .panel-card .metric-value { font-size:1.1rem; font-weight:700; color:#0f172a; }
+
+/* spans */
+.span-3 { grid-column: span 3 / span 3; }
+.span-4 { grid-column: span 4 / span 4; }
+.span-12 { grid-column: 1 / -1; }
+
+@media (max-width: 1200px) {
+  .span-3 { grid-column: span 6 / span 6; }
+  .span-4 { grid-column: span 6 / span 6; }
+}
+@media (max-width: 992px) {
+  .admin-grid .panel-card .metric-grid { grid-template-columns: 1fr; }
+}
+
+/* Users Overview: show more columns to reduce height */
+.panel-card.users-overview .metric-grid { grid-template-columns: repeat(5, minmax(0,1fr)); }
+@media (max-width: 1400px) { .panel-card.users-overview .metric-grid { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+@media (max-width: 1200px) { .panel-card.users-overview .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (max-width: 992px) { .panel-card.users-overview .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+
+/* Users Total: force exactly 3 equal cards in one row */
+.panel-card.users-total .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+.panel-card.users-total .metric-item { text-align:center; min-height:78px; display:flex; flex-direction:column; justify-content:center; }
+.panel-card.users-total .metric-title { font-size:.85rem; margin-bottom:4px; }
+.panel-card.users-total .metric-value { font-size:1.25rem; }
+
+@media (max-width: 992px) { .panel-card.users-total .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (max-width: 768px) { .panel-card.users-total .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 576px) { .panel-card.users-total .metric-grid { grid-template-columns: 1fr; } }
+
+@media (max-width: 768px) {
+  .span-3, .span-4, .span-12 { grid-column: 1 / -1; }
+}
 /* ===== Admin/Administration/ManageUser.php ===== */
 :root { --primary: #4361ee; --secondary: #3f37c9; --success: #4bb543; --danger: #f44336; --light: #f8f9fa; --dark: #343a40; --border-radius: 8px; --shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
 .container { background: #fff; padding: 1.5rem; margin: 1.5rem auto; width: 95%; max-width: 1200px; border-radius: var(--border-radius); box-shadow: var(--shadow); }
