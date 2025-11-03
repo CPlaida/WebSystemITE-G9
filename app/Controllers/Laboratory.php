@@ -14,6 +14,71 @@ class Laboratory extends Controller
         $this->labModel = new LaboratoryModel();
     }
 
+    /**
+     * Patient name suggestions (case-insensitive) for lab and booking forms.
+     * GET /laboratory/patient/suggest?q=term
+     * Returns: { success: true, results: [{id,name,type}] }
+     */
+    public function patientSuggest()
+    {
+        if (!session()->get('isLoggedIn')) {
+            return $this->response->setJSON(['success' => false, 'results' => []]);
+        }
+
+        $q = trim((string) ($this->request->getGet('q') ?? ''));
+        if ($q === '' || mb_strlen($q) < 2) {
+            return $this->response->setJSON(['success' => true, 'results' => []]);
+        }
+
+        try {
+            $db = \Config\Database::connect();
+            if (!$db->tableExists('patients')) {
+                return $this->response->setJSON(['success' => true, 'results' => []]);
+            }
+
+            $fields = array_map('strtolower', $db->getFieldNames('patients'));
+            $colFirst = in_array('first_name', $fields) ? 'first_name' : (in_array('firstname', $fields) ? 'firstname' : null);
+            $colLast  = in_array('last_name', $fields) ? 'last_name'  : (in_array('lastname', $fields)  ? 'lastname'  : null);
+            $colName  = in_array('name', $fields) ? 'name' : (in_array('full_name', $fields) ? 'full_name' : null);
+            $colType  = in_array('type', $fields) ? 'type' : null; // inpatient/outpatient if present
+
+            $b = $db->table('patients');
+            // Build select name expression
+            if ($colName) {
+                $b->select("id, TRIM($colName) AS name" . ($colType ? ", $colType AS type" : ", '' AS type"), false);
+                // case-insensitive search on name column
+                $b->groupStart()
+                  ->like($colName, $q, 'both', null, true)
+                  ->groupEnd();
+            } else {
+                $firstExpr = $colFirst ? $colFirst : "''";
+                $lastExpr  = $colLast  ? $colLast  : "''";
+                $nameExpr  = "TRIM(CONCAT($firstExpr, ' ', $lastExpr))";
+                $b->select("id, $nameExpr AS name" . ($colType ? ", $colType AS type" : ", '' AS type"), false);
+                // case-insensitive search across first/last and concatenation
+                $b->groupStart();
+                if ($colFirst) { $b->like($colFirst, $q, 'both', null, true); }
+                if ($colLast)  { $b->orLike($colLast,  $q, 'both', null, true); }
+                $b->orLike("CONCAT($firstExpr, ' ', $lastExpr)", $q, 'both', null, true);
+                $b->groupEnd();
+            }
+
+            $rows = $b->orderBy('id', 'DESC')->limit(10)->get()->getResultArray();
+            // Normalize output
+            $results = array_map(function($r){
+                return [
+                    'id' => (int)($r['id'] ?? 0),
+                    'name' => trim((string)($r['name'] ?? '')),
+                    'type' => (string)($r['type'] ?? '')
+                ];
+            }, $rows ?? []);
+
+            return $this->response->setJSON(['success' => true, 'results' => $results]);
+        } catch (\Throwable $e) {
+            return $this->response->setJSON(['success' => false, 'results' => []]);
+        }
+    }
+
     public function request()
     {
         // Check if user is logged in and has appropriate role

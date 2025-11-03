@@ -255,7 +255,6 @@ try {
       <div class="metric-grid">
         <div class="metric-item"><div class="metric-title">Active Users</div><div class="metric-value"><?= number_format((int)($usersActiveTotal ?? 0)) ?></div></div>
         <div class="metric-item"><div class="metric-title">Inactive Users</div><div class="metric-value"><?= number_format((int)($usersInactiveTotal ?? 0)) ?></div></div>
-        <div class="metric-item"><div class="metric-title">Suspended Users</div><div class="metric-value"><?= number_format((int)($usersSuspendedTotal ?? 0)) ?></div></div>
       </div>
     </div>
   </div>

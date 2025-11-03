@@ -218,7 +218,6 @@
             <select id="status" name="status" required>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
             </select>
           </div>
         </div>
@@ -326,11 +325,11 @@
           matchesRole = role.toLowerCase() === roleFilter.toLowerCase();
         }
         
-        // Check status filter (assuming status is in the last column)
-        if (!matchesStatus && cells.length > 0) {
-          const statusCell = cells[cells.length - 1];
-          const status = statusCell.textContent || statusCell.innerText;
-          matchesStatus = status.toLowerCase().includes(statusFilter.toLowerCase());
+        // Check status filter (Status column is the 4th column -> index 3)
+        if (!matchesStatus && cells.length > 3) {
+          const statusText = (cells[3].textContent || cells[3].innerText || '').trim().toLowerCase();
+          // exact match only (avoid 'inactive' matching 'active')
+          matchesStatus = statusFilter === '' ? true : (statusText === statusFilter);
         }
         
         // Show/hide row based on all filters

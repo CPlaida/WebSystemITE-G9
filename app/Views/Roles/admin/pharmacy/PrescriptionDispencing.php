@@ -16,7 +16,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="patientInput">Patient Name</label>
                             <div class="patient-autocomplete">
@@ -26,12 +26,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="prescriptionDate">Date</label>
-                            <input type="date" class="form-control" id="prescriptionDate" value="<?= date('Y-m-d') ?>">
-                        </div>
-                    </div>
+                    <input type="hidden" id="prescriptionDate" value="<?= date('Y-m-d') ?>">
                 </div>
                 
                 <div class="form-group">

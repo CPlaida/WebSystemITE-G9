@@ -21,22 +21,19 @@ class Doctor extends BaseController
         if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
         if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
 
-        $doctorId = (int) session()->get('user_id');
         $today = date('Y-m-d');
         $db = \Config\Database::connect();
 
+        // Global counts (all doctors share the same data)
         $todayAppointments = $db->table('appointments')
-            ->where('doctor_id', $doctorId)
             ->where('appointment_date', $today)
             ->countAllResults();
 
         $patientsSeen = $db->table('appointments')
-            ->where('doctor_id', $doctorId)
             ->where('status', 'completed')
             ->countAllResults();
 
         $pendingResults = $db->table('appointments')
-            ->where('doctor_id', $doctorId)
             ->groupStart()
                 ->where('status', 'in_progress')
                 ->orWhere('status', 'confirmed')
@@ -46,19 +43,15 @@ class Doctor extends BaseController
         $prescriptionsCount = 0;
         try {
             if ($db->tableExists('prescriptions')) {
-                $fields = $db->getFieldNames('prescriptions');
-                if (in_array('doctor_id', $fields)) {
-                    $prescriptionsCount = $db->table('prescriptions')
-                        ->where('doctor_id', $doctorId)
-                        ->countAllResults();
-                }
+                $prescriptionsCount = $db->table('prescriptions')->countAllResults();
             }
         } catch (\Throwable $e) {
             $prescriptionsCount = 0;
         }
 
+        // Unified upcoming list for today (all doctors)
         $appointmentsModel = new AppointmentModel();
-        $upcomingAppointments = $appointmentsModel->getAppointmentsByDoctor($doctorId, $today);
+        $upcomingAppointments = $appointmentsModel->getUnifiedList(null, $today);
 
         return view('Roles/doctor/dashboard', [
             'title' => 'Doctor Dashboard',
@@ -75,12 +68,12 @@ class Doctor extends BaseController
         if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
         if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
 
-        $doctorId = (int) session()->get('user_id');
         $appointmentsModel = new AppointmentModel();
-        $list = $appointmentsModel->getAppointmentsByDoctor($doctorId);
+        // Unified list (all doctors see the same appointments)
+        $list = $appointmentsModel->getUnifiedList();
 
         return view('Roles/doctor/appointments/Appointmentlist', [
-            'title' => 'My Appointments',
+            'title' => 'Appointments',
             'appointments' => $list,
         ]);
     }

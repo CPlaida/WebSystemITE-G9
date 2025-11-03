@@ -975,15 +975,13 @@ body {
 @media (max-width: 1200px) { .panel-card.users-overview .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
 @media (max-width: 992px) { .panel-card.users-overview .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 
-/* Users Total: force exactly 3 equal cards in one row */
-.panel-card.users-total .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+/* Users Total: force exactly 2 equal cards in one row (Active, Inactive) */
+.panel-card.users-total .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
 .panel-card.users-total .metric-item { text-align:center; min-height:78px; display:flex; flex-direction:column; justify-content:center; }
 .panel-card.users-total .metric-title { font-size:.85rem; margin-bottom:4px; }
 .panel-card.users-total .metric-value { font-size:1.25rem; }
 
-@media (max-width: 992px) { .panel-card.users-total .metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
-@media (max-width: 768px) { .panel-card.users-total .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-@media (max-width: 576px) { .panel-card.users-total .metric-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .panel-card.users-total .metric-grid { grid-template-columns: 1fr; } }
 
 @media (max-width: 768px) {
   .span-3, .span-4, .span-12 { grid-column: 1 / -1; }

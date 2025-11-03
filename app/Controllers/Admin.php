@@ -59,15 +59,24 @@ class Admin extends BaseController
         if (!$this->request->is('post')) {
             return redirect()->back();
         }
+
         $model = new UserModel();
         $username = trim((string) $this->request->getPost('username'));
-        $email = trim((string) $this->request->getPost('email'));
+        $email = strtolower(trim((string) $this->request->getPost('email')));
         $password = (string) $this->request->getPost('password');
         $roleId = (int) ($this->request->getPost('role_id') ?? 0);
         $status = strtolower((string) $this->request->getPost('status'));
 
         if ($username === '' || $email === '' || $password === '' || empty($roleId)) {
-            return redirect()->back()->with('error', 'Please fill in all required fields.');
+            return redirect()->back()->withInput()->with('error', 'Please fill in all required fields.');
+        }
+
+        // Uniqueness checks to avoid DB duplicate key errors
+        if ($model->where('email', $email)->countAllResults() > 0) {
+            return redirect()->back()->withInput()->with('error', 'Email already exists.');
+        }
+        if ($model->where('username', $username)->countAllResults() > 0) {
+            return redirect()->back()->withInput()->with('error', 'Username already exists.');
         }
 
         $data = [
@@ -75,11 +84,21 @@ class Admin extends BaseController
             'email' => $email,
             'password' => password_hash($password, PASSWORD_DEFAULT),
             'role_id' => $roleId,
-            'status' => in_array($status, ['active','inactive','suspended']) ? $status : 'active',
+            'status' => in_array($status, ['active','inactive']) ? $status : 'active',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
-        $model->insert($data);
+
+        try {
+            $model->insert($data);
+        } catch (\Throwable $e) {
+            // Fallback for any DB errors (e.g., race condition hitting unique index)
+            $message = (strpos(strtolower($e->getMessage()), 'duplicate') !== false)
+                ? 'Email already exists.'
+                : 'Failed to create user. Please try again.';
+            return redirect()->back()->withInput()->with('error', $message);
+        }
+
         return redirect()->to('/admin/Administration/ManageUser')->with('success', 'User created successfully.');
     }
 
@@ -99,7 +118,7 @@ class Admin extends BaseController
             'username' => $username,
             'email' => $email,
             'role_id' => $roleId,
-            'status' => in_array($status, ['active','inactive','suspended']) ? $status : 'active',
+            'status' => in_array($status, ['active','inactive']) ? $status : 'active',
             'updated_at' => date('Y-m-d H:i:s'),
         ];
         if ($password !== '') {

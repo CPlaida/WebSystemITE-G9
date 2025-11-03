@@ -64,7 +64,9 @@
                                 </td>
                                 <td class="action-buttons">
                                     <a href="<?= base_url('billing/show/' . (int)$bill['id']) ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
-                                    <button type="button" class="btn btn-edit" data-action="edit">Edit</button>
+                                    <?php if ($ps !== 'paid'): ?>
+                                        <button type="button" class="btn btn-edit" data-action="edit">Edit</button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -93,63 +93,68 @@ class Appointment extends BaseController
             return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized access']);
         }
 
-        // Handle patient - get patient_name from text input
-        $patientName = $this->request->getPost('patient_name');
-        $patientId = null;
+        // Handle patient - prefer provided patient_id from autocomplete; fallback to name lookup/create
+        $patientName = trim((string)$this->request->getPost('patient_name'));
+        $patientId = (int) ($this->request->getPost('patient_id') ?? 0);
         
-        if (empty($patientName)) {
+        if ($patientId <= 0 && $patientName === '') {
             if (!$this->request->isAJAX()) {
                 return redirect()->back()->withInput()->with('error', 'Please enter patient name');
             }
             return $this->response->setJSON(['success' => false, 'message' => 'Please enter patient name']);
         }
 
-        // Try to find existing patient by name first
-        $existingPatient = $this->patientModel
-            ->like('CONCAT(first_name, " ", last_name)', $patientName)
-            ->orLike('first_name', $patientName)
-            ->first();
-        
-        if ($existingPatient) {
-            $patientId = $existingPatient['id'];
-        } else {
-            // Create new patient from name
-            $nameParts = explode(' ', trim($patientName), 2);
-            $firstName = $nameParts[0];
-            $lastName = isset($nameParts[1]) ? $nameParts[1] : 'Unknown';
+        if ($patientId <= 0) {
+            // Try to find existing patient by name first (case-insensitive on first and last)
+            $existingPatient = $this->patientModel
+                ->groupStart()
+                    ->like('first_name', $patientName)
+                    ->orLike('last_name', $patientName)
+                    ->orLike("CONCAT(first_name, ' ', last_name)", $patientName)
+                ->groupEnd()
+                ->first();
             
-            // Generate a proper phone number and email
-            $randomNum = rand(1000, 9999);
-            $email = strtolower(str_replace(' ', '.', $firstName . '.' . $lastName)) . $randomNum . '@temp.com';
-            $phone = '09' . rand(100000000, 999999999); // Philippine format
-            
-            $newPatientData = [
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'email' => $email,
-                'phone' => $phone,
-                'date_of_birth' => '1990-01-01',
-                'gender' => 'other',
-                'address' => 'Not provided',
-                'status' => 'active'
-            ];
-            
-            // Temporarily disable validation for auto-created patients
-            $this->patientModel->skipValidation(true);
-            $patientId = $this->patientModel->insert($newPatientData);
-            $this->patientModel->skipValidation(false);
-            
-            if (!$patientId) {
-                $errors = $this->patientModel->errors();
-                $errorMessage = 'Failed to create patient record';
-                if (!empty($errors)) {
-                    $errorMessage .= ': ' . implode(', ', $errors);
+            if ($existingPatient) {
+                $patientId = (int) $existingPatient['id'];
+            } else {
+                // Auto-create minimal patient so booking does not depend on suggestions
+                $nameParts = explode(' ', trim($patientName), 2);
+                $firstName = $nameParts[0] ?? 'Unknown';
+                $lastName = $nameParts[1] ?? 'Unknown';
+
+                $randomNum = rand(1000, 9999);
+                $email = strtolower(str_replace(' ', '.', $firstName . '.' . $lastName)) . $randomNum . '@temp.com';
+                $phone = '09' . rand(100000000, 999999999);
+
+                $newPatientData = [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'date_of_birth' => '1990-01-01',
+                    'gender' => 'other',
+                    'address' => 'Not provided',
+                    'status' => 'active',
+                    // Ensure auto-created records from booking are not listed as outpatients
+                    'type' => 'walkin'
+                ];
+
+                $this->patientModel->skipValidation(true);
+                $patientId = (int) $this->patientModel->insert($newPatientData);
+                $this->patientModel->skipValidation(false);
+
+                if ($patientId <= 0) {
+                    $errors = $this->patientModel->errors();
+                    $errorMessage = 'Failed to create patient record';
+                    if (!empty($errors)) {
+                        $errorMessage .= ': ' . implode(', ', $errors);
+                    }
+
+                    if (!$this->request->isAJAX()) {
+                        return redirect()->back()->withInput()->with('error', $errorMessage);
+                    }
+                    return $this->response->setJSON(['success' => false, 'message' => $errorMessage]);
                 }
-                
-                if (!$this->request->isAJAX()) {
-                    return redirect()->back()->withInput()->with('error', $errorMessage);
-                }
-                return $this->response->setJSON(['success' => false, 'message' => $errorMessage]);
             }
         }
 
