@@ -553,9 +553,14 @@
       const shiftType = document.getElementById('shiftType').value;
       const department = document.getElementById('department').value;
 
-      // Validate form
-      if (!doctorId || !shiftDate || !shiftType || !department) {
-        showAddShiftError('Please fill in all required fields.');
+      // Validate form with specific missing fields
+      const missing = [];
+      if (!doctorId) missing.push('Doctor');
+      if (!shiftDate) missing.push('Date');
+      if (!shiftType) missing.push('Shift Type');
+      if (!department) missing.push('Department');
+      if (missing.length) {
+        showAddShiftError('Missing: ' + missing.join(', ') + '.');
         return;
       }
 
@@ -658,13 +663,7 @@
         }
       });
 
-      // Reset selection if currently disabled
-      if (shiftTypeEl.value) {
-        const selOpt = shiftTypeEl.querySelector(`option[value="${shiftTypeEl.value}"]`);
-        if (selOpt && selOpt.disabled) {
-          shiftTypeEl.value = '';
-        }
-      }
+      
     }
 
     // Inline error helpers

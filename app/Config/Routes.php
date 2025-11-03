@@ -32,7 +32,6 @@ $routes->setAutoRoute(false);
 // Only logged-in users can see this (unified dashboard)
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 // Convenience role-specific dashboards (reuse unified dashboard)
-$routes->get('doctor/dashboard', 'Doctor\Doctor::index', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/my-schedule', 'Doctor\DoctorScheduleController::view', ['filter' => 'auth:doctor']);
 $routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
@@ -74,11 +73,6 @@ $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:a
 $routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
 $routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
 $routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
-$routes->post('/doctor/getConflicts', 'Doctor\Doctor::getConflicts', ['filter' => 'auth:admin,doctor']);
-$routes->get('/doctor/getScheduleData', 'Doctor\Doctor::getScheduleData', ['filter' => 'auth:admin,doctor']);
-$routes->get('/doctor/getDoctors', 'Doctor\Doctor::getDoctors', ['filter' => 'auth:admin,doctor']);
-// Doctor app shortcuts
-$routes->get('doctor/appointments', 'Doctor\Doctor::appointments', ['filter' => 'auth:doctor,admin']);
 
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
@@ -249,13 +243,6 @@ $routes->group('nurse/laboratory', ['namespace' => 'App\\Views', 'filter' => 'au
     $routes->view('request', 'Roles/nurse/laboratory/LaboratoryReq');
     $routes->view('testresult', 'Roles/nurse/laboratory/TestResult');
 });
-
-// Doctor Patients route (controller-powered to load data)
-$routes->get('doctor/patients/view', 'Doctor\Doctor::patientsView', ['filter' => 'auth:doctor,admin']);
-// Doctor EHR endpoints
-$routes->get('doctor/prescription', 'Doctor\Doctor::getPrescription', ['filter' => 'auth:doctor,admin']);
-$routes->post('doctor/prescription/save', 'Doctor\Doctor::savePrescription', ['filter' => 'auth:doctor,admin']);
-$routes->get('doctor/lab-results', 'Doctor\Doctor::labResults', ['filter' => 'auth:doctor,admin']);
 
 // Pharmacy Routes
 $routes->group('pharmacist', ['filter' => 'auth:pharmacist,admin'], function($routes) {

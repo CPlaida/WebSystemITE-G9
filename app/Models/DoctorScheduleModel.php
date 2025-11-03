@@ -21,13 +21,7 @@ class DoctorScheduleModel extends Model
         'start_time',
         'end_time',
         'status',
-        'notes',
-        'preferred_days',
-        'is_available',
-        'consecutive_nights',
-        'monthly_shift_count',
-        'swap_request_id',
-        'is_on_leave'
+        'notes'
     ];
 
     protected $useTimestamps = true;
@@ -78,44 +72,51 @@ class DoctorScheduleModel extends Model
                    ->findAll();
     }
 
-    /**
-     * Get schedules for a specific doctor
-     */
-    public function getDoctorSchedules($doctorId, $startDate = null, $endDate = null)
-    {
-        $builder = $this->where('doctor_id', $doctorId);
-        
-        if ($startDate) {
-            $builder->where('shift_date >=', $startDate);
-        }
-        
-        if ($endDate) {
-            $builder->where('shift_date <=', $endDate);
-        }
-        
-        return $builder->orderBy('shift_date', 'ASC')
-                      ->orderBy('start_time', 'ASC')
-                      ->findAll();
-    }
+    
 
     /**
      * Check for scheduling conflicts
      */
     public function checkConflicts($doctorId, $shiftDate, $startTime, $endTime, $excludeId = null)
     {
+        // Build full DateTime interval for the proposed shift
+        $proposedStart = new \DateTime($shiftDate . ' ' . $startTime);
+        $proposedEnd = new \DateTime($shiftDate . ' ' . $endTime);
+        if ($proposedEnd <= $proposedStart) {
+            // Cross-midnight shift (e.g., 22:00 -> 06:00 next day)
+            $proposedEnd->modify('+1 day');
+        }
+
+        // Fetch existing schedules on adjacent days to catch cross-midnight overlaps
+        $dayBefore = date('Y-m-d', strtotime($shiftDate . ' -1 day'));
+        $dayAfter  = date('Y-m-d', strtotime($shiftDate . ' +1 day'));
+
         $builder = $this->where('doctor_id', $doctorId)
-                       ->where('shift_date', $shiftDate)
-                       ->where('status !=', 'cancelled')
-                       ->groupStart()
-                           ->where('start_time <', $endTime)
-                           ->where('end_time >', $startTime)
-                       ->groupEnd();
-        
+                        ->whereIn('shift_date', [$dayBefore, $shiftDate, $dayAfter])
+                        ->where('status !=', 'cancelled');
+
         if ($excludeId) {
             $builder->where('id !=', $excludeId);
         }
-        
-        return $builder->findAll();
+
+        $existing = $builder->findAll();
+
+        // Compare intervals in PHP to robustly handle cross-midnight cases
+        $conflicts = [];
+        foreach ($existing as $row) {
+            $rowStart = new \DateTime($row['shift_date'] . ' ' . $row['start_time']);
+            $rowEnd = new \DateTime($row['shift_date'] . ' ' . $row['end_time']);
+            if ($rowEnd <= $rowStart) {
+                $rowEnd->modify('+1 day');
+            }
+
+            // Overlap check: startA < endB AND endA > startB
+            if ($rowStart < $proposedEnd && $rowEnd > $proposedStart) {
+                $conflicts[] = $row;
+            }
+        }
+
+        return $conflicts;
     }
 
     /**
@@ -137,25 +138,7 @@ class DoctorScheduleModel extends Model
         return $this->db->query($sql)->getResultArray();
     }
 
-    /**
-     * Get schedules by department
-     */
-    public function getSchedulesByDepartment($department, $startDate = null, $endDate = null)
-    {
-        $builder = $this->where('department', $department);
-        
-        if ($startDate) {
-            $builder->where('shift_date >=', $startDate);
-        }
-        
-        if ($endDate) {
-            $builder->where('shift_date <=', $endDate);
-        }
-        
-        return $builder->orderBy('shift_date', 'ASC')
-                      ->orderBy('start_time', 'ASC')
-                      ->findAll();
-    }
+    
 
     /**
      * Get schedule statistics
@@ -205,96 +188,6 @@ class DoctorScheduleModel extends Model
         return !$previousShift; // Can work if no night shift previous day
     }
 
-    /**
-     * Get doctor's monthly shift count
-     */
-    public function getMonthlyShiftCount($doctorId, $month = null, $year = null)
-    {
-        $month = $month ?? date('m');
-        $year = $year ?? date('Y');
-        
-        $startDate = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01';
-        $endDate = date('Y-m-t', strtotime($startDate));
-        
-        return $this->where('doctor_id', $doctorId)
-                   ->where('shift_date >=', $startDate)
-                   ->where('shift_date <=', $endDate)
-                   ->where('status !=', 'cancelled')
-                   ->countAllResults();
-    }
-
-    /**
-     * Get available doctors for a specific date and shift type
-     */
-    public function getAvailableDoctors($shiftDate, $shiftType)
-    {
-        $dayOfWeek = strtolower(date('l', strtotime($shiftDate)));
-        
-        // Get all doctors not already scheduled for this date/time
-        $scheduledDoctors = $this->select('doctor_id')
-                               ->where('shift_date', $shiftDate)
-                               ->where('status !=', 'cancelled')
-                               ->findColumn('doctor_id');
-        
-        // Select doctors via roles table join (users.role column no longer exists)
-        $query = $this->db->table('users u')
-                          ->select('u.*')
-                          ->join('roles r', 'u.role_id = r.id', 'left')
-                          ->where('r.name', 'doctor')
-                          ->where('u.is_available', true)
-                          ->where('u.is_on_leave', false);
-        
-        if (!empty($scheduledDoctors)) {
-            $query->whereNotIn('u.id', $scheduledDoctors);
-        }
-        
-        // Additional check for night shift consecutive rule
-        if ($shiftType === 'night') {
-            $availableDoctors = [];
-            $allDoctors = $query->get()->getResultArray();
-            
-            foreach ($allDoctors as $doctor) {
-                if ($this->canWorkConsecutiveNights($doctor['id'], $shiftDate)) {
-                    $availableDoctors[] = $doctor;
-                }
-            }
-            
-            return $availableDoctors;
-        }
-        
-        return $query->get()->getResultArray();
-    }
-
-    /**
-     * Get workload distribution for fairness tracking
-     */
-    public function getWorkloadDistribution($month = null, $year = null)
-    {
-        $month = $month ?? date('m');
-        $year = $year ?? date('Y');
-        
-        $startDate = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01';
-        $endDate = date('Y-m-t', strtotime($startDate));
-        
-        $sql = "SELECT 
-                    u.id,
-                    u.username as doctor_name,
-                    COUNT(ds.id) as shift_count,
-                    SUM(CASE WHEN ds.shift_type = 'night' THEN 1 ELSE 0 END) as night_shifts,
-                    SUM(CASE WHEN ds.shift_type = 'morning' THEN 1 ELSE 0 END) as morning_shifts,
-                    SUM(CASE WHEN ds.shift_type = 'afternoon' THEN 1 ELSE 0 END) as afternoon_shifts
-                FROM users u
-                LEFT JOIN roles r ON u.role_id = r.id
-                LEFT JOIN doctor_schedules ds ON u.id = ds.doctor_id 
-                    AND ds.shift_date >= ? 
-                    AND ds.shift_date <= ?
-                    AND ds.status != 'cancelled'
-                WHERE r.name = 'doctor'
-                GROUP BY u.id, u.username
-                ORDER BY shift_count DESC";
-        
-        return $this->db->query($sql, [$startDate, $endDate])->getResultArray();
-    }
 
     /**
      * Add a new schedule with automatic time setting
@@ -365,13 +258,9 @@ class DoctorScheduleModel extends Model
             $data['status'] = 'scheduled';
         }
         
-        // Log the data being inserted for debugging
-        log_message('debug', 'DoctorScheduleModel inserting data: ' . json_encode($data));
-        
         $result = $this->insert($data);
         
         if ($result) {
-            log_message('debug', 'Schedule inserted successfully with ID: ' . $result);
             return [
                 'success' => true,
                 'message' => 'Schedule added successfully',

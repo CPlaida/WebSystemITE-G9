@@ -3,8 +3,6 @@
 namespace App\Controllers\Doctor;
 use App\Models\UserModel;
 use App\Models\DoctorScheduleModel;
-use App\Models\AppointmentModel;
-use App\Models\PatientModel;
 use App\Controllers\BaseController;
 
 class Doctor extends BaseController
@@ -14,175 +12,6 @@ class Doctor extends BaseController
     public function __construct()
     {
         $this->doctorScheduleModel = new DoctorScheduleModel();
-    }
-
-    public function index()
-    {
-        if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
-        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
-
-        $today = date('Y-m-d');
-        $db = \Config\Database::connect();
-
-        // Global counts (all doctors share the same data)
-        $todayAppointments = $db->table('appointments')
-            ->where('appointment_date', $today)
-            ->countAllResults();
-
-        $patientsSeen = $db->table('appointments')
-            ->where('status', 'completed')
-            ->countAllResults();
-
-        $pendingResults = $db->table('appointments')
-            ->groupStart()
-                ->where('status', 'in_progress')
-                ->orWhere('status', 'confirmed')
-            ->groupEnd()
-            ->countAllResults();
-
-        $prescriptionsCount = 0;
-        try {
-            if ($db->tableExists('prescriptions')) {
-                $prescriptionsCount = $db->table('prescriptions')->countAllResults();
-            }
-        } catch (\Throwable $e) {
-            $prescriptionsCount = 0;
-        }
-
-        // Unified upcoming list for today (all doctors)
-        $appointmentsModel = new AppointmentModel();
-        $upcomingAppointments = $appointmentsModel->getUnifiedList(null, $today);
-
-        return view('Roles/doctor/dashboard', [
-            'title' => 'Doctor Dashboard',
-            'todayAppointments' => $todayAppointments,
-            'patientsSeen' => $patientsSeen,
-            'pendingResults' => $pendingResults,
-            'prescriptionsCount' => $prescriptionsCount,
-            'upcomingAppointments' => $upcomingAppointments,
-        ]);
-    }
-
-    public function appointments()
-    {
-        if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
-        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
-
-        $appointmentsModel = new AppointmentModel();
-        // Unified list (all doctors see the same appointments)
-        $list = $appointmentsModel->getUnifiedList();
-
-        return view('Roles/doctor/appointments/Appointmentlist', [
-            'title' => 'Appointments',
-            'appointments' => $list,
-        ]);
-    }
-
-    // Patients page: show all patients split by type
-    public function patientsView()
-    {
-        if (!session()->get('isLoggedIn')) { return redirect()->to('/login'); }
-        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return redirect()->to('/dashboard'); }
-
-        $patientModel = new PatientModel();
-        $all = $patientModel->orderBy('first_name','ASC')->findAll();
-
-        $inpatients = array_filter($all, fn($p) => ($p['type'] ?? '') === 'inpatient');
-        $outpatients = array_filter($all, fn($p) => ($p['type'] ?? '') === 'outpatient');
-
-        return view('Roles/doctor/patients/view', [
-            'title' => 'Patient Records',
-            'inpatients' => $inpatients,
-            'outpatients' => $outpatients,
-            'patients' => $all,
-        ]);
-    }
-
-    // Load existing prescription/result note for a patient (latest appointment of this doctor)
-    public function getPrescription()
-    {
-        if (!session()->get('isLoggedIn')) { return $this->response->setJSON(['success' => false, 'message' => 'Not logged in']); }
-        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized']); }
-
-        $patientId = (int) ($this->request->getGet('patient_id') ?? 0);
-        if ($patientId <= 0) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid patient']);
-        }
-
-        $doctorId = (int) session()->get('user_id');
-        $am = new AppointmentModel();
-        $row = $am->where('patient_id', $patientId)
-                  ->where('doctor_id', $doctorId)
-                  ->orderBy('appointment_date', 'DESC')
-                  ->orderBy('appointment_time', 'DESC')
-                  ->first();
-
-        return $this->response->setJSON([
-            'success' => true,
-            'note' => $row['notes'] ?? ''
-        ]);
-    }
-
-    // Save prescription/result note into the latest appointment for this patient and doctor
-    public function savePrescription()
-    {
-        if (!session()->get('isLoggedIn')) { return $this->response->setJSON(['success' => false, 'message' => 'Not logged in']); }
-        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized']); }
-        if (!$this->request->isAJAX()) { return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']); }
-
-        $patientId = (int) ($this->request->getPost('patient_id') ?? 0);
-        $note = trim((string) $this->request->getPost('note'));
-        if ($patientId <= 0) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid patient']);
-        }
-
-        $doctorId = (int) session()->get('user_id');
-        $am = new AppointmentModel();
-        $row = $am->where('patient_id', $patientId)
-                  ->where('doctor_id', $doctorId)
-                  ->orderBy('appointment_date', 'DESC')
-                  ->orderBy('appointment_time', 'DESC')
-                  ->first();
-        if (!$row) {
-            return $this->response->setJSON(['success' => false, 'message' => 'No appointment found to attach note']);
-        }
-
-        $ok = $am->update($row['id'], ['notes' => $note]);
-        return $this->response->setJSON([
-            'success' => (bool) $ok,
-            'message' => $ok ? 'Saved' : 'Failed to save'
-        ]);
-    }
-
-    // Fetch lab results related to this patient (by name) for doctor view
-    public function labResults()
-    {
-        if (!session()->get('isLoggedIn')) { return $this->response->setJSON(['success' => false, 'message' => 'Not logged in']); }
-        if (!in_array(session()->get('role'), ['doctor', 'admin'])) { return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized']); }
-
-        $patientId = (int) ($this->request->getGet('patient_id') ?? 0);
-        if ($patientId <= 0) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid patient']);
-        }
-
-        // Get patient name
-        $pm = new PatientModel();
-        $p = $pm->find($patientId);
-        if (!$p) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Patient not found']);
-        }
-        $fullName = trim(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? ''));
-
-        // Query laboratory table by patient name (stored in test_name column)
-        $db = \Config\Database::connect();
-        $builder = $db->table('laboratory');
-        $rows = $builder->select('id as test_id, test_type, test_date, status, notes')
-                        ->like('test_name', $fullName)
-                        ->orderBy('test_date', 'DESC')
-                        ->get()
-                        ->getResultArray();
-
-        return $this->response->setJSON(['success' => true, 'results' => $rows]);
     }
 
     /**
@@ -206,31 +35,21 @@ class Doctor extends BaseController
 
         // Get schedules for the date range
         $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($startDate, $endDate);
-        
-        // Get all doctors for the dropdown (use doctors.id to satisfy FK doctor_schedules.doctor_id -> doctors.id)
-        $userModel = new UserModel();
-        $doctors = $userModel->select('doctors.id AS doctor_id, users.id AS user_id, users.username, doctors.first_name, doctors.last_name')
-                             ->join('roles r', 'users.role_id = r.id', 'left')
-                             ->join('doctors', 'doctors.user_id = users.id', 'left')
-                             ->where('r.name', 'doctor')
-                             ->findAll();
-        
-        // Debug: Log the doctors data
-        log_message('debug', 'Doctors found: ' . count($doctors));
-        if (!empty($doctors)) {
-            log_message('debug', 'First doctor: ' . json_encode($doctors[0]));
-        }
 
-        // Get schedule statistics
-        $stats = $this->doctorScheduleModel->getScheduleStats();
+        // Build dropdown options directly from users who have a doctor role
+        $userModel = new UserModel();
+        $doctors = $userModel->select('users.id AS doctor_id, users.id AS user_id, users.username')
+                             ->join('roles r', 'users.role_id = r.id', 'left')
+                             ->like('r.name', 'doctor', 'both')
+                             ->orderBy('users.username', 'ASC')
+                             ->findAll();
+        // Note: doctor_id here is users.id; addSchedule will normalize to doctors.id before insert
 
         $data = [
             'schedules' => $schedules,
             'doctors' => $doctors,
-            'stats' => $stats,
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'conflicts' => $this->doctorScheduleModel->getAllConflicts()
         ];
 
         return view('Roles/admin/appointments/StaffSchedule', $data);
@@ -246,10 +65,6 @@ class Doctor extends BaseController
         }
 
         try {
-            // Get all POST data for debugging
-            $allPostData = $this->request->getPost();
-            log_message('debug', 'All POST Data: ' . json_encode($allPostData));
-            
             $data = [
                 'doctor_id' => $this->request->getPost('doctor_id'),
                 'doctor_name' => $this->request->getPost('doctor_name'),
@@ -259,15 +74,77 @@ class Doctor extends BaseController
                 'notes' => $this->request->getPost('notes') ?? ''
             ];
 
-            // Debug logging
-            log_message('debug', 'Add Schedule Data: ' . json_encode($data));
+            // Normalize doctor_id (users.id -> doctors.id) to satisfy FK
+            try {
+                $db = \Config\Database::connect();
+                $doctorsTbl = $db->table('doctors');
+                $usersTbl = $db->table('users');
+
+                $providedId = (int) ($data['doctor_id'] ?? 0);
+                if ($providedId > 0) {
+                    // If already a doctors.id, keep; else map from users.id
+                    $doctorById = $doctorsTbl->where('id', $providedId)->get()->getRowArray();
+                    if (!$doctorById) {
+                        $userRow = $usersTbl->where('id', $providedId)->get()->getRowArray();
+                        if ($userRow) {
+                            $existing = $doctorsTbl->where('user_id', $userRow['id'])->get()->getRowArray();
+                            if ($existing) {
+                                $data['doctor_id'] = (int) $existing['id'];
+                            } else {
+                                // Insert full doctors row meeting NOT NULL/UNIQUE constraints
+                                $email = trim((string)($userRow['email'] ?? ''));
+                                if ($email === '') {
+                                    $email = 'doc_' . (int)$userRow['id'] . '@local'; // unique fallback
+                                }
+                                $uname = (string) ($userRow['username'] ?? 'Doctor User');
+                                $parts = preg_split('/\s+/', trim($uname));
+                                $first = ucfirst($parts[0] ?? 'Doctor');
+                                $last  = ucfirst($parts[1] ?? 'User');
+                                $insert = [
+                                    'user_id'          => (int)$userRow['id'],
+                                    'email'            => $email,
+                                    'first_name'       => $first,
+                                    'last_name'        => $last,
+                                    'specialization'   => 'General',
+                                    'license_number'   => 'LIC-' . (int)$userRow['id'], // unique fallback
+                                    'experience_years' => 0,
+                                    'consultation_fee' => 0.00,
+                                    'status'           => 'active',
+                                ];
+                                $doctorsTbl->insert($insert);
+                                $newDoctorId = (int) $db->insertID();
+                                if ($newDoctorId > 0) { $data['doctor_id'] = $newDoctorId; }
+                            }
+                            if (empty($data['doctor_name'])) {
+                                $uname = (string) ($userRow['username'] ?? 'Doctor');
+                                $data['doctor_name'] = ucfirst(str_replace('dr.', 'Dr. ', $uname));
+                            }
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                log_message('error', 'Doctor ID normalization failed: ' . $e->getMessage());
+            }
+
+            // Safety: verify doctor_id now points to a valid doctors.id
+            try {
+                $db = \Config\Database::connect();
+                $doctorRow = $db->table('doctors')->where('id', (int)($data['doctor_id'] ?? 0))->get()->getRowArray();
+                if (!$doctorRow) {
+                    return $this->response->setStatusCode(400)->setJSON([
+                        'success' => false,
+                        'message' => 'Unable to resolve doctor. Please select a valid doctor user.'
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                log_message('error', 'Doctor verification failed: ' . $e->getMessage());
+            }
 
             // Time validation - prevent adding shifts in the past
             // Use Asia/Manila timezone explicitly to match local environment
             $tz = new \DateTimeZone('Asia/Manila');
             $now = new \DateTime('now', $tz);
             $today = $now->format('Y-m-d');
-            $currentHour = (int)$now->format('H');
 
             // If selected date is in the past, block outright
             if (strtotime($data['shift_date']) < strtotime($today)) {
@@ -314,17 +191,7 @@ class Doctor extends BaseController
                 ]);
             }
 
-            // Check if DoctorScheduleModel exists and is loaded
-            if (!$this->doctorScheduleModel) {
-                return $this->response->setStatusCode(500)->setJSON([
-                    'success' => false, 
-                    'message' => 'DoctorScheduleModel not loaded'
-                ]);
-            }
-
             $result = $this->doctorScheduleModel->addSchedule($data);
-            
-            log_message('debug', 'Add Schedule Result: ' . json_encode($result));
             
             return $this->response->setJSON($result);
         } catch (\Exception $e) {
@@ -422,91 +289,6 @@ class Doctor extends BaseController
                 'message' => 'Failed to delete schedule'
             ]);
         }
-    }
-
-    /**
-     * Get conflicts for a specific schedule
-     */
-    public function getConflicts()
-    {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
-        }
-
-        $doctorId = $this->request->getPost('doctor_id');
-        $shiftDate = $this->request->getPost('shift_date');
-        $startTime = $this->request->getPost('start_time');
-        $endTime = $this->request->getPost('end_time');
-        $excludeId = $this->request->getPost('exclude_id');
-
-        $conflicts = $this->doctorScheduleModel->checkConflicts(
-            $doctorId,
-            $shiftDate,
-            $startTime,
-            $endTime,
-            $excludeId
-        );
-
-        return $this->response->setJSON([
-            'success' => true,
-            'conflicts' => $conflicts
-        ]);
-    }
-
-    /**
-     * Get schedule data for AJAX requests
-     */
-    public function getScheduleData()
-    {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
-        }
-
-        $view = $this->request->getGet('view') ?? 'month';
-        $date = $this->request->getGet('date') ?? date('Y-m-d');
-
-        switch ($view) {
-            case 'day':
-                $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($date, $date);
-                break;
-            case 'week':
-                $startDate = date('Y-m-d', strtotime('monday this week', strtotime($date)));
-                $endDate = date('Y-m-d', strtotime('sunday this week', strtotime($date)));
-                $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($startDate, $endDate);
-                break;
-            case 'month':
-            default:
-                $startDate = date('Y-m-01', strtotime($date));
-                $endDate = date('Y-m-t', strtotime($date));
-                $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($startDate, $endDate);
-                break;
-        }
-
-        return $this->response->setJSON([
-            'success' => true,
-            'schedules' => $schedules,
-            'view' => $view,
-            'date' => $date
-        ]);
-    }
-
-    /**
-     * Get doctor information for dropdown
-     */
-    public function getDoctors()
-    {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Invalid request']);
-        }
-
-        $userModel = new UserModel();
-        $doctors = $userModel->select('doctors.id AS doctor_id, users.username, users.email, doctors.first_name, doctors.last_name')
-                             ->join('roles r', 'users.role_id = r.id', 'left')
-                             ->join('doctors', 'doctors.user_id = users.id', 'left')
-                             ->where('r.name', 'doctor')
-                             ->findAll();
-
-        return $this->response->setJSON(['success' => true, 'doctors' => $doctors]);
     }
 
 }
