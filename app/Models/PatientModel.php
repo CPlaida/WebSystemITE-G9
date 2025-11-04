@@ -8,7 +8,7 @@ class PatientModel extends Model
 {
     protected $table = 'patients';
     protected $primaryKey = 'id';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
 
@@ -31,6 +31,7 @@ class PatientModel extends Model
     }
 
     protected $allowedFields = [
+        'id',
         'first_name',
         'last_name',
         'email',
@@ -67,7 +68,7 @@ class PatientModel extends Model
         'status' => 'in_list[active,inactive]'
     ];
 
-    protected $beforeInsert = ['setCreatedAt'];
+    protected $beforeInsert = ['assignStringId','setCreatedAt'];
     protected $beforeUpdate = ['setUpdatedAt'];
 
     protected $validationMessages = [
@@ -88,6 +89,26 @@ class PatientModel extends Model
     protected function setUpdatedAt(array $data)
     {
         $data['data']['updated_at'] = date('Y-m-d H:i:s');
+        return $data;
+    }
+
+    protected function assignStringId(array $data)
+    {
+        if (!isset($data['data']['id']) || empty($data['data']['id'])) {
+            $prefix = 'PAT';
+            $today = date('ymd');
+            $like = $prefix . '-' . $today . '-%';
+            $last = $this->where('id LIKE', $like)
+                        ->orderBy('id', 'DESC')
+                        ->first();
+            $next = 1;
+            if ($last && isset($last['id'])) {
+                $parts = explode('-', $last['id']);
+                $seq = end($parts);
+                $next = (int)$seq + 1;
+            }
+            $data['data']['id'] = sprintf('%s-%s-%04d', $prefix, $today, $next);
+        }
         return $data;
     }
 }

@@ -8,11 +8,13 @@ class DoctorScheduleModel extends Model
 {
     protected $table = 'doctor_schedules';
     protected $primaryKey = 'id';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
+    protected $beforeInsert = ['generateId'];
     protected $allowedFields = [
+        'id',
         'doctor_id',
         'doctor_name',
         'department',
@@ -24,12 +26,43 @@ class DoctorScheduleModel extends Model
         'notes'
     ];
 
+    /**
+     * Generate string primary key: SCH-yymmdd-#### (daily sequence)
+     */
+    protected function generateId(array $data)
+    {
+        if (!empty($data['data']['id'])) {
+            return $data;
+        }
+        $datePart = date('ymd');
+        $prefix = 'SCH-' . $datePart . '-';
+        $like = $prefix . '%';
+
+        $row = $this->db->table($this->table)
+            ->select('id')
+            ->like('id', $prefix, 'after')
+            ->orderBy('id', 'DESC')
+            ->get(1)
+            ->getRowArray();
+
+        $next = 1;
+        if ($row && isset($row['id'])) {
+            $parts = explode('-', $row['id']);
+            $lastSeq = end($parts);
+            if (is_numeric($lastSeq)) {
+                $next = (int)$lastSeq + 1;
+            }
+        }
+        $data['data']['id'] = $prefix . str_pad((string)$next, 4, '0', STR_PAD_LEFT);
+        return $data;
+    }
+
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
     protected $validationRules = [
-        'doctor_id' => 'required|integer',
+        'doctor_id' => 'required',
         'doctor_name' => 'required|max_length[255]',
         'department' => 'required|max_length[100]',
         'shift_type' => 'required|in_list[morning,afternoon,night]',
@@ -41,8 +74,7 @@ class DoctorScheduleModel extends Model
 
     protected $validationMessages = [
         'doctor_id' => [
-            'required' => 'Doctor ID is required',
-            'integer' => 'Doctor ID must be a valid number'
+            'required' => 'Doctor ID is required'
         ],
         'doctor_name' => [
             'required' => 'Doctor name is required'

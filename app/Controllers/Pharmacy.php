@@ -154,7 +154,7 @@ class Pharmacy extends Controller
             'id' => (int)$row['id'],
             'transaction_number' => $row['transaction_number'] ?? null,
             'date' => $row['date'] ?? null,
-            'patient_id' => (int)($row['patient_id'] ?? 0),
+            'patient_id' => $row['patient_id'] ?? null,
             'patient_name' => trim(($row['first_name'] ?? '').' '.($row['last_name'] ?? '')),
             'subtotal' => (float)($row['subtotal'] ?? 0),
             'tax' => (float)($row['tax'] ?? 0),
@@ -166,7 +166,7 @@ class Pharmacy extends Controller
         if (empty($prescriptionId)) {
             $latest = $this->db->table('prescriptions')
                 ->select('id, subtotal, tax, total_amount')
-                ->where('patient_id', (int)$row['patient_id'])
+                ->where('patient_id', $row['patient_id'])
                 ->orderBy('date','DESC')->orderBy('id','DESC')
                 ->get()->getRowArray();
             if ($latest) {
@@ -414,7 +414,7 @@ class Pharmacy extends Controller
         $validation = \Config\Services::validation();
         
         $validation->setRules([
-            'patient_id' => 'required|numeric',
+            'patient_id' => 'permit_empty',
             'patient_name' => 'required',
             'date' => 'required',
             'payment_method' => 'required',
@@ -430,6 +430,55 @@ class Pharmacy extends Controller
         }
         
         $data = $this->request->getJSON(true);
+
+        // Resolve patient_id: if missing, try to find by name or auto-create minimal patient
+        $pid = trim((string)($data['patient_id'] ?? ''));
+        $pname = trim((string)($data['patient_name'] ?? ''));
+        if ($pid === '' && $pname !== '') {
+            // Find by exact full name or partial match
+            $row = $this->db->table('patients')
+                ->select("id, CONCAT(first_name, ' ', last_name) AS name")
+                ->groupStart()
+                    ->where("CONCAT(first_name, ' ', last_name)", $pname)
+                    ->orLike('first_name', $pname)
+                    ->orLike('last_name', $pname)
+                ->groupEnd()
+                ->orderBy('id', 'DESC')
+                ->get()->getRowArray();
+            if ($row && !empty($row['id'])) {
+                $pid = (string)$row['id'];
+            } else {
+                // Auto-create a minimal patient
+                $parts = preg_split('/\s+/', $pname, 2);
+                $first = $parts[0] ?: 'Unknown';
+                $last = $parts[1] ?? 'Unknown';
+                $email = strtolower(str_replace(' ', '.', $first . '.' . $last)) . rand(1000,9999) . '@temp.com';
+                $phone = '09' . rand(100000000, 999999999);
+                $this->db->table('patients')->insert([
+                    'first_name' => $first,
+                    'last_name' => $last,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'date_of_birth' => '1990-01-01',
+                    'gender' => 'other',
+                    'address' => 'Not provided',
+                    'status' => 'active',
+                    'type' => 'walkin',
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+                // For string IDs generated via model triggers, fetch last inserted by name
+                $created = $this->db->table('patients')
+                    ->select('id')
+                    ->where('email', $email)
+                    ->orderBy('id', 'DESC')
+                    ->get()->getRowArray();
+                if ($created && !empty($created['id'])) {
+                    $pid = (string)$created['id'];
+                }
+            }
+            $data['patient_id'] = $pid;
+        }
 
         // Validate stock availability and expiry BEFORE starting transaction
         $itemIds = array_map(fn($it) => (int)$it['medicine_id'], $data['items']);
@@ -505,7 +554,7 @@ class Pharmacy extends Controller
 
             // Insert prescription
             $this->db->table('prescriptions')->insert([
-                'patient_id' => (int)$data['patient_id'],
+                'patient_id' => (string)$data['patient_id'],
                 'date' => $data['date'],
                 'payment_method' => $data['payment_method'],
                 'subtotal' => $subtotal,
@@ -546,7 +595,7 @@ class Pharmacy extends Controller
             $transactionNumber = $this->generateTransactionNumber();
             $this->db->table('pharmacy_transactions')->insert([
                 'transaction_number' => $transactionNumber,
-                'patient_id' => (int)$data['patient_id'],
+                'patient_id' => (string)$data['patient_id'],
                 'date' => $data['date'],
                 'total_items' => $totalItems,
                 'total_amount' => $total,

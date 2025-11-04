@@ -10,17 +10,16 @@ class CreateAppointmentsTable extends Migration
     {
         $this->forge->addField([
             'id' => [
-                'type'           => 'INT',
-                'unsigned'       => true, 
-                'auto_increment' => true,
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
             ],
             'patient_id' => [
-                'type'       => 'INT',
-                'unsigned'   => true, 
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
             ],
             'doctor_id' => [
-                'type'       => 'INT',
-                'unsigned'   => true, 
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
             ],
             'appointment_date' => [
                 'type' => 'DATE',

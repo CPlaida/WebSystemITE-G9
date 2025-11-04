@@ -3,6 +3,7 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
+use App\Models\UserModel;
 
 class DoctorSeeder extends Seeder
 {
@@ -64,7 +65,7 @@ class DoctorSeeder extends Seeder
             $this->db->table('roles')->insert(['name' => 'doctor']);
             $doctorRoleId = $this->db->insertID();
         } else {
-            $doctorRoleId = (int)$roleRow['id'];
+            $doctorRoleId = $roleRow['id'];
         }
 
         $createdUsers = 0;
@@ -72,13 +73,12 @@ class DoctorSeeder extends Seeder
         $upsertedDoctors = 0;
         $hasDoctorsTable = $this->db->tableExists('doctors');
 
+        $userModel = new UserModel();
         foreach ($doctors as $doc) {
-            // Find-or-create user by email
-            $user = $this->db->table('users')->where('email', $doc['email'])->get();
-            $userRow = $user ? $user->getRowArray() : null;
-
+            // Find-or-create user by email via model so ID generator runs
+            $userRow = $this->db->table('users')->where('email', $doc['email'])->get()->getRowArray();
             if (!$userRow) {
-                $this->db->table('users')->insert([
+                $userData = [
                     'username'   => $doc['username'],
                     'email'      => $doc['email'],
                     'password'   => password_hash('doctor123', PASSWORD_DEFAULT),
@@ -86,19 +86,24 @@ class DoctorSeeder extends Seeder
                     'status'     => 'active',
                     'created_at' => $now,
                     'updated_at' => $now,
-                ]);
-                $userId = (int)$this->db->insertID();
+                ];
+                $userModel->insert($userData);
+                // Retrieve by email to get generated string ID
+                $userRow = $this->db->table('users')->where('email', $doc['email'])->get()->getRowArray();
                 $createdUsers++;
             } else {
-                $userId = (int)$userRow['id'];
-                if ((int)($userRow['role_id'] ?? 0) !== $doctorRoleId) {
-                    $this->db->table('users')->where('id', $userId)->update([
+                // Ensure role_id is doctor
+                if (($userRow['role_id'] ?? null) != $doctorRoleId) {
+                    $this->db->table('users')->where('id', $userRow['id'])->update([
                         'role_id' => $doctorRoleId,
                         'updated_at' => $now,
                     ]);
+                    // refresh row
+                    $userRow = $this->db->table('users')->where('email', $doc['email'])->get()->getRowArray();
                     $updatedUsers++;
                 }
             }
+            $userId = $userRow['id'];
 
             // Upsert doctor profile if table exists
             if ($hasDoctorsTable) {

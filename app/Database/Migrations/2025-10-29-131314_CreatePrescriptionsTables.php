@@ -9,7 +9,7 @@ class CreatePrescriptionsTables extends Migration
     {
         $this->forge->addField([
             'id' => ['type'=>'INT','unsigned'=>true,'auto_increment'=>true],
-            'patient_id' => ['type'=>'INT','unsigned'=>true],
+            'patient_id' => ['type'=>'VARCHAR','constraint'=>20],
             'date' => ['type'=>'DATE'],
             'payment_method' => ['type'=>'ENUM','constraint'=>['cash','insurance'],'default'=>'cash'],
             'subtotal' => ['type'=>'DECIMAL','constraint'=>'10,2','default'=>'0.00'],
@@ -39,7 +39,7 @@ class CreatePrescriptionsTables extends Migration
         $this->forge->addField([
             'id' => ['type'=>'INT','unsigned'=>true,'auto_increment'=>true],
             'transaction_number' => ['type'=>'VARCHAR','constraint'=>50],
-            'patient_id' => ['type'=>'INT','unsigned'=>true],
+            'patient_id' => ['type'=>'VARCHAR','constraint'=>20],
             'date' => ['type'=>'DATE'],
             'total_items' => ['type'=>'INT','default'=>0],
             'total_amount' => ['type'=>'DECIMAL','constraint'=>'10,2','default'=>'0.00'],

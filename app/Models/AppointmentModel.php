@@ -8,11 +8,12 @@ class AppointmentModel extends Model
 {
     protected $table = 'appointments';
     protected $primaryKey = 'id';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
+        'id',
         'patient_id', 
         'doctor_id',
         'appointment_date',
@@ -31,8 +32,8 @@ class AppointmentModel extends Model
 
     // Validation
     protected $validationRules = [
-        'patient_id' => 'required|integer',
-        'doctor_id' => 'required|integer',
+        'patient_id' => 'required',
+        'doctor_id' => 'required',
         'appointment_date' => 'required|valid_date',
         'appointment_time' => 'required',
         'appointment_type' => 'required|in_list[consultation,follow_up,emergency,routine_checkup]',
@@ -41,12 +42,10 @@ class AppointmentModel extends Model
 
     protected $validationMessages = [
         'patient_id' => [
-            'required' => 'Patient ID is required',
-            'integer' => 'Patient ID must be a valid number'
+            'required' => 'Patient ID is required'
         ],
         'doctor_id' => [
-            'required' => 'Doctor ID is required',
-            'integer' => 'Doctor ID must be a valid number'
+            'required' => 'Doctor ID is required'
         ],
         'appointment_date' => [
             'required' => 'Appointment date is required',
@@ -66,6 +65,25 @@ class AppointmentModel extends Model
 
     // Callbacks (none needed when using only numeric id)
     protected $allowCallbacks = true;
+    protected $beforeInsert = ['assignStringId'];
+
+    protected function assignStringId(array $data)
+    {
+        if (!isset($data['data']['id']) || empty($data['data']['id'])) {
+            $prefix = 'APT';
+            $today = date('ymd');
+            $like = $prefix . '-' . $today . '-%';
+            $last = $this->where('id LIKE', $like)->orderBy('id', 'DESC')->first();
+            $next = 1;
+            if ($last && isset($last['id'])) {
+                $parts = explode('-', $last['id']);
+                $seq = end($parts);
+                $next = (int)$seq + 1;
+            }
+            $data['data']['id'] = sprintf('%s-%s-%04d', $prefix, $today, $next);
+        }
+        return $data;
+    }
 
     /**
      * Get all appointments with patient and doctor details
@@ -133,7 +151,7 @@ class AppointmentModel extends Model
     /**
      * Unified list for admin/doctor with identical ordering and optional filters
      */
-    public function getUnifiedList(?int $doctorId = null, ?string $date = null): array
+    public function getUnifiedList($doctorId = null, ?string $date = null): array
     {
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
@@ -146,7 +164,7 @@ class AppointmentModel extends Model
         $builder->join('users u', 'a.doctor_id = u.id', 'left');
 
         if ($doctorId !== null) {
-            $builder->where('a.doctor_id', (int)$doctorId);
+            $builder->where('a.doctor_id', $doctorId);
         }
         if ($date) {
             $builder->where('a.appointment_date', $date);

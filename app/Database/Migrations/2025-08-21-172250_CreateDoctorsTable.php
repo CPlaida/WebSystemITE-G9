@@ -15,8 +15,8 @@ class CreateDoctorsTable extends Migration
                 'auto_increment' => true,
             ],
             'user_id' => [
-                'type'       => 'INT',
-                'unsigned'   => true,
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
                 'null'       => true,
             ],
             'first_name' => [

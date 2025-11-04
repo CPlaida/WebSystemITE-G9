@@ -3,6 +3,7 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
+use App\Models\AppointmentModel;
 
 class AppointmentSeeder extends Seeder
 {
@@ -44,7 +45,7 @@ class AppointmentSeeder extends Seeder
             echo "Not enough patients to create sample appointments (need at least 2). Aborting seeding.\n";
             return;
         }
-        $patientIds = array_map(static function ($r) { return (int)$r['id']; }, $patientRows);
+        $patientIds = array_map(static function ($r) { return (string)$r['id']; }, $patientRows);
 
         // 2) Resolve doctor user IDs to satisfy FK to users.id
         $userRows = $this->db->table('users')->select('id')->orderBy('id', 'ASC')->get(2)->getResultArray();
@@ -52,8 +53,8 @@ class AppointmentSeeder extends Seeder
             echo "No users found. Seed users/doctors first (e.g., UserSeeder/DoctorSeeder). Aborting seeding.\n";
             return;
         }
-        $doctorIdA = (int)$userRows[0]['id'];
-        $doctorIdB = (count($userRows) > 1) ? (int)$userRows[1]['id'] : (int)$userRows[0]['id'];
+        $doctorIdA = (string)$userRows[0]['id'];
+        $doctorIdB = (count($userRows) > 1) ? (string)$userRows[1]['id'] : (string)$userRows[0]['id'];
 
         // 3) Build appointments mapped to existing patient IDs and chosen doctor IDs
         // Use the first 10 patient IDs cyclically where needed
@@ -209,9 +210,10 @@ class AppointmentSeeder extends Seeder
             ]
         ];
 
-        // Insert appointments
+        // Insert appointments using model to auto-generate string IDs
+        $model = new AppointmentModel();
         foreach ($appointments as $appointment) {
-            $this->db->table('appointments')->insert($appointment);
+            $model->insert($appointment);
         }
 
         echo "Inserted " . count($appointments) . " sample appointments.\n";

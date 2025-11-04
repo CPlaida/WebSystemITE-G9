@@ -74,51 +74,44 @@ class Doctor extends BaseController
                 'notes' => $this->request->getPost('notes') ?? ''
             ];
 
-            // Normalize doctor_id (users.id -> doctors.id) to satisfy FK
+            // Normalize/validate doctor_id (users.id as VARCHAR) and ensure a doctor profile exists
             try {
                 $db = \Config\Database::connect();
                 $doctorsTbl = $db->table('doctors');
                 $usersTbl = $db->table('users');
 
-                $providedId = (int) ($data['doctor_id'] ?? 0);
-                if ($providedId > 0) {
-                    // If already a doctors.id, keep; else map from users.id
-                    $doctorById = $doctorsTbl->where('id', $providedId)->get()->getRowArray();
-                    if (!$doctorById) {
-                        $userRow = $usersTbl->where('id', $providedId)->get()->getRowArray();
-                        if ($userRow) {
-                            $existing = $doctorsTbl->where('user_id', $userRow['id'])->get()->getRowArray();
-                            if ($existing) {
-                                $data['doctor_id'] = (int) $existing['id'];
-                            } else {
-                                // Insert full doctors row meeting NOT NULL/UNIQUE constraints
-                                $email = trim((string)($userRow['email'] ?? ''));
-                                if ($email === '') {
-                                    $email = 'doc_' . (int)$userRow['id'] . '@local'; // unique fallback
-                                }
-                                $uname = (string) ($userRow['username'] ?? 'Doctor User');
-                                $parts = preg_split('/\s+/', trim($uname));
-                                $first = ucfirst($parts[0] ?? 'Doctor');
-                                $last  = ucfirst($parts[1] ?? 'User');
-                                $insert = [
-                                    'user_id'          => (int)$userRow['id'],
-                                    'email'            => $email,
-                                    'first_name'       => $first,
-                                    'last_name'        => $last,
-                                    'specialization'   => 'General',
-                                    'license_number'   => 'LIC-' . (int)$userRow['id'], // unique fallback
-                                    'experience_years' => 0,
-                                    'consultation_fee' => 0.00,
-                                    'status'           => 'active',
-                                ];
-                                $doctorsTbl->insert($insert);
-                                $newDoctorId = (int) $db->insertID();
-                                if ($newDoctorId > 0) { $data['doctor_id'] = $newDoctorId; }
+                $providedId = trim((string)($data['doctor_id'] ?? ''));
+                if ($providedId !== '') {
+                    // Ensure user exists
+                    $userRow = $usersTbl->where('id', $providedId)->get()->getRowArray();
+                    if ($userRow) {
+                        // Ensure doctors profile exists keyed by user_id
+                        $existing = $doctorsTbl->where('user_id', $userRow['id'])->get()->getRowArray();
+                        if (!$existing) {
+                            $email = trim((string)($userRow['email'] ?? ''));
+                            if ($email === '') {
+                                $email = 'doc_' . $userRow['id'] . '@local'; // unique fallback
                             }
-                            if (empty($data['doctor_name'])) {
-                                $uname = (string) ($userRow['username'] ?? 'Doctor');
-                                $data['doctor_name'] = ucfirst(str_replace('dr.', 'Dr. ', $uname));
-                            }
+                            $uname = (string) ($userRow['username'] ?? 'Doctor User');
+                            $parts = preg_split('/\s+/', trim($uname));
+                            $first = ucfirst($parts[0] ?? 'Doctor');
+                            $last  = ucfirst($parts[1] ?? 'User');
+                            $insert = [
+                                'user_id'          => (string)$userRow['id'],
+                                'email'            => $email,
+                                'first_name'       => $first,
+                                'last_name'        => $last,
+                                'specialization'   => 'General',
+                                'license_number'   => 'LIC-' . $userRow['id'], // unique fallback
+                                'experience_years' => 0,
+                                'consultation_fee' => 0.00,
+                                'status'           => 'active',
+                            ];
+                            $doctorsTbl->insert($insert);
+                        }
+                        if (empty($data['doctor_name'])) {
+                            $uname = (string) ($userRow['username'] ?? 'Doctor');
+                            $data['doctor_name'] = ucfirst(str_replace('dr.', 'Dr. ', $uname));
                         }
                     }
                 }
@@ -126,11 +119,18 @@ class Doctor extends BaseController
                 log_message('error', 'Doctor ID normalization failed: ' . $e->getMessage());
             }
 
-            // Safety: verify doctor_id now points to a valid doctors.id
+            // Safety: verify doctor_id points to a valid doctor user (users.id with doctor role)
             try {
                 $db = \Config\Database::connect();
-                $doctorRow = $db->table('doctors')->where('id', (int)($data['doctor_id'] ?? 0))->get()->getRowArray();
-                if (!$doctorRow) {
+                $doctorUser = $db->table('users u')
+                    ->select('u.id')
+                    ->join('roles r', 'u.role_id = r.id', 'left')
+                    ->where('u.id', trim((string)($data['doctor_id'] ?? '')))
+                    ->groupStart()
+                        ->like('r.name', 'doctor', 'both')
+                    ->groupEnd()
+                    ->get()->getRowArray();
+                if (!$doctorUser) {
                     return $this->response->setStatusCode(400)->setJSON([
                         'success' => false,
                         'message' => 'Unable to resolve doctor. Please select a valid doctor user.'

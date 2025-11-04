@@ -81,7 +81,7 @@ class Billing extends BaseController
     public function store()
     {
         $rules = [
-            'patient_id' => 'required|integer',
+            'patient_id' => 'required',
             'final_amount' => 'required|numeric',
             'payment_status' => 'required|in_list[pending,partial,paid,overdue]',
             'bill_date' => 'required|valid_date',
@@ -104,7 +104,7 @@ class Billing extends BaseController
         $computedFinal = ($computedTotal - $discount) + $tax;
 
         $payload = [
-            'patient_id' => (int) $this->request->getPost('patient_id'),
+            'patient_id' => (string) $this->request->getPost('patient_id'),
             'service_id' => $this->request->getPost('service_id') ? (int) $this->request->getPost('service_id') : null,
             'consultation_fee' => $consultation,
             'medication_cost' => $medication,
@@ -218,7 +218,7 @@ class Billing extends BaseController
     public function update($id)
     {
         $rules = [
-            'patient_id' => 'permit_empty|integer',
+            'patient_id' => 'permit_empty',
             'service_id' => 'permit_empty|integer',
             'final_amount' => 'permit_empty|numeric',
             'payment_status' => 'permit_empty|in_list[pending,partial,paid,overdue]',
@@ -238,7 +238,7 @@ class Billing extends BaseController
 
         $data = [
             'id' => (int)$id,
-            'patient_id' => $this->request->getPost('patient_id') !== null ? (int)$this->request->getPost('patient_id') : null,
+            'patient_id' => $this->request->getPost('patient_id') !== null ? (string)$this->request->getPost('patient_id') : null,
             'service_id' => $this->request->getPost('service_id') !== null ? (int)$this->request->getPost('service_id') : null,
             'payment_status' => $this->request->getPost('payment_status') ?? null,
             'payment_method' => $this->request->getPost('payment_method') ?? null,
@@ -283,7 +283,7 @@ class Billing extends BaseController
     public function storeWithItems()
     {
         $rules = [
-            'patient_id' => 'required|integer',
+            'patient_id' => 'required',
             'bill_date' => 'required|valid_date',
             'payment_method' => 'permit_empty|string'
         ];
@@ -329,7 +329,7 @@ class Billing extends BaseController
         $db->transBegin();
         try {
             $payload = [
-                'patient_id' => (int)$this->request->getPost('patient_id'),
+                'patient_id' => (string)$this->request->getPost('patient_id'),
                 'total_amount' => $subtotal,
                 'tax' => $tax,
                 'final_amount' => $total,

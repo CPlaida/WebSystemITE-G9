@@ -95,16 +95,16 @@ class Appointment extends BaseController
 
         // Handle patient - prefer provided patient_id from autocomplete; fallback to name lookup/create
         $patientName = trim((string)$this->request->getPost('patient_name'));
-        $patientId = (int) ($this->request->getPost('patient_id') ?? 0);
+        $patientId = (string) ($this->request->getPost('patient_id') ?? '');
         
-        if ($patientId <= 0 && $patientName === '') {
+        if ($patientId === '' && $patientName === '') {
             if (!$this->request->isAJAX()) {
                 return redirect()->back()->withInput()->with('error', 'Please enter patient name');
             }
             return $this->response->setJSON(['success' => false, 'message' => 'Please enter patient name']);
         }
 
-        if ($patientId <= 0) {
+        if ($patientId === '') {
             // Try to find existing patient by name first (case-insensitive on first and last)
             $existingPatient = $this->patientModel
                 ->groupStart()
@@ -115,7 +115,7 @@ class Appointment extends BaseController
                 ->first();
             
             if ($existingPatient) {
-                $patientId = (int) $existingPatient['id'];
+                $patientId = $existingPatient['id'];
             } else {
                 // Auto-create minimal patient so booking does not depend on suggestions
                 $nameParts = explode(' ', trim($patientName), 2);
@@ -140,10 +140,10 @@ class Appointment extends BaseController
                 ];
 
                 $this->patientModel->skipValidation(true);
-                $patientId = (int) $this->patientModel->insert($newPatientData);
+                $patientId = $this->patientModel->insert($newPatientData);
                 $this->patientModel->skipValidation(false);
 
-                if ($patientId <= 0) {
+                if (empty($patientId)) {
                     $errors = $this->patientModel->errors();
                     $errorMessage = 'Failed to create patient record';
                     if (!empty($errors)) {
@@ -159,7 +159,7 @@ class Appointment extends BaseController
         }
 
         $rules = [
-            'doctor_id' => 'required|integer',
+            'doctor_id' => 'required',
             'appointment_date' => 'required|valid_date',
             'appointment_time' => 'required',
             'appointment_type' => 'required|in_list[consultation,follow_up,emergency,routine_checkup]',
@@ -180,7 +180,7 @@ class Appointment extends BaseController
 
         $data = [
             'patient_id' => $patientId,
-            'doctor_id' => $this->request->getPost('doctor_id'),
+            'doctor_id' => (string)$this->request->getPost('doctor_id'),
             'appointment_date' => $this->request->getPost('appointment_date'),
             'appointment_time' => $this->request->getPost('appointment_time'),
             'appointment_type' => $this->request->getPost('appointment_type'),

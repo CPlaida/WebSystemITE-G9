@@ -174,7 +174,7 @@ $(document).ready(function() {
 
     $(document).on('mousedown', '#patientSuggestions .autocomplete-item', function(e){
         const name = $(this).data('name');
-        const id = Number($(this).data('id')) || 0;
+        const id = String($(this).data('id') || '').trim();
         $('#patientInput').val(name);
         $('#patientId').val(id);
         $('#patientSuggestions').attr('hidden', true).empty();
@@ -396,11 +396,11 @@ $(document).ready(function() {
         }
         
         
-        // Validate patient selection (must match a suggestion so we have an ID)
-        const pid = Number($('#patientId').val() || 0);
+        // Validate patient selection; if ID missing but name present, backend will resolve/create
+        const pid = String($('#patientId').val() || '').trim();
         const pname = $('#patientInput').val().trim();
-        if (!pname || pid <= 0) {
-            alert('Please select a valid patient from the suggestions.');
+        if (!pname) {
+            alert('Please enter or select a patient name.');
             return;
         }
 

@@ -10,15 +10,12 @@ class CreateDoctorSchedulesTable extends Migration
     {
         $this->forge->addField([
             'id' => [
-                'type'           => 'INT',
-                'constraint'     => 11,
-                'unsigned'       => true,
-                'auto_increment' => true,
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
             ],
             'doctor_id' => [
-                'type'       => 'INT',
-                'constraint' => 11,
-                'unsigned'   => true,
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
             ],
             'doctor_name' => [
                 'type'       => 'VARCHAR',
@@ -94,7 +91,7 @@ class CreateDoctorSchedulesTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addKey('doctor_id');
         $this->forge->addKey('shift_date');
-        $this->forge->addForeignKey('doctor_id', 'doctors', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('doctor_id', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('doctor_schedules');
     }
 

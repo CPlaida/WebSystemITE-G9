@@ -3,6 +3,7 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
+use App\Models\UserModel;
 
 class UserSeeder extends Seeder
 {
@@ -91,8 +92,11 @@ class UserSeeder extends Seeder
             ],
         ];
 
-        // Using Query Builder to insert data
-        $this->db->table('users')->insertBatch($users);
+        $model = new UserModel();
+        foreach ($users as $user) {
+            // Insert via model to trigger beforeInsert ID generator
+            $model->insert($user);
+        }
     }
 }
 
