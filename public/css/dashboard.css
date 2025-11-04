@@ -1029,6 +1029,25 @@ select { width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; bac
 .btn-primary { background: var(--primary-color); color:#fff; }
 @media (max-width: 992px) { .form-grid { grid-template-columns:1fr; gap:16px; } .container { padding:20px 16px; } }
 
+/* Buttons in appointment list */
+.btn-action {
+  text-decoration: none;           /* remove underline for <a> */
+  display: inline-flex;            /* ensure anchors look like buttons */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Neutral/Cancel-style button */
+.btn-warning {
+  background: #e0e0e0;
+  color: #333;
+  border-color: #d1d5db;
+}
+.btn-warning:hover {
+  background: #d5d5d5;
+  border-color: #c7cdd4;
+}
+
 /* ===== Appointments/Appointmentlist.php ===== */
 .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap:wrap; gap:15px; }
 .page-title { color:#5a5c69; font-size:1.5rem; margin:0; display:flex; align-items:center; gap:10px; }
@@ -2315,6 +2334,40 @@ body.receipt-page { font-family: Arial, sans-serif; line-height: 1.6; max-width:
         font-size: 13px;
     }
 }
+
+/* Ensure appointment action buttons are always clickable above siblings */
+.card { position: relative; overflow: visible; }
+.card-header { position: relative; z-index: 2; }      /* Keep header above, without covering table */
+.table-container table { position: relative; z-index: 1; }
+.table-container td { position: relative; z-index: 2; }
+.action-buttons { position: relative; z-index: 1000; pointer-events: auto; display: inline-flex; gap: 8px; flex-wrap: wrap; }
+.action-buttons .btn-action { position: relative; z-index: 1001; pointer-events: auto; }
+/* If any pseudo overlays exist on the table container, ignore clicks */
+.table-container::before, .table-container::after { pointer-events: none; }
+
+/* Harden stacking for table so cells sit above any neighbor layers */
+.table-container thead,
+.table-container tbody,
+.table-container tr,
+.table-container th,
+.table-container td { position: relative; z-index: 2; }
+
+/* Make the Actions column unconditionally clickable and on top */
+.table-container th:last-child,
+.table-container td:last-child { z-index: 100; pointer-events: auto; }
+
+/* Neutralize any row/header pseudo overlays */
+.table-container tr::before,
+.table-container tr::after,
+.table-container thead::before,
+.table-container thead::after { pointer-events: none; }
+
+/* Prevent header tools from overlapping table area */
+/* Keep header below the table area to avoid overlap */
+.card-header, .search-container { position: relative; z-index: 0; }
+
+/* Action buttons explicit pointer cursor */
+.btn-action { cursor: pointer; }
 
 /* Patient autocomplete - professional card list */
 .patient-autocomplete { position: relative; }

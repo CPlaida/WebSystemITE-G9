@@ -6,18 +6,21 @@ use CodeIgniter\Controller;
 use App\Models\AppointmentModel;
 use App\Models\PatientModel;
 use App\Models\UserModel;
+use App\Models\DoctorScheduleModel;
 
 class Appointment extends BaseController
 {
     protected $appointmentModel;
     protected $patientModel;
     protected $userModel;
+    protected $doctorScheduleModel;
 
     public function __construct()
     {
         $this->appointmentModel = new AppointmentModel();
         $this->patientModel = new PatientModel();
         $this->userModel = new UserModel();
+        $this->doctorScheduleModel = new DoctorScheduleModel();
     }
 
     /**
@@ -31,12 +34,28 @@ class Appointment extends BaseController
             return redirect()->to('login');
         }
 
+        $filter = $this->request->getGet('filter') ?? 'today';
+        $date   = $this->request->getGet('date');
+        $today  = date('Y-m-d'); // server/app timezone
+
+        if ($filter === 'all') {
+            $appointments = $this->appointmentModel->getAppointmentsWithDetails();
+        } elseif ($filter === 'date' && $date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $appointments = $this->appointmentModel->getAppointmentsByDateRange($date, $date);
+        } else { // default: today
+            $appointments = $this->appointmentModel->getAppointmentsByDateRange($today, $today);
+            $filter = 'today';
+            $date = $today;
+        }
+
         $data = [
-            'title' => 'Appointment List',
+            'title' => "Appointment List",
             'active_menu' => 'appointments',
-            'appointments' => $this->appointmentModel->getAppointmentsWithDetails()
+            'appointments' => $appointments,
+            'currentFilter' => $filter,
+            'currentDate' => $date ?? $today,
         ];
-        
+
         return view('Roles/admin/appointments/Appointmentlist', $data);
     }
 
@@ -67,6 +86,128 @@ class Appointment extends BaseController
         ];
         
         return view('Roles/admin/appointments/Bookappointment', $data);
+    }
+
+    /**
+     * JSON: Get available schedule dates (distinct shift_date >= today)
+     */
+    public function getAvailableDates()
+    {
+        $allowedRoles = ['admin', 'nurse', 'receptionist'];
+        if (!in_array(session('role'), $allowedRoles)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized'])->setStatusCode(401);
+        }
+
+        $today = date('Y-m-d');
+        $db = \Config\Database::connect();
+        $rows = $db->table('doctor_schedules')
+            ->select('shift_date')
+            ->where('shift_date >=', $today)
+            ->where('status !=', 'cancelled')
+            ->distinct()
+            ->orderBy('shift_date', 'ASC')
+            ->get()->getResultArray();
+
+        $dates = array_values(array_unique(array_map(function($r){ return $r['shift_date']; }, $rows)));
+        return $this->response->setJSON(['success' => true, 'dates' => $dates]);
+    }
+
+    /**
+     * JSON: Get doctors by selected date
+     */
+    public function getDoctorsByDate()
+    {
+        $allowedRoles = ['admin', 'nurse', 'receptionist'];
+        if (!in_array(session('role'), $allowedRoles)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized'])->setStatusCode(401);
+        }
+
+        $date = $this->request->getGet('date');
+        if (!$date || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid date'])->setStatusCode(400);
+        }
+
+        $db = \Config\Database::connect();
+        $rows = $db->table('doctor_schedules ds')
+            ->select("ds.doctor_id, COALESCE(u.username, ds.doctor_name) AS name, u.email")
+            ->join('users u', 'u.id = ds.doctor_id', 'left')
+            ->where('ds.shift_date', $date)
+            ->where('ds.status !=', 'cancelled')
+            ->groupBy('ds.doctor_id, name, u.email')
+            ->orderBy('name', 'ASC')
+            ->get()->getResultArray();
+
+        return $this->response->setJSON(['success' => true, 'doctors' => $rows]);
+    }
+
+    /**
+     * JSON: Get hourly time slots by doctor and date (expands shift into 1-hour slots)
+     */
+    public function getTimesByDoctorAndDate()
+    {
+        $allowedRoles = ['admin', 'nurse', 'receptionist'];
+        if (!in_array(session('role'), $allowedRoles)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized'])->setStatusCode(401);
+        }
+
+        $date = $this->request->getGet('date');
+        $doctorId = $this->request->getGet('doctor_id');
+        if (!$date || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !$doctorId) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid parameters'])->setStatusCode(400);
+        }
+
+        $db = \Config\Database::connect();
+
+        // 1) Load doctor's shift blocks for the selected date
+        $rows = $db->table('doctor_schedules')
+            ->select('start_time, end_time')
+            ->where('doctor_id', $doctorId)
+            ->where('shift_date', $date)
+            ->where('status !=', 'cancelled')
+            ->orderBy('start_time', 'ASC')
+            ->get()->getResultArray();
+
+        // 2) Load already-booked appointment times for that doctor/date (exclude cancelled/no_show)
+        $booked = $db->table('appointments')
+            ->select('appointment_time')
+            ->where('doctor_id', $doctorId)
+            ->where('appointment_date', $date)
+            ->whereNotIn('status', ['cancelled', 'no_show'])
+            ->get()->getResultArray();
+        $bookedSet = [];
+        foreach ($booked as $b) {
+            // normalize to HH:MM:00
+            $t = substr($b['appointment_time'], 0, 5) . ':00';
+            $bookedSet[$t] = true;
+        }
+
+        // 3) Expand schedule into 1-hour slots and remove booked ones
+        $slots = [];
+        $tz = new \DateTimeZone('Asia/Manila');
+        foreach ($rows as $r) {
+            $start = new \DateTime($date . ' ' . $r['start_time'], $tz);
+            $end = new \DateTime($date . ' ' . $r['end_time'], $tz);
+            if ($end <= $start) { // cross-midnight handling
+                $end->modify('+1 day');
+            }
+            $cursor = clone $start;
+            while ($cursor < $end) {
+                $value = $cursor->format('H:i:00'); // submit value
+                if (!isset($bookedSet[$value])) {   // exclude already booked times
+                    $slots[$value] = $cursor->format('g:i A'); // display label
+                }
+                $cursor->modify('+1 hour');
+            }
+        }
+
+        // 4) Build response array
+        ksort($slots);
+        $times = [];
+        foreach ($slots as $value => $label) {
+            $times[] = [ 'value' => $value, 'label' => $label ];
+        }
+
+        return $this->response->setJSON(['success' => true, 'times' => $times]);
     }
     
     /**
@@ -230,8 +371,8 @@ class Appointment extends BaseController
      */
     public function show($id)
     {
-        // Validate ID
-        if (!is_numeric($id) || (int) $id <= 0) {
+        // Validate ID (accept alphanumeric IDs like APT-YYYYMMDD-####)
+        if (empty($id) || !preg_match('/^[A-Za-z0-9\-]+$/', $id)) {
             return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
         }
         // Check if user is logged in and has appropriate role
@@ -282,8 +423,8 @@ class Appointment extends BaseController
      */
     public function update($id)
     {
-        // Validate ID
-        if (!is_numeric($id) || (int) $id <= 0) {
+        // Validate ID (accept alphanumeric IDs like APT-YYYYMMDD-####)
+        if (empty($id) || !preg_match('/^[A-Za-z0-9\-]+$/', $id)) {
             return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
         }
         // Check if user is logged in and has appropriate role
@@ -531,6 +672,31 @@ class Appointment extends BaseController
             'success' => true,
             'appointments' => $appointments
         ]);
+    }
+
+    /**
+     * Get appointments by date range (YYYY-MM-DD)
+     */
+    public function byDateRange()
+    {
+        $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
+        if (!in_array(session('role'), $allowedRoles)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized access'])->setStatusCode(401);
+        }
+
+        $start = $this->request->getGet('start_date');
+        $end = $this->request->getGet('end_date');
+        if (!$start || !$end || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $start) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $end)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid or missing date parameters'])->setStatusCode(400);
+        }
+
+        // Normalize order if needed
+        if ($start > $end) {
+            [$start, $end] = [$end, $start];
+        }
+
+        $appointments = $this->appointmentModel->getAppointmentsByDateRange($start, $end);
+        return $this->response->setJSON(['success' => true, 'appointments' => $appointments]);
     }
 
     /**

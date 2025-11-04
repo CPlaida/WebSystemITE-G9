@@ -3,9 +3,12 @@
 <?= $this->section('title') ?>Today's Appointments<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  
-
   <div class="container">
+    <style>
+      .table-container { position: relative; overflow: visible; }
+      .action-buttons { position: relative; z-index: 1000; pointer-events: auto; }
+      .action-buttons .btn-action { pointer-events: auto; position: relative; z-index: 1001; }
+    </style>
     <div class="header">
       <h1 class="page-title">
         Today's Appointments
@@ -20,7 +23,7 @@
           <button id="searchButton" class="search-button">Search</button>
         </div>
       </div>
-      <div class="table-container">
+      <div class="table-container" style="position: relative;">
         <table>
           <thead>
             <tr>
@@ -53,15 +56,15 @@
                     </span>
                   </td>
                   <td>
-                    <div class="action-buttons" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                      <button onclick="viewDetails(<?= $appointment['id'] ?>)" class="btn-action btn-info" title="View Details">
+                    <div class="action-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 10;">
+                      <a href="<?= base_url('appointments/show/' . $appointment['id']) ?>" class="btn-action btn-warning js-view" data-appointment-id="<?= $appointment['id'] ?>" title="View Details" style="pointer-events: auto;">
                         View
-                      </button>
+                      </a>
                       <?php if ($appointment['status'] !== 'completed' && $appointment['status'] !== 'cancelled'): ?>
-                        <button onclick="updateStatus(<?= $appointment['id'] ?>, 'completed')" class="btn-action btn-success" title="Mark Complete">
+                        <button type="button" class="btn-action btn-success js-complete" data-appointment-id="<?= $appointment['id'] ?>" title="Mark Complete" style="pointer-events: auto;">
                           Complete
                         </button>
-                        <button onclick="updateStatus(<?= $appointment['id'] ?>, 'cancelled')" class="btn-action btn-warning" title="Cancel">
+                        <button type="button" class="btn-action btn-warning js-cancel" data-appointment-id="<?= $appointment['id'] ?>" title="Cancel" style="pointer-events: auto;">
                           Cancel
                         </button>
                       <?php endif; ?>
@@ -124,6 +127,43 @@
       }
     });
 
+    function handleViewAppointment(appointmentId) {
+      if (!appointmentId) return;
+      viewDetails(appointmentId);
+    }
+
+    function handleCompleteAppointment(appointmentId) {
+      if (!appointmentId) return;
+      if (!confirm('Mark this appointment as completed?')) return;
+      updateStatus(appointmentId, 'completed');
+    }
+
+    function handleCancelAppointment(appointmentId) {
+      if (!appointmentId) return;
+      if (!confirm('Are you sure you want to cancel this appointment?')) return;
+      updateStatus(appointmentId, 'cancelled');
+    }
+
+    document.addEventListener('click', function(e) {
+      const target = e.target;
+      if (target.classList.contains('js-view')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = target.dataset.appointmentId || target.closest('tr')?.dataset.appointmentId;
+        handleViewAppointment(id);
+      } else if (target.classList.contains('js-complete')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = target.dataset.appointmentId || target.closest('tr')?.dataset.appointmentId;
+        handleCompleteAppointment(id);
+      } else if (target.classList.contains('js-cancel')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = target.dataset.appointmentId || target.closest('tr')?.dataset.appointmentId;
+        handleCancelAppointment(id);
+      }
+    });
+
     function updateStatus(appointmentId, status) {
       if (status === 'cancelled' && !confirm('Are you sure you want to cancel this appointment?')) {
         return;
@@ -177,6 +217,17 @@
       });
     }
 
+    function formatTime12(timeStr) {
+      if (!timeStr) return '';
+      const parts = timeStr.split(':');
+      const h = parseInt(parts[0], 10);
+      const m = parseInt(parts[1] || '0', 10);
+      const h12 = (h % 12) || 12;
+      const mm = String(m).padStart(2, '0');
+      const ampm = h < 12 ? 'AM' : 'PM';
+      return `${h12}:${mm} ${ampm}`;
+    }
+
     function showMessage(message, type) {
       const existingMessages = document.querySelectorAll('.alert-message');
       existingMessages.forEach(msg => msg.remove());
@@ -219,7 +270,7 @@
                 <div><strong>Patient:</strong> ${appointment.patient_name || 'N/A'}</div>
                 <div><strong>Doctor:</strong> ${appointment.doctor_name || 'N/A'}</div>
                 <div><strong>Date:</strong> ${new Date(appointment.appointment_date).toLocaleDateString()}</div>
-                <div><strong>Time:</strong> ${appointment.appointment_time}</div>
+                <div><strong>Time:</strong> ${formatTime12(appointment.appointment_time)}</div>
                 <div><strong>Type:</strong> ${appointment.appointment_type}</div>
                 <div><strong>Status:</strong> <span class="status-badge status-${appointment.status}">${appointment.status}</span></div>
                 ${appointment.reason ? `<div><strong>Reason:</strong> ${appointment.reason}</div>` : ''}

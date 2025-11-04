@@ -91,12 +91,17 @@ $routes->get('appointments/book', 'Appointment::book');
 $routes->get('appointments/list', 'Appointment::index');
 $routes->get('appointments/schedule', 'Appointment::schedule');
 $routes->post('appointments/create', 'Appointment::create');
-$routes->get('appointments/show/(:num)', 'Appointment::show/$1');
-$routes->post('appointments/update/(:num)', 'Appointment::update/$1');
-$routes->post('appointments/cancel/(:num)', 'Appointment::cancel/$1');
-$routes->post('appointments/complete/(:num)', 'Appointment::complete/$1');
-$routes->post('appointments/no-show/(:num)', 'Appointment::noShow/$1');
-$routes->post('appointments/delete/(:num)', 'Appointment::delete/$1');
+$routes->get('appointments/show/(:any)', 'Appointment::show/$1');
+$routes->post('appointments/update/(:any)', 'Appointment::update/$1');
+$routes->post('appointments/cancel/(:any)', 'Appointment::cancel/$1');
+$routes->post('appointments/complete/(:any)', 'Appointment::complete/$1');
+$routes->post('appointments/no-show/(:any)', 'Appointment::noShow/$1');
+$routes->post('appointments/delete/(:any)', 'Appointment::delete/$1');
+
+// Dynamic schedule-driven endpoints for booking form
+$routes->get('appointments/available-dates', 'Appointment::getAvailableDates');
+$routes->get('appointments/doctors-by-date', 'Appointment::getDoctorsByDate');
+$routes->get('appointments/times-by-doctor', 'Appointment::getTimesByDoctorAndDate');
 
 // Appointment Query Routes
 $routes->get('appointments/doctor/(:num)', 'Appointment::getByDoctor/$1');
@@ -105,6 +110,7 @@ $routes->get('appointments/today', 'Appointment::getTodays');
 $routes->get('appointments/upcoming', 'Appointment::getUpcoming');
 $routes->get('appointments/search', 'Appointment::search');
 $routes->get('appointments/stats', 'Appointment::getStats');
+$routes->get('appointments/by-date-range', 'Appointment::byDateRange');
 
 
 // Billing Routes

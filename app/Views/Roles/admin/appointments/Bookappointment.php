@@ -45,44 +45,29 @@
               <div class="error-message">Please select or enter patient name</div>
             </div>
 
-            <!-- Doctor Selection -->
+            <!-- Date (Dynamic from schedules) -->
+            <div class="form-group">
+              <label class="form-label required-field" for="appointment_date">Date</label>
+              <select name="appointment_date" id="appointment_date" class="form-select" required disabled>
+                <option value="" selected>Loading available dates...</option>
+              </select>
+              <div class="error-message">Please select a date</div>
+            </div>
+
+            <!-- Doctor Selection (Dynamic by date) -->
             <div class="form-group">
               <label class="form-label required-field" for="doctor_id">Doctor</label>
-              <select name="doctor_id" id="doctor_id" class="form-select" required>
-                <option value="">Select Doctor</option>
-                <?php if (isset($doctors) && !empty($doctors)): ?>
-                  <?php foreach ($doctors as $doctor): ?>
-                    <option value="<?= $doctor['id'] ?>" <?= old('doctor_id') == $doctor['id'] ? 'selected' : '' ?>>
-                      Dr. <?= esc($doctor['username']) ?> - <?= esc($doctor['email']) ?>
-                    </option>
-                  <?php endforeach; ?>
-                <?php endif; ?>
+              <select name="doctor_id" id="doctor_id" class="form-select" required disabled>
+                <option value="" selected>Select a date first</option>
               </select>
               <div class="error-message">Please select a doctor</div>
             </div>
 
-            <!-- Date -->
-            <div class="form-group">
-              <label class="form-label required-field" for="appointment_date">Date</label>
-              <input type="date" name="appointment_date" id="appointment_date" class="form-control" 
-                     min="<?= date('Y-m-d') ?>" value="<?= old('appointment_date', date('Y-m-d', strtotime('+1 day'))) ?>" required>
-              <div class="error-message">Please select a date</div>
-            </div>
-
-            <!-- Time -->
+            <!-- Time (Dynamic by doctor + date) -->
             <div class="form-group">
               <label class="form-label required-field" for="appointment_time">Time</label>
-              <select name="appointment_time" id="appointment_time" class="form-select" required>
-                <option value="">Select Time</option>
-                <option value="08:00:00" <?= old('appointment_time') == '08:00:00' ? 'selected' : '' ?>>08:00 AM</option>
-                <option value="09:00:00" <?= old('appointment_time') == '09:00:00' ? 'selected' : '' ?>>09:00 AM</option>
-                <option value="10:00:00" <?= old('appointment_time') == '10:00:00' ? 'selected' : '' ?>>10:00 AM</option>
-                <option value="11:00:00" <?= old('appointment_time') == '11:00:00' ? 'selected' : '' ?>>11:00 AM</option>
-                <option value="13:00:00" <?= old('appointment_time') == '13:00:00' ? 'selected' : '' ?>>01:00 PM</option>
-                <option value="14:00:00" <?= old('appointment_time') == '14:00:00' ? 'selected' : '' ?>>02:00 PM</option>
-                <option value="15:00:00" <?= old('appointment_time') == '15:00:00' ? 'selected' : '' ?>>03:00 PM</option>
-                <option value="16:00:00" <?= old('appointment_time') == '16:00:00' ? 'selected' : '' ?>>04:00 PM</option>
-                <option value="17:00:00" <?= old('appointment_time') == '17:00:00' ? 'selected' : '' ?>>05:00 PM</option>
+              <select name="appointment_time" id="appointment_time" class="form-select" required disabled>
+                <option value="" selected>Select a doctor first</option>
               </select>
               <div class="error-message">Please select a time</div>
             </div>
@@ -125,17 +110,124 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('appointmentForm');
-      
+      const dateSelect = document.getElementById('appointment_date');
+      const doctorSelect = document.getElementById('doctor_id');
+      const timeSelect = document.getElementById('appointment_time');
+
+      const setOptions = (selectEl, options, placeholder, disabled = false) => {
+        selectEl.innerHTML = '';
+        const ph = document.createElement('option');
+        ph.value = '';
+        ph.textContent = placeholder;
+        ph.selected = true;
+        ph.disabled = true;
+        selectEl.appendChild(ph);
+        (options || []).forEach(opt => {
+          const o = document.createElement('option');
+          o.value = opt.value;
+          o.textContent = opt.label;
+          selectEl.appendChild(o);
+        });
+        selectEl.disabled = disabled;
+      };
+
+      const formatDateLong = (isoDate) => {
+        if (!isoDate) return '';
+        const [y, m, d] = isoDate.split('-').map(Number);
+        const dt = new Date(y, (m || 1) - 1, d || 1);
+        const base = dt.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+        return base.replace(/^([A-Za-z]+) (\d+), (\d{4})$/, '$1, $2, $3');
+      };
+
+      const clearDependent = (level) => {
+        if (level === 'date') {
+          setOptions(doctorSelect, [], 'Select a date first', true);
+          setOptions(timeSelect, [], 'Select a doctor first', true);
+        } else if (level === 'doctor') {
+          setOptions(timeSelect, [], 'Select a doctor first', true);
+        }
+      };
+
+      // Load available dates
+      const loadDates = async () => {
+        try {
+          const res = await fetch('<?= base_url('appointments/available-dates') ?>');
+          const data = await res.json();
+          if (data.success && data.dates && data.dates.length) {
+            const opts = data.dates.map(d => ({ value: d, label: formatDateLong(d) }));
+            setOptions(dateSelect, opts, 'Select Date');
+            dateSelect.disabled = false;
+          } else {
+            setOptions(dateSelect, [], 'No available schedule', true);
+            clearDependent('date');
+          }
+        } catch (e) {
+          setOptions(dateSelect, [], 'Failed to load dates', true);
+          clearDependent('date');
+        }
+      };
+
+      // Load doctors for selected date
+      const loadDoctors = async (date) => {
+        setOptions(doctorSelect, [], 'Loading doctors...', true);
+        setOptions(timeSelect, [], 'Select a doctor first', true);
+        try {
+          const res = await fetch('<?= base_url('appointments/doctors-by-date') ?>?date=' + encodeURIComponent(date));
+          const data = await res.json();
+          if (data.success && data.doctors && data.doctors.length) {
+            const opts = data.doctors.map(d => ({ value: d.doctor_id, label: 'Dr. ' + d.name + (d.email ? ' - ' + d.email : '') }));
+            setOptions(doctorSelect, opts, 'Select Doctor');
+            doctorSelect.disabled = false;
+          } else {
+            setOptions(doctorSelect, [], 'No doctors available for this date', true);
+          }
+        } catch (e) {
+          setOptions(doctorSelect, [], 'Failed to load doctors', true);
+        }
+      };
+
+      // Load times for selected date + doctor
+      const loadTimes = async (date, doctorId) => {
+        setOptions(timeSelect, [], 'Loading times...', true);
+        try {
+          const res = await fetch('<?= base_url('appointments/times-by-doctor') ?>?date=' + encodeURIComponent(date) + '&doctor_id=' + encodeURIComponent(doctorId));
+          const data = await res.json();
+          if (data.success && data.times && data.times.length) {
+            const opts = data.times.map(t => ({ value: t.value, label: t.label }));
+            setOptions(timeSelect, opts, 'Select Time');
+            timeSelect.disabled = false;
+          } else {
+            setOptions(timeSelect, [], 'No available times for this doctor', true);
+          }
+        } catch (e) {
+          setOptions(timeSelect, [], 'Failed to load times', true);
+        }
+      };
+
+      // Wire events
+      dateSelect.addEventListener('change', function() {
+        clearDependent('date');
+        if (this.value) {
+          loadDoctors(this.value);
+        }
+      });
+
+      doctorSelect.addEventListener('change', function() {
+        clearDependent('doctor');
+        if (this.value && dateSelect.value) {
+          loadTimes(dateSelect.value, this.value);
+        }
+      });
+
+      // Client-side validation styling
       form.addEventListener('submit', function(event) {
         if (!form.checkValidity()) {
           event.preventDefault();
           event.stopPropagation();
         }
-        
         form.classList.add('was-validated');
       }, false);
-      
-      // Real-time validation
+
       const inputs = form.querySelectorAll('input, select, textarea');
       inputs.forEach(input => {
         input.addEventListener('input', function() {
@@ -146,6 +238,10 @@
           }
         });
       });
+
+      // Initialize
+      clearDependent('date');
+      loadDates();
     });
   </script>
 <?= $this->endSection() ?>

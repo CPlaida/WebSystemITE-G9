@@ -4,6 +4,11 @@
 
 <?= $this->section('content') ?>
   <div class="container">
+    <style>
+      .table-container { position: relative; overflow: visible; }
+      .action-buttons { position: relative; z-index: 1000; pointer-events: auto; }
+      .action-buttons .btn-action { pointer-events: auto; position: relative; z-index: 1001; }
+    </style>
     <div class="header">
       <h1 class="page-title">
         Today's Appointments
@@ -13,12 +18,18 @@
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Appointment List</h2>
-        <div class="search-container">
-          <input type="text" id="searchInput" class="search-input" placeholder="Search appointments...">
-          <button id="searchButton" class="search-button">Search</button>
+        <div class="filter-container" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-start;">
+          <div class="btn-group" role="group" aria-label="Date filters" style="display:flex; gap:8px;">
+            <button type="button" id="btnToday" class="btn <?= (isset($currentFilter) && $currentFilter==='today') ? 'btn-primary' : 'btn-outline' ?>">Today</button>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button type="button" id="btnChooseDate" class="btn <?= (isset($currentFilter) && $currentFilter==='date') ? 'btn-primary' : 'btn-outline' ?>">Choose Date</button>
+              <input type="date" id="filterDate" class="form-control" value="<?= esc($currentDate ?? date('Y-m-d')) ?>" style="min-width:170px; <?= (isset($currentFilter) && $currentFilter==='date') ? '' : 'display:none;' ?>">
+            </div>
+            <button type="button" id="btnAll" class="btn <?= (isset($currentFilter) && $currentFilter==='all') ? 'btn-primary' : 'btn-outline' ?>">All</button>
+          </div>
         </div>
       </div>
-      <div class="table-container">
+      <div class="table-container" style="position: relative;">
         <table>
           <thead>
             <tr>
@@ -30,7 +41,7 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="appointmentsTbody">
             <?php if (isset($appointments) && !empty($appointments)): ?>
               <?php foreach ($appointments as $appointment): ?>
                 <tr>
@@ -51,15 +62,15 @@
                     </span>
                   </td>
                   <td>
-                    <div class="action-buttons" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                      <button onclick="viewDetails(<?= $appointment['id'] ?>)" class="btn-action btn-info" title="View Details">
+                    <div class="action-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 10;">
+                      <a href="<?= base_url('appointments/show/' . $appointment['id']) ?>" class="btn-action btn-warning js-view" data-appointment-id="<?= $appointment['id'] ?>" title="View Details">
                         View
-                      </button>
+                      </a>
                       <?php if ($appointment['status'] !== 'completed' && $appointment['status'] !== 'cancelled'): ?>
-                        <button onclick="updateStatus(<?= $appointment['id'] ?>, 'completed')" class="btn-action btn-success" title="Mark Complete">
+                        <button type="button" class="btn-action btn-success js-complete" data-appointment-id="<?= $appointment['id'] ?>" title="Mark Complete">
                           Complete
                         </button>
-                        <button onclick="updateStatus(<?= $appointment['id'] ?>, 'cancelled')" class="btn-action btn-warning" title="Cancel">
+                        <button type="button" class="btn-action btn-warning js-cancel" data-appointment-id="<?= $appointment['id'] ?>" title="Cancel">
                           Cancel
                         </button>
                       <?php endif; ?>
@@ -82,37 +93,70 @@
   </div>
 
   <script>
-    function filterAppointments() {
-      const searchInput = document.getElementById('searchInput');
-      const searchTerm = searchInput.value.toLowerCase();
-      const tableRows = document.querySelectorAll('tbody tr');
-      
-      tableRows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        if (text.includes(searchTerm)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
+    // search removed per request
+
+    function handleViewAppointment(appointmentId) {
+      if (!appointmentId) return;
+      viewDetails(appointmentId);
     }
-    
+
+    function handleCompleteAppointment(appointmentId) {
+      if (!appointmentId) return;
+      if (!confirm('Mark this appointment as completed?')) return;
+      updateStatus(appointmentId, 'completed');
+    }
+
+    function handleCancelAppointment(appointmentId) {
+      if (!appointmentId) return;
+      if (!confirm('Are you sure you want to cancel this appointment?')) return;
+      updateStatus(appointmentId, 'cancelled');
+    }
+
+    document.addEventListener('click', function(e) {
+      const target = e.target.closest('.js-view, .js-complete, .js-cancel');
+      if (!target) return;
+
+      if (target.classList.contains('js-view')) {
+        e.preventDefault();
+        const id = target.dataset.appointmentId || target.closest('tr')?.dataset.appointmentId;
+        handleViewAppointment(id);
+      } else if (target.classList.contains('js-complete')) {
+        e.preventDefault();
+        const id = target.dataset.appointmentId || target.closest('tr')?.dataset.appointmentId;
+        handleCompleteAppointment(id);
+      } else if (target.classList.contains('js-cancel')) {
+        e.preventDefault();
+        const id = target.dataset.appointmentId || target.closest('tr')?.dataset.appointmentId;
+        handleCancelAppointment(id);
+      }
+    });
+
     // Initialize event listeners
     document.addEventListener('DOMContentLoaded', function() {
-      const searchButton = document.getElementById('searchButton');
-      const searchInput = document.getElementById('searchInput');
-      
-      if (searchButton) {
-        searchButton.addEventListener('click', filterAppointments);
-      }
-      
-      if (searchInput) {
-        searchInput.addEventListener('keyup', function(e) {
-          if (e.key === 'Enter') {
-            filterAppointments();
-          }
-        });
-      }
+      // Wire filter buttons
+      const btnToday = document.getElementById('btnToday');
+      const btnAll = document.getElementById('btnAll');
+      const btnChooseDate = document.getElementById('btnChooseDate');
+      const dateInput = document.getElementById('filterDate');
+
+      function goTo(url) { window.location.href = url; }
+
+      if (btnToday) btnToday.addEventListener('click', function(){
+        goTo('<?= base_url('appointments/list') ?>?filter=today');
+      });
+      if (btnAll) btnAll.addEventListener('click', function(){
+        goTo('<?= base_url('appointments/list') ?>?filter=all');
+      });
+      if (btnChooseDate) btnChooseDate.addEventListener('click', function(){
+        if (dateInput) {
+          dateInput.style.display = '';
+          dateInput.focus();
+        }
+      });
+      if (dateInput) dateInput.addEventListener('change', function(){
+        if (!this.value) return;
+        goTo('<?= base_url('appointments/list') ?>?filter=date&date=' + encodeURIComponent(this.value));
+      });
     });
 
     function updateStatus(appointmentId, status) {
@@ -166,6 +210,17 @@
         console.error('Error:', error);
         showMessage('An error occurred while loading appointment details', 'error');
       });
+    }
+
+    function formatTime12(timeStr) {
+      if (!timeStr) return '';
+      const parts = timeStr.split(':');
+      const h = parseInt(parts[0], 10);
+      const m = parseInt(parts[1] || '0', 10);
+      const h12 = (h % 12) || 12;
+      const mm = String(m).padStart(2, '0');
+      const ampm = h < 12 ? 'AM' : 'PM';
+      return `${h12}:${mm} ${ampm}`;
     }
 
     function showMessage(message, type) {

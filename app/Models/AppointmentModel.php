@@ -133,14 +133,14 @@ class AppointmentModel extends Model
         $builder->where('r.name', 'doctor');
         $builder->where('a.appointment_date >=', $startDate);
         $builder->where('a.appointment_date <=', $endDate);
-        $statusOrder = "CASE a.status \
-            WHEN 'scheduled' THEN 0 \
-            WHEN 'confirmed' THEN 1 \
-            WHEN 'in_progress' THEN 2 \
-            WHEN 'completed' THEN 3 \
-            WHEN 'cancelled' THEN 4 \
-            WHEN 'no_show' THEN 5 \
-            ELSE 6 END";
+        $statusOrder = "(CASE a.status
+            WHEN 'scheduled' THEN 0
+            WHEN 'confirmed' THEN 1
+            WHEN 'in_progress' THEN 2
+            WHEN 'completed' THEN 3
+            WHEN 'cancelled' THEN 4
+            WHEN 'no_show' THEN 5
+            ELSE 6 END)";
         $builder->orderBy($statusOrder, 'ASC', false);
         $builder->orderBy('a.appointment_date', 'ASC');
         $builder->orderBy('a.appointment_time', 'ASC');
