@@ -15,7 +15,7 @@
             <div class="card-body">
                 <form method="post" action="<?= site_url('laboratory/testresult/add') ?>" id="addResultForm">
                     <?= csrf_field() ?>
-                    <input type="hidden" name="test_id" value="<?= (int) $testResult['id'] ?>">
+                    <input type="hidden" name="test_id" value="<?= esc($testResult['id']) ?>">
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Patient Name</label>

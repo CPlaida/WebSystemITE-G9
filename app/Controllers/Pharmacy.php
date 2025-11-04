@@ -320,7 +320,6 @@ class Pharmacy extends Controller
         foreach ($medications as &$m) {
             if (isset($m['price'])) $m['price'] = (float)$m['price'];
             if (isset($m['stock'])) $m['stock'] = (int)$m['stock'];
-            if (isset($m['id'])) $m['id'] = (int)$m['id'];
             $m['expiry_date'] = $m['expiry_date'] ?? null;
             if (!empty($m['expiry_date'])) {
                 $diff = (strtotime($m['expiry_date']) - strtotime($today)) / 86400;
@@ -481,7 +480,7 @@ class Pharmacy extends Controller
         }
 
         // Validate stock availability and expiry BEFORE starting transaction
-        $itemIds = array_map(fn($it) => (int)$it['medicine_id'], $data['items']);
+        $itemIds = array_map(fn($it) => (string)$it['medicine_id'], $data['items']);
         $uniqueIds = array_values(array_unique($itemIds));
         $info = [];
         if (!empty($uniqueIds)) {
@@ -490,7 +489,7 @@ class Pharmacy extends Controller
                 ->whereIn('id', $uniqueIds)
                 ->get()->getResultArray();
             foreach ($rows as $r) {
-                $info[(int)$r['id']] = [
+                $info[(string)$r['id']] = [
                     'stock' => (int)($r['stock'] ?? 0),
                     'name' => $r['name'] ?? (string)$r['id'],
                     'expiry_date' => $r['expiry_date'] ?? null,
@@ -501,7 +500,7 @@ class Pharmacy extends Controller
         $expiryViolations = [];
         $requestedPerMed = [];
         foreach ($data['items'] as $it) {
-            $mid = (int)$it['medicine_id'];
+            $mid = (string)$it['medicine_id'];
             $qty = (int)$it['quantity'];
             if (!isset($requestedPerMed[$mid])) $requestedPerMed[$mid] = 0;
             $requestedPerMed[$mid] += $qty;
@@ -571,7 +570,7 @@ class Pharmacy extends Controller
                 $lineTotal = $item['price'] * $item['quantity'];
                 $this->db->table('prescription_items')->insert([
                     'prescription_id' => $prescriptionId,
-                    'medication_id' => (int)$item['medicine_id'],
+                    'medication_id' => (string)$item['medicine_id'],
                     'quantity' => (int)$item['quantity'],
                     'price' => $item['price'],
                     'total' => $lineTotal,
@@ -580,7 +579,7 @@ class Pharmacy extends Controller
                 $totalItems += (int)$item['quantity'];
                 // Safe stock deduction: never allow negative stock
                 $deductQty = (int)$item['quantity'];
-                $medId = (int)$item['medicine_id'];
+                $medId = (string)$item['medicine_id'];
                 $this->db->table('medicines')
                     ->set('stock', 'stock - ' . $deductQty, false)
                     ->where('id', $medId)
@@ -715,7 +714,7 @@ class Pharmacy extends Controller
                 ->getResultArray();
             $payload['items'] = array_map(function($it){
                 return [
-                    'medicine_id' => (int)$it['medication_id'],
+                    'medicine_id' => (string)$it['medication_id'],
                     'medicine_name' => $it['medicine_name'] ?? $it['medication_id'],
                     'quantity' => (int)$it['quantity'],
                     'unit_price' => (float)$it['unit_price'],

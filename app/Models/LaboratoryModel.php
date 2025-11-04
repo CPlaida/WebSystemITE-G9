@@ -8,6 +8,7 @@ class LaboratoryModel extends Model
 {
     protected $table = 'laboratory';
     protected $primaryKey = 'id';
+    protected $useAutoIncrement = false;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
 
@@ -39,4 +40,24 @@ class LaboratoryModel extends Model
             'in_list' => 'Priority must be routine, normal, urgent, or stat'
         ]
     ];
+
+    protected $beforeInsert = ['generateId'];
+
+    protected function generateId(array $data)
+    {
+        if (!empty($data['data']['id'])) return $data;
+        $db = \Config\Database::connect();
+        $row = $db->table($this->table)
+            ->select('id')
+            ->like('id', 'LAB-', 'after')
+            ->orderBy('id', 'DESC')
+            ->get(1)->getRowArray();
+        $next = 1;
+        if ($row && isset($row['id'])) {
+            $num = (int)substr($row['id'], 4);
+            if ($num > 0) $next = $num + 1;
+        }
+        $data['data']['id'] = 'LAB-' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
+        return $data;
+    }
 }

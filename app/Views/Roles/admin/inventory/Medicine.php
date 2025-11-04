@@ -77,7 +77,7 @@ $currentSubmenu = 'inventory';
                     <?php if (!empty($medicines)) : ?>
                         <?php foreach ($medicines as $m): ?>
                             <tr>
-                                <td><?= (int)$m['id'] ?></td>
+                                <td><?= esc($m['id']) ?></td>
                                 <td><?= esc($m['name']) ?></td>
                                 <td><?= esc($m['brand']) ?></td>
                                 <td><?= esc($m['category']) ?></td>

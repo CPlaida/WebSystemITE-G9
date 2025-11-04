@@ -18,7 +18,7 @@ class Medicine extends Controller
         // if coming from edit link, load the record to prefill modal
         $editId = $this->request->getGet('edit');
         if ($editId) {
-            $data['edit_medicine'] = $model->find((int)$editId);
+            $data['edit_medicine'] = $model->find($editId);
         }
         // request to open add modal directly (ensures fresh add mode)
         if ($this->request->getGet('add')) {
@@ -80,7 +80,7 @@ class Medicine extends Controller
     public function edit($id = null)
     {
         // Redirect to index and open the modal pre-filled via query param
-        return redirect()->to('/medicines?edit=' . (int)$id);
+        return redirect()->to('/medicines?edit=' . $id);
     }
 
     public function update($id = null)
@@ -91,10 +91,10 @@ class Medicine extends Controller
         $today = date('Y-m-d');
         $limit = date('Y-m-d', strtotime('+30 days'));
         if (!empty($expiry) && $expiry < $today) {
-            return redirect()->to('/medicines?edit=' . (int)$id)->with('error', 'Expiry date cannot be in the past.');
+            return redirect()->to('/medicines?edit=' . $id)->with('error', 'Expiry date cannot be in the past.');
         }
         if (!empty($expiry) && $expiry <= $limit) {
-            return redirect()->to('/medicines?edit=' . (int)$id)->with('error', 'Expiry date is within 30 days and cannot be saved.');
+            return redirect()->to('/medicines?edit=' . $id)->with('error', 'Expiry date is within 30 days and cannot be saved.');
         }
 
         $data = [

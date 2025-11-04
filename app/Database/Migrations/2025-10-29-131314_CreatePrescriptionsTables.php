@@ -25,7 +25,7 @@ class CreatePrescriptionsTables extends Migration
         $this->forge->addField([
             'id' => ['type'=>'INT','unsigned'=>true,'auto_increment'=>true],
             'prescription_id' => ['type'=>'INT','unsigned'=>true],
-            'medication_id' => ['type'=>'INT','unsigned'=>true],
+            'medication_id' => ['type'=>'VARCHAR','constraint'=>20],
             'quantity' => ['type'=>'INT','default'=>1],
             'price' => ['type'=>'DECIMAL','constraint'=>'10,2','default'=>'0.00'],
             'total' => ['type'=>'DECIMAL','constraint'=>'10,2','default'=>'0.00'],

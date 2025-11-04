@@ -244,7 +244,7 @@ $(document).ready(function() {
     // Handle add to cart button click
     $('#addToCartBtn').on('click', function() {
         const selected = $('#medicationSelect').select2('data')[0];
-        const medicationId = selected?.id;
+        const medicationId = String(selected?.id ?? '');
         const medicationName = selected?.name || selected?.text || '';
         const price = Number(selected?.price || 0);
         const quantity = Number($('#quantity').val());
@@ -259,7 +259,7 @@ $(document).ready(function() {
             return;
         }
         // Compute how many of this med already in cart
-        const inCartQty = cart.reduce((sum, i) => i.medicationId === Number(medicationId) ? sum + Number(i.quantity) : sum, 0);
+        const inCartQty = cart.reduce((sum, i) => i.medicationId === medicationId ? sum + Number(i.quantity) : sum, 0);
         const remaining = stock - inCartQty;
         if (stock <= 0 || quantity > remaining) {
             alert(`Insufficient stock. Available: ${Math.max(remaining, 0)}`);
@@ -267,13 +267,13 @@ $(document).ready(function() {
         }
         
         // Merge with existing item of same med if present
-        const existing = cart.find(i => i.medicationId === Number(medicationId));
+        const existing = cart.find(i => i.medicationId === medicationId);
         if (existing) {
             existing.quantity += quantity;
         } else {
             const item = {
                 id: Date.now(),
-                medicationId: Number(medicationId),
+                medicationId: medicationId,
                 name: medicationName,
                 quantity: quantity,
                 price: price,

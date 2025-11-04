@@ -8,9 +8,9 @@ class CreateMedicinesTable extends Migration
     {
         $this->forge->addField([
             'id' => [
-                'type'           => 'INT',
-                'unsigned'       => true,
-                'auto_increment' => true,
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
+                'null'       => false,
             ],
             'name' => [
                 'type'       => 'VARCHAR',

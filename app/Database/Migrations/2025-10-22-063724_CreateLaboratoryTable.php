@@ -9,14 +9,14 @@ class CreateLaboratoryTable extends Migration
     public function up()
     {
         if ($this->db->tableExists('laboratory')) {
-            return; // Table already exists; make migration idempotent
+            return; 
         }
 
         $this->forge->addField([
             'id' => [
-                'type'           => 'INT',
-                'unsigned'       => true,
-                'auto_increment' => true,
+                'type'           => 'VARCHAR',
+                'constraint'     => 20,
+                'null'           => false,
             ],
             'patient_id' => [
                 'type'       => 'VARCHAR',
