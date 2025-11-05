@@ -3,34 +3,30 @@
 <?= $this->section('title') ?>IT Staff Dashboard<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="dashboard-container">
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-        <h2>Welcome, IT Staff</h2>
-        <p>System Administration & Security Overview</p>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="stats-container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title">System Uptime</div>
-                <div class="stat-value">99.8%</div>
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card dashboard-overview" style="margin-top:0; margin-bottom: 1.5rem;">
+        <div class="composite-header">
+            <div class="composite-title">Dashboard Overview</div>
+        </div>
+        <div class="admin-grid" style="padding: 1.25rem;">
+            <div class="kpi-card span-3">
+                <div class="kpi-title">System Uptime</div>
+                <div class="kpi-value">99.8%</div>
             </div>
             
-            <div class="stat-card">
-                <div class="stat-title">Active Users</div>
-                <div class="stat-value">156</div>
+            <div class="kpi-card span-3">
+                <div class="kpi-title">Active Users</div>
+                <div class="kpi-value">156</div>
             </div>
             
-            <div class="stat-card">
-                <div class="stat-title">System Alerts</div>
-                <div class="stat-value">3</div>
+            <div class="kpi-card span-3 text-warning">
+                <div class="kpi-title">System Alerts</div>
+                <div class="kpi-value">3</div>
             </div>
             
-            <div class="stat-card">
-                <div class="stat-title">Pending Tasks</div>
-                <div class="stat-value">5</div>
+            <div class="kpi-card span-3">
+                <div class="kpi-title">Pending Tasks</div>
+                <div class="kpi-value">5</div>
             </div>
         </div>
     </div>

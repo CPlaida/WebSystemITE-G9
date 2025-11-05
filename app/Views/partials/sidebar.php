@@ -28,7 +28,7 @@
             <!-- Appointments -->
             <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Appointments</span>
+                    <span class="text">Appointments & Scheduling</span>
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">

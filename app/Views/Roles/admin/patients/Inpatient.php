@@ -120,7 +120,19 @@
             </div>
             <div class="form-group">
               <label class="form-label">Attending Physician</label>
-              <input type="text" name="attending_physician" class="form-control" placeholder="Doctor's Name">
+              <select name="attending_physician" class="form-select">
+                <option value="">Select Physician</option>
+                <?php if (!empty($doctors)): ?>
+                  <?php foreach ($doctors as $doctor): ?>
+                    <?php
+                      $value = $doctor['id'] ?? '';
+                      $label = $doctor['display_name'] ?? $doctor['username'] ?? 'Unknown Doctor';
+                      $selected = old('attending_physician') == $value ? 'selected' : '';
+                    ?>
+                    <option value="<?= esc($value) ?>" <?= $selected ?>><?= esc($label) ?></option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+              </select>
             </div>
           </div>
           <div class="form-row">

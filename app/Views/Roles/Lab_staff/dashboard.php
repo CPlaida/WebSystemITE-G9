@@ -5,30 +5,27 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="dashboard-header">
-        <h1>Laboratory Staff Dashboard</h1>
-        <p class="dashboard-subtitle">Laboratory Test Management</p>
-    </div>
-
-    <!-- Overview Cards -->
-    <div class="overview-grid">
-        <div class="overview-card">
-            <div class="card-content">
-                <h3>Pending Tests</h3>
-                <div class="card-value"><?= is_array($pendingTests) ? count($pendingTests) : (int)$pendingTests ?></div>
-            </div>
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card dashboard-overview" style="margin-top:0; margin-bottom: 1.5rem;">
+        <div class="composite-header">
+            <div class="composite-title">Dashboard Overview</div>
         </div>
-        <div class="overview-card">
-            <div class="card-content">
-                <h3>Completed Today</h3>
-                <div class="card-value"><?= is_array($completedToday) ? count($completedToday) : (int)$completedToday ?></div>
+        <div class="admin-grid" style="padding: 1.25rem;">
+            <div class="kpi-card span-4">
+                <div class="kpi-title">Pending Tests</div>
+                <div class="kpi-value"><?= is_array($pendingTests) ? count($pendingTests) : (int)$pendingTests ?></div>
             </div>
-        </div>
-        <div class="overview-card">
-            <div class="card-content">
-                <h3>Total Tests This Month</h3>
-                <div class="card-value"><?= is_array($monthlyTests) ? count($monthlyTests) : (int)$monthlyTests ?></div>
+            
+            <div class="kpi-card span-4">
+                <div class="kpi-title">Completed Today</div>
+                <div class="kpi-value"><?= is_array($completedToday) ? count($completedToday) : (int)$completedToday ?></div>
+            </div>
+            
+            <div class="kpi-card span-4">
+                <div class="kpi-title">Total Tests This Month</div>
+                <div class="kpi-value"><?= is_array($monthlyTests) ? count($monthlyTests) : (int)$monthlyTests ?></div>
             </div>
         </div>
     </div>
+</div>
 <?= $this->endSection() ?>

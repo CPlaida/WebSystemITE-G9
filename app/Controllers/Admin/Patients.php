@@ -4,14 +4,17 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\PatientModel;
+use App\Models\UserModel;
 
 class Patients extends BaseController
 {
     protected $patientModel;
+    protected $userModel;
     
     public function __construct()
     {
         $this->patientModel = new PatientModel();
+        $this->userModel = new UserModel();
         helper(['form', 'url', 'auth']);
     }
 
@@ -108,9 +111,20 @@ class Patients extends BaseController
 
     public function inpatient()
     {
+        $doctors = $this->userModel
+            ->select("users.id, COALESCE(NULLIF(CONCAT(d.first_name, ' ', d.last_name), ' '), users.username) AS display_name, d.first_name, d.last_name, users.username")
+            ->join('roles r', 'users.role_id = r.id', 'left')
+            ->join('doctors d', 'd.user_id = users.id', 'left')
+            ->where('r.name', 'doctor')
+            ->where('users.status', 'active')
+            ->orderBy('d.first_name', 'ASC')
+            ->orderBy('users.username', 'ASC')
+            ->findAll();
+
         $data = [
             'title' => 'Register Inpatient',
-            'validation' => \Config\Services::validation()
+            'validation' => \Config\Services::validation(),
+            'doctors' => $doctors,
         ];
         
         return view('Roles/admin/patients/Inpatient', $data);

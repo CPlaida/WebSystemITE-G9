@@ -3,34 +3,30 @@
 <?= $this->section('title') ?>Doctor Dashboard<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="dashboard-container">
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-        <h2>Welcome back, Dr. <?= esc($name ?? 'Doctor') ?></h2>
-        <p>Here's what's happening with your patients today</p>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="stats-container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title">Today's Appointments</div>
-                <div class="stat-value"><?= $appointmentsCount ?? '0' ?></div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-title">Patients Seen</div>
-                <div class="stat-value"><?= $patientsSeenToday ?? '0' ?></div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-title">Pending Results</div>
-                <div class="stat-value"><?= $pendingLabResults ?? '0' ?></div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-title">Prescriptions</div>
-                <div class="stat-value"><?= $prescriptionsCount ?? '0' ?></div>
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card dashboard-overview" style="margin-top:0; margin-bottom: 1.5rem;">
+        <div class="composite-header">
+            <div class="composite-title">Dashboard Overview</div>
+        </div>
+        <div class="admin-grid" style="padding: 1.25rem;">
+        <div class="kpi-card span-3">
+            <div class="kpi-title">Today's Appointments</div>
+            <div class="kpi-value"><?= $appointmentsCount ?? '0' ?></div>
+        </div>
+        
+        <div class="kpi-card span-3">
+            <div class="kpi-title">Patients Seen</div>
+            <div class="kpi-value"><?= $patientsSeenToday ?? '0' ?></div>
+        </div>
+        
+        <div class="kpi-card span-3">
+            <div class="kpi-title">Pending Results</div>
+            <div class="kpi-value"><?= $pendingLabResults ?? '0' ?></div>
+        </div>
+        
+        <div class="kpi-card span-3">
+            <div class="kpi-title">Prescriptions</div>
+            <div class="kpi-value"><?= $prescriptionsCount ?? '0' ?></div>
             </div>
         </div>
     </div>
