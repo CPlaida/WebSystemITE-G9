@@ -114,6 +114,33 @@ class Admin extends BaseController
         $roleId = (int) ($this->request->getPost('role_id') ?? 0);
         $status = strtolower((string) $this->request->getPost('status'));
 
+        if ($username === '' || $email === '' || empty($roleId)) {
+            return redirect()->back()->withInput()->with('error', 'Please fill in all required fields.');
+        }
+
+        // Use database builder to avoid model state issues
+        $db = \Config\Database::connect();
+        
+        // Check for duplicate email (excluding current user)
+        $existingEmail = $db->table('users')
+                           ->where('email', $email)
+                           ->where('id !=', (int)$id)
+                           ->get()
+                           ->getRow();
+        if ($existingEmail) {
+            return redirect()->back()->withInput()->with('error', 'Email already exists.');
+        }
+
+        // Check for duplicate username (excluding current user)
+        $existingUsername = $db->table('users')
+                              ->where('username', $username)
+                              ->where('id !=', (int)$id)
+                              ->get()
+                              ->getRow();
+        if ($existingUsername) {
+            return redirect()->back()->withInput()->with('error', 'Username already exists.');
+        }
+
         $data = [
             'username' => $username,
             'email' => $email,
@@ -124,7 +151,16 @@ class Admin extends BaseController
         if ($password !== '') {
             $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
-        $model->update((int)$id, $data);
+        
+        try {
+            $model->update((int)$id, $data);
+        } catch (\Throwable $e) {
+            $message = (strpos(strtolower($e->getMessage()), 'duplicate') !== false)
+                ? 'Username or email already exists.'
+                : 'Failed to update user. Please try again.';
+            return redirect()->back()->withInput()->with('error', $message);
+        }
+        
         return redirect()->to('/admin/Administration/ManageUser')->with('success', 'User updated successfully.');
     }
 

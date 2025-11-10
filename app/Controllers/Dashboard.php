@@ -16,6 +16,9 @@ class Dashboard extends BaseController
         $username = session()->get('username') ?? 'User';
 
         $data = $this->buildDashboardData($userRole, $username);
+        if ($userRole === 'doctor') {
+            return view('Roles/doctor/dashboard', $data);
+        }
         return view('auth/dashboard', $data);
     }
     
@@ -85,21 +88,52 @@ class Dashboard extends BaseController
 
         // If user is lab staff, load lab-specific data
         if ($userRole === 'lab_staff') {
-            // In a real application, you would fetch these from your database
-            // For example:
-            // $labTestModel = new \App\Models\LabTestModel();
-            // $data['pendingTests'] = $labTestModel->where('status', 'pending')->findAll();
-            // $data['completedToday'] = $labTestModel->where('status', 'completed')
-            //     ->where('DATE(completed_at)', $today)
-            //     ->countAllResults();
-            // $data['monthlyTests'] = $labTestModel->where('created_at >=', $monthStart)
-            //     ->where('created_at <=', $monthEnd)
-            //     ->countAllResults();
-            
-            // For now, we'll set some dummy data
             $data['pendingTests'] = [];
             $data['completedToday'] = 0;
             $data['monthlyTests'] = 0;
+        }
+
+        // Doctor KPIs: 4 simple, connected metrics
+        if ($userRole === 'doctor') {
+            try {
+                $db = \Config\Database::connect();
+                $doctorId = (string) (session()->get('user_id') ?? '');
+                if ($doctorId !== '') {
+                    // 1) Today's appointments (exclude cancelled/no_show)
+                    $data['appointmentsCount'] = (int) $db->table('appointments')
+                        ->where('doctor_id', $doctorId)
+                        ->where('appointment_date', $today)
+                        ->whereNotIn('status', ['cancelled', 'no_show'])
+                        ->countAllResults();
+
+                    // 2) Pending today (scheduled/confirmed/in_progress only)
+                    $data['pendingAppointmentsToday'] = (int) $db->table('appointments')
+                        ->where('doctor_id', $doctorId)
+                        ->where('appointment_date', $today)
+                        ->whereIn('status', ['scheduled','confirmed','in_progress'])
+                        ->countAllResults();
+
+                    // 3) Pending lab results (if lab_requests has doctor_id)
+                    $data['pendingLabResults'] = 0;
+                    if ($db->tableExists('lab_requests') && $db->fieldExists('doctor_id', 'lab_requests')) {
+                        $data['pendingLabResults'] = (int) $db->table('lab_requests')
+                            ->where('doctor_id', $doctorId)
+                            ->whereIn('status', ['pending','in_progress'])
+                            ->countAllResults();
+                    }
+
+                    // 4) Today's shifts (doctor's own schedule only)
+                    $data['todaysShifts'] = 0;
+                    if ($db->tableExists('doctor_schedules')) {
+                        $data['todaysShifts'] = (int) $db->table('doctor_schedules')
+                            ->where('doctor_id', $doctorId)
+                            ->where('shift_date', $today)
+                            ->countAllResults();
+                    }
+                }
+            } catch (\Throwable $e) {
+                log_message('error', 'Doctor dashboard KPI error: ' . $e->getMessage());
+            }
         }
 
         return $data;

@@ -32,6 +32,7 @@ $routes->setAutoRoute(false);
 // Only logged-in users can see this (unified dashboard)
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 // Convenience role-specific dashboards (reuse unified dashboard)
+$routes->get('doctor/dashboard', 'Dashboard::index', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/my-schedule', 'Doctor\DoctorScheduleController::view', ['filter' => 'auth:doctor']);
 $routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
@@ -74,6 +75,11 @@ $routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 
 $routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
 $routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
 
+// Doctor patients routes
+$routes->group('doctor/patients', ['namespace' => 'App\\Controllers', 'filter' => 'auth:doctor,admin'], function($routes) {
+    $routes->get('view', 'Patients::doctorView');
+});
+
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
 
@@ -112,6 +118,10 @@ $routes->get('appointments/search', 'Appointment::search');
 $routes->get('appointments/stats', 'Appointment::getStats');
 $routes->get('appointments/by-date-range', 'Appointment::byDateRange');
 
+// Doctor shortcuts for appointments
+$routes->group('doctor', ['filter' => 'auth:doctor,admin'], function($routes) {
+    $routes->get('appointments', 'Appointment::index');
+});
 
 // Billing Routes
 $routes->get('billing', 'Billing::index', ['filter' => 'auth']);
