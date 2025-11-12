@@ -1,0 +1,13 @@
+CRITICAL - 2025-08-26 02:52:14 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "doctor/dashboard.php"
+[Method: GET, Route: doctor/dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('doctor/dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('doctor/dashboard', [], true)
+ 3 APPPATH\Controllers\Doctor.php(25): view('doctor/dashboard', [...])
+ 4 APPPATH\Controllers\Doctor.php(10): App\Controllers\Doctor->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

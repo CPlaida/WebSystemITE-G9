@@ -1,0 +1,359 @@
+ERROR - 2025-09-16 02:52:44 --> mysqli_sql_exception: Table 'lab_requests' already exists in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `l...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `l...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `l...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `l...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-09-16-024500_CreateLabRequestsTable.php(81): CodeIgniter\Database\Forge->createTable('lab_requests')
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateLabRequestsTable->up()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-09-16 03:02:37 --> mysqli_sql_exception: Duplicate key name 'request_id' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `l...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `l...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `l...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `l...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-09-16-024500_CreateLabRequestsTable.php(81): CodeIgniter\Database\Forge->createTable('lab_requests')
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateLabRequestsTable->up()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-09-16 03:04:37 --> mysqli_sql_exception: Column count doesn't match value count at row 1 in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `te...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `te...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `te...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1841): CodeIgniter\Database\BaseConnection->query('INSERT INTO `te...', NULL, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2230): CodeIgniter\Database\BaseBuilder->batchExecute('_insertBatch', 100)
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\LaboratorySeeder.php(187): CodeIgniter\Database\BaseBuilder->insertBatch(Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\LaboratorySeeder->run()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-16 03:08:07 --> ErrorException: Undefined array key "test_name"
+[Method: GET, Route: laboratory/testresult/view/1]
+in APPPATH\Views\admin\laboratory\ViewTestResult.php on line 306.
+ 1 APPPATH\Views\admin\laboratory\ViewTestResult.php(306): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "test_name"', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\laboratory\\ViewTestResult.php', 306)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\laboratory\\ViewTestResult.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/laboratory/ViewTestResult', [], true)
+ 5 APPPATH\Controllers\Laboratory.php(204): view('admin/laboratory/ViewTestResult', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->viewTestResult('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-16 03:23:58 --> ErrorException: Undefined array key "test_name"
+[Method: GET, Route: laboratory/testresult/view/1]
+in APPPATH\Views\admin\laboratory\ViewTestResult.php on line 306.
+ 1 APPPATH\Views\admin\laboratory\ViewTestResult.php(306): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "test_name"', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\laboratory\\ViewTestResult.php', 306)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\laboratory\\ViewTestResult.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/laboratory/ViewTestResult', [], true)
+ 5 APPPATH\Controllers\Laboratory.php(271): view('admin/laboratory/ViewTestResult', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->viewTestResult('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-16 03:35:59 --> Validation errors: Date of birth is required
+ERROR - 2025-09-16 03:41:29 --> Failed to create lab request: The date_of_birth field is required.
+ERROR - 2025-09-16 03:46:19 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `la...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `la...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `la...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `la...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\LabRequestModel.php(67): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(128): App\Models\LabRequestModel->createRequest(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+CRITICAL - 2025-09-16 03:46:19 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+[Method: POST, Route: laboratory/request/submit]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (:test_name:, :test_type:, :test_date:, :test_time:, :status:, :notes:, :patient_id:, :created_at:, :updated_at:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Models\LabRequestModel.php(67): CodeIgniter\Model->insert([...])
+ 6 APPPATH\Controllers\Laboratory.php(128): App\Models\LabRequestModel->createRequest([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-16 03:46:19 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:46:19\', \'pending\', \'aadsf\', \'2\', \'2025-09-16 03:46:19\', \'2025-09-16 03:46:19\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:46:19\', \'pending\', \'aadsf\', \'2\', \'2025-09-16 03:46:19\', \'2025-09-16 03:46:19\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (:test_name:, :test_type:, :test_date:, :test_time:, :status:, :notes:, :patient_id:, :created_at:, :updated_at:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Models\LabRequestModel.php(67): CodeIgniter\Model->insert([...])
+ 8 APPPATH\Controllers\Laboratory.php(128): App\Models\LabRequestModel->createRequest([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-16 03:46:19 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:46:19\', \'pending\', \'aadsf\', \'2\', \'2025-09-16 03:46:19\', \'2025-09-16 03:46:19\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:46:19\', \'pending\', \'aadsf\', \'2\', \'2025-09-16 03:46:19\', \'2025-09-16 03:46:19\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:46:19\', \'pending\', \'aadsf\', \'2\', \'2025-09-16 03:46:19\', \'2025-09-16 03:46:19\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `patient_id`, `created_at`, `updated_at`) VALUES (:test_name:, :test_type:, :test_date:, :test_time:, :status:, :notes:, :patient_id:, :created_at:, :updated_at:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Models\LabRequestModel.php(67): CodeIgniter\Model->insert([...])
+ 9 APPPATH\Controllers\Laboratory.php(128): App\Models\LabRequestModel->createRequest([...])
+10 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+11 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+12 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-16 03:47:33 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `la...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `la...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `la...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `la...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\LabRequestModel.php(67): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(127): App\Models\LabRequestModel->createRequest(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+CRITICAL - 2025-09-16 03:47:33 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+[Method: POST, Route: laboratory/request/submit]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (:test_name:, :test_type:, :test_date:, :test_time:, :status:, :notes:, :created_at:, :updated_at:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Models\LabRequestModel.php(67): CodeIgniter\Model->insert([...])
+ 6 APPPATH\Controllers\Laboratory.php(127): App\Models\LabRequestModel->createRequest([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-16 03:47:33 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:47:33\', \'pending\', \'aadsf\', \'2025-09-16 03:47:33\', \'2025-09-16 03:47:33\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:47:33\', \'pending\', \'aadsf\', \'2025-09-16 03:47:33\', \'2025-09-16 03:47:33\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (:test_name:, :test_type:, :test_date:, :test_time:, :status:, :notes:, :created_at:, :updated_at:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Models\LabRequestModel.php(67): CodeIgniter\Model->insert([...])
+ 8 APPPATH\Controllers\Laboratory.php(127): App\Models\LabRequestModel->createRequest([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-16 03:47:33 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:47:33\', \'pending\', \'aadsf\', \'2025-09-16 03:47:33\', \'2025-09-16 03:47:33\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:47:33\', \'pending\', \'aadsf\', \'2025-09-16 03:47:33\', \'2025-09-16 03:47:33\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (\'Maria Santos\', \'blood\', \'2025-09-16\', \'03:47:33\', \'pending\', \'aadsf\', \'2025-09-16 03:47:33\', \'2025-09-16 03:47:33\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `laboratory` (`test_name`, `test_type`, `test_date`, `test_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES (:test_name:, :test_type:, :test_date:, :test_time:, :status:, :notes:, :created_at:, :updated_at:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Models\LabRequestModel.php(67): CodeIgniter\Model->insert([...])
+ 9 APPPATH\Controllers\Laboratory.php(127): App\Models\LabRequestModel->createRequest([...])
+10 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+11 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+12 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-16 03:49:36 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `la...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `la...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `la...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `la...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(132): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-09-16 03:49:36 --> Lab request creation failed: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`laboratory`, CONSTRAINT `laboratory_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)
+CRITICAL - 2025-09-16 03:53:43 --> ErrorException: Undefined array key "test_name"
+[Method: GET, Route: laboratory/testresult/view/1]
+in APPPATH\Views\admin\laboratory\ViewTestResult.php on line 306.
+ 1 APPPATH\Views\admin\laboratory\ViewTestResult.php(306): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "test_name"', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\laboratory\\ViewTestResult.php', 306)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\laboratory\\ViewTestResult.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/laboratory/ViewTestResult', [], true)
+ 5 APPPATH\Controllers\Laboratory.php(283): view('admin/laboratory/ViewTestResult', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->viewTestResult('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-16 04:00:34 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:00:37 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:00:40 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:03:30 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:03:32 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:03:35 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 04:03:37 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 04:05:27 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:05:34 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 04:08:36 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:08:38 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:08:41 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 04:10:58 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:11:00 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:11:03 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 04:13:46 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:22:27 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:22:30 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 04:22:35 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 09:13:10 --> mysqli_sql_exception: Duplicate entry 'LR202509160001' for key 'request_id' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `la...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `la...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `la...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1841): CodeIgniter\Database\BaseConnection->query('INSERT INTO `la...', NULL, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2230): CodeIgniter\Database\BaseBuilder->batchExecute('_insertBatch', 100)
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\LaboratorySeeder.php(72): CodeIgniter\Database\BaseBuilder->insertBatch(Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\LaboratorySeeder->run()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-09-16 09:16:51 --> mysqli_sql_exception: Duplicate entry 'admin' for key 'username' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `us...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `us...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `us...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1841): CodeIgniter\Database\BaseConnection->query('INSERT INTO `us...', NULL, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2230): CodeIgniter\Database\BaseBuilder->batchExecute('_insertBatch', 100)
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\UserSeeder.php(89): CodeIgniter\Database\BaseBuilder->insertBatch(Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\UserSeeder->run()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\DatabaseSeeder.php(11): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\DatabaseSeeder->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#14 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#15 {main}
+<<<<<<< HEAD
+ERROR - 2025-09-16 09:43:52 --> mysqli_sql_exception: Duplicate key name 'request_id' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `l...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `l...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `l...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `l...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-09-16-024500_CreateLabRequestsTable.php(81): CodeIgniter\Database\Forge->createTable('lab_requests')
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateLabRequestsTable->up()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-09-16 12:10:37 --> mysqli_sql_exception: Duplicate key name 'request_id' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `l...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `l...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `l...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `l...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-09-16-024500_CreateLabRequestsTable.php(81): CodeIgniter\Database\Forge->createTable('lab_requests')
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateLabRequestsTable->up()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+=======
+ERROR - 2025-09-16 10:43:24 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 10:46:24 --> mysqli_sql_exception: Duplicate entry 'admin' for key 'username' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `us...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `us...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `us...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1841): CodeIgniter\Database\BaseConnection->query('INSERT INTO `us...', NULL, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2230): CodeIgniter\Database\BaseBuilder->batchExecute('_insertBatch', 100)
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\UserSeeder.php(89): CodeIgniter\Database\BaseBuilder->insertBatch(Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\UserSeeder->run()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\DatabaseSeeder.php(11): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\DatabaseSeeder->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#14 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#15 {main}
+ERROR - 2025-09-16 10:52:04 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 10:52:08 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 10:52:11 --> Failed to load test for result entry: Undefined variable $testId
+>>>>>>> c104d442b57c6e4f1649b5faf2f2d89f92d6d323
+ERROR - 2025-09-16 13:59:20 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 14:00:56 --> Failed to get test result: Undefined array key "patient_name"
+ERROR - 2025-09-16 14:01:02 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:03 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:05 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:06 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:01:07 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:59:43 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:59:48 --> Failed to load test for result entry: Undefined variable $testId
+ERROR - 2025-09-16 14:59:53 --> Failed to load test for result entry: Undefined variable $testId

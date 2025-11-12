@@ -1,0 +1,2069 @@
+<<<<<<< HEAD
+CRITICAL - 2025-09-08 13:41:52 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: billing]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\admin\Billing & payment\billingmanagement.php(984): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\Billing & payment\\billingmanagement.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 5 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+=======
+CRITICAL - 2025-09-08 14:36:31 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/appointments/Appointmentlist.php"
+[Method: GET, Route: appointments/list]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/appointments/Appointmentlist.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/appointments/Appointmentlist', [], true)
+ 3 APPPATH\Controllers\Appointment.php(40): view('admin/appointments/Appointmentlist', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:02:05 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/6]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(326): CodeIgniter\Model->update('6', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('6')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:02:08 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(326): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:02:47 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(326): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:04:42 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(326): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:12:17 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/6]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(343): CodeIgniter\Model->update('6', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('6')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:12:20 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(343): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:12:33 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(343): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:03 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(343): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:19:05 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:19:06 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:06 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:06 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:19:07 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:19:07 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:07 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:07 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:19:08 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:19:08 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:08 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:08 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:19:14 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:19:14 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/1]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:14 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:19:14 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:32 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:32 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:32 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:32 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:33 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:33 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:33 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:33 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:34 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:34 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:34 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:34 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:35 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:35 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:35 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:35 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:36 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:36 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:36 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:36 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:50 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:50 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:50 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:50 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:54 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:54 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:54 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:54 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:58 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('6')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:58 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/6]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('6')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:58 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'6\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'6\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('6')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:58 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'6\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'6\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'6\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('6')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:22:59 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('5')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:22:59 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/5]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('5')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:59 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'5\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'5\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('5')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:22:59 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'5\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'5\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'5\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('5')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:23:00 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:23:00 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/1]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:23:00 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:23:00 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'1\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('1')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:24:52 --> mysqli_sql_exception: Unknown column 'users.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appoint...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appoint...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appoint...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appoint...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-09-08 15:24:52 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+[Method: GET, Route: appointments/show/4]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:24:52 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:24:52 --> [Caused by] mysqli_sql_exception: Unknown column 'users.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = \'4\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `appointments`.*, `patients`.`first_name` as `patient_first_name`, `patients`.`last_name` as `patient_last_name`, `users`.`first_name` as `doctor_first_name`, `users`.`last_name` as `doctor_last_name`, `users`.`specialization`
+FROM `appointments`
+LEFT JOIN `patients` ON `patients`.`id` = `appointments`.`patient_id`
+LEFT JOIN `users` ON `users`.`id` = `appointments`.`doctor_id`
+WHERE `appointments`.`id` = :appointments.id:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Controllers\Appointment.php(257): CodeIgniter\BaseModel->first()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->show('4')
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:26:18 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(343): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:30:20 --> mysqli_sql_exception: Unknown column 'u.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->index()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-09-08 15:30:20 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+[Method: GET, Route: appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 2 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:30:20 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 4 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+>>>>>>> d7fb365d9f760f01b3742de8589fd861d700100a
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+<<<<<<< HEAD
+CRITICAL - 2025-09-08 13:42:10 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: billing]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\admin\Billing & payment\billingmanagement.php(984): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\admin\\Billing & payment\\billingmanagement.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 5 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+=======
+CRITICAL - 2025-09-08 15:30:20 --> [Caused by] mysqli_sql_exception: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 5 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:30:23 --> mysqli_sql_exception: Unknown column 'u.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->index()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-09-08 15:30:23 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+[Method: GET, Route: appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 2 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:30:23 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 4 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+>>>>>>> d7fb365d9f760f01b3742de8589fd861d700100a
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+<<<<<<< HEAD
+CRITICAL - 2025-09-08 13:50:45 --> ParseError: syntax error, unexpected identifier "s", expecting "," or ";"
+[Method: GET, Route: billing]
+in APPPATH\Views\admin\Billing & payment\billingmanagement.php on line 320.
+ 1 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 3 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+=======
+CRITICAL - 2025-09-08 15:30:23 --> [Caused by] mysqli_sql_exception: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 5 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:30:32 --> mysqli_sql_exception: Unknown column 'u.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->index()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-09-08 15:30:32 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+[Method: GET, Route: appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 2 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+>>>>>>> d7fb365d9f760f01b3742de8589fd861d700100a
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+<<<<<<< HEAD
+CRITICAL - 2025-09-08 13:51:22 --> ParseError: syntax error, unexpected identifier "s", expecting "," or ";"
+[Method: GET, Route: billing]
+in APPPATH\Views\admin\Billing & payment\billingmanagement.php on line 320.
+ 1 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/billingmanagement', [], true)
+ 3 APPPATH\Controllers\Billing.php(20): view('admin/Billing & payment/billingmanagement')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:57:36 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/Billing & payment/receipt.php"
+[Method: GET, Route: billing/receipt/INV-2023-001]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/Billing & payment/receipt.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/receipt', [], true)
+ 3 APPPATH\Controllers\Billing.php(65): view('admin/Billing & payment/receipt', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->receipt('INV-2023-001')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:57:39 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/Billing & payment/receipt.php"
+[Method: GET, Route: billing/receipt/INV-2023-001]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/Billing & payment/receipt.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/receipt', [], true)
+ 3 APPPATH\Controllers\Billing.php(65): view('admin/Billing & payment/receipt', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->receipt('INV-2023-001')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 13:57:59 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/Billing & payment/receipt.php"
+[Method: GET, Route: billing/receipt/INV-2023-001]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/Billing & payment/receipt.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/Billing & payment/receipt', [], true)
+ 3 APPPATH\Controllers\Billing.php(65): view('admin/Billing & payment/receipt', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->receipt('INV-2023-001')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+=======
+CRITICAL - 2025-09-08 15:30:32 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 4 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:30:32 --> [Caused by] mysqli_sql_exception: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 5 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-09-08 15:30:36 --> mysqli_sql_exception: Unknown column 'u.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->index()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-09-08 15:30:36 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+[Method: GET, Route: appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 2 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+>>>>>>> d7fb365d9f760f01b3742de8589fd861d700100a
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+<<<<<<< HEAD
+=======
+CRITICAL - 2025-09-08 15:30:36 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 4 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:30:36 --> [Caused by] mysqli_sql_exception: Unknown column 'u.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`last_name` as `patient_last_name`, `p`.`phone` as `patient_phone`, `u`.`first_name` as `doctor_first_name`, `u`.`last_name` as `doctor_last_name`, `u`.`specialization`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id` AND `u`.`role` = "doctor"
+ORDER BY `a`.`appointment_date` DESC, `a`.`appointment_time` ASC', [], false)
+ 5 APPPATH\Models\AppointmentModel.php(106): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(37): App\Models\AppointmentModel->getAppointmentsWithDetails()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:37:06 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/5]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(343): CodeIgniter\Model->update('5', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('5')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:37:10 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/6]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(343): CodeIgniter\Model->update('6', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('6')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-08 15:51:10 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/7]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(301): CodeIgniter\Model->update('7', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('7')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+>>>>>>> d7fb365d9f760f01b3742de8589fd861d700100a

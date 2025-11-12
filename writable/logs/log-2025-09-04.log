@@ -1,0 +1,12 @@
+CRITICAL - 2025-09-04 15:31:22 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "admin/laboratory/ViewTestResult.php"
+[Method: GET, Route: laboratory/testresult/view/1]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('admin/laboratory/ViewTestResult.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin/laboratory/ViewTestResult', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(101): view('admin/laboratory/ViewTestResult', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->viewTestResult('1')
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

@@ -159,26 +159,4 @@ class Patients extends BaseController
 
         return $this->response->setJSON(['patient' => $patient]);
     }
-
-    public function doctorView()
-    {
-        if (!session()->has('user_id')) {
-            return redirect()->to('login');
-        }
-
-        $role = session('role');
-        if (!in_array($role, ['doctor', 'admin'])) {
-            return redirect()->back()->with('error', 'You do not have permission to access this page.');
-        }
-
-        $patients = $this->patientModel->orderBy('created_at', 'DESC')->findAll();
-
-        $data = [
-            'title' => 'Patients',
-            'active_menu' => 'patients',
-            'patients' => $patients
-        ];
-
-        return view('Roles/doctor/patients/view', $data);
-    }
 }

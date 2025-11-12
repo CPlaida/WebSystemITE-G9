@@ -1,0 +1,46 @@
+ERROR - 2025-10-23 17:00:55 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-23 17:00:55 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-23 17:00:56 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-23 17:00:58 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-23 17:04:46 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-23 17:08:47 --> Failed to load test for result entry: Invalid file: "admin/laboratory/AddTestResult.php"
+ERROR - 2025-10-23 17:09:00 --> Failed to load test for result entry: Invalid file: "admin/laboratory/AddTestResult.php"
+CRITICAL - 2025-10-23 17:38:35 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/3]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(341): CodeIgniter\Model->update('3', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('3')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-23 17:38:53 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/4]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(341): CodeIgniter\Model->update('4', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('4')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-23 17:38:54 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/11]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(341): CodeIgniter\Model->update('11', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('11')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

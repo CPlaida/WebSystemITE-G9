@@ -1,0 +1,112 @@
+CRITICAL - 2025-09-18 13:50:30 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "doctor/schedule_pdf.php"
+[Method: GET, Route: doctor/exportToPDF]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('doctor/schedule_pdf.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('doctor/schedule_pdf', [], true)
+ 3 APPPATH\Controllers\Doctor\Doctor.php(369): view('doctor/schedule_pdf', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->exportToPDF()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 13:51:21 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(318): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-19', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 13:51:24 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(318): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-18', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 13:51:45 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(318): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-18', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 14:01:03 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(345): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-18', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 14:04:04 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(345): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-18', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 14:11:20 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(345): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-18', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 14:11:30 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(345): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-20', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 14:11:44 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(345): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-20', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 14:11:46 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(345): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-20', 'afternoon')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-09-18 14:12:14 --> Error: Class "App\Models\User\UserModel" not found
+[Method: POST, Route: doctor/getAvailableDoctors]
+in APPPATH\Models\DoctorScheduleModel.php on line 239.
+ 1 APPPATH\Controllers\Doctor\Doctor.php(345): App\Models\DoctorScheduleModel->getAvailableDoctors('2025-09-20', 'morning')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->getAvailableDoctors()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

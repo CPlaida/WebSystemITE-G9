@@ -258,6 +258,26 @@
 
         <?php endif; ?>
 
+        <?php if ($role === 'labstaff' || $role === 'Lab_staff'): ?>
+            <li class="nav-item">
+                <a href="<?= site_url('dashboard') ?>">
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="<?= site_url('labstaff/laboratory/request') ?>">
+                    <span class="text">Lab Request</span>
+                </a>
+            </li>
+
+            <!-- Patients -->
+            <li class="nav-item">
+                <a href="<?= site_url('labstaff/laboratory/testresult') ?>">
+                    <span class="text">Test Result</span>
+                </a>
+            </li>
+        <?php endif; ?>
+
         <!-- Common menu items for all users -->
         <li class="nav-item" style="margin-top: auto;">
             <a href="<?= site_url('auth/logout') ?>">
@@ -266,3 +286,4 @@
         </li>
     </ul>
 </div>
+       
