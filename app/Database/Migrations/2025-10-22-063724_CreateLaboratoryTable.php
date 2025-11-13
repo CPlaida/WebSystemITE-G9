@@ -28,6 +28,12 @@ class CreateLaboratoryTable extends Migration
                 'constraint' => 20,
                 'null'       => true,
             ],
+            'service_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'null'       => true,
+            ],
             'test_name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 200,
@@ -61,6 +67,11 @@ class CreateLaboratoryTable extends Migration
                 'type'       => 'ENUM',
                 'constraint' => ['pending', 'in_progress', 'completed', 'cancelled'],
                 'default'    => 'pending',
+            ],
+            'billed' => [
+                'type'       => 'TINYINT',
+                'constraint' => 1,
+                'default'    => 0,
             ],
             'cost' => [
                 'type'       => 'DECIMAL',

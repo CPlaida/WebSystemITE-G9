@@ -123,6 +123,7 @@ $routes->post('billing/save', 'Billing::save', ['filter' => 'auth']);
 $routes->post('billing/store', 'Billing::store', ['filter' => 'auth']);
 // New: store header + items in a single transaction
 $routes->post('billing/store-with-items', 'Billing::storeWithItems', ['filter' => 'auth']);
+$routes->get('billing/patient-services', 'Billing::patientServices', ['filter' => 'auth']);
 $routes->get('billing/edit/(:num)', 'Billing::edit/$1', ['filter' => 'auth']);
 $routes->post('billing/update/(:num)', 'Billing::update/$1', ['filter' => 'auth']);
 $routes->get('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth']);

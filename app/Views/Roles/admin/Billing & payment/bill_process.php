@@ -15,7 +15,7 @@
                 <!-- Patient Information -->
                 <div class="form-section" style="background-color: #f0f7ff; position: relative;">
                     <h3 class="section-header" style="color: #2980b9;">Patient Information</h3>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px;">
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;">
                         <div class="form-group" style="position: relative;">
                             <label for="patientName">Patient Name</label>
                             <input type="text" id="patientName" class="form-control" placeholder="Enter patient name" autocomplete="off">
@@ -31,14 +31,6 @@
                             <select id="payment_method" name="payment_method" class="form-control">
                                 <option value="cash">Cash</option>
                                 <option value="insurance">Insurance</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="payment_status">Payment Status</label>
-                            <select id="payment_status" name="payment_status" class="form-control" required>
-                                <option value="pending" selected>Pending</option>
-                                <option value="paid">Paid</option>
-                                <option value="partial">Partial</option>
                             </select>
                         </div>
                     </div>
@@ -62,7 +54,6 @@
                                     <th style="width: 80px;">Qty</th>
                                     <th style="width: 120px;">Unit Price</th>
                                     <th style="width: 120px;">Amount</th>
-                                    <th style="width: 50px;"></th>
                                 </tr>
                             </thead>
                             <tbody id="billItems">
@@ -113,6 +104,7 @@
     <tr>
         <td>
             <input type="text" name="service[]" class="form-control service" required>
+            <input type="hidden" name="lab_id[]" class="lab-id">
         </td>
         <td>
             <input type="number" name="qty[]" class="form-control qty" min="1" value="1" required>
@@ -123,11 +115,6 @@
         <td>
             <input type="number" name="amount[]" class="form-control amount" readonly>
         </td>
-        <td class="text-right">
-            <button type="button" class="btn btn-sm btn-danger remove-item">
-                <i class="fas fa-times"></i>
-            </button>
-        </td>
     </tr>
 </template>
 
@@ -136,6 +123,75 @@
 const patientInput = document.getElementById('patientName');
 const patientList = document.getElementById('patientList');
 const patientID = document.getElementById('patientID');
+
+async function loadPatientServices(patientId){
+    try {
+        const res = await fetch(`<?= base_url('billing/patient-services') ?>?patient_id=${encodeURIComponent(patientId)}`);
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : (data.items || []);
+        if (items.length) {
+            setBillItems(items);
+        } else {
+            // No items: leave table empty
+        }
+    } catch (err) {
+        try { console.error('Failed to load patient services', err); } catch(_) {}
+        ensureAtLeastOneRow();
+    }
+}
+
+function setBillItems(items){
+    const tbody = document.getElementById('billItems');
+    const tpl = document.getElementById('billItemTemplate');
+    // Clear existing
+    tbody.innerHTML = '';
+    items.forEach(it => {
+        const rowFrag = tpl.content.cloneNode(true);
+        const row = rowFrag.querySelector('tr');
+        row.querySelector('.service').value = it.service || '';
+        row.querySelector('.qty').value = it.qty != null ? it.qty : 1;
+        row.querySelector('.price').value = (it.price != null ? it.price : 0).toFixed ? it.price : Number(it.price || 0);
+        const qty = parseFloat(row.querySelector('.qty').value) || 0;
+        const price = parseFloat(row.querySelector('.price').value) || 0;
+        row.querySelector('.amount').value = (it.amount != null ? it.amount : qty * price).toFixed ? (it.amount != null ? it.amount : qty * price) : Number(it.amount || qty * price);
+        if (it.lab_id) {
+            row.querySelector('.lab-id').value = it.lab_id;
+            // lock down auto-filled lab items from editing
+            const svcInput = row.querySelector('.service');
+            const qtyInput = row.querySelector('.qty');
+            const priceInput = row.querySelector('.price');
+            svcInput.readOnly = true;
+            qtyInput.readOnly = true;
+            priceInput.readOnly = true;
+            row.setAttribute('data-locked', '1');
+            // subtle style cue
+            svcInput.style.backgroundColor = '#f5f5f5';
+            qtyInput.style.backgroundColor = '#f5f5f5';
+            priceInput.style.backgroundColor = '#f5f5f5';
+            // disable remove button
+            const removeBtn = row.querySelector('.remove-item');
+            if (removeBtn) {
+                removeBtn.disabled = true;
+                removeBtn.classList.add('disabled');
+                removeBtn.title = 'Linked to laboratory record';
+            }
+        }
+        tbody.appendChild(rowFrag);
+    });
+    // Normalize numeric display
+    document.querySelectorAll('#billItems .price').forEach(i => i.value = (parseFloat(i.value)||0).toFixed(2));
+    document.querySelectorAll('#billItems .amount').forEach(i => i.value = (parseFloat(i.value)||0).toFixed(2));
+    updateTotals();
+}
+
+function ensureAtLeastOneRow(){ /* no-op: do not auto-add blank rows */ }
+
+// Also react if some other script sets patientID
+document.getElementById('patientID')?.addEventListener('change', function(){
+    const pid = this.value && this.value.trim();
+    if (pid) { loadPatientServices(pid); }
+});
+
 
 if (patientInput) {
     patientInput.addEventListener('input', async function() {
@@ -167,6 +223,8 @@ if (patientInput) {
                     patientID.value = p.id;
                     patientList.innerHTML = '';
                     patientList.style.display = 'none';
+                    // Auto-load patient's services
+                    loadPatientServices(p.id);
                 };
                 patientList.appendChild(item);
             });
@@ -179,6 +237,32 @@ if (patientInput) {
         if (!patientList.contains(e.target) && e.target !== patientInput) {
             patientList.innerHTML = '';
             patientList.style.display = 'none';
+        }
+    });
+    // Trigger selection on Enter: pick first suggestion automatically
+    patientInput.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const first = patientList.querySelector('a');
+            if (first && first.textContent) {
+                first.click();
+            } else if (!patientID.value) {
+                const term = patientInput.value.trim();
+                if (term) {
+                    try {
+                        const res = await fetch(`<?= base_url('patients/search') ?>?term=${encodeURIComponent(term)}`);
+                        const data = await res.json();
+                        const results = Array.isArray(data) ? data : (data.patients || []);
+                        if (results.length) {
+                            patientInput.value = results[0].name;
+                            patientID.value = results[0].id;
+                            patientList.innerHTML = '';
+                            patientList.style.display = 'none';
+                            loadPatientServices(results[0].id);
+                        }
+                    } catch {}
+                }
+            }
         }
     });
 }
@@ -203,13 +287,7 @@ document.addEventListener('input', function(e) {
     }
 });
 
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.remove-item')) {
-        const row = e.target.closest('tr');
-        row?.remove();
-        updateTotals();
-    }
-});
+// No row removal – X button removed
 
 function updateTotals() {
     let subtotal = 0;
@@ -281,10 +359,7 @@ document.getElementById('billForm')?.addEventListener('submit', function(e) {
     }
 });
 
-// Initialize with one row
-(function initFirstRow(){
-    document.getElementById('addItem')?.click();
-})();
+// Do not auto-add initial row
 
 </script>
 

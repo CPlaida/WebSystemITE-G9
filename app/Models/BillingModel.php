@@ -62,7 +62,7 @@ class BillingModel extends Model
 
         // Optional services join if schema exists
         if ($this->tableHas('billing', 'service_id') && $this->tableHas('services')) {
-            $builder->select('s.name AS service_name, s.price AS service_price')
+            $builder->select('s.name AS service_name, s.base_price AS service_price')
                     ->join('services s', 's.id = b.service_id', 'left');
         }
         return $builder;

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\LaboratoryModel;
+use App\Models\ServiceModel;
 
 class Laboratory extends Controller
 {
@@ -129,6 +130,25 @@ class Laboratory extends Controller
             'status' => 'pending',
             'notes' => $clinicalNotes
         ];
+
+        // Attempt to snapshot service_id and cost from services table
+        try {
+            $svcModel = new ServiceModel();
+            $svc = null;
+            if (!empty($testType)) {
+                $svc = $svcModel->findByCodeOrName($testType);
+                if (!$svc) {
+                    // fallback: try case-insensitive name match
+                    $svc = $svcModel->where('LOWER(name)', strtolower($testType))->where('active', 1)->get()->getRowArray();
+                }
+            }
+            if ($svc) {
+                $data['service_id'] = (int)$svc['id'];
+                $data['cost'] = (float)$svc['base_price'];
+            }
+        } catch (\Throwable $e) {
+            // ignore snapshot errors; lab record can still be created
+        }
 
         // Data prepared for insertion
         try {

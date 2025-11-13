@@ -13,8 +13,8 @@ class LaboratoryModel extends Model
     protected $useSoftDeletes = false;
 
     protected $allowedFields = [
-        'patient_id', 'doctor_id', 'test_name', 'test_type', 'priority',
-        'test_date', 'test_time', 'test_results', 'normal_range', 'status',
+        'patient_id', 'doctor_id', 'service_id', 'test_name', 'test_type', 'priority',
+        'test_date', 'test_time', 'test_results', 'normal_range', 'status', 'billed',
         'cost', 'notes', 'created_at', 'updated_at'
     ];
 
