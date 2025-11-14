@@ -101,6 +101,7 @@
                             <label class="form-label">Province <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
+                                <input type="text" id="provinceSearch" class="form-control" placeholder="Search province..." style="max-width: 220px;">
                                 <select id="provinceSelect" class="form-select" required>
                                     <option value="">Select Province</option>
                                 </select>
@@ -110,6 +111,7 @@
                             <label class="form-label">City/Municipality <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-city text-muted"></i></span>
+                                <input type="text" id="citySearch" class="form-control" placeholder="Search city/municipality..." style="max-width: 220px;">
                                 <select id="citySelect" class="form-select" required disabled>
                                     <option value="">Select City/Municipality</option>
                                 </select>
@@ -119,6 +121,7 @@
                             <label class="form-label">Barangay <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-home text-muted"></i></span>
+                                <input type="text" id="barangaySearch" class="form-control" placeholder="Search barangay..." style="max-width: 220px;">
                                 <select id="barangaySelect" class="form-select" required disabled>
                                     <option value="">Select Barangay</option>
                                 </select>
@@ -182,9 +185,6 @@
                                     <option value="A2-" <?= old('blood_type') == 'A2-' ? 'selected' : '' ?>>A2-</option>
                                     <option value="A2B+" <?= old('blood_type') == 'A2B+' ? 'selected' : '' ?>>A2B+</option>
                                     <option value="A2B-" <?= old('blood_type') == 'A2B-' ? 'selected' : '' ?>>A2B-</option>
-                                    <option value="Bombay (Oh)" <?= old('blood_type') == 'Bombay (Oh)' ? 'selected' : '' ?>>Bombay (Oh)</option>
-                                    <option value="Hh (Bombay)" <?= old('blood_type') == 'Hh (Bombay)' ? 'selected' : '' ?>>Hh (Bombay)</option>
-                                    <option value="Rh null (Golden Blood)" <?= old('blood_type') == 'Rh null (Golden Blood)' ? 'selected' : '' ?>>Rh null (Golden Blood)</option>
                                 </select>
                             </div>
                         </div>
@@ -217,40 +217,45 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Insurance Provider</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-building text-muted"></i></span>
-                                <select name="insurance_provider" class="form-select">
-                                    <option value="">Select Insurance Provider</option>
-                                    <?php
-                                        $insuranceOptions = [
-                                            'PhilHealth',
-                                            'Maxicare',
-                                            'Intellicare',
-                                            'Medicard',
-                                            'Kaiser',
-                                            'Others',
-                                        ];
-                                        $oldInsurance = old('insurance_provider');
-                                    ?>
-                                    <?php foreach ($insuranceOptions as $opt): ?>
-                                        <option value="<?= esc($opt) ?>" <?= $oldInsurance === $opt ? 'selected' : '' ?>>
-                                            <?= esc($opt) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                    <div id="insuranceContainer">
+                        <div class="form-row insurance-row">
+                            <div class="form-group">
+                                <label class="form-label">Insurance Provider</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-building text-muted"></i></span>
+                                    <select name="insurance_provider" class="form-select">
+                                        <option value="">Select Insurance Provider</option>
+                                        <?php
+                                            $insuranceOptions = [
+                                                'PhilHealth',
+                                                'Maxicare',
+                                                'Intellicare',
+                                                'Medicard',
+                                                'Kaiser',
+                                                'Others',
+                                            ];
+                                            $oldInsurance = old('insurance_provider');
+                                        ?>
+                                        <?php foreach ($insuranceOptions as $opt): ?>
+                                            <option value="<?= esc($opt) ?>" <?= $oldInsurance === $opt ? 'selected' : '' ?>>
+                                                <?= esc($opt) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Policy / Insurance Number</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-id-card text-muted"></i></span>
-                                <input type="text" name="insurance_number" class="form-control" placeholder="Enter policy or insurance number" value="<?= old('insurance_number') ?>">
+                            <div class="form-group">
+                                <label class="form-label">Policy / Insurance Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card text-muted"></i></span>
+                                    <input type="text" name="insurance_number" class="form-control" placeholder="Enter policy or insurance number" value="<?= old('insurance_number') ?>">
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <button type="button" id="addInsuranceBtn" class="btn btn-sm btn-outline-primary" style="margin-top: 0.5rem; margin-bottom: 0.75rem;">
+                        <i class="fas fa-plus"></i> Add Insurance
+                    </button>
                     <div class="form-group">
                         <label class="form-label">Medical History & Allergies</label>
                         <div class="input-group">
@@ -396,7 +401,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const barangaySelect = document.getElementById('barangaySelect');
     const streetInput = document.getElementById('streetInput');
     const addressHidden = document.getElementById('addressHidden');
+    const provinceSearch = document.getElementById('provinceSearch');
+    const citySearch = document.getElementById('citySearch');
+    const barangaySearch = document.getElementById('barangaySearch');
     const apiBase = '<?= base_url('api/locations') ?>';
+
+    let provinceOptions = [];
+    let cityOptions = [];
+    let barangayOptions = [];
 
     const setLoading = (select, loading) => {
         if (!select) return;
@@ -417,19 +429,26 @@ document.addEventListener('DOMContentLoaded', function() {
         addressHidden.value = parts.join(', ');
     };
 
+    const renderOptions = (select, placeholder, rows) => {
+        if (!select) return;
+        select.innerHTML = `<option value="">${placeholder}</option>`;
+        rows.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.code;
+            opt.textContent = r.name;
+            select.appendChild(opt);
+        });
+        select.disabled = rows.length === 0;
+    };
+
     const loadProvinces = async () => {
         if (!provinceSelect) return;
         setLoading(provinceSelect, true);
         try {
             const res = await fetch(`${apiBase}/provinces`);
             const rows = await res.json();
-            provinceSelect.innerHTML = '<option value="">Select Province</option>';
-            rows.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r.code;
-                opt.textContent = r.name;
-                provinceSelect.appendChild(opt);
-            });
+            provinceOptions = rows;
+            renderOptions(provinceSelect, 'Select Province', provinceOptions);
             provinceSelect.disabled = false;
         } catch (e) {
             provinceSelect.innerHTML = '<option value="">Failed to load provinces</option>';
@@ -445,13 +464,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
             const rows = await res.json();
-            citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-            rows.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r.code;
-                opt.textContent = r.name;
-                citySelect.appendChild(opt);
-            });
+            cityOptions = rows;
+            renderOptions(citySelect, 'Select City/Municipality', cityOptions);
             citySelect.disabled = false;
         } catch (e) {
             citySelect.innerHTML = '<option value="">Failed to load cities</option>';
@@ -466,13 +480,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
             const rows = await res.json();
-            barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-            rows.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r.code;
-                opt.textContent = r.name;
-                barangaySelect.appendChild(opt);
-            });
+            barangayOptions = rows;
+            renderOptions(barangaySelect, 'Select Barangay', barangayOptions);
             barangaySelect.disabled = false;
         } catch (e) {
             barangaySelect.innerHTML = '<option value="">Failed to load barangays</option>';
@@ -493,6 +502,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 composeAddress();
                 return;
             }
+            if (citySearch) citySearch.value = '';
+            if (barangaySearch) barangaySearch.value = '';
             loadCities(v);
         });
         citySelect.addEventListener('change', () => {
@@ -503,10 +514,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 composeAddress();
                 return;
             }
+            if (barangaySearch) barangaySearch.value = '';
             loadBarangays(v);
         });
         barangaySelect.addEventListener('change', composeAddress);
         if (streetInput) streetInput.addEventListener('input', composeAddress);
+
+        if (provinceSearch) {
+            provinceSearch.addEventListener('input', () => {
+                const term = provinceSearch.value.trim().toLowerCase();
+                const filtered = term
+                    ? provinceOptions.filter(r => r.name.toLowerCase().includes(term))
+                    : provinceOptions;
+                renderOptions(provinceSelect, 'Select Province', filtered);
+            });
+        }
+
+        if (citySearch) {
+            citySearch.addEventListener('input', () => {
+                const term = citySearch.value.trim().toLowerCase();
+                const filtered = term
+                    ? cityOptions.filter(r => r.name.toLowerCase().includes(term))
+                    : cityOptions;
+                renderOptions(citySelect, 'Select City/Municipality', filtered);
+            });
+        }
+
+        if (barangaySearch) {
+            barangaySearch.addEventListener('input', () => {
+                const term = barangaySearch.value.trim().toLowerCase();
+                const filtered = term
+                    ? barangayOptions.filter(r => r.name.toLowerCase().includes(term))
+                    : barangayOptions;
+                renderOptions(barangaySelect, 'Select Barangay', filtered);
+            });
+        }
     }
 
     // Format phone number
@@ -532,6 +574,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (phoneInput) {
         phoneInput.addEventListener('input', (e) => formatPhoneNumber(e.target));
+    }
+
+    // Dynamic Insurance rows (add more)
+    const insuranceContainer = document.getElementById('insuranceContainer');
+    const addInsuranceBtn = document.getElementById('addInsuranceBtn');
+    if (insuranceContainer && addInsuranceBtn) {
+        const templateRow = insuranceContainer.querySelector('.insurance-row');
+
+        const createRemovableRow = () => {
+            const clone = templateRow.cloneNode(true);
+            clone.querySelectorAll('select').forEach(sel => { sel.value = ''; });
+            clone.querySelectorAll('input[type="text"]').forEach(inp => { inp.value = ''; });
+
+            const actionsCol = document.createElement('div');
+            actionsCol.className = 'form-group';
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-sm btn-outline-danger';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', () => {
+                insuranceContainer.removeChild(clone);
+            });
+            actionsCol.appendChild(removeBtn);
+            clone.appendChild(actionsCol);
+
+            return clone;
+        };
+
+        addInsuranceBtn.addEventListener('click', () => {
+            const newRow = createRemovableRow();
+            insuranceContainer.appendChild(newRow);
+        });
     }
 });
 </script>

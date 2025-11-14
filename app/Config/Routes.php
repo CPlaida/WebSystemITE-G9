@@ -187,6 +187,13 @@ $routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($ro
     $routes->get('medicines/expired', 'Pharmacy::getExpiredMedicines');
 });
 
+// Beds/Wards availability API for inpatient assignment
+$routes->group('api/rooms', ['namespace' => 'App\\Controllers'], function($routes) {
+    $routes->get('wards', 'Api\\Rooms::wards');
+    $routes->get('rooms/(:segment)', 'Api\\Rooms::rooms/$1');
+    $routes->get('beds/(:segment)/(:segment)', 'Api\\Rooms::beds/$1/$2');
+});
+
 // Location API Routes (Provinces → Cities/Municipalities → Barangays)
 $routes->group('api/locations', ['namespace' => 'App\\Controllers'], function($routes) {
     $routes->get('provinces', 'Api\\Locations::provinces');

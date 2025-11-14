@@ -77,6 +77,7 @@
               <label class="form-label">Province <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
+                <input type="text" id="provinceSearch" class="form-control" placeholder="Search province..." style="max-width: 220px;">
                 <select id="provinceSelect" class="form-select" required>
                   <option value="">Select Province</option>
                 </select>
@@ -86,6 +87,7 @@
               <label class="form-label">City/Municipality <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-city text-muted"></i></span>
+                <input type="text" id="citySearch" class="form-control" placeholder="Search city/municipality..." style="max-width: 220px;">
                 <select id="citySelect" class="form-select" required disabled>
                   <option value="">Select City/Municipality</option>
                 </select>
@@ -95,6 +97,7 @@
               <label class="form-label">Barangay <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-home text-muted"></i></span>
+                <input type="text" id="barangaySearch" class="form-control" placeholder="Search barangay..." style="max-width: 220px;">
                 <select id="barangaySelect" class="form-select" required disabled>
                   <option value="">Select Barangay</option>
                 </select>
@@ -168,15 +171,21 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Ward</label>
-              <input type="text" name="ward" class="form-control" placeholder="Ward">
+              <select name="ward" id="wardSelect" class="form-select">
+                <option value="">Select Ward</option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">Room</label>
-              <input type="text" name="room" class="form-control" placeholder="Room">
+              <select name="room" id="roomSelect" class="form-select" disabled>
+                <option value="">Select Room</option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">Bed</label>
-              <input type="text" name="bed" class="form-control" placeholder="Bed">
+              <select name="bed" id="bedSelect" class="form-select" disabled>
+                <option value="">Select Bed</option>
+              </select>
             </div>
           </div>
           <div class="form-group">
@@ -188,40 +197,45 @@
         <!-- Insurance -->
         <div class="form-section">
           <h3 class="section-title"><i class="fas fa-file-invoice"></i> Insurance</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Insurance Provider</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-building text-muted"></i></span>
-                <select name="insurance_provider" class="form-select">
-                  <option value="">Select Insurance Provider</option>
-                  <?php
-                    $insuranceOptions = [
-                      'PhilHealth',
-                      'Maxicare',
-                      'Intellicare',
-                      'Medicard',
-                      'Kaiser',
-                      'Others',
-                    ];
-                    $oldInsurance = old('insurance_provider');
-                  ?>
-                  <?php foreach ($insuranceOptions as $opt): ?>
-                    <option value="<?= esc($opt) ?>" <?= $oldInsurance === $opt ? 'selected' : '' ?>>
-                      <?= esc($opt) ?>
-                    </option>
-                  <?php endforeach; ?>
-                </select>
+          <div id="insuranceContainer">
+            <div class="form-row insurance-row">
+              <div class="form-group">
+                <label class="form-label">Insurance Provider</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-building text-muted"></i></span>
+                  <select name="insurance_provider" class="form-select">
+                    <option value="">Select Insurance Provider</option>
+                    <?php
+                      $insuranceOptions = [
+                        'PhilHealth',
+                        'Maxicare',
+                        'Intellicare',
+                        'Medicard',
+                        'Kaiser',
+                        'Others',
+                      ];
+                      $oldInsurance = old('insurance_provider');
+                    ?>
+                    <?php foreach ($insuranceOptions as $opt): ?>
+                      <option value="<?= esc($opt) ?>" <?= $oldInsurance === $opt ? 'selected' : '' ?>>
+                        <?= esc($opt) ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Policy / Insurance Number</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-id-card text-muted"></i></span>
-                <input type="text" name="insurance_number" class="form-control" placeholder="Enter policy or insurance number" value="<?= old('insurance_number') ?>">
+              <div class="form-group">
+                <label class="form-label">Policy / Insurance Number</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-id-card text-muted"></i></span>
+                  <input type="text" name="insurance_number" class="form-control" placeholder="Enter policy or insurance number" value="<?= old('insurance_number') ?>">
+                </div>
               </div>
             </div>
           </div>
+          <button type="button" id="addInsuranceBtn" class="btn btn-sm btn-outline-primary" style="margin-top: 0.5rem;">
+            <i class="fas fa-plus"></i> Add Insurance
+          </button>
         </div>
 
         <!-- Medical Information -->
@@ -248,10 +262,35 @@
                                     <option value="A2-" <?= old('blood_type') == 'A2-' ? 'selected' : '' ?>>A2-</option>
                                     <option value="A2B+" <?= old('blood_type') == 'A2B+' ? 'selected' : '' ?>>A2B+</option>
                                     <option value="A2B-" <?= old('blood_type') == 'A2B-' ? 'selected' : '' ?>>A2B-</option>
-                                    <option value="Bombay (Oh)" <?= old('blood_type') == 'Bombay (Oh)' ? 'selected' : '' ?>>Bombay (Oh)</option>
-                                    <option value="Hh (Bombay)" <?= old('blood_type') == 'Hh (Bombay)' ? 'selected' : '' ?>>Hh (Bombay)</option>
-                                    <option value="Rh null (Golden Blood)" <?= old('blood_type') == 'Rh null (Golden Blood)' ? 'selected' : '' ?>>Rh null (Golden Blood)</option>
               </select>
+            </div>
+          </div>
+          <div class="form-section" style="margin-top: 1rem;">
+            <h4 class="section-title" style="font-size: 1rem;">
+              <i class="fas fa-heartbeat"></i> Vitals
+            </h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Blood Pressure</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-heartbeat text-muted"></i></span>
+                  <input type="text" name="vitals_bp" class="form-control" placeholder="e.g., 120/80">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Heart Rate (bpm)</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-heart text-muted"></i></span>
+                  <input type="number" name="vitals_hr" class="form-control" min="0" max="300" placeholder="e.g., 72">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Temperature (°C)</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-thermometer-half text-muted"></i></span>
+                  <input type="number" step="0.1" name="vitals_temp" class="form-control" min="30" max="45" placeholder="e.g., 36.8">
+                </div>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -362,14 +401,144 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // Dynamic Insurance rows (add more)
+  const insuranceContainer = document.getElementById('insuranceContainer');
+  const addInsuranceBtn = document.getElementById('addInsuranceBtn');
+  if (insuranceContainer && addInsuranceBtn) {
+    const templateRow = insuranceContainer.querySelector('.insurance-row');
+
+    const createRemovableRow = () => {
+      const clone = templateRow.cloneNode(true);
+      clone.querySelectorAll('select').forEach(sel => { sel.value = ''; });
+      clone.querySelectorAll('input[type="text"]').forEach(inp => { inp.value = ''; });
+
+      const actionsCol = document.createElement('div');
+      actionsCol.className = 'form-group';
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn btn-sm btn-outline-danger';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => {
+        insuranceContainer.removeChild(clone);
+      });
+      actionsCol.appendChild(removeBtn);
+      clone.appendChild(actionsCol);
+
+      return clone;
+    };
+
+    addInsuranceBtn.addEventListener('click', () => {
+      const newRow = createRemovableRow();
+      insuranceContainer.appendChild(newRow);
+    });
+  }
+
+  // Ward / Room / Bed cascading selects (available only)
+  const wardSelect = document.getElementById('wardSelect');
+  const roomSelect = document.getElementById('roomSelect');
+  const bedSelect  = document.getElementById('bedSelect');
+  const roomsApiBase = '<?= base_url('api/rooms') ?>';
+
+  const setSimpleLoading = (select, placeholder, loadingText) => {
+    if (!select) return;
+    select.disabled = true;
+    select.innerHTML = `<option value="">${loadingText}</option>`;
+  };
+
+  const renderSimpleOptions = (select, placeholder, items, valueKey, labelKey) => {
+    if (!select) return;
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+    items.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item[valueKey] ?? item[labelKey] ?? '';
+      opt.textContent = item[labelKey] ?? '';
+      select.appendChild(opt);
+    });
+    select.disabled = items.length === 0;
+  };
+
+  const loadWards = async () => {
+    if (!wardSelect) return;
+    setSimpleLoading(wardSelect, 'Select Ward', 'Loading wards...');
+    try {
+      const res = await fetch(`${roomsApiBase}/wards`);
+      const rows = await res.json();
+      renderSimpleOptions(wardSelect, 'Select Ward', rows, 'name', 'name');
+    } catch (e) {
+      wardSelect.innerHTML = '<option value="">Failed to load wards</option>';
+      wardSelect.disabled = true;
+    }
+  };
+
+  const loadRooms = async (wardName) => {
+    if (!roomSelect) return;
+    setSimpleLoading(roomSelect, 'Select Room', 'Loading rooms...');
+    bedSelect.innerHTML = '<option value="">Select Bed</option>';
+    bedSelect.disabled = true;
+    try {
+      const res = await fetch(`${roomsApiBase}/rooms/${encodeURIComponent(wardName)}`);
+      const rows = await res.json();
+      renderSimpleOptions(roomSelect, 'Select Room', rows, 'name', 'name');
+    } catch (e) {
+      roomSelect.innerHTML = '<option value="">Failed to load rooms</option>';
+      roomSelect.disabled = true;
+    }
+  };
+
+  const loadBeds = async (wardName, roomName) => {
+    if (!bedSelect) return;
+    setSimpleLoading(bedSelect, 'Select Bed', 'Loading beds...');
+    try {
+      const res = await fetch(`${roomsApiBase}/beds/${encodeURIComponent(wardName)}/${encodeURIComponent(roomName)}`);
+      const rows = await res.json();
+      renderSimpleOptions(bedSelect, 'Select Bed', rows, 'name', 'name');
+    } catch (e) {
+      bedSelect.innerHTML = '<option value="">Failed to load beds</option>';
+      bedSelect.disabled = true;
+    }
+  };
+
+  if (wardSelect && roomSelect && bedSelect) {
+    loadWards();
+
+    wardSelect.addEventListener('change', () => {
+      const ward = wardSelect.value;
+      roomSelect.innerHTML = '<option value="">Select Room</option>';
+      roomSelect.disabled = !ward;
+      bedSelect.innerHTML = '<option value="">Select Bed</option>';
+      bedSelect.disabled = true;
+      if (ward) {
+        loadRooms(ward);
+      }
+    });
+
+    roomSelect.addEventListener('change', () => {
+      const ward = wardSelect.value;
+      const room = roomSelect.value;
+      bedSelect.innerHTML = '<option value="">Select Bed</option>';
+      bedSelect.disabled = !(ward && room);
+      if (ward && room) {
+        loadBeds(ward, room);
+      }
+    });
+  }
+
   initDefaults();
   updateAge();
-  // Address cascading selects
+  // Address cascading selects with searchable dropdowns
   const provinceSelect = document.getElementById('provinceSelect');
   const citySelect = document.getElementById('citySelect');
   const barangaySelect = document.getElementById('barangaySelect');
   const addressHidden = document.getElementById('addressHidden');
+  const streetInput = document.getElementById('streetInput');
+  const provinceSearch = document.getElementById('provinceSearch');
+  const citySearch = document.getElementById('citySearch');
+  const barangaySearch = document.getElementById('barangaySearch');
   const apiBase = '<?= base_url('api/locations') ?>';
+
+  let provinceOptions = [];
+  let cityOptions = [];
+  let barangayOptions = [];
 
   function setLoading(select, loading) {
     if (!select) return;
@@ -381,7 +550,6 @@ document.addEventListener('DOMContentLoaded', function () {
     select.appendChild(opt);
   }
 
-  const streetInput = document.getElementById('streetInput');
   function composeAddress() {
     const provText = provinceSelect?.selectedOptions[0]?.text || '';
     const cityText = citySelect?.selectedOptions[0]?.text || '';
@@ -391,19 +559,26 @@ document.addEventListener('DOMContentLoaded', function () {
     if (addressHidden) addressHidden.value = parts.join(', ');
   }
 
+  function renderOptions(select, placeholder, rows) {
+    if (!select) return;
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+    rows.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.code;
+      opt.textContent = r.name;
+      select.appendChild(opt);
+    });
+    select.disabled = rows.length === 0;
+  }
+
   async function loadProvinces() {
     if (!provinceSelect) return;
     setLoading(provinceSelect, true);
     try {
       const res = await fetch(`${apiBase}/provinces`);
       const rows = await res.json();
-      provinceSelect.innerHTML = '<option value="">Select Province</option>';
-      rows.forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r.code;
-        opt.textContent = r.name;
-        provinceSelect.appendChild(opt);
-      });
+      provinceOptions = rows;
+      renderOptions(provinceSelect, 'Select Province', provinceOptions);
       provinceSelect.disabled = false;
     } catch (e) {
       provinceSelect.innerHTML = '<option value="">Failed to load provinces</option>';
@@ -419,13 +594,8 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
       const rows = await res.json();
-      citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-      rows.forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r.code;
-        opt.textContent = r.name;
-        citySelect.appendChild(opt);
-      });
+      cityOptions = rows;
+      renderOptions(citySelect, 'Select City/Municipality', cityOptions);
       citySelect.disabled = false;
     } catch (e) {
       citySelect.innerHTML = '<option value="">Failed to load cities</option>';
@@ -440,16 +610,11 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
       const rows = await res.json();
-      barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-      rows.forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r.code;
-        opt.textContent = r.name;
-        barangaySelect.appendChild(opt);
-      });
+      barangayOptions = rows;
+      renderOptions(barangaySelect, 'Select Barangay', barangayOptions);
       barangaySelect.disabled = false;
     } catch (e) {
-      barangaySelect.innerHTML = '<option value=\"\">Failed to load barangays</option>';
+      barangaySelect.innerHTML = '<option value="">Failed to load barangays</option>';
       barangaySelect.disabled = true;
     }
     composeAddress();
@@ -467,6 +632,8 @@ document.addEventListener('DOMContentLoaded', function () {
         composeAddress();
         return;
       }
+      if (citySearch) citySearch.value = '';
+      if (barangaySearch) barangaySearch.value = '';
       loadCities(v);
     });
     citySelect.addEventListener('change', () => {
@@ -477,10 +644,41 @@ document.addEventListener('DOMContentLoaded', function () {
         composeAddress();
         return;
       }
+      if (barangaySearch) barangaySearch.value = '';
       loadBarangays(v);
     });
     barangaySelect.addEventListener('change', composeAddress);
     if (streetInput) streetInput.addEventListener('input', composeAddress);
+
+    if (provinceSearch) {
+      provinceSearch.addEventListener('input', () => {
+        const term = provinceSearch.value.trim().toLowerCase();
+        const filtered = term
+          ? provinceOptions.filter(r => r.name.toLowerCase().includes(term))
+          : provinceOptions;
+        renderOptions(provinceSelect, 'Select Province', filtered);
+      });
+    }
+
+    if (citySearch) {
+      citySearch.addEventListener('input', () => {
+        const term = citySearch.value.trim().toLowerCase();
+        const filtered = term
+          ? cityOptions.filter(r => r.name.toLowerCase().includes(term))
+          : cityOptions;
+        renderOptions(citySelect, 'Select City/Municipality', filtered);
+      });
+    }
+
+    if (barangaySearch) {
+      barangaySearch.addEventListener('input', () => {
+        const term = barangaySearch.value.trim().toLowerCase();
+        const filtered = term
+          ? barangayOptions.filter(r => r.name.toLowerCase().includes(term))
+          : barangayOptions;
+        renderOptions(barangaySelect, 'Select Barangay', filtered);
+      });
+    }
   }
 });
 </script>
