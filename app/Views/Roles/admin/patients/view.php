@@ -171,7 +171,16 @@
             <p>Prescription details will appear here...</p>
           </div>
           <div id="vitals" class="tab-content" style="display:none;">
-            <p>Vitals records will appear here...</p>
+            <div class="vitals-section" style="font-size:14px; color:#2c3e50;">
+              <h6 style="font-weight:600; margin-bottom:8px;">
+                <i class="fas fa-heartbeat me-1"></i> Vitals
+              </h6>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px 16px;">
+                <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
+                <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
+                <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
+              </div>
+            </div>
           </div>
           <div id="lab" class="tab-content" style="display:none;">
             <div id="ehrLabContainer" style="min-height:120px; padding:6px 0; color:#2c3e50; font-size:14px;">

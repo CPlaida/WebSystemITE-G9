@@ -187,6 +187,13 @@ $routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($ro
     $routes->get('medicines/expired', 'Pharmacy::getExpiredMedicines');
 });
 
+// Location API Routes (Provinces → Cities/Municipalities → Barangays)
+$routes->group('api/locations', ['namespace' => 'App\\Controllers'], function($routes) {
+    $routes->get('provinces', 'Api\\Locations::provinces');
+    $routes->get('cities/(:segment)', 'Api\\Locations::cities/$1');
+    $routes->get('barangays/(:segment)', 'Api\\Locations::barangays/$1');
+});
+
 $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransaction/$1', ['filter' => 'auth:pharmacist,admin']);
 
     // View routes
@@ -219,7 +226,14 @@ $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransact
             $routes->get('view/(:num)', 'Admin\Patients::view/$1');
             $routes->get('edit/(:num)', 'Admin\Patients::edit/$1');
             $routes->post('update/(:num)', 'Admin\Patients::update/$1');
-            $routes->get('delete/(:num)', 'Admin\Patients::delete/$1');
+            $routes->get('delete/(:num)', 'Admin\\Patients::delete/$1');
+        });
+        // Admin ward/room pages (controller-backed)
+        $routes->group('rooms', function($routes) {
+            $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
+            $routes->get('male-ward', 'Admin\\Rooms::maleWard');
+            $routes->get('female-ward', 'Admin\\Rooms::femaleWard');
+            $routes->post('beds/update-status', 'Admin\\Rooms::updateBedStatus');
         });
     });
 
@@ -236,6 +250,13 @@ $routes->group('receptionist/patients', ['namespace' => 'App\\Views', 'filter' =
     $routes->view('register', 'Roles/Reception/patients/register');
     $routes->view('inpatient', 'Roles/Reception/patients/Inpatient');
     $routes->view('view', 'Roles/Reception/patients/view');
+});
+
+// Receptionist ward/room pages (reuse Admin\Rooms dynamic wards)
+$routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers', 'filter' => 'auth:receptionist,admin'], function($routes) {
+    $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
+    $routes->get('male-ward', 'Admin\\Rooms::maleWard');
+    $routes->get('female-ward', 'Admin\\Rooms::femaleWard');
 });
 
 // Nurse Routes (directly to views)

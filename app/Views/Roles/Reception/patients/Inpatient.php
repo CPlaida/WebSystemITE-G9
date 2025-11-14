@@ -3,8 +3,6 @@
 <?= $this->section('title') ?>Inpatient Registration<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
- 
-
 <div class="main-content" id="mainContent">
   <div class="page-header">
     <h1 class="page-title">Inpatient Registration</h1>
@@ -76,12 +74,42 @@
           <h3 class="section-title"><i class="fas fa-address-book"></i> Contact Information</h3>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Complete Address</label>
+              <label class="form-label">Province <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
-                <input type="text" name="address" class="form-control" placeholder="House No., Street, Barangay, City/Municipality" value="<?= old('address') ?>">
+                <select id="provinceSelect" class="form-select" required>
+                  <option value="">Select Province</option>
+                </select>
               </div>
             </div>
+            <div class="form-group">
+              <label class="form-label">City/Municipality <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-city text-muted"></i></span>
+                <select id="citySelect" class="form-select" required disabled>
+                  <option value="">Select City/Municipality</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Barangay <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-home text-muted"></i></span>
+                <select id="barangaySelect" class="form-select" required disabled>
+                  <option value="">Select Barangay</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">House No. / Street</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-road text-muted"></i></span>
+                <input type="text" id="streetInput" class="form-control" placeholder="e.g., 23-A Mabini St." value="">
+              </div>
+            </div>
+            <input type="hidden" name="address" id="addressHidden" value="<?= old('address') ?>">
+          </div>
+          <div class="form-row">
             <div class="form-group">
               <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
               <div class="input-group">
@@ -122,7 +150,19 @@
             </div>
             <div class="form-group">
               <label class="form-label">Attending Physician</label>
-              <input type="text" name="attending_physician" class="form-control" placeholder="Doctor's Name">
+              <select name="attending_physician" class="form-select">
+                <option value="">Select Physician</option>
+                <?php if (!empty($doctors)): ?>
+                  <?php foreach ($doctors as $doctor): ?>
+                    <?php
+                      $value = $doctor['id'] ?? '';
+                      $label = $doctor['display_name'] ?? $doctor['username'] ?? 'Unknown Doctor';
+                      $selected = old('attending_physician') == $value ? 'selected' : '';
+                    ?>
+                    <option value="<?= esc($value) ?>" <?= $selected ?>><?= esc($label) ?></option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+              </select>
             </div>
           </div>
           <div class="form-row">
@@ -153,7 +193,25 @@
               <label class="form-label">Insurance Provider</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-building text-muted"></i></span>
-                <input type="text" name="insurance_provider" class="form-control" placeholder="e.g., PhilHealth, Maxicare, Intellicare" value="<?= old('insurance_provider') ?>">
+                <select name="insurance_provider" class="form-select">
+                  <option value="">Select Insurance Provider</option>
+                  <?php
+                    $insuranceOptions = [
+                      'PhilHealth',
+                      'Maxicare',
+                      'Intellicare',
+                      'Medicard',
+                      'Kaiser',
+                      'Others',
+                    ];
+                    $oldInsurance = old('insurance_provider');
+                  ?>
+                  <?php foreach ($insuranceOptions as $opt): ?>
+                    <option value="<?= esc($opt) ?>" <?= $oldInsurance === $opt ? 'selected' : '' ?>>
+                      <?= esc($opt) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
               </div>
             </div>
             <div class="form-group">
@@ -306,6 +364,124 @@ document.addEventListener('DOMContentLoaded', function () {
 
   initDefaults();
   updateAge();
+  // Address cascading selects
+  const provinceSelect = document.getElementById('provinceSelect');
+  const citySelect = document.getElementById('citySelect');
+  const barangaySelect = document.getElementById('barangaySelect');
+  const addressHidden = document.getElementById('addressHidden');
+  const apiBase = '<?= base_url('api/locations') ?>';
+
+  function setLoading(select, loading) {
+    if (!select) return;
+    select.disabled = loading;
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = loading ? 'Loading...' : 'Select';
+    select.innerHTML = '';
+    select.appendChild(opt);
+  }
+
+  const streetInput = document.getElementById('streetInput');
+  function composeAddress() {
+    const provText = provinceSelect?.selectedOptions[0]?.text || '';
+    const cityText = citySelect?.selectedOptions[0]?.text || '';
+    const brgyText = barangaySelect?.selectedOptions[0]?.text || '';
+    const street = streetInput?.value?.trim() || '';
+    const parts = [street, brgyText, cityText, provText].filter(Boolean);
+    if (addressHidden) addressHidden.value = parts.join(', ');
+  }
+
+  async function loadProvinces() {
+    if (!provinceSelect) return;
+    setLoading(provinceSelect, true);
+    try {
+      const res = await fetch(`${apiBase}/provinces`);
+      const rows = await res.json();
+      provinceSelect.innerHTML = '<option value="">Select Province</option>';
+      rows.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.code;
+        opt.textContent = r.name;
+        provinceSelect.appendChild(opt);
+      });
+      provinceSelect.disabled = false;
+    } catch (e) {
+      provinceSelect.innerHTML = '<option value="">Failed to load provinces</option>';
+      provinceSelect.disabled = true;
+    }
+  }
+
+  async function loadCities(provCode) {
+    if (!citySelect) return;
+    setLoading(citySelect, true);
+    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+    barangaySelect.disabled = true;
+    try {
+      const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
+      const rows = await res.json();
+      citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+      rows.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.code;
+        opt.textContent = r.name;
+        citySelect.appendChild(opt);
+      });
+      citySelect.disabled = false;
+    } catch (e) {
+      citySelect.innerHTML = '<option value="">Failed to load cities</option>';
+      citySelect.disabled = true;
+    }
+    composeAddress();
+  }
+
+  async function loadBarangays(cityCode) {
+    if (!barangaySelect) return;
+    setLoading(barangaySelect, true);
+    try {
+      const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
+      const rows = await res.json();
+      barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+      rows.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.code;
+        opt.textContent = r.name;
+        barangaySelect.appendChild(opt);
+      });
+      barangaySelect.disabled = false;
+    } catch (e) {
+      barangaySelect.innerHTML = '<option value=\"\">Failed to load barangays</option>';
+      barangaySelect.disabled = true;
+    }
+    composeAddress();
+  }
+
+  if (provinceSelect && citySelect && barangaySelect && addressHidden) {
+    loadProvinces();
+    provinceSelect.addEventListener('change', () => {
+      const v = provinceSelect.value;
+      if (!v) {
+        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+        citySelect.disabled = true;
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        barangaySelect.disabled = true;
+        composeAddress();
+        return;
+      }
+      loadCities(v);
+    });
+    citySelect.addEventListener('change', () => {
+      const v = citySelect.value;
+      if (!v) {
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        barangaySelect.disabled = true;
+        composeAddress();
+        return;
+      }
+      loadBarangays(v);
+    });
+    barangaySelect.addEventListener('change', composeAddress);
+    if (streetInput) streetInput.addEventListener('input', composeAddress);
+  }
 });
 </script>
 <?= $this->endSection() ?>

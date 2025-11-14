@@ -82,6 +82,19 @@
                 </a>
             </li>
 
+            <!-- Inpatient Units / Wards -->
+            <li class="nav-item expandable">
+                <a href="#" onclick="toggleSubmenu(this)">
+                    <span class="text">Inpatient Units</span>
+                    <span class="arrow">›</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="<?= base_url('admin/rooms/pedia-ward') ?>"><span class="text">Pedia Ward</span></a></li>
+                    <li><a href="<?= base_url('admin/rooms/male-ward') ?>"><span class="text">Male Ward</span></a></li>
+                    <li><a href="<?= base_url('admin/rooms/female-ward') ?>"><span class="text">Female Ward</span></a></li>
+                </ul>
+            </li>
+
             <!-- Administration -->
             <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
@@ -188,6 +201,18 @@
                     <li><a href="<?= site_url('receptionist/patients/register') ?>"><span class="text">Register Out Patient</span></a></li>
                     <li><a href="<?= site_url('receptionist/patients/inpatient') ?>"><span class="text">Register In Patient</span></a></li>
                     <li><a href="<?= site_url('receptionist/patients/view') ?>"><span class="text">View Patient</span></a></li>
+                </ul>
+            </li>
+            <!-- Inpatient Units / Wards -->
+            <li class="nav-item expandable">
+                <a href="#" onclick="toggleSubmenu(this)">
+                    <span class="text">Inpatient Units</span>
+                    <span class="arrow">›</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="<?= site_url('receptionist/rooms/pedia-ward') ?>"><span class="text">Pedia Ward</span></a></li>
+                    <li><a href="<?= site_url('receptionist/rooms/male-ward') ?>"><span class="text">Male Ward</span></a></li>
+                    <li><a href="<?= site_url('receptionist/rooms/female-ward') ?>"><span class="text">Female Ward</span></a></li>
                 </ul>
             </li>
             <!-- Appointments -->
