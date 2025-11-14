@@ -19,6 +19,7 @@ class PrescriptionModel extends Model
         'subtotal',
         'tax',
         'total_amount',
+        'note',
         'created_at',
         'updated_at'
     ];
@@ -33,6 +34,7 @@ class PrescriptionModel extends Model
         'payment_method' => 'required|in_list[cash,insurance]',
         'subtotal' => 'required|decimal',
         'tax' => 'required|decimal',
-        'total_amount' => 'required|decimal'
+        'total_amount' => 'required|decimal',
+        'note' => 'permit_empty|string'
     ];
 }

@@ -32,6 +32,7 @@ $routes->setAutoRoute(false);
 // Only logged-in users can see this (unified dashboard)
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 // Convenience role-specific dashboards (reuse unified dashboard)
+$routes->get('doctor/dashboard', 'Dashboard::index', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/my-schedule', 'Doctor\DoctorScheduleController::view', ['filter' => 'auth:doctor']);
 $routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
@@ -265,6 +266,19 @@ $routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers', 'filter
     $routes->get('male-ward', 'Admin\\Rooms::maleWard');
     $routes->get('female-ward', 'Admin\\Rooms::femaleWard');
 });
+
+// Doctor Routes
+// Patient list (doctor read-only view)
+$routes->get('doctor/patients/view', 'Doctor\\PatientController::view', ['filter' => 'auth:doctor,admin']);
+// Doctor's own appointments
+$routes->get('doctor/appointments', 'Appointment::doctorToday', ['filter' => 'auth:doctor']);
+$routes->get('doctor/appointments/list', 'Appointment::doctorToday', ['filter' => 'auth:doctor']);
+// Doctor prescription notes (EHR)
+$routes->get('doctor/prescription', 'Doctor\\PrescriptionController::show', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
+$routes->post('doctor/prescription/save', 'Doctor\\PrescriptionController::save', ['filter' => 'auth:doctor,admin']);
+// Vitals API for EHR modal (viewable by all clinical roles; writable by doctor/nurse/admin)
+$routes->get('doctor/vitals', 'Doctor\\VitalsController::show', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
+$routes->post('doctor/vitals/save', 'Doctor\\VitalsController::save', ['filter' => 'auth:doctor,admin,nurse']);
 
 // Nurse Routes (directly to views)
 $routes->group('nurse/appointments', ['namespace' => 'App\\Views', 'filter' => 'auth:nurse,admin'], function($routes) {

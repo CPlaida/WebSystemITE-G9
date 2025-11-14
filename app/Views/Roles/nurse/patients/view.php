@@ -173,10 +173,22 @@
             <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
           </div>
           <div id="prescription" class="tab-content">
-            <p>Prescription details will appear here...</p>
+            <div id="ehrPrescriptionContent" style="min-height:120px; padding:10px; border:1px solid #e5e7eb; border-radius:6px; color:#2c3e50; font-size:14px;">
+              Prescription details will appear here...
+            </div>
           </div>
           <div id="vitals" class="tab-content" style="display:none;">
-            <p>Vitals records will appear here...</p>
+            <div class="vitals-section" style="font-size:14px; color:#2c3e50;">
+              <h6 style="font-weight:600; margin-bottom:8px;">
+                <i class="fas fa-heartbeat me-1"></i> Vitals
+              </h6>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px 16px;">
+                <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
+                <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
+                <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
+                <div><strong>Last Updated:</strong> <span id="ehrVitalsUpdated">-</span></div>
+              </div>
+            </div>
           </div>
           <div id="lab" class="tab-content" style="display:none;">
             <p>Lab records will appear here...</p>
@@ -203,6 +215,10 @@
       document.getElementById("ehrEmergencyContact").innerText = emergencyContact;
 
       document.getElementById("ehrModal").style.display = "flex";
+
+      // Load latest prescription and vitals for this patient
+      loadPrescription(patientId);
+      loadVitals(patientId);
     }
 
     function closeModal() {
@@ -220,6 +236,67 @@
       }
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.classList.add("active");
+
+      const pid = document.getElementById('ehrPatientId').innerText.trim();
+      if (tabName === 'vitals' && pid) {
+        loadVitals(pid);
+      }
+      if (tabName === 'prescription' && pid) {
+        loadPrescription(pid);
+      }
+    }
+
+    async function loadVitals(patientId) {
+      const bpEl = document.getElementById('ehrVitalsBp');
+      const hrEl = document.getElementById('ehrVitalsHr');
+      const tempEl = document.getElementById('ehrVitalsTemp');
+      const updatedEl = document.getElementById('ehrVitalsUpdated');
+
+      if (!bpEl || !hrEl || !tempEl || !updatedEl) return;
+
+      bpEl.innerText = hrEl.innerText = tempEl.innerText = '...';
+      updatedEl.innerText = 'Loading...';
+
+      try {
+        const res = await fetch(`<?= base_url('doctor/vitals') ?>?patient_id=${encodeURIComponent(patientId)}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+        if (!data || !data.success) {
+          bpEl.innerText = hrEl.innerText = tempEl.innerText = '-';
+          updatedEl.innerText = data && data.message ? data.message : 'No vitals data';
+          return;
+        }
+        const v = data.vitals || null;
+        bpEl.innerText = v && v.blood_pressure ? v.blood_pressure : '-';
+        hrEl.innerText = v && v.heart_rate ? v.heart_rate : '-';
+        tempEl.innerText = v && v.temperature ? v.temperature : '-';
+        updatedEl.innerText = v && v.created_at ? (new Date(v.created_at)).toLocaleString() : '-';
+      } catch (e) {
+        bpEl.innerText = hrEl.innerText = tempEl.innerText = '-';
+        updatedEl.innerText = 'Error loading vitals';
+      }
+    }
+
+    async function loadPrescription(patientId) {
+      const content = document.getElementById('ehrPrescriptionContent');
+      if (!content) return;
+      content.textContent = 'Loading prescription...';
+
+      try {
+        const res = await fetch(`<?= base_url('doctor/prescription') ?>?patient_id=${encodeURIComponent(patientId)}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+        if (!data || !data.success) {
+          content.textContent = (data && data.message) ? data.message : 'Failed to load prescription.';
+          return;
+        }
+        const note = data.note ? data.note.trim() : '';
+        content.textContent = note !== '' ? note : 'No prescription note recorded yet.';
+      } catch (e) {
+        content.textContent = 'Error loading prescription.';
+      }
     }
 
     // Close modal on outside click

@@ -7,7 +7,7 @@
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <section aria-label="Staff Schedule Section">
       <div class="flex justify-between items-center mb-5 p-6">
-        <h1 class="text-xl font-bold">Doctor Schedule</h1>
+        <h1 class="text-xl font-bold">My Schedule</h1>
         <div class="flex gap-3 items-center">
           <div>
             <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>

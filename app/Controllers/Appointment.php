@@ -60,6 +60,47 @@ class Appointment extends BaseController
     }
 
     /**
+     * Doctor-facing appointment list (defaults to today's appointments for logged-in doctor).
+     */
+    public function doctorToday()
+    {
+        // Only doctors can access this view
+        if (session('role') !== 'doctor') {
+            return redirect()->to('login');
+        }
+
+        $doctorId = (string) session('user_id');
+        if ($doctorId === '') {
+            return redirect()->to('/dashboard')->with('error', 'Unable to resolve doctor account.');
+        }
+
+        $filter = $this->request->getGet('filter') ?? 'today';
+        $date   = $this->request->getGet('date');
+        $today  = date('Y-m-d');
+
+        if ($filter === 'all') {
+            $appointments = $this->appointmentModel->getUnifiedList($doctorId, null);
+        } elseif ($filter === 'date' && $date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $appointments = $this->appointmentModel->getUnifiedList($doctorId, $date);
+        } else {
+            // Default: today's appointments for this doctor
+            $appointments = $this->appointmentModel->getUnifiedList($doctorId, $today);
+            $filter = 'today';
+            $date = $today;
+        }
+
+        $data = [
+            'title'          => "My Appointments",
+            'active_menu'    => 'appointments',
+            'appointments'   => $appointments,
+            'currentFilter'  => $filter,
+            'currentDate'    => $date ?? $today,
+        ];
+
+        return view('Roles/doctor/appointments/Appointmentlist', $data);
+    }
+
+    /**
      * Show book appointment form
      */
     public function book()

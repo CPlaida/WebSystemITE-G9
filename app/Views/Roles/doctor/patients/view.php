@@ -162,7 +162,6 @@
           <p><b>Date of Birth:</b> <span id="ehrDOB">-</span></p>
           <p><b>Gender:</b> <span id="ehrGender">-</span></p>
           <p><b>Blood Type:</b> <span id="ehrBloodType">-</span></p>
-          <p><b>Emergency Contact:</b> <span id="ehrEmergencyContact">-</span></p>
           <p><b>Medical History:</b> <span id="ehrAilment">-</span></p>
           <p><b>Date Recorded:</b> <span id="ehrDate">-</span></p>
         </div>
@@ -182,7 +181,19 @@
             </div>
           </div>
           <div id="vitals" class="tab-content" style="display:none;">
-            <p>Vitals records will appear here...</p>
+            <div class="vitals-section" style="font-size:14px; color:#2c3e50; display:flex; flex-direction:column; gap:10px;">
+              <div>
+                <h6 style="font-weight:600; margin-bottom:8px;">
+                  <i class="fas fa-heartbeat" style="margin-right:4px;"></i> Latest Vitals
+                </h6>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px 16px;">
+                  <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
+                  <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
+                  <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
+                  <div><strong>Last Updated:</strong> <span id="ehrVitalsUpdated">-</span></div>
+                </div>
+              </div>
+            </div>
           </div>
           <div id="lab" class="tab-content" style="display:none;">
             <div id="ehrLabContainer" style="min-height:120px; padding:6px 0; color:#2c3e50; font-size:14px;">
@@ -208,7 +219,6 @@
       document.getElementById("ehrPatientId").innerText = patientId;
       document.getElementById("ehrEmail").innerText = email;
       document.getElementById("ehrBloodType").innerText = bloodType;
-      document.getElementById("ehrEmergencyContact").innerText = emergencyContact;
 
       document.getElementById("ehrModal").style.display = "flex";
 
@@ -216,6 +226,8 @@
       loadPrescription(patientId);
       // Load lab records for this patient
       loadLabRecords(patientId, name);
+      // Load vitals for this patient
+      loadVitals(patientId);
       // Bind save handler
       const saveBtn = document.getElementById('savePrescriptionBtn');
       if (saveBtn) {
@@ -239,11 +251,16 @@
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.classList.add("active");
 
+      const pid = document.getElementById('ehrPatientId').innerText.trim();
+      const pname = document.getElementById('ehrName').innerText.trim();
+
       // If opening Lab tab, refresh records for currently viewed patient
       if (tabName === 'lab') {
-        const pid = document.getElementById('ehrPatientId').innerText.trim();
-        const pname = document.getElementById('ehrName').innerText.trim();
         loadLabRecords(pid ? parseInt(pid) : 0, pname);
+      }
+      // If opening Vitals tab, ensure vitals are refreshed
+      if (tabName === 'vitals') {
+        loadVitals(pid);
       }
     }
 
@@ -298,6 +315,43 @@
         status.textContent = 'Error loading note';
       }
     }
+
+    async function loadVitals(patientId){
+      const status = document.getElementById('vitalsStatus');
+      if (status) {
+        status.textContent = 'Loading vitals...';
+      }
+      try {
+        const res = await fetch(`<?= base_url('doctor/vitals') ?>?patient_id=${encodeURIComponent(patientId)}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+        if (!data || !data.success) {
+          if (status) status.textContent = data && data.message ? data.message : 'Failed to load vitals';
+          return;
+        }
+        const v = data.vitals || null;
+        document.getElementById('ehrVitalsBp').innerText = v && v.blood_pressure ? v.blood_pressure : '-';
+        document.getElementById('ehrVitalsHr').innerText = v && v.heart_rate ? v.heart_rate : '-';
+        document.getElementById('ehrVitalsTemp').innerText = v && v.temperature ? v.temperature : '-';
+        document.getElementById('ehrVitalsUpdated').innerText = v && v.created_at ? (new Date(v.created_at)).toLocaleString() : '-';
+
+        // Pre-fill inputs with latest values
+        const bpInput = document.getElementById('vitalBpInput');
+        const hrInput = document.getElementById('vitalHrInput');
+        const tempInput = document.getElementById('vitalTempInput');
+        if (bpInput) bpInput.value = v && v.blood_pressure ? v.blood_pressure : '';
+        if (hrInput) hrInput.value = v && v.heart_rate ? v.heart_rate : '';
+        if (tempInput) tempInput.value = v && v.temperature ? v.temperature : '';
+
+        if (status) {
+          status.textContent = v ? 'Latest vitals loaded.' : 'No vitals recorded yet.';
+        }
+      } catch (e) {
+        if (status) status.textContent = 'Error loading vitals';
+      }
+    }
+
 
     async function savePrescription(patientId){
       const note = document.getElementById('prescriptionNote').value.trim();

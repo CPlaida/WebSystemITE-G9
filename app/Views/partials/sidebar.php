@@ -28,13 +28,13 @@
             <!-- Appointments -->
             <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Appointments & Scheduling</span>
+                    <span class="text">Appointments</span>
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
                     <li><a href="<?= base_url('appointments/book') ?>"><span class="text">Book Appointment</span></a></li>
                     <li><a href="<?= site_url('appointments/list') ?>"><span class="text">Appointment List</span></a></li>
-                    <li><a href="<?= site_url('doctor/schedule') ?>"><span class="text">Staff Schedule</span></a></li>
+                    <li><a href="<?= site_url('doctor/schedule') ?>"><span class="text">Doctor Schedule</span></a></li>
                 </ul>
             </li>
 
@@ -130,7 +130,7 @@
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
-                    <li><a href="<?= site_url('doctor/appointments') ?>"><span class="text">Appointment List</span></a></li>
+                    <li><a href="<?= site_url('doctor/appointments/list') ?>"><span class="text">Appointment List</span></a></li>
                    <li><a href="<?= site_url('doctor/my-schedule') ?>"><span class="text">Schedule</span></a></li>
                 </ul>
             </li>
@@ -203,18 +203,7 @@
                     <li><a href="<?= site_url('receptionist/patients/view') ?>"><span class="text">View Patient</span></a></li>
                 </ul>
             </li>
-            <!-- Inpatient Units / Wards -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Inpatient Units</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('receptionist/rooms/pedia-ward') ?>"><span class="text">Pedia Ward</span></a></li>
-                    <li><a href="<?= site_url('receptionist/rooms/male-ward') ?>"><span class="text">Male Ward</span></a></li>
-                    <li><a href="<?= site_url('receptionist/rooms/female-ward') ?>"><span class="text">Female Ward</span></a></li>
-                </ul>
-            </li>
+    
             <!-- Appointments -->
             <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
