@@ -203,7 +203,18 @@
                     <li><a href="<?= site_url('receptionist/patients/view') ?>"><span class="text">View Patient</span></a></li>
                 </ul>
             </li>
-    
+            <!-- Inpatient Units / Wards (Receptionist view) -->
+            <li class="nav-item expandable">
+                <a href="#" onclick="toggleSubmenu(this)">
+                    <span class="text">Inpatient Units</span>
+                    <span class="arrow">›</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="<?= site_url('receptionist/rooms/pedia-ward') ?>"><span class="text">Pedia Ward</span></a></li>
+                    <li><a href="<?= site_url('receptionist/rooms/male-ward') ?>"><span class="text">Male Ward</span></a></li>
+                    <li><a href="<?= site_url('receptionist/rooms/female-ward') ?>"><span class="text">Female Ward</span></a></li>
+                </ul>
+            </li>
             <!-- Appointments -->
             <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">

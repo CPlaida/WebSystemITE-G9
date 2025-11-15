@@ -54,6 +54,23 @@ class Patients extends BaseController
             'medical_history' => 'permit_empty|string'
         ];
 
+        $type = $this->request->getPost('type') ?? 'outpatient';
+
+        // Additional rules for inpatient admissions only
+        if ($type === 'inpatient') {
+            $rules = array_merge($rules, [
+                'middle_name' => 'permit_empty|max_length[100]',
+                'name_extension' => 'permit_empty|max_length[10]',
+                'civil_status' => 'required|in_list[single,married,widowed,separated,divorced]',
+                'place_of_birth' => 'required|max_length[255]',
+                'admitting_diagnosis' => 'required|max_length[500]',
+                'attending_physician' => 'required',
+                'emergency_contact_person' => 'required|max_length[100]',
+                'emergency_contact_relationship' => 'permit_empty|max_length[50]',
+                'emergency_contact_phone' => 'required|min_length[10]|max_length[15]',
+            ]);
+        }
+
         if (!$this->validate($rules)) {
             return $this->response->setJSON([
                 'success' => false,
@@ -63,6 +80,12 @@ class Patients extends BaseController
         }
 
         // Prepare patient data
+        $emergencyContact = $this->request->getPost('emergency_contact');
+        if ($type === 'inpatient') {
+            // For inpatients, store the primary emergency contact number in the existing column
+            $emergencyContact = $this->request->getPost('emergency_contact_phone');
+        }
+
         $data = [
             'first_name' => $this->request->getPost('first_name'),
             'last_name' => $this->request->getPost('last_name'),
@@ -71,12 +94,12 @@ class Patients extends BaseController
             'gender' => $this->request->getPost('gender'),
             'date_of_birth' => $this->request->getPost('date_of_birth'),
             'address' => $this->request->getPost('address'),
-            'type' => $this->request->getPost('type') ?? 'outpatient',
+            'type' => $type,
             'ward' => $this->request->getPost('ward'),
             'room' => $this->request->getPost('room'),
             'bed' => $this->request->getPost('bed'),
             'blood_type' => $this->request->getPost('blood_type'),
-            'emergency_contact' => $this->request->getPost('emergency_contact'),
+            'emergency_contact' => $emergencyContact,
             'insurance_provider' => $this->request->getPost('insurance_provider'),
             'insurance_number' => $this->request->getPost('insurance_number'),
             'medical_history' => $this->request->getPost('medical_history'),

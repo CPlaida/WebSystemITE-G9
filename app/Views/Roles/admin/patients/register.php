@@ -56,12 +56,28 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="form-label">Middle Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
+                                <input type="text" name="middle_name" class="form-control" placeholder="Middle Name" value="<?= old('middle_name') ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="form-label">Last Name <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
                                 <input type="text" name="last_name" class="form-control" placeholder="Patient's Last Name" value="<?= old('last_name') ?>" required>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">Name Extension</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-badge text-muted"></i></span>
+                                <input type="text" name="name_extension" class="form-control" placeholder="e.g., Jr., III" value="<?= old('name_extension') ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row" style="margin-top: 0.75rem;">
                         <div class="form-group">
                             <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
                             <div class="input-group">
@@ -86,6 +102,29 @@
                                     <option value="female" <?= old('gender') == 'female' ? 'selected' : '' ?>>Female</option>
                                     <option value="other" <?= old('gender') == 'other' ? 'selected' : '' ?>>Other</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Civil Status</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-ring text-muted"></i></span>
+                                <select name="civil_status" class="form-select">
+                                    <option value="">Select Civil Status</option>
+                                    <option value="single" <?= old('civil_status') == 'single' ? 'selected' : '' ?>>Single</option>
+                                    <option value="married" <?= old('civil_status') == 'married' ? 'selected' : '' ?>>Married</option>
+                                    <option value="widowed" <?= old('civil_status') == 'widowed' ? 'selected' : '' ?>>Widowed</option>
+                                    <option value="separated" <?= old('civil_status') == 'separated' ? 'selected' : '' ?>>Separated</option>
+                                    <option value="divorced" <?= old('civil_status') == 'divorced' ? 'selected' : '' ?>>Divorced</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row" style="margin-top: 0.75rem;">
+                        <div class="form-group" style="flex: 1 1 100%;">
+                            <label class="form-label">Place of Birth</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
+                                <input type="text" name="place_of_birth" class="form-control" placeholder="City/Municipality, Province" value="<?= old('place_of_birth') ?>">
                             </div>
                         </div>
                     </div>
@@ -261,6 +300,29 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-notes-medical text-muted"></i></span>
                             <textarea name="medical_history" class="form-control" rows="3" placeholder="List known allergies, past medical/surgical history, relevant notes."><?= old('medical_history') ?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact (minimal for outpatient) -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-phone-alt"></i> Emergency Contact
+                    </h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Contact Person</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user-friends text-muted"></i></span>
+                                <input type="text" name="emergency_contact_person" class="form-control" placeholder="Full name of emergency contact" value="<?= old('emergency_contact_person') ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text">+63</span>
+                                <input type="tel" name="emergency_contact_phone" class="form-control" placeholder="912 345 6789" value="<?= old('emergency_contact_phone') ?>" minlength="10" maxlength="15">
+                            </div>
                         </div>
                     </div>
                 </div>

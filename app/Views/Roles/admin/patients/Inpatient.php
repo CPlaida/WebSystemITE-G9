@@ -40,12 +40,28 @@
               </div>
             </div>
             <div class="form-group">
+              <label class="form-label">Middle Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
+                <input type="text" name="middle_name" class="form-control" placeholder="Middle Name" value="<?= old('middle_name') ?>">
+              </div>
+            </div>
+            <div class="form-group">
               <label class="form-label">Last Name <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
                 <input type="text" name="last_name" class="form-control" placeholder="Last Name" value="<?= old('last_name') ?>" required>
               </div>
             </div>
+            <div class="form-group">
+              <label class="form-label">Name Extension</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-id-badge text-muted"></i></span>
+                <input type="text" name="name_extension" class="form-control" placeholder="e.g., Jr., III" value="<?= old('name_extension') ?>">
+              </div>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top: 0.75rem;">
             <div class="form-group">
               <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
               <div class="input-group">
@@ -65,6 +81,26 @@
                 <option value="female" <?= old('gender') == 'female' ? 'selected' : '' ?>>Female</option>
                 <option value="other" <?= old('gender') == 'other' ? 'selected' : '' ?>>Other</option>
               </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Civil Status <span class="text-danger">*</span></label>
+              <select name="civil_status" class="form-select" required>
+                <option value="">Select Civil Status</option>
+                <option value="single" <?= old('civil_status') == 'single' ? 'selected' : '' ?>>Single</option>
+                <option value="married" <?= old('civil_status') == 'married' ? 'selected' : '' ?>>Married</option>
+                <option value="widowed" <?= old('civil_status') == 'widowed' ? 'selected' : '' ?>>Widowed</option>
+                <option value="separated" <?= old('civil_status') == 'separated' ? 'selected' : '' ?>>Separated</option>
+                <option value="divorced" <?= old('civil_status') == 'divorced' ? 'selected' : '' ?>>Divorced</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top: 0.75rem;">
+            <div class="form-group" style="flex: 1 1 100%;">
+              <label class="form-label">Place of Birth <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
+                <input type="text" name="place_of_birth" class="form-control" placeholder="City/Municipality, Province" value="<?= old('place_of_birth') ?>" required>
+              </div>
             </div>
           </div>
         </div>
@@ -152,7 +188,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Attending Physician</label>
+              <label class="form-label">Admitting Doctor <span class="text-danger">*</span></label>
               <select name="attending_physician" class="form-select">
                 <option value="">Select Physician</option>
                 <?php if (!empty($doctors)): ?>
@@ -189,8 +225,40 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="form-label">Admitting Diagnosis <span class="text-danger">*</span></label>
+            <textarea name="admitting_diagnosis" class="form-control" rows="2" placeholder="Chief complaint / Admitting diagnosis" required><?= old('admitting_diagnosis') ?></textarea>
+          </div>
+          <div class="form-group" style="margin-top: 0.75rem;">
             <label class="form-label">Reason for Admission</label>
-            <textarea name="reason_admission" class="form-control" rows="2" placeholder="Chief complaint / Reason for admission"></textarea>
+            <textarea name="reason_admission" class="form-control" rows="2" placeholder="Additional details for admission (optional)"><?= old('reason_admission') ?></textarea>
+          </div>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="form-section">
+          <h3 class="section-title"><i class="fas fa-phone-alt"></i> Emergency Contact</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Contact Person <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user-friends text-muted"></i></span>
+                <input type="text" name="emergency_contact_person" class="form-control" placeholder="Full name of emergency contact" value="<?= old('emergency_contact_person') ?>" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Relationship</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-heart text-muted"></i></span>
+                <input type="text" name="emergency_contact_relationship" class="form-control" placeholder="e.g., Father, Spouse" value="<?= old('emergency_contact_relationship') ?>">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Number <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">+63</span>
+                <input type="tel" name="emergency_contact_phone" class="form-control" placeholder="912 345 6789" value="<?= old('emergency_contact_phone') ?>" minlength="10" maxlength="15" required>
+              </div>
+            </div>
           </div>
         </div>
 
