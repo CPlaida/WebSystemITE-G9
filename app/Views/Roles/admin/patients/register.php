@@ -138,39 +138,36 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Province <span class="text-danger">*</span></label>
-                            <div class="input-group">
+                            <div class="input-group autocomplete-wrapper">
                                 <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
-                                <input type="text" id="provinceSearch" class="form-control" placeholder="Search province..." style="max-width: 220px;">
-                                <select id="provinceSelect" class="form-select" required>
-                                    <option value="">Select Province</option>
-                                </select>
+                                <input type="text" id="provinceInput" name="province" class="form-control autocomplete-input" placeholder="Type to search province..." autocomplete="off" required>
+                                <input type="hidden" id="provinceCode" name="province_code">
+                                <div class="autocomplete-dropdown" id="provinceDropdown"></div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">City/Municipality <span class="text-danger">*</span></label>
-                            <div class="input-group">
+                            <div class="input-group autocomplete-wrapper">
                                 <span class="input-group-text"><i class="fas fa-city text-muted"></i></span>
-                                <input type="text" id="citySearch" class="form-control" placeholder="Search city/municipality..." style="max-width: 220px;">
-                                <select id="citySelect" class="form-select" required disabled>
-                                    <option value="">Select City/Municipality</option>
-                                </select>
+                                <input type="text" id="cityInput" name="city" class="form-control autocomplete-input" placeholder="Type to search city/municipality..." autocomplete="off" required disabled>
+                                <input type="hidden" id="cityCode" name="city_code">
+                                <div class="autocomplete-dropdown" id="cityDropdown"></div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Barangay <span class="text-danger">*</span></label>
-                            <div class="input-group">
+                            <div class="input-group autocomplete-wrapper">
                                 <span class="input-group-text"><i class="fas fa-home text-muted"></i></span>
-                                <input type="text" id="barangaySearch" class="form-control" placeholder="Search barangay..." style="max-width: 220px;">
-                                <select id="barangaySelect" class="form-select" required disabled>
-                                    <option value="">Select Barangay</option>
-                                </select>
+                                <input type="text" id="barangayInput" name="barangay" class="form-control autocomplete-input" placeholder="Type to search barangay..." autocomplete="off" required disabled>
+                                <input type="hidden" id="barangayCode" name="barangay_code">
+                                <div class="autocomplete-dropdown" id="barangayDropdown"></div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">House No. / Street</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-road text-muted"></i></span>
-                                <input type="text" id="streetInput" class="form-control" placeholder="e.g., 23-A Mabini St." value="">
+                                <input type="text" id="streetInput" name="street" class="form-control" placeholder="e.g., 23-A Mabini St." value="<?= old('street') ?>">
                             </div>
                         </div>
                         <input type="hidden" name="address" id="addressHidden" value="<?= old('address') ?>">
@@ -457,160 +454,269 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAge();
     }
 
-    // Address cascading selects (Province → City/Municipality → Barangay)
-    const provinceSelect = document.getElementById('provinceSelect');
-    const citySelect = document.getElementById('citySelect');
-    const barangaySelect = document.getElementById('barangaySelect');
+    // Address autocomplete (Province → City/Municipality → Barangay)
+    const provinceInput = document.getElementById('provinceInput');
+    const cityInput = document.getElementById('cityInput');
+    const barangayInput = document.getElementById('barangayInput');
     const streetInput = document.getElementById('streetInput');
     const addressHidden = document.getElementById('addressHidden');
-    const provinceSearch = document.getElementById('provinceSearch');
-    const citySearch = document.getElementById('citySearch');
-    const barangaySearch = document.getElementById('barangaySearch');
+    const provinceCode = document.getElementById('provinceCode');
+    const cityCode = document.getElementById('cityCode');
+    const barangayCode = document.getElementById('barangayCode');
+    const provinceDropdown = document.getElementById('provinceDropdown');
+    const cityDropdown = document.getElementById('cityDropdown');
+    const barangayDropdown = document.getElementById('barangayDropdown');
     const apiBase = '<?= base_url('api/locations') ?>';
 
     let provinceOptions = [];
     let cityOptions = [];
     let barangayOptions = [];
-
-    const setLoading = (select, loading) => {
-        if (!select) return;
-        select.disabled = loading;
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = loading ? 'Loading...' : 'Select';
-        select.innerHTML = '';
-        select.appendChild(opt);
-    };
+    let selectedProvince = null;
+    let selectedCity = null;
+    let selectedBarangay = null;
 
     const composeAddress = () => {
-        const provText = provinceSelect?.selectedOptions[0]?.text || '';
-        const cityText = citySelect?.selectedOptions[0]?.text || '';
-        const brgyText = barangaySelect?.selectedOptions[0]?.text || '';
+        const provText = selectedProvince?.name || provinceInput?.value || '';
+        const cityText = selectedCity?.name || cityInput?.value || '';
+        const brgyText = selectedBarangay?.name || barangayInput?.value || '';
         const street = streetInput?.value?.trim() || '';
         const parts = [street, brgyText, cityText, provText].filter(Boolean);
         addressHidden.value = parts.join(', ');
     };
 
-    const renderOptions = (select, placeholder, rows) => {
-        if (!select) return;
-        select.innerHTML = `<option value="">${placeholder}</option>`;
-        rows.forEach(r => {
-            const opt = document.createElement('option');
-            opt.value = r.code;
-            opt.textContent = r.name;
-            select.appendChild(opt);
+    const showDropdown = (dropdown, items, onSelect) => {
+        if (!dropdown) return;
+        dropdown.innerHTML = '';
+        if (items.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+        }
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'autocomplete-item';
+            div.textContent = item.name;
+            div.addEventListener('click', () => {
+                onSelect(item);
+                dropdown.style.display = 'none';
+            });
+            dropdown.appendChild(div);
         });
-        select.disabled = rows.length === 0;
+        dropdown.style.display = 'block';
     };
 
+    const hideDropdown = (dropdown) => {
+        if (dropdown) dropdown.style.display = 'none';
+    };
+
+    const filterOptions = (options, term) => {
+        if (!term) return options;
+        const lowerTerm = term.toLowerCase();
+        return options.filter(opt => opt.name.toLowerCase().includes(lowerTerm));
+    };
+
+    // Load provinces on page load
     const loadProvinces = async () => {
-        if (!provinceSelect) return;
-        setLoading(provinceSelect, true);
         try {
             const res = await fetch(`${apiBase}/provinces`);
-            const rows = await res.json();
-            provinceOptions = rows;
-            renderOptions(provinceSelect, 'Select Province', provinceOptions);
-            provinceSelect.disabled = false;
+            provinceOptions = await res.json();
         } catch (e) {
-            provinceSelect.innerHTML = '<option value="">Failed to load provinces</option>';
-            provinceSelect.disabled = true;
+            console.error('Failed to load provinces:', e);
+            provinceOptions = [];
         }
     };
 
-    const loadCities = async (provCode) => {
-        if (!citySelect) return;
-        setLoading(citySelect, true);
-        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-        barangaySelect.disabled = true;
-        try {
-            const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
-            const rows = await res.json();
-            cityOptions = rows;
-            renderOptions(citySelect, 'Select City/Municipality', cityOptions);
-            citySelect.disabled = false;
-        } catch (e) {
-            citySelect.innerHTML = '<option value="">Failed to load cities</option>';
-            citySelect.disabled = true;
-        }
-        composeAddress();
-    };
-
-    const loadBarangays = async (cityCode) => {
-        if (!barangaySelect) return;
-        setLoading(barangaySelect, true);
-        try {
-            const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
-            const rows = await res.json();
-            barangayOptions = rows;
-            renderOptions(barangaySelect, 'Select Barangay', barangayOptions);
-            barangaySelect.disabled = false;
-        } catch (e) {
-            barangaySelect.innerHTML = '<option value="">Failed to load barangays</option>';
-            barangaySelect.disabled = true;
-        }
-        composeAddress();
-    };
-
-    if (provinceSelect && citySelect && barangaySelect && addressHidden) {
+    // Province autocomplete
+    if (provinceInput && provinceDropdown) {
         loadProvinces();
-        provinceSelect.addEventListener('change', () => {
-            const v = provinceSelect.value;
-            if (!v) {
-                citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-                citySelect.disabled = true;
-                barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                barangaySelect.disabled = true;
+        
+        provinceInput.addEventListener('input', (e) => {
+            const term = e.target.value.trim();
+            const filtered = filterOptions(provinceOptions, term);
+            showDropdown(provinceDropdown, filtered.slice(0, 10), (item) => {
+                selectedProvince = item;
+                provinceInput.value = item.name;
+                provinceCode.value = item.code;
+                cityInput.value = '';
+                cityCode.value = '';
+                cityInput.disabled = false;
+                barangayInput.value = '';
+                barangayCode.value = '';
+                barangayInput.disabled = true;
+                cityOptions = [];
+                barangayOptions = [];
+                selectedCity = null;
+                selectedBarangay = null;
+                hideDropdown(cityDropdown);
+                hideDropdown(barangayDropdown);
                 composeAddress();
-                return;
-            }
-            if (citySearch) citySearch.value = '';
-            if (barangaySearch) barangaySearch.value = '';
-            loadCities(v);
+            });
         });
-        citySelect.addEventListener('change', () => {
-            const v = citySelect.value;
-            if (!v) {
-                barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                barangaySelect.disabled = true;
-                composeAddress();
-                return;
+
+        provinceInput.addEventListener('focus', () => {
+            if (provinceInput.value.trim()) {
+                const filtered = filterOptions(provinceOptions, provinceInput.value);
+                showDropdown(provinceDropdown, filtered.slice(0, 10), (item) => {
+                    selectedProvince = item;
+                    provinceInput.value = item.name;
+                    provinceCode.value = item.code;
+                    cityInput.disabled = false;
+                    cityInput.value = '';
+                    cityCode.value = '';
+                    barangayInput.value = '';
+                    barangayCode.value = '';
+                    barangayInput.disabled = true;
+                    composeAddress();
+                });
             }
-            if (barangaySearch) barangaySearch.value = '';
-            loadBarangays(v);
         });
-        barangaySelect.addEventListener('change', composeAddress);
-        if (streetInput) streetInput.addEventListener('input', composeAddress);
 
-        if (provinceSearch) {
-            provinceSearch.addEventListener('input', () => {
-                const term = provinceSearch.value.trim().toLowerCase();
-                const filtered = term
-                    ? provinceOptions.filter(r => r.name.toLowerCase().includes(term))
-                    : provinceOptions;
-                renderOptions(provinceSelect, 'Select Province', filtered);
-            });
-        }
+        document.addEventListener('click', (e) => {
+            const wrapper = provinceInput.closest('.autocomplete-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                hideDropdown(provinceDropdown);
+            }
+        });
+    }
 
-        if (citySearch) {
-            citySearch.addEventListener('input', () => {
-                const term = citySearch.value.trim().toLowerCase();
-                const filtered = term
-                    ? cityOptions.filter(r => r.name.toLowerCase().includes(term))
-                    : cityOptions;
-                renderOptions(citySelect, 'Select City/Municipality', filtered);
-            });
-        }
+    // City autocomplete
+    if (cityInput && cityDropdown) {
+        const loadCities = async (provCode) => {
+            if (!provCode) return;
+            try {
+                const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
+                cityOptions = await res.json();
+            } catch (e) {
+                console.error('Failed to load cities:', e);
+                cityOptions = [];
+            }
+        };
 
-        if (barangaySearch) {
-            barangaySearch.addEventListener('input', () => {
-                const term = barangaySearch.value.trim().toLowerCase();
-                const filtered = term
-                    ? barangayOptions.filter(r => r.name.toLowerCase().includes(term))
-                    : barangayOptions;
-                renderOptions(barangaySelect, 'Select Barangay', filtered);
-            });
-        }
+        cityInput.addEventListener('input', (e) => {
+            if (!selectedProvince) return;
+            if (cityOptions.length === 0) {
+                loadCities(selectedProvince.code).then(() => {
+                    const term = e.target.value.trim();
+                    const filtered = filterOptions(cityOptions, term);
+                    showDropdown(cityDropdown, filtered.slice(0, 10), (item) => {
+                        selectedCity = item;
+                        cityInput.value = item.name;
+                        cityCode.value = item.code;
+                        barangayInput.value = '';
+                        barangayCode.value = '';
+                        barangayInput.disabled = false;
+                        barangayOptions = [];
+                        selectedBarangay = null;
+                        hideDropdown(barangayDropdown);
+                        composeAddress();
+                    });
+                });
+            } else {
+                const term = e.target.value.trim();
+                const filtered = filterOptions(cityOptions, term);
+                showDropdown(cityDropdown, filtered.slice(0, 10), (item) => {
+                    selectedCity = item;
+                    cityInput.value = item.name;
+                    cityCode.value = item.code;
+                    barangayInput.value = '';
+                    barangayCode.value = '';
+                    barangayInput.disabled = false;
+                    barangayOptions = [];
+                    selectedBarangay = null;
+                    hideDropdown(barangayDropdown);
+                    composeAddress();
+                });
+            }
+        });
+
+        cityInput.addEventListener('focus', async () => {
+            if (!selectedProvince) return;
+            if (cityOptions.length === 0) {
+                await loadCities(selectedProvince.code);
+            }
+            if (cityInput.value.trim()) {
+                const filtered = filterOptions(cityOptions, cityInput.value);
+                showDropdown(cityDropdown, filtered.slice(0, 10), (item) => {
+                    selectedCity = item;
+                    cityInput.value = item.name;
+                    cityCode.value = item.code;
+                    barangayInput.disabled = false;
+                    composeAddress();
+                });
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const wrapper = cityInput.closest('.autocomplete-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                hideDropdown(cityDropdown);
+            }
+        });
+    }
+
+    // Barangay autocomplete
+    if (barangayInput && barangayDropdown) {
+        const loadBarangays = async (cityCode) => {
+            if (!cityCode) return;
+            try {
+                const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
+                barangayOptions = await res.json();
+            } catch (e) {
+                console.error('Failed to load barangays:', e);
+                barangayOptions = [];
+            }
+        };
+
+        barangayInput.addEventListener('input', (e) => {
+            if (!selectedCity) return;
+            if (barangayOptions.length === 0) {
+                loadBarangays(selectedCity.code).then(() => {
+                    const term = e.target.value.trim();
+                    const filtered = filterOptions(barangayOptions, term);
+                    showDropdown(barangayDropdown, filtered.slice(0, 10), (item) => {
+                        selectedBarangay = item;
+                        barangayInput.value = item.name;
+                        barangayCode.value = item.code;
+                        composeAddress();
+                    });
+                });
+            } else {
+                const term = e.target.value.trim();
+                const filtered = filterOptions(barangayOptions, term);
+                showDropdown(barangayDropdown, filtered.slice(0, 10), (item) => {
+                    selectedBarangay = item;
+                    barangayInput.value = item.name;
+                    barangayCode.value = item.code;
+                    composeAddress();
+                });
+            }
+        });
+
+        barangayInput.addEventListener('focus', async () => {
+            if (!selectedCity) return;
+            if (barangayOptions.length === 0) {
+                await loadBarangays(selectedCity.code);
+            }
+            if (barangayInput.value.trim()) {
+                const filtered = filterOptions(barangayOptions, barangayInput.value);
+                showDropdown(barangayDropdown, filtered.slice(0, 10), (item) => {
+                    selectedBarangay = item;
+                    barangayInput.value = item.name;
+                    barangayCode.value = item.code;
+                    composeAddress();
+                });
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const wrapper = barangayInput.closest('.autocomplete-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                hideDropdown(barangayDropdown);
+            }
+        });
+    }
+
+    if (streetInput) {
+        streetInput.addEventListener('input', composeAddress);
     }
 
     // Format phone number
