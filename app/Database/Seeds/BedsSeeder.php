@@ -60,12 +60,12 @@ class BedsSeeder extends Seeder
 
         // SPECIALIZED PATIENT ROOMS BEDS
         // ED
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-101', 'bed' => 'Bay 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-101', 'bed' => 'Bay 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-101', 'bed' => 'Bay 3', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-102', 'bed' => 'Bay 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-102', 'bed' => 'Bay 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-102', 'bed' => 'Bay 3', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-101', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-101', 'bed' => 'Bed 2', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-101', 'bed' => 'Bed 3', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-102', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-102', 'bed' => 'Bed 2', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-102', 'bed' => 'Bed 3', 'status' => 'Available'];
 
         // ISO
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ISO', 'room' => 'ISO-201', 'bed' => 'Bed 1', 'status' => 'Available'];
@@ -75,12 +75,12 @@ class BedsSeeder extends Seeder
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ISO', 'room' => 'ISO-205', 'bed' => 'Bed 1', 'status' => 'Available'];
 
         // PACU
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bay 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bay 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bay 3', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bay 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bay 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bay 3', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bed 2', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bed 3', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bed 2', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bed 3', 'status' => 'Available'];
 
         // LD
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'LD', 'room' => 'LD-401', 'bed' => 'Suite 1', 'status' => 'Available'];
