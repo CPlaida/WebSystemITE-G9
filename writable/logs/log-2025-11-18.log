@@ -336,3 +336,513 @@ in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
 13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
 14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-18 16:32:48 --> mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-11-18 16:32:48 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+[Method: GET, Route: doctor/appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 2 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:32:48 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 4 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:32:48 --> [Caused by] mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 5 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-18 16:33:01 --> mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-11-18 16:33:01 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+[Method: GET, Route: doctor/appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 2 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:01 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 4 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:01 --> [Caused by] mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 5 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-18 16:33:07 --> mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-11-18 16:33:07 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+[Method: GET, Route: doctor/appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 2 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:07 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 4 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:07 --> [Caused by] mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 5 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-18 16:33:45 --> mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-11-18 16:33:45 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+[Method: GET, Route: doctor/appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 2 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:45 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 4 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:45 --> [Caused by] mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 5 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-18 16:33:51 --> mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-11-18 16:33:51 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+[Method: GET, Route: doctor/appointments/list]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 2 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:51 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 4 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 16:33:51 --> [Caused by] mysqli_sql_exception: Unknown column 'p.middle_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = \'DOC-251118-0001\'
+AND `a`.`appointment_date` = \'2025-11-18\'
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `a`.*, `p`.`first_name` as `patient_first_name`, `p`.`middle_name` as `patient_middle_name`, `p`.`last_name` as `patient_last_name`, `p`.`name_extension` as `patient_name_extension`, `p`.`phone` as `patient_phone`, `u`.`username` as `doctor_name`, `u`.`email` as `doctor_email`
+FROM `appointments` `a`
+LEFT JOIN `patients` `p` ON `a`.`patient_id` = `p`.`id`
+LEFT JOIN `users` `u` ON `a`.`doctor_id` = `u`.`id`
+WHERE `a`.`doctor_id` = :a.doctor_id:
+AND `a`.`appointment_date` = :a.appointment_date:
+ORDER BY FIELD(a.status, \'scheduled\',\'confirmed\',\'in_progress\',\'completed\',\'cancelled\',\'no_show\') ASC, `a`.`appointment_date` ASC, `a`.`appointment_time` ASC', [...], false)
+ 5 APPPATH\Models\AppointmentModel.php(184): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Appointment.php(87): App\Models\AppointmentModel->getUnifiedList('DOC-251118-0001', '2025-11-18')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->doctorToday()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

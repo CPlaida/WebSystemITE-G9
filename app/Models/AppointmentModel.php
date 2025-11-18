@@ -93,9 +93,7 @@ class AppointmentModel extends Model
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
-                         p.middle_name as patient_middle_name,
                          p.last_name as patient_last_name, 
-                         p.name_extension as patient_name_extension,
                          p.phone as patient_phone, 
                          u.username as doctor_name, 
                          u.email as doctor_email');
@@ -126,9 +124,7 @@ class AppointmentModel extends Model
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
-                         p.middle_name as patient_middle_name,
                          p.last_name as patient_last_name, 
-                         p.name_extension as patient_name_extension,
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
@@ -160,9 +156,7 @@ class AppointmentModel extends Model
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
-                         p.middle_name as patient_middle_name,
                          p.last_name as patient_last_name, 
-                         p.name_extension as patient_name_extension,
                          p.phone as patient_phone,
                          u.username as doctor_name,
                          u.email as doctor_email');
@@ -219,9 +213,7 @@ class AppointmentModel extends Model
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
-                         p.middle_name as patient_middle_name,
                          p.last_name as patient_last_name, 
-                         p.name_extension as patient_name_extension,
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
@@ -251,9 +243,7 @@ class AppointmentModel extends Model
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
-                         p.middle_name as patient_middle_name,
                          p.last_name as patient_last_name, 
-                         p.name_extension as patient_name_extension,
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
@@ -333,9 +323,7 @@ class AppointmentModel extends Model
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
-                         p.middle_name as patient_middle_name,
                          p.last_name as patient_last_name, 
-                         p.name_extension as patient_name_extension,
                          u.username as doctor_name, 
                          u.email as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
