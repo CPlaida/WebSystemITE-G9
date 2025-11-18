@@ -65,7 +65,7 @@
               <?php foreach ($inpatients as $patient): ?>
                 <tr>
                   <td><?= esc($patient['id']) ?></td>
-                  <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
+                  <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''))) ?></td>
                   <td><?= esc($patient['phone']) ?></td>
                   <td><?= esc($patient['address'] ?? 'N/A') ?></td>
                   <td><?= esc(ucfirst($patient['gender'])) ?></td>
@@ -77,7 +77,10 @@
                   </td>
                   <td>
                     <div class="action-buttons">
-                      <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">
+                      <?php 
+                        $fullName = trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''));
+                      ?>
+                      <button class="btn-view" onclick="viewPatient('<?= esc($fullName) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">
                         <i class="fas fa-eye"></i> View
                       </button>
                     </div>
@@ -114,7 +117,7 @@
               <?php foreach ($outpatients as $patient): ?>
                 <tr>
                   <td><?= esc($patient['id']) ?></td>
-                  <td><?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?></td>
+                  <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''))) ?></td>
                   <td><?= esc($patient['phone']) ?></td>
                   <td><?= esc($patient['address'] ?? 'N/A') ?></td>
                   <td><?= esc(ucfirst($patient['gender'])) ?></td>
@@ -126,7 +129,10 @@
                   </td>
                   <td>
                     <div class="action-buttons">
-                      <button class="btn-view" onclick="viewPatient('<?= esc($patient['first_name'] . ' ' . $patient['last_name']) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">
+                      <?php 
+                        $fullName = trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''));
+                      ?>
+                      <button class="btn-view" onclick="viewPatient('<?= esc($fullName) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">
                         <i class="fas fa-eye"></i> View
                       </button>
                     </div>

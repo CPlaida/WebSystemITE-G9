@@ -88,7 +88,9 @@ class Patients extends BaseController
 
         $data = [
             'first_name' => $this->request->getPost('first_name'),
+            'middle_name' => $this->request->getPost('middle_name') ?: null,
             'last_name' => $this->request->getPost('last_name'),
+            'name_extension' => $this->request->getPost('name_extension') ?: null,
             'email' => $this->request->getPost('email'),
             'phone' => $this->request->getPost('phone'),
             'gender' => $this->request->getPost('gender'),

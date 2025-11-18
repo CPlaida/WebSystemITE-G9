@@ -67,9 +67,9 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
 // Admin user CRUD endpoints
 $routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin']);
-$routes->post('admin/users/update/(:num)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/users/delete/(:num)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/users/reset-password/(:num)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/update/(:segment)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/delete/(:segment)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/reset-password/(:segment)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin']);
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
@@ -153,9 +153,9 @@ $routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestRe
  //Medicine Routes
 $routes->get('/medicines', 'Medicine::index');
 $routes->post('/medicines/store', 'Medicine::store');
-$routes->get('/medicines/edit/(:num)', 'Medicine::edit/$1');
-$routes->post('/medicines/update/(:num)', 'Medicine::update/$1');
-$routes->get('/medicines/delete/(:num)', 'Medicine::delete/$1');
+$routes->get('/medicines/edit/(:segment)', 'Medicine::edit/$1');
+$routes->post('/medicines/update/(:segment)', 'Medicine::update/$1');
+$routes->get('/medicines/delete/(:segment)', 'Medicine::delete/$1');
  // Sidebar alias
 $routes->get('admin/inventory/medicine', 'Medicine::index');
 

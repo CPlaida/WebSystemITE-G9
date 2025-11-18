@@ -83,7 +83,7 @@
                                         <td><strong><?= esc($row['room'] ?? '') ?></strong></td>
                                         <td><?= esc($row['bed'] ?? '') ?></td>
                                         <td><?= esc($patient['id'] ?? '-') ?></td>
-                                        <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? '')) ?: '-') ?></td>
+                                        <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? '')) ?: '-') ?></td>
                                         <td>
                                             <span class="badge <?= esc($badgeClass ?? $badge) ?> text-white" style="<?= $status === 'Occupied' ? 'background-color: #dc3545 !important;' : 'background-color: #198754 !important;' ?> color: #ffffff !important;">
                                                 <?= esc($status) ?>
@@ -154,7 +154,7 @@
                                             <td><strong><?= esc($row['room'] ?? '') ?></strong></td>
                                             <td><?= esc($row['bed'] ?? '') ?></td>
                                             <td><?= esc($patient['id'] ?? '-') ?></td>
-                                            <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? '')) ?: '-') ?></td>
+                                            <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? '')) ?: '-') ?></td>
                                             <td>
                                                 <span class="badge <?= esc($badgeClass ?? $badge) ?> text-white" style="<?= $status === 'Occupied' ? 'background-color: #dc3545 !important;' : 'background-color: #198754 !important;' ?> color: #ffffff !important;">
                                                     <?= esc($status) ?>

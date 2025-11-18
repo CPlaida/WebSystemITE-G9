@@ -33,7 +33,9 @@ class PatientModel extends Model
     protected $allowedFields = [
         'id',
         'first_name',
+        'middle_name',
         'last_name',
+        'name_extension',
         'email',
         'phone',
         'gender',

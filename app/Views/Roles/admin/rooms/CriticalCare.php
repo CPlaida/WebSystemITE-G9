@@ -65,7 +65,7 @@
                             <?php foreach ($rows as $r): 
                                 $patient = $r['patient'] ?? null;
                                 $pid = $patient['patient_id'] ?? ($patient['id'] ?? '-');
-                                $pname = trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''));
+                                $pname = trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''));
                                 if ($pname === '') { $pname = '-'; }
                                 $status = $r['status'] ?? 'Available';
                                 $badge = ($status === 'Occupied') ? 'bg-danger' : 'bg-success';

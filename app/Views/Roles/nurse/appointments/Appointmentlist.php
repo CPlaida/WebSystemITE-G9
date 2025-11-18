@@ -35,7 +35,7 @@
               <?php foreach ($appointments as $appointment): ?>
                 <tr>
                   <td><strong><?= date('h:i A', strtotime($appointment['appointment_time'])) ?></strong></td>
-                  <td><?= esc(trim($appointment['patient_first_name'] . ' ' . $appointment['patient_last_name'])) ?></td>
+                  <td><?= esc(trim(($appointment['patient_first_name'] ?? '') . ' ' . ($appointment['patient_middle_name'] ?? '') . ' ' . ($appointment['patient_last_name'] ?? '') . ' ' . ($appointment['patient_name_extension'] ?? ''))) ?></td>
                   <td>
                     <?php if ($appointment['doctor_name']): ?>
                       Dr. <?= esc($appointment['doctor_name']) ?><br>
