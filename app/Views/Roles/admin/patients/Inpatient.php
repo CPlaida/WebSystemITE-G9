@@ -57,7 +57,18 @@
               <label class="form-label">Name Extension</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-id-badge text-muted"></i></span>
-                <input type="text" name="name_extension" class="form-control" placeholder="e.g., Jr., III" value="<?= old('name_extension') ?>">
+                <select name="name_extension" class="form-select">
+                  <option value="">Select Extension</option>
+                  <?php
+                    $nameExtensions = ['Jr.', 'Sr.', 'II', 'III', 'IV', 'V'];
+                    $oldExtension = old('name_extension');
+                  ?>
+                  <?php foreach ($nameExtensions as $ext): ?>
+                    <option value="<?= esc($ext) ?>" <?= $oldExtension === $ext ? 'selected' : '' ?>>
+                      <?= esc($ext) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
               </div>
             </div>
           </div>
@@ -94,12 +105,12 @@
               </select>
             </div>
           </div>
-          <div class="form-row" style="margin-top: 0.75rem;">
-            <div class="form-group" style="flex: 1 1 100%;">
+          <div class="form-row" style="margin-top: 0.75rem; display: block !important; grid-template-columns: 1fr !important;">
+            <div class="form-group" style="width: 100% !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important;">
               <label class="form-label">Place of Birth <span class="text-danger">*</span></label>
-              <div class="input-group">
+              <div class="input-group" style="width: 100% !important; max-width: 100% !important;">
                 <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
-                <input type="text" name="place_of_birth" class="form-control" placeholder="City/Municipality, Province" value="<?= old('place_of_birth') ?>" required>
+                <input type="text" name="place_of_birth" class="form-control" placeholder="City/Municipality, Province" value="<?= old('place_of_birth') ?>" required style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important; width: 100% !important; flex: 1 !important; max-width: 100% !important;">
               </div>
             </div>
           </div>
@@ -111,39 +122,36 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Province <span class="text-danger">*</span></label>
-              <div class="input-group">
+              <div class="input-group autocomplete-wrapper">
                 <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
-                <input type="text" id="provinceSearch" class="form-control" placeholder="Search province..." style="max-width: 220px;">
-                <select id="provinceSelect" class="form-select" required>
-                  <option value="">Select Province</option>
-                </select>
+                <input type="text" id="provinceInput" name="province" class="form-control autocomplete-input" placeholder="Type to search province..." autocomplete="off" required>
+                <input type="hidden" id="provinceCode" name="province_code">
+                <div class="autocomplete-dropdown" id="provinceDropdown"></div>
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">City/Municipality <span class="text-danger">*</span></label>
-              <div class="input-group">
+              <div class="input-group autocomplete-wrapper">
                 <span class="input-group-text"><i class="fas fa-city text-muted"></i></span>
-                <input type="text" id="citySearch" class="form-control" placeholder="Search city/municipality..." style="max-width: 220px;">
-                <select id="citySelect" class="form-select" required disabled>
-                  <option value="">Select City/Municipality</option>
-                </select>
+                <input type="text" id="cityInput" name="city" class="form-control autocomplete-input" placeholder="Type to search city/municipality..." autocomplete="off" required disabled>
+                <input type="hidden" id="cityCode" name="city_code">
+                <div class="autocomplete-dropdown" id="cityDropdown"></div>
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">Barangay <span class="text-danger">*</span></label>
-              <div class="input-group">
+              <div class="input-group autocomplete-wrapper">
                 <span class="input-group-text"><i class="fas fa-home text-muted"></i></span>
-                <input type="text" id="barangaySearch" class="form-control" placeholder="Search barangay..." style="max-width: 220px;">
-                <select id="barangaySelect" class="form-select" required disabled>
-                  <option value="">Select Barangay</option>
-                </select>
+                <input type="text" id="barangayInput" name="barangay" class="form-control autocomplete-input" placeholder="Type to search barangay..." autocomplete="off" required disabled>
+                <input type="hidden" id="barangayCode" name="barangay_code">
+                <div class="autocomplete-dropdown" id="barangayDropdown"></div>
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">House No. / Street</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-road text-muted"></i></span>
-                <input type="text" id="streetInput" class="form-control" placeholder="e.g., 23-A Mabini St." value="">
+                <input type="text" name="street" id="streetInput" class="form-control" placeholder="e.g., 23-A Mabini St." value="<?= old('street') ?>" autocomplete="off">
               </div>
             </div>
             <input type="hidden" name="address" id="addressHidden" value="<?= old('address') ?>">
@@ -153,14 +161,14 @@
               <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text">+63</span>
-                <input type="tel" name="phone" class="form-control" placeholder="912 345 6789" value="<?= old('phone') ?>" required>
+                <input type="tel" name="phone" class="form-control" placeholder="912 345 6789" value="<?= old('phone') ?>" required style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">Email Address</label>
               <div class="input-group">
                 <span class="input-group-text">@</span>
-                <input type="email" name="email" class="form-control" placeholder="patient@example.com" value="<?= old('email') ?>">
+                <input type="email" name="email" class="form-control" placeholder="patient@example.com" value="<?= old('email') ?>" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
               </div>
             </div>
           </div>
@@ -219,7 +227,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">Bed</label>
-              <select name="bed" id="bedSelect" class="form-select" disabled>
+              <select name="bed_id" id="bedSelect" class="form-select" disabled>
                 <option value="">Select Bed</option>
               </select>
             </div>
@@ -474,10 +482,37 @@ document.addEventListener('DOMContentLoaded', function () {
   const addInsuranceBtn = document.getElementById('addInsuranceBtn');
   if (insuranceContainer && addInsuranceBtn) {
     const templateRow = insuranceContainer.querySelector('.insurance-row');
+    
+    // Define insurance options to ensure they're always available
+    const insuranceOptions = [
+      { value: '', text: 'Select Insurance Provider' },
+      { value: 'PhilHealth', text: 'PhilHealth' },
+      { value: 'Maxicare', text: 'Maxicare' },
+      { value: 'Intellicare', text: 'Intellicare' },
+      { value: 'Medicard', text: 'Medicard' },
+      { value: 'Kaiser', text: 'Kaiser' },
+      { value: 'Others', text: 'Others' }
+    ];
 
     const createRemovableRow = () => {
       const clone = templateRow.cloneNode(true);
-      clone.querySelectorAll('select').forEach(sel => { sel.value = ''; });
+      
+      // Restore select options from hardcoded array
+      const clonedSelect = clone.querySelector('select[name="insurance_provider"]');
+      if (clonedSelect) {
+        clonedSelect.innerHTML = '';
+        insuranceOptions.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.textContent = opt.text;
+          clonedSelect.appendChild(option);
+        });
+        clonedSelect.value = '';
+        // Ensure select is visible and enabled
+        clonedSelect.style.display = 'block';
+        clonedSelect.disabled = false;
+      }
+      
       clone.querySelectorAll('input[type="text"]').forEach(inp => { inp.value = ''; });
 
       const actionsCol = document.createElement('div');
@@ -525,14 +560,72 @@ document.addEventListener('DOMContentLoaded', function () {
     select.disabled = items.length === 0;
   };
 
+  const renderCategorizedWards = (select, placeholder, categories) => {
+    if (!select) return;
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+    
+    // Define category order
+    const categoryOrder = [
+      'General Inpatient',
+      'Critical Care Units',
+      'Specialized Patient Rooms'
+    ];
+    
+    let totalWards = 0;
+    
+    // Render each category as an optgroup
+    categoryOrder.forEach(categoryName => {
+      const categoryWards = categories[categoryName];
+      if (categoryWards && Array.isArray(categoryWards) && categoryWards.length > 0) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = categoryName;
+        
+        categoryWards.forEach(ward => {
+          const opt = document.createElement('option');
+          // Use 'value' if available (for abbreviations like ICU), otherwise 'name'
+          opt.value = ward.value || ward.name || ward;
+          opt.textContent = ward.name || ward;
+          optgroup.appendChild(opt);
+          totalWards++;
+        });
+        
+        select.appendChild(optgroup);
+      }
+    });
+    
+    select.disabled = totalWards === 0;
+  };
+
   const loadWards = async () => {
     if (!wardSelect) return;
     setSimpleLoading(wardSelect, 'Select Ward', 'Loading wards...');
     try {
       const res = await fetch(`${roomsApiBase}/wards`);
-      const rows = await res.json();
-      renderSimpleOptions(wardSelect, 'Select Ward', rows, 'name', 'name');
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      
+      // Handle the API response structure: { categories: {...}, all: [...] }
+      if (data.categories && Object.keys(data.categories).length > 0) {
+        // Render with categories using optgroups
+        renderCategorizedWards(wardSelect, 'Select Ward', data.categories);
+      } else if (Array.isArray(data.all) && data.all.length > 0) {
+        // Fallback to 'all' array if categories don't exist
+        const wards = data.all.map(ward => ({
+          name: ward,
+          value: ward
+        }));
+        renderSimpleOptions(wardSelect, 'Select Ward', wards, 'value', 'name');
+      } else if (Array.isArray(data) && data.length > 0) {
+        // Direct array response
+        renderSimpleOptions(wardSelect, 'Select Ward', data, 'value', 'name');
+      } else {
+        wardSelect.innerHTML = '<option value="">No wards available</option>';
+        wardSelect.disabled = true;
+      }
     } catch (e) {
+      console.error('Error loading wards:', e);
       wardSelect.innerHTML = '<option value="">Failed to load wards</option>';
       wardSelect.disabled = true;
     }
@@ -559,12 +652,13 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const res = await fetch(`${roomsApiBase}/beds/${encodeURIComponent(wardName)}/${encodeURIComponent(roomName)}`);
       const rows = await res.json();
-      renderSimpleOptions(bedSelect, 'Select Bed', rows, 'name', 'name');
+      renderSimpleOptions(bedSelect, 'Select Bed', rows, 'id', 'name');
     } catch (e) {
       bedSelect.innerHTML = '<option value="">Failed to load beds</option>';
       bedSelect.disabled = true;
     }
   };
+
 
   if (wardSelect && roomSelect && bedSelect) {
     loadWards();
@@ -593,160 +687,269 @@ document.addEventListener('DOMContentLoaded', function () {
 
   initDefaults();
   updateAge();
-  // Address cascading selects with searchable dropdowns
-  const provinceSelect = document.getElementById('provinceSelect');
-  const citySelect = document.getElementById('citySelect');
-  const barangaySelect = document.getElementById('barangaySelect');
-  const addressHidden = document.getElementById('addressHidden');
+  // Address autocomplete (Province → City/Municipality → Barangay)
+  const provinceInput = document.getElementById('provinceInput');
+  const cityInput = document.getElementById('cityInput');
+  const barangayInput = document.getElementById('barangayInput');
   const streetInput = document.getElementById('streetInput');
-  const provinceSearch = document.getElementById('provinceSearch');
-  const citySearch = document.getElementById('citySearch');
-  const barangaySearch = document.getElementById('barangaySearch');
+  const addressHidden = document.getElementById('addressHidden');
+  const provinceCode = document.getElementById('provinceCode');
+  const cityCode = document.getElementById('cityCode');
+  const barangayCode = document.getElementById('barangayCode');
+  const provinceDropdown = document.getElementById('provinceDropdown');
+  const cityDropdown = document.getElementById('cityDropdown');
+  const barangayDropdown = document.getElementById('barangayDropdown');
   const apiBase = '<?= base_url('api/locations') ?>';
 
   let provinceOptions = [];
   let cityOptions = [];
   let barangayOptions = [];
+  let selectedProvince = null;
+  let selectedCity = null;
+  let selectedBarangay = null;
 
-  function setLoading(select, loading) {
-    if (!select) return;
-    select.disabled = loading;
-    const opt = document.createElement('option');
-    opt.value = '';
-    opt.textContent = loading ? 'Loading...' : 'Select';
-    select.innerHTML = '';
-    select.appendChild(opt);
-  }
-
-  function composeAddress() {
-    const provText = provinceSelect?.selectedOptions[0]?.text || '';
-    const cityText = citySelect?.selectedOptions[0]?.text || '';
-    const brgyText = barangaySelect?.selectedOptions[0]?.text || '';
+  const composeAddress = () => {
+    const provText = selectedProvince?.name || provinceInput?.value || '';
+    const cityText = selectedCity?.name || cityInput?.value || '';
+    const brgyText = selectedBarangay?.name || barangayInput?.value || '';
     const street = streetInput?.value?.trim() || '';
     const parts = [street, brgyText, cityText, provText].filter(Boolean);
     if (addressHidden) addressHidden.value = parts.join(', ');
-  }
+  };
 
-  function renderOptions(select, placeholder, rows) {
-    if (!select) return;
-    select.innerHTML = `<option value="">${placeholder}</option>`;
-    rows.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.code;
-      opt.textContent = r.name;
-      select.appendChild(opt);
+  const showDropdown = (dropdown, items, onSelect) => {
+    if (!dropdown) return;
+    dropdown.innerHTML = '';
+    if (items.length === 0) {
+      dropdown.style.display = 'none';
+      return;
+    }
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'autocomplete-item';
+      div.textContent = item.name;
+      div.addEventListener('click', () => {
+        onSelect(item);
+        dropdown.style.display = 'none';
+      });
+      dropdown.appendChild(div);
     });
-    select.disabled = rows.length === 0;
-  }
+    dropdown.style.display = 'block';
+  };
 
-  async function loadProvinces() {
-    if (!provinceSelect) return;
-    setLoading(provinceSelect, true);
+  const hideDropdown = (dropdown) => {
+    if (dropdown) dropdown.style.display = 'none';
+  };
+
+  const filterOptions = (options, term) => {
+    if (!term) return options;
+    const lowerTerm = term.toLowerCase();
+    return options.filter(opt => opt.name.toLowerCase().includes(lowerTerm));
+  };
+
+  // Load provinces on page load
+  const loadProvinces = async () => {
     try {
       const res = await fetch(`${apiBase}/provinces`);
-      const rows = await res.json();
-      provinceOptions = rows;
-      renderOptions(provinceSelect, 'Select Province', provinceOptions);
-      provinceSelect.disabled = false;
+      provinceOptions = await res.json();
     } catch (e) {
-      provinceSelect.innerHTML = '<option value="">Failed to load provinces</option>';
-      provinceSelect.disabled = true;
+      console.error('Failed to load provinces:', e);
+      provinceOptions = [];
     }
-  }
+  };
 
-  async function loadCities(provCode) {
-    if (!citySelect) return;
-    setLoading(citySelect, true);
-    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-    barangaySelect.disabled = true;
-    try {
-      const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
-      const rows = await res.json();
-      cityOptions = rows;
-      renderOptions(citySelect, 'Select City/Municipality', cityOptions);
-      citySelect.disabled = false;
-    } catch (e) {
-      citySelect.innerHTML = '<option value="">Failed to load cities</option>';
-      citySelect.disabled = true;
-    }
-    composeAddress();
-  }
-
-  async function loadBarangays(cityCode) {
-    if (!barangaySelect) return;
-    setLoading(barangaySelect, true);
-    try {
-      const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
-      const rows = await res.json();
-      barangayOptions = rows;
-      renderOptions(barangaySelect, 'Select Barangay', barangayOptions);
-      barangaySelect.disabled = false;
-    } catch (e) {
-      barangaySelect.innerHTML = '<option value="">Failed to load barangays</option>';
-      barangaySelect.disabled = true;
-    }
-    composeAddress();
-  }
-
-  if (provinceSelect && citySelect && barangaySelect && addressHidden) {
+  // Province autocomplete
+  if (provinceInput && provinceDropdown) {
     loadProvinces();
-    provinceSelect.addEventListener('change', () => {
-      const v = provinceSelect.value;
-      if (!v) {
-        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-        citySelect.disabled = true;
-        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-        barangaySelect.disabled = true;
+    
+    provinceInput.addEventListener('input', (e) => {
+      const term = e.target.value.trim();
+      const filtered = filterOptions(provinceOptions, term);
+      showDropdown(provinceDropdown, filtered.slice(0, 10), (item) => {
+        selectedProvince = item;
+        provinceInput.value = item.name;
+        provinceCode.value = item.code;
+        cityInput.value = '';
+        cityCode.value = '';
+        cityInput.disabled = false;
+        barangayInput.value = '';
+        barangayCode.value = '';
+        barangayInput.disabled = true;
+        cityOptions = [];
+        barangayOptions = [];
+        selectedCity = null;
+        selectedBarangay = null;
+        hideDropdown(cityDropdown);
+        hideDropdown(barangayDropdown);
         composeAddress();
-        return;
-      }
-      if (citySearch) citySearch.value = '';
-      if (barangaySearch) barangaySearch.value = '';
-      loadCities(v);
+      });
     });
-    citySelect.addEventListener('change', () => {
-      const v = citySelect.value;
-      if (!v) {
-        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-        barangaySelect.disabled = true;
-        composeAddress();
-        return;
+
+    provinceInput.addEventListener('focus', () => {
+      if (provinceInput.value.trim()) {
+        const filtered = filterOptions(provinceOptions, provinceInput.value);
+        showDropdown(provinceDropdown, filtered.slice(0, 10), (item) => {
+          selectedProvince = item;
+          provinceInput.value = item.name;
+          provinceCode.value = item.code;
+          cityInput.disabled = false;
+          cityInput.value = '';
+          cityCode.value = '';
+          barangayInput.value = '';
+          barangayCode.value = '';
+          barangayInput.disabled = true;
+          composeAddress();
+        });
       }
-      if (barangaySearch) barangaySearch.value = '';
-      loadBarangays(v);
     });
-    barangaySelect.addEventListener('change', composeAddress);
-    if (streetInput) streetInput.addEventListener('input', composeAddress);
 
-    if (provinceSearch) {
-      provinceSearch.addEventListener('input', () => {
-        const term = provinceSearch.value.trim().toLowerCase();
-        const filtered = term
-          ? provinceOptions.filter(r => r.name.toLowerCase().includes(term))
-          : provinceOptions;
-        renderOptions(provinceSelect, 'Select Province', filtered);
-      });
-    }
+    document.addEventListener('click', (e) => {
+      const wrapper = provinceInput.closest('.autocomplete-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        hideDropdown(provinceDropdown);
+      }
+    });
+  }
 
-    if (citySearch) {
-      citySearch.addEventListener('input', () => {
-        const term = citySearch.value.trim().toLowerCase();
-        const filtered = term
-          ? cityOptions.filter(r => r.name.toLowerCase().includes(term))
-          : cityOptions;
-        renderOptions(citySelect, 'Select City/Municipality', filtered);
-      });
-    }
+  // City autocomplete
+  if (cityInput && cityDropdown) {
+    const loadCities = async (provCode) => {
+      if (!provCode) return;
+      try {
+        const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
+        cityOptions = await res.json();
+      } catch (e) {
+        console.error('Failed to load cities:', e);
+        cityOptions = [];
+      }
+    };
 
-    if (barangaySearch) {
-      barangaySearch.addEventListener('input', () => {
-        const term = barangaySearch.value.trim().toLowerCase();
-        const filtered = term
-          ? barangayOptions.filter(r => r.name.toLowerCase().includes(term))
-          : barangayOptions;
-        renderOptions(barangaySelect, 'Select Barangay', filtered);
-      });
-    }
+    cityInput.addEventListener('input', (e) => {
+      if (!selectedProvince) return;
+      if (cityOptions.length === 0) {
+        loadCities(selectedProvince.code).then(() => {
+          const term = e.target.value.trim();
+          const filtered = filterOptions(cityOptions, term);
+          showDropdown(cityDropdown, filtered.slice(0, 10), (item) => {
+            selectedCity = item;
+            cityInput.value = item.name;
+            cityCode.value = item.code;
+            barangayInput.value = '';
+            barangayCode.value = '';
+            barangayInput.disabled = false;
+            barangayOptions = [];
+            selectedBarangay = null;
+            hideDropdown(barangayDropdown);
+            composeAddress();
+          });
+        });
+      } else {
+        const term = e.target.value.trim();
+        const filtered = filterOptions(cityOptions, term);
+        showDropdown(cityDropdown, filtered.slice(0, 10), (item) => {
+          selectedCity = item;
+          cityInput.value = item.name;
+          cityCode.value = item.code;
+          barangayInput.value = '';
+          barangayCode.value = '';
+          barangayInput.disabled = false;
+          barangayOptions = [];
+          selectedBarangay = null;
+          hideDropdown(barangayDropdown);
+          composeAddress();
+        });
+      }
+    });
+
+    cityInput.addEventListener('focus', async () => {
+      if (!selectedProvince) return;
+      if (cityOptions.length === 0) {
+        await loadCities(selectedProvince.code);
+      }
+      if (cityInput.value.trim()) {
+        const filtered = filterOptions(cityOptions, cityInput.value);
+        showDropdown(cityDropdown, filtered.slice(0, 10), (item) => {
+          selectedCity = item;
+          cityInput.value = item.name;
+          cityCode.value = item.code;
+          barangayInput.disabled = false;
+          composeAddress();
+        });
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const wrapper = cityInput.closest('.autocomplete-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        hideDropdown(cityDropdown);
+      }
+    });
+  }
+
+  // Barangay autocomplete
+  if (barangayInput && barangayDropdown) {
+    const loadBarangays = async (cityCode) => {
+      if (!cityCode) return;
+      try {
+        const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
+        barangayOptions = await res.json();
+      } catch (e) {
+        console.error('Failed to load barangays:', e);
+        barangayOptions = [];
+      }
+    };
+
+    barangayInput.addEventListener('input', (e) => {
+      if (!selectedCity) return;
+      if (barangayOptions.length === 0) {
+        loadBarangays(selectedCity.code).then(() => {
+          const term = e.target.value.trim();
+          const filtered = filterOptions(barangayOptions, term);
+          showDropdown(barangayDropdown, filtered.slice(0, 10), (item) => {
+            selectedBarangay = item;
+            barangayInput.value = item.name;
+            barangayCode.value = item.code;
+            composeAddress();
+          });
+        });
+      } else {
+        const term = e.target.value.trim();
+        const filtered = filterOptions(barangayOptions, term);
+        showDropdown(barangayDropdown, filtered.slice(0, 10), (item) => {
+          selectedBarangay = item;
+          barangayInput.value = item.name;
+          barangayCode.value = item.code;
+          composeAddress();
+        });
+      }
+    });
+
+    barangayInput.addEventListener('focus', async () => {
+      if (!selectedCity) return;
+      if (barangayOptions.length === 0) {
+        await loadBarangays(selectedCity.code);
+      }
+      if (barangayInput.value.trim()) {
+        const filtered = filterOptions(barangayOptions, barangayInput.value);
+        showDropdown(barangayDropdown, filtered.slice(0, 10), (item) => {
+          selectedBarangay = item;
+          barangayInput.value = item.name;
+          barangayCode.value = item.code;
+          composeAddress();
+        });
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const wrapper = barangayInput.closest('.autocomplete-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        hideDropdown(barangayDropdown);
+      }
+    });
+  }
+
+  if (streetInput) {
+    streetInput.addEventListener('input', composeAddress);
   }
 });
 </script>

@@ -84,7 +84,8 @@ $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse'
 $routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes) {
     $routes->get('register', 'Patients::register');
     $routes->post('register', 'Patients::processRegister');
-    $routes->get('view', 'Patients::view');
+    // Map to Admin\Patients index to display list and avoid 404
+    $routes->get('view', 'Admin\Patients::index');
     $routes->get('search', 'Patients::search');
     $routes->get('get/(:num)', 'Patients::getPatient/$1');
 });
@@ -241,6 +242,9 @@ $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransact
             $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
             $routes->get('male-ward', 'Admin\\Rooms::maleWard');
             $routes->get('female-ward', 'Admin\\Rooms::femaleWard');
+            $routes->get('general-inpatient', 'Admin\\Rooms::generalInpatient');
+            $routes->get('critical-care', 'Admin\\Rooms::criticalCare');
+            $routes->get('specialized', 'Admin\\Rooms::specialized');
             $routes->post('beds/update-status', 'Admin\\Rooms::updateBedStatus');
         });
     });
@@ -261,6 +265,11 @@ $routes->group('receptionist/patients', ['namespace' => 'App\\Views', 'filter' =
 });
 
 // Receptionist ward/room pages (reuse Admin\Rooms dynamic wards)
+$routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers\\Admin', 'filter' => 'auth:receptionist,admin'], function($routes) {
+    $routes->get('general-inpatient', 'Rooms::generalInpatient');
+    $routes->get('critical-care', 'Rooms::criticalCare');
+    $routes->get('specialized', 'Rooms::specialized');
+});
 $routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers', 'filter' => 'auth:receptionist,admin'], function($routes) {
     $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
     $routes->get('male-ward', 'Admin\\Rooms::maleWard');

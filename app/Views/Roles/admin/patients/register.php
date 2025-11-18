@@ -73,7 +73,18 @@
                             <label class="form-label">Name Extension</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-id-badge text-muted"></i></span>
-                                <input type="text" name="name_extension" class="form-control" placeholder="e.g., Jr., III" value="<?= old('name_extension') ?>">
+                                <select name="name_extension" class="form-select">
+                                    <option value="">Select Extension</option>
+                                    <?php
+                                        $nameExtensions = ['Jr.', 'Sr.', 'II', 'III', 'IV', 'V'];
+                                        $oldExtension = old('name_extension');
+                                    ?>
+                                    <?php foreach ($nameExtensions as $ext): ?>
+                                        <option value="<?= esc($ext) ?>" <?= $oldExtension === $ext ? 'selected' : '' ?>>
+                                            <?= esc($ext) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -119,12 +130,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-row" style="margin-top: 0.75rem;">
-                        <div class="form-group" style="flex: 1 1 100%;">
+                    <div class="form-row" style="margin-top: 0.75rem; display: block !important; grid-template-columns: 1fr !important;">
+                        <div class="form-group" style="width: 100% !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important;">
                             <label class="form-label">Place of Birth</label>
-                            <div class="input-group">
+                            <div class="input-group" style="width: 100% !important; max-width: 100% !important;">
                                 <span class="input-group-text"><i class="fas fa-map-marker-alt text-muted"></i></span>
-                                <input type="text" name="place_of_birth" class="form-control" placeholder="City/Municipality, Province" value="<?= old('place_of_birth') ?>">
+                                <input type="text" name="place_of_birth" class="form-control" placeholder="City/Municipality, Province" value="<?= old('place_of_birth') ?>" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important; width: 100% !important; flex: 1 !important; max-width: 100% !important;">
                             </div>
                         </div>
                     </div>
@@ -178,14 +189,14 @@
                             <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text">+63</span>
-                                <input type="tel" name="phone" class="form-control" placeholder="912 345 6789" value="<?= old('phone') ?>" required>
+                                <input type="tel" name="phone" class="form-control" placeholder="912 345 6789" value="<?= old('phone') ?>" required style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Email Address</label>
                             <div class="input-group">
                                 <span class="input-group-text">@</span>
-                                <input type="email" name="email" class="form-control" placeholder="patient@example.com" value="<?= old('email') ?>">
+                                <input type="email" name="email" class="form-control" placeholder="patient@example.com" value="<?= old('email') ?>" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
                             </div>
                         </div>
                     </div>
@@ -234,25 +245,59 @@
                                 <label class="form-label">Blood Pressure</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-heartbeat text-muted"></i></span>
-                                    <input type="text" name="vitals_bp" class="form-control" placeholder="e.g., 120/80">
+                                    <input type="text" name="vitals_bp" class="form-control" placeholder="e.g., 120/80" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Heart Rate (bpm)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-heart text-muted"></i></span>
-                                    <input type="number" name="vitals_hr" class="form-control" min="0" max="300" placeholder="e.g., 72">
+                                    <input type="number" name="vitals_hr" class="form-control" min="0" max="300" placeholder="e.g., 72" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Temperature (°C)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-thermometer-half text-muted"></i></span>
-                                    <input type="number" step="0.1" name="vitals_temp" class="form-control" min="30" max="45" placeholder="e.g., 36.8">
+                                    <input type="number" step="0.1" name="vitals_temp" class="form-control" min="30" max="45" placeholder="e.g., 36.8" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Emergency Contact (minimal for outpatient) -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-phone-alt"></i> Emergency Contact
+                    </h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Contact Person</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user-friends text-muted"></i></span>
+                                <input type="text" name="emergency_contact_person" class="form-control" placeholder="Full name of emergency contact" value="<?= old('emergency_contact_person') ?>" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Relationship</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-heart text-muted"></i></span>
+                                <input type="text" name="emergency_contact_relationship" class="form-control" placeholder="e.g., Father, Spouse" value="<?= old('emergency_contact_relationship') ?>" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text">+63</span>
+                                <input type="tel" name="emergency_contact_phone" class="form-control" placeholder="912 345 6789" value="<?= old('emergency_contact_phone') ?>" minlength="10" maxlength="15" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insurance Section -->
+                <div class="form-section">
                     <div id="insuranceContainer">
                         <div class="form-row insurance-row">
                             <div class="form-group">
@@ -284,7 +329,7 @@
                                 <label class="form-label">Policy / Insurance Number</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-id-card text-muted"></i></span>
-                                    <input type="text" name="insurance_number" class="form-control" placeholder="Enter policy or insurance number" value="<?= old('insurance_number') ?>">
+                                    <input type="text" name="insurance_number" class="form-control" placeholder="Enter policy or insurance number" value="<?= old('insurance_number') ?>" style="padding: 0.875rem 1.25rem !important; font-size: 1.05rem !important; min-height: 52px !important;">
                                 </div>
                             </div>
                         </div>
@@ -297,29 +342,6 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-notes-medical text-muted"></i></span>
                             <textarea name="medical_history" class="form-control" rows="3" placeholder="List known allergies, past medical/surgical history, relevant notes."><?= old('medical_history') ?></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Emergency Contact (minimal for outpatient) -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-phone-alt"></i> Emergency Contact
-                    </h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Contact Person</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user-friends text-muted"></i></span>
-                                <input type="text" name="emergency_contact_person" class="form-control" placeholder="Full name of emergency contact" value="<?= old('emergency_contact_person') ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Contact Number</label>
-                            <div class="input-group">
-                                <span class="input-group-text">+63</span>
-                                <input type="tel" name="emergency_contact_phone" class="form-control" placeholder="912 345 6789" value="<?= old('emergency_contact_phone') ?>" minlength="10" maxlength="15">
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -749,10 +771,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const addInsuranceBtn = document.getElementById('addInsuranceBtn');
     if (insuranceContainer && addInsuranceBtn) {
         const templateRow = insuranceContainer.querySelector('.insurance-row');
+        
+        // Define insurance options to ensure they're always available
+        const insuranceOptions = [
+            { value: '', text: 'Select Insurance Provider' },
+            { value: 'PhilHealth', text: 'PhilHealth' },
+            { value: 'Maxicare', text: 'Maxicare' },
+            { value: 'Intellicare', text: 'Intellicare' },
+            { value: 'Medicard', text: 'Medicard' },
+            { value: 'Kaiser', text: 'Kaiser' },
+            { value: 'Others', text: 'Others' }
+        ];
 
         const createRemovableRow = () => {
             const clone = templateRow.cloneNode(true);
-            clone.querySelectorAll('select').forEach(sel => { sel.value = ''; });
+            
+            // Restore select options from hardcoded array
+            const clonedSelect = clone.querySelector('select[name="insurance_provider"]');
+            if (clonedSelect) {
+                clonedSelect.innerHTML = '';
+                insuranceOptions.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.value;
+                    option.textContent = opt.text;
+                    clonedSelect.appendChild(option);
+                });
+                clonedSelect.value = '';
+                // Ensure select is visible and enabled
+                clonedSelect.style.display = 'block';
+                clonedSelect.disabled = false;
+            }
+            
             clone.querySelectorAll('input[type="text"]').forEach(inp => { inp.value = ''; });
 
             const actionsCol = document.createElement('div');
