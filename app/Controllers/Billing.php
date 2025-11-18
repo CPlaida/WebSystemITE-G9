@@ -6,6 +6,9 @@ use CodeIgniter\Controller;
 use App\Models\BillingModel;
 use App\Models\LaboratoryModel;
 use App\Models\ServiceModel;
+use App\Models\Financial\PhilHealthAuditModel;
+use App\Models\Financial\PhilHealthCaseRateModel;
+use App\Services\PhilHealthCaseRateService;
 
 class Billing extends BaseController
 {
@@ -68,14 +71,38 @@ class Billing extends BaseController
         ]);
     }
 
-    public function process()
+    public function process($id = null)
     {
         $data = [
             'title' => 'Bill Process',
             'active_menu' => 'billing',
-            'validation' => \Config\Services::validation()
+            'validation' => \Config\Services::validation(),
+            'bill' => null,
+            'billItems' => [],
         ];
-        
+
+        if ($id) {
+            $bill = $this->billingModel->findWithRelations((int)$id);
+            if ($bill) {
+                $data['bill'] = $bill;
+                // Load existing items for edit mode
+                $db = \Config\Database::connect();
+                $this->ensureBillingItemsTable();
+                if ($db->tableExists('billing_items')) {
+                    $rows = $db->table('billing_items')->where('billing_id', (int)$id)->get()->getResultArray();
+                    foreach ($rows as $ri) {
+                        $data['billItems'][] = [
+                            'service' => $ri['service'] ?? '',
+                            'qty' => (int)($ri['qty'] ?? 1),
+                            'price' => (float)($ri['price'] ?? 0),
+                            'amount' => (float)($ri['amount'] ?? 0),
+                            'lab_id' => $ri['lab_id'] ?? null,
+                        ];
+                    }
+                }
+            }
+        }
+
         return view('Roles/admin/Billing & payment/bill_process', $data);
     }
     
@@ -225,6 +252,16 @@ class Billing extends BaseController
         // Return JSON for modal editing
         $bill = $this->billingModel->findWithRelations((int)$id);
         if (!$bill) return $this->response->setStatusCode(404)->setJSON(['error' => 'Not found']);
+        try {
+            $svc = new PhilHealthCaseRateService();
+            $adate = $bill['admission_date'] ?? ($bill['bill_date'] ?? date('Y-m-d'));
+            $res = $svc->suggest($bill['primary_rvs_code'] ?? null, $bill['primary_icd10_code'] ?? null, $adate ?: null);
+            $gross = (float)($bill['final_amount'] ?? ($bill['total_amount'] ?? 0));
+            $suggested = min((float)($res['suggested_amount'] ?? 0), max($gross, 0));
+            $bill['philhealth_suggested_amount_calc'] = $suggested;
+            $bill['philhealth_codes_used_calc'] = $res['codes_used'] ?? null;
+            $bill['philhealth_rate_ids_calc'] = $res['rate_ids'] ?? [];
+        } catch (\Throwable $e) { /* ignore suggestion errors */ }
         return $this->response->setJSON($bill);
     }
 
@@ -236,6 +273,11 @@ class Billing extends BaseController
             'final_amount' => 'permit_empty|numeric',
             'payment_status' => 'permit_empty|in_list[pending,partial,paid,overdue]',
             'bill_date' => 'permit_empty|valid_date',
+            'philhealth_member' => 'permit_empty|in_list[0,1]',
+            'philhealth_approved_amount' => 'permit_empty|numeric',
+            'primary_icd10_code' => 'permit_empty|string',
+            'primary_rvs_code' => 'permit_empty|string',
+            'admission_date' => 'permit_empty|valid_date',
         ];
         if (!$this->validate($rules)) {
             return $this->response->setStatusCode(422)->setJSON(['errors' => $this->validator->getErrors()]);
@@ -257,6 +299,11 @@ class Billing extends BaseController
             'payment_method' => $this->request->getPost('payment_method') ?? null,
             'bill_date' => $this->request->getPost('bill_date') ?? null,
             'notes' => $this->request->getPost('notes') ?? null,
+            'philhealth_member' => $this->request->getPost('philhealth_member') !== null ? (int)$this->request->getPost('philhealth_member') : null,
+            'philhealth_approved_amount' => $this->request->getPost('philhealth_approved_amount') !== null ? (float)$this->request->getPost('philhealth_approved_amount') : null,
+            'primary_icd10_code' => $this->request->getPost('primary_icd10_code') !== null ? (string)$this->request->getPost('primary_icd10_code') : null,
+            'primary_rvs_code' => $this->request->getPost('primary_rvs_code') !== null ? (string)$this->request->getPost('primary_rvs_code') : null,
+            'admission_date' => $this->request->getPost('admission_date') ?? null,
         ];
 
         if ($hasComponents) {
@@ -278,6 +325,77 @@ class Billing extends BaseController
             $data['final_amount'] = $computedFinal;
         } else if ($this->request->getPost('final_amount') !== null) {
             $data['final_amount'] = (float)$this->request->getPost('final_amount');
+        }
+
+        // PhilHealth validation and audit (Dropdown-driven)
+        $isMember = (int)($this->request->getPost('philhealth_member') ?? 0) === 1;
+        $approved = $this->request->getPost('philhealth_approved_amount');
+        $approved = $approved !== null ? (float)$approved : null;
+        if ($isMember) {
+            $current = $this->billingModel->find((int)$id) ?: [];
+            $gross = null;
+            if (isset($data['final_amount'])) { $gross = (float)$data['final_amount']; }
+            else if (isset($current['final_amount'])) { $gross = (float)$current['final_amount']; }
+            else { $gross = 0.0; }
+
+            $selectedRateId = (string)($this->request->getPost('philhealth_selected_rate_id') ?? '');
+            $selectedAmount = $this->request->getPost('philhealth_selected_amount');
+            $selectedAmount = $selectedAmount !== null ? (float)$selectedAmount : null;
+
+            if ($approved === null) {
+                return $this->response->setStatusCode(422)->setJSON(['errors' => ['philhealth_approved_amount' => 'PhilHealth Approved Deduction Amount is required.']]);
+            }
+
+            // Determine suggested cap from selected rate if provided; otherwise 0
+            $suggested = 0.0;
+            $codesUsed = [];
+            $rateIds = [];
+            if ($selectedRateId !== '') {
+                $rateIds[] = $selectedRateId;
+                // If amount not posted, fetch from DB as fallback
+                if ($selectedAmount === null) {
+                    try {
+                        $phModel = new PhilHealthCaseRateModel();
+                        $rate = $phModel->find($selectedRateId);
+                        if ($rate) {
+                            $selectedAmount = (float)(($rate['professional_share'] ?? 0) + ($rate['facility_share'] ?? 0));
+                            $codesUsed[] = [$rate['code_type'] ?? null, $rate['code'] ?? null];
+                        }
+                    } catch (\Throwable $e) { /* ignore */ }
+                }
+                if ($selectedAmount !== null) {
+                    $suggested = (float)$selectedAmount;
+                }
+            }
+            // Cap by gross
+            $suggested = min($suggested, max($gross, 0));
+
+            if ($approved > $suggested) {
+                return $this->response->setStatusCode(422)->setJSON(['errors' => ['philhealth_approved_amount' => 'Approved amount cannot exceed selected case rate.']]);
+            }
+            if ($approved > $gross) {
+                return $this->response->setStatusCode(422)->setJSON(['errors' => ['philhealth_approved_amount' => 'Approved amount cannot exceed gross bill.']]);
+            }
+
+            $data['philhealth_suggested_amount'] = $suggested;
+            $data['philhealth_codes_used'] = !empty($codesUsed) ? json_encode($codesUsed) : ($data['philhealth_codes_used'] ?? null);
+            $data['philhealth_rate_ids'] = !empty($rateIds) ? json_encode($rateIds) : ($data['philhealth_rate_ids'] ?? null);
+            $data['philhealth_verified_by'] = (string)(session()->get('id') ?? session()->get('user_id') ?? session()->get('username') ?? 'unknown');
+            $data['philhealth_verified_at'] = date('Y-m-d H:i:s');
+
+            $audit = new PhilHealthAuditModel();
+            $audit->insert([
+                'bill_id' => (int)$id,
+                'patient_id' => (string)($data['patient_id'] ?? ($current['patient_id'] ?? '')),
+                'suggested_amount' => $suggested,
+                'approved_amount' => $approved,
+                'officer_user_id' => (string)($data['philhealth_verified_by'] ?? ''),
+                'codes_used' => !empty($codesUsed) ? json_encode($codesUsed) : null,
+                'rate_ids' => !empty($rateIds) ? json_encode($rateIds) : null,
+                'notes' => (string)($this->request->getPost('philhealth_note') ?? ''),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
         }
 
         // Remove nulls to avoid overwriting
@@ -583,5 +701,100 @@ class Billing extends BaseController
         }
 
         return $this->response->setJSON(['items' => $items]);
+    }
+
+    /**
+     * Return case rates filtered by RVS/ICD and admission date.
+     * GET params: rvs, icd, admission (YYYY-MM-DD)
+     * Response: { rates: [{ id, label, amount, code_type, code, case_type }] }
+     */
+    public function caseRates()
+    {
+        $rvs = trim((string)$this->request->getGet('rvs')) ?: null;
+        $icd = trim((string)$this->request->getGet('icd')) ?: null;
+        $admission = trim((string)$this->request->getGet('admission')) ?: date('Y-m-d'); // Default to today if not provided
+
+        log_message('debug', 'caseRates called with params: ' . json_encode([
+            'rvs' => $rvs,
+            'icd' => $icd,
+            'admission' => $admission
+        ]));
+
+        $model = new PhilHealthCaseRateModel();
+        $builder = $model->builder();
+        $builder->select('*');
+        
+        // If no codes provided, return all active rates for the admission date
+        if (!$rvs && !$icd) {
+            log_message('debug', 'No RVS or ICD code provided, returning all active rates');
+        } else {
+            $builder->groupStart();
+            if ($rvs) { 
+                log_message('debug', 'Filtering by RVS code: ' . $rvs);
+                $builder->orGroupStart()
+                    ->where('code_type', 'RVS')
+                    ->like('code', $rvs, 'both')  // Use LIKE with wildcards for partial matching
+                    ->groupEnd(); 
+            }
+            if ($icd) { 
+                log_message('debug', 'Filtering by ICD code: ' . $icd);
+                $builder->orGroupStart()
+                    ->where('code_type', 'ICD')
+                    ->like('code', $icd, 'both')  // Use LIKE with wildcards for partial matching
+                    ->groupEnd(); 
+            }
+            $builder->groupEnd();
+        }
+        
+        // Always filter by active status if the column exists
+        if ($this->hasField('philhealth_case_rates', 'active')) {
+            $builder->where('active', 1);
+        }
+        
+        // Filter by effective date range
+        log_message('debug', 'Filtering by admission date: ' . $admission);
+        $builder->groupStart()
+            ->where('effective_from IS NULL')
+            ->orWhere("effective_from <= '" . $admission . "'");
+        $builder->groupEnd();
+        
+        $builder->groupStart()
+            ->where('effective_to IS NULL')
+            ->orWhere("effective_to >= '" . $admission . "'");
+        $builder->groupEnd();
+        
+        // Get the final query
+        $query = $builder->getCompiledSelect();
+        log_message('debug', 'Executing query: ' . $query);
+        
+        // Execute the query
+        $rows = $builder->orderBy('case_type', 'DESC')->get()->getResultArray();
+        log_message('debug', 'Found ' . count($rows) . ' matching case rates');
+
+        $rates = array_map(function($r){
+            $amount = (float)(($r['professional_share'] ?? 0) + ($r['facility_share'] ?? 0));
+            $label = sprintf('%s %s - %s (%s) - ₱%s', 
+                $r['code_type'], 
+                $r['code'], 
+                $r['description'] ?? '', 
+                strtoupper($r['case_type'] ?? ''), 
+                number_format($amount, 2)
+            );
+            $rateData = [
+                'id' => (string)$r['id'],
+                'label' => $label,
+                'amount' => $amount,
+                'code_type' => $r['code_type'] ?? null,
+                'code' => $r['code'] ?? null,
+                'case_type' => $r['case_type'] ?? null,
+            ];
+            log_message('debug', 'Mapped rate: ' . json_encode($rateData));
+            return $rateData;
+        }, $rows);
+
+        $response = ['rates' => $rates];
+        log_message('debug', 'Returning response: ' . json_encode($response));
+        
+        return $this->response->setJSON($response);
     }
 }

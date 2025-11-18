@@ -8,9 +8,9 @@
 <div class="bill-container">
     <!-- Main Content -->
     <div class="bill-main">
-        <form id="billForm" method="post" action="<?= base_url('billing/store-with-items') ?>">
+        <form id="billForm" method="post" action="<?= isset($bill['id']) ? base_url('billing/update/' . (int)$bill['id']) : base_url('billing/store-with-items') ?>">
             <div class="form-section">
-                <h2 class="section-header">Create New Bill</h2>
+                <h2 class="section-header"><?= isset($bill['id']) ? 'Edit Bill' : 'Create New Bill' ?></h2>
                 
                 <!-- Patient Information -->
                 <div class="form-section" style="background-color: #f0f7ff; position: relative;">
@@ -18,24 +18,26 @@
                     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;">
                         <div class="form-group" style="position: relative;">
                             <label for="patientName">Patient Name</label>
-                            <input type="text" id="patientName" class="form-control" placeholder="Enter patient name" autocomplete="off">
-                            <input type="hidden" id="patientID" name="patient_id">
+                            <input type="text" id="patientName" class="form-control" placeholder="Enter patient name" autocomplete="off" value="<?= esc($bill['patient_name'] ?? '') ?>" <?= isset($bill['id']) ? 'readonly style="background:#f3f4f6;color:#6b7280;"' : '' ?> >
+                            <input type="hidden" id="patientID" name="patient_id" value="<?= esc($bill['patient_id'] ?? '') ?>">
                             <div id="patientList" class="list-group" style="position:absolute; z-index:1000; top:58px; left:0; right:0;"></div>
                         </div>
                         <div class="form-group">
                             <label for="bill_date">Date</label>
-                            <input type="date" id="bill_date" name="bill_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input type="date" id="bill_date" name="bill_date" class="form-control" value="<?= esc($bill['bill_date'] ?? date('Y-m-d')) ?>" required>
                         </div>
                         <div class="form-group">
                             <label for="payment_method">Payment Method</label>
                             <select id="payment_method" name="payment_method" class="form-control">
-                                <option value="cash">Cash</option>
-                                <option value="insurance">Insurance</option>
+                                <?php $pm = strtolower($bill['payment_method'] ?? 'cash'); ?>
+                                <option value="cash" <?= $pm==='cash'?'selected':'' ?>>Cash</option>
+                                <option value="insurance" <?= $pm==='insurance'?'selected':'' ?>>Insurance</option>
                             </select>
                         </div>
                     </div>
                     <div id="payment_details" class="mt-2"></div>
                 </div>
+
 
                 <!-- Bill Items -->
                 <div class="form-section">
@@ -57,7 +59,25 @@
                                 </tr>
                             </thead>
                             <tbody id="billItems">
-                                <!-- Bill items will be added here dynamically -->
+                                <?php if (isset($billItems)): ?>
+                                    <?php foreach ($billItems as $item): ?>
+                                        <tr>
+                                            <td>
+                                                <input type="text" name="service[]" class="form-control service" required value="<?= esc($item['service']) ?>">
+                                                <input type="hidden" name="lab_id[]" class="lab-id" value="<?= esc($item['lab_id']) ?>">
+                                            </td>
+                                            <td>
+                                                <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty']) ?>" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price']) ?>" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="amount[]" class="form-control amount" readonly value="<?= esc($item['amount']) ?>">
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -74,16 +94,16 @@
             <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 6px;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span>Subtotal:</span>
-                    <span id="subtotal">₱0.00</span>
+                    <span id="subtotal">₱<?= esc($bill['subtotal'] ?? '0.00') ?></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                     <span>Tax (12%):</span>
-                    <span id="tax">₱0.00</span>
+                    <span id="tax">₱<?= esc($bill['tax'] ?? '0.00') ?></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1em; 
                             border-top: 1px solid #ddd; padding-top: 10px; margin-top: 8px;">
                     <span>Total:</span>
-                    <span id="total">₱0.00</span>
+                    <span id="total">₱<?= esc($bill['total'] ?? '0.00') ?></span>
                 </div>
             </div>
             
@@ -91,6 +111,7 @@
                 <button type="button" class="btn" style="flex: 1; background: #95a5a6; color: white;" onclick="window.history.back()">
                     Cancel
                 </button>
+                <input type="hidden" id="final_amount_field" name="final_amount" value="<?= esc($bill['final_amount'] ?? '0') ?>">
                 <button type="submit" form="billForm" class="btn btn-success" style="flex: 1;">
                     <i class="fas fa-save"></i> Save Bill
                 </button>
@@ -225,6 +246,7 @@ if (patientInput) {
                     patientList.style.display = 'none';
                     // Auto-load patient's services
                     loadPatientServices(p.id);
+                    if (paymentMethod?.value === 'insurance') { loadPatientInsurance(p.id); }
                 };
                 patientList.appendChild(item);
             });
@@ -299,29 +321,49 @@ function updateTotals() {
     document.getElementById('total').textContent = `₱${total.toFixed(2)}`;
 }
 
-// Payment method details
+// Payment method details + Insurance autofill
 const paymentMethod = document.getElementById('payment_method');
 const paymentDetails = document.getElementById('payment_details');
+
+async function loadPatientInsurance(pid){
+    if (!pid) return;
+    try {
+        const res = await fetch(`<?= base_url('patients/get/') ?>${encodeURIComponent(pid)}`);
+        const data = await res.json();
+        const p = (data && data.patient) ? data.patient : {};
+        const prov = (p.insurance_provider || '').toString();
+        const num = (p.insurance_number || '').toString();
+        const provInput = document.getElementById('insurance_provider');
+        const numInput = document.getElementById('insurance_number');
+        if (provInput) provInput.value = prov;
+        if (numInput) numInput.value = num;
+    } catch(e) { /* ignore */ }
+}
+
 if (paymentMethod && paymentDetails) {
     function renderPaymentDetails(method){
         paymentDetails.innerHTML = '';
         if (method === 'insurance') {
             paymentDetails.innerHTML = `
-                <div class="form-group">
-                    <label for="insurance_provider">Insurance Provider</label>
-                    <select id="insurance_provider" name="insurance_provider" class="form-control">
-                        <option value="">Select insurance provider</option>
-                        <option value="philhealth">PhilHealth</option>
-                        <option value="hmi">HMI</option>
-                        <option value="maxicare">Maxicare</option>
-                        <option value="intellicare">Intellicare</option>
-                    </select>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label for="insurance_provider">Insurance Provider</label>
+                        <input type="text" id="insurance_provider" name="insurance_provider" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="insurance_number">Insurance Number</label>
+                        <input type="text" id="insurance_number" name="insurance_number" class="form-control" readonly>
+                    </div>
                 </div>
             `;
+            const pid = document.getElementById('patientID')?.value?.trim();
+            if (pid) loadPatientInsurance(pid);
         }
     }
-    paymentMethod.addEventListener('change', function(){ renderPaymentDetails(this.value); });
-    // Render once on load (keeps UI consistent when default is cash)
+    paymentMethod.addEventListener('change', function(){
+        renderPaymentDetails(this.value);
+    });
+    // Initial render
     renderPaymentDetails(paymentMethod.value);
 }
 

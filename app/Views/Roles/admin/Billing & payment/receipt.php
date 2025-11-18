@@ -77,6 +77,9 @@
                 <p>Subtotal: ₱<?= number_format($bill['subtotal'] ?? 0, 2) ?></p>
                 <p>Tax (12%): ₱<?= number_format($bill['tax'] ?? 0, 2) ?></p>
                 <p>Total: ₱<?= number_format($bill['total'] ?? 0, 2) ?></p>
+                <?php $gross = (float)(($bill['subtotal'] ?? 0) + ($bill['tax'] ?? 0)); $ph = (float)($bill['philhealth_approved_amount'] ?? 0); $net = max($gross - $ph, 0); ?>
+                <p>Less: PhilHealth Case Rate Deduction: ₱<?= number_format($ph, 2) ?></p>
+                <p>Net Payable: ₱<?= number_format($net, 2) ?></p>
             </div>
 
             <div class="footer">

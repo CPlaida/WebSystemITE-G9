@@ -119,6 +119,35 @@
                 <label style="margin:0; color:#374151; font-weight:600;">Bill Date</label>
                 <input id="em_bill_date" type="date" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.bill_date || ''}">
 
+                <div style="grid-column: 1 / -1; height:1px; background:#e5e7eb; margin:8px 0;"></div>
+
+                <label style="margin:0; color:#111827; font-weight:700;">PhilHealth Member</label>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input id="em_ph_member" type="checkbox" ${String(bill.philhealth_member||'0')==='1' ? 'checked' : ''}>
+                    <span style="font-size:12px; color:#6b7280;">Check if patient is eligible for PhilHealth</span>
+                </div>
+
+                <label style="margin:0; color:#374151; font-weight:600;">Admission Date</label>
+                <input id="em_admission_date" type="date" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.admission_date || bill.bill_date || ''}">
+
+                <label style="margin:0; color:#374151; font-weight:600;">Primary RVS Code</label>
+                <input id="em_primary_rvs" type="text" placeholder="e.g., 48010" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.primary_rvs_code || ''}">
+
+                <label style="margin:0; color:#374151; font-weight:600;">Primary ICD-10 Code</label>
+                <input id="em_primary_icd" type="text" placeholder="e.g., A04.7" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.primary_icd10_code || ''}">
+
+                <label style="margin:0; color:#374151; font-weight:600;">Suggested Deduction</label>
+                <input id="em_ph_suggested" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${bill.philhealth_suggested_amount_calc || 0}" disabled>
+
+                <label style="margin:0; color:#374151; font-weight:600;">Approved Deduction (Final)</label>
+                <input id="em_ph_approved" type="number" step="0.01" placeholder="Enter approved amount" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.philhealth_approved_amount || ''}">
+
+                <label style="margin:0; color:#374151; font-weight:600;">Reason / Note</label>
+                <textarea id="em_ph_note" rows="2" placeholder="Required if codes missing or approved < suggested" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;"></textarea>
+
+                <label style="margin:0; color:#374151; font-weight:600;">Remaining Balance</label>
+                <input id="em_remaining" type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${(() => { const gross=(+bill.final_amount||0); const ph=(+bill.philhealth_approved_amount||0); const net=Math.max(gross - ph,0); return net.toFixed(2); })()}" disabled>
+
             </div>`;
 
         Swal.fire({
@@ -133,6 +162,17 @@
                 fd.append('final_amount', document.getElementById('em_final_amount').value);
                 fd.append('payment_status', document.getElementById('em_payment_status').value);
                 fd.append('bill_date', document.getElementById('em_bill_date').value);
+                // PhilHealth
+                const phMember = document.getElementById('em_ph_member').checked ? '1' : '0';
+                fd.append('philhealth_member', phMember);
+                fd.append('admission_date', document.getElementById('em_admission_date').value);
+                fd.append('primary_rvs_code', document.getElementById('em_primary_rvs').value);
+                fd.append('primary_icd10_code', document.getElementById('em_primary_icd').value);
+                const approved = document.getElementById('em_ph_approved').value;
+                if (phMember === '1') {
+                    fd.append('philhealth_approved_amount', approved);
+                    fd.append('philhealth_note', document.getElementById('em_ph_note').value);
+                }
                 return fetch('<?= base_url('billing/update/') ?>' + bill.id, { method: 'POST', body: fd })
                     .then(r => r.ok ? r.json() : r.json().then(err => Promise.reject(err)))
                     .catch(err => { Swal.showValidationMessage(err.errors ? Object.values(err.errors).join('<br>') : 'Update failed'); });

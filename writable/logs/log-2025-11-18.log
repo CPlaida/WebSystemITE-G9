@@ -1,0 +1,148 @@
+ERROR - 2025-11-18 17:36:59 --> mysqli_sql_exception: Unknown column 'philhealth_member' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('UPDATE `billing...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `billing...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `billing...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(1025): CodeIgniter\Model->doUpdate(Array, Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(860): CodeIgniter\BaseModel->update(Array, Array)
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(749): CodeIgniter\Model->update(3, Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(404): CodeIgniter\BaseModel->save(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+CRITICAL - 2025-11-18 17:36:59 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'philhealth_member' in 'field list'
+[Method: POST, Route: billing/update/3]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing` SET `payment_status` = :payment_status:, `bill_date` = :bill_date:, `philhealth_member` = :philhealth_member:, `philhealth_approved_amount` = :philhealth_approved_amount:, `primary_icd10_code` = :primary_icd10_code:, `primary_rvs_code` = :primary_rvs_code:, `admission_date` = :admission_date:, `final_amount` = :final_amount:, `philhealth_suggested_amount` = :philhealth_suggested_amount:, `philhealth_rate_ids` = :philhealth_rate_ids:, `philhealth_verified_by` = :philhealth_verified_by:, `philhealth_verified_at` = :philhealth_verified_at:, `updated_at` = :updated_at:
+WHERE `billing`.`id` IN :billing.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 3 SYSTEMPATH\BaseModel.php(1025): CodeIgniter\Model->doUpdate([...], [...])
+ 4 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [...])
+ 5 SYSTEMPATH\BaseModel.php(749): CodeIgniter\Model->update(3, [...])
+ 6 APPPATH\Controllers\Billing.php(404): CodeIgniter\BaseModel->save([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 17:36:59 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'philhealth_member' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `billing` SET `payment_status` = \'pending\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 375, `primary_icd10_code` = \'\', `primary_rvs_code` = \'81003\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 375, `philhealth_rate_ids` = \'[\\"14\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:36:59\', `updated_at` = \'2025-11-18 17:36:59\'
+WHERE `billing`.`id` IN (3)')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `billing` SET `payment_status` = \'pending\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 375, `primary_icd10_code` = \'\', `primary_rvs_code` = \'81003\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 375, `philhealth_rate_ids` = \'[\\"14\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:36:59\', `updated_at` = \'2025-11-18 17:36:59\'
+WHERE `billing`.`id` IN (3)')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing` SET `payment_status` = :payment_status:, `bill_date` = :bill_date:, `philhealth_member` = :philhealth_member:, `philhealth_approved_amount` = :philhealth_approved_amount:, `primary_icd10_code` = :primary_icd10_code:, `primary_rvs_code` = :primary_rvs_code:, `admission_date` = :admission_date:, `final_amount` = :final_amount:, `philhealth_suggested_amount` = :philhealth_suggested_amount:, `philhealth_rate_ids` = :philhealth_rate_ids:, `philhealth_verified_by` = :philhealth_verified_by:, `philhealth_verified_at` = :philhealth_verified_at:, `updated_at` = :updated_at:
+WHERE `billing`.`id` IN :billing.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 5 SYSTEMPATH\BaseModel.php(1025): CodeIgniter\Model->doUpdate([...], [...])
+ 6 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [...])
+ 7 SYSTEMPATH\BaseModel.php(749): CodeIgniter\Model->update(3, [...])
+ 8 APPPATH\Controllers\Billing.php(404): CodeIgniter\BaseModel->save([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 17:36:59 --> [Caused by] mysqli_sql_exception: Unknown column 'philhealth_member' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('UPDATE `billing` SET `payment_status` = \'pending\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 375, `primary_icd10_code` = \'\', `primary_rvs_code` = \'81003\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 375, `philhealth_rate_ids` = \'[\\"14\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:36:59\', `updated_at` = \'2025-11-18 17:36:59\'
+WHERE `billing`.`id` IN (3)', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `billing` SET `payment_status` = \'pending\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 375, `primary_icd10_code` = \'\', `primary_rvs_code` = \'81003\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 375, `philhealth_rate_ids` = \'[\\"14\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:36:59\', `updated_at` = \'2025-11-18 17:36:59\'
+WHERE `billing`.`id` IN (3)')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `billing` SET `payment_status` = \'pending\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 375, `primary_icd10_code` = \'\', `primary_rvs_code` = \'81003\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 375, `philhealth_rate_ids` = \'[\\"14\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:36:59\', `updated_at` = \'2025-11-18 17:36:59\'
+WHERE `billing`.`id` IN (3)')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing` SET `payment_status` = :payment_status:, `bill_date` = :bill_date:, `philhealth_member` = :philhealth_member:, `philhealth_approved_amount` = :philhealth_approved_amount:, `primary_icd10_code` = :primary_icd10_code:, `primary_rvs_code` = :primary_rvs_code:, `admission_date` = :admission_date:, `final_amount` = :final_amount:, `philhealth_suggested_amount` = :philhealth_suggested_amount:, `philhealth_rate_ids` = :philhealth_rate_ids:, `philhealth_verified_by` = :philhealth_verified_by:, `philhealth_verified_at` = :philhealth_verified_at:, `updated_at` = :updated_at:
+WHERE `billing`.`id` IN :billing.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH\BaseModel.php(1025): CodeIgniter\Model->doUpdate([...], [...])
+ 7 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [...])
+ 8 SYSTEMPATH\BaseModel.php(749): CodeIgniter\Model->update(3, [...])
+ 9 APPPATH\Controllers\Billing.php(404): CodeIgniter\BaseModel->save([...])
+10 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+11 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+12 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-18 17:37:22 --> mysqli_sql_exception: Unknown column 'philhealth_member' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('UPDATE `billing...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `billing...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `billing...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(1025): CodeIgniter\Model->doUpdate(Array, Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(860): CodeIgniter\BaseModel->update(Array, Array)
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(749): CodeIgniter\Model->update(3, Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(404): CodeIgniter\BaseModel->save(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+CRITICAL - 2025-11-18 17:37:22 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'philhealth_member' in 'field list'
+[Method: POST, Route: billing/update/3]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing` SET `payment_status` = :payment_status:, `bill_date` = :bill_date:, `philhealth_member` = :philhealth_member:, `philhealth_approved_amount` = :philhealth_approved_amount:, `primary_icd10_code` = :primary_icd10_code:, `primary_rvs_code` = :primary_rvs_code:, `admission_date` = :admission_date:, `final_amount` = :final_amount:, `philhealth_suggested_amount` = :philhealth_suggested_amount:, `philhealth_rate_ids` = :philhealth_rate_ids:, `philhealth_verified_by` = :philhealth_verified_by:, `philhealth_verified_at` = :philhealth_verified_at:, `updated_at` = :updated_at:
+WHERE `billing`.`id` IN :billing.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 3 SYSTEMPATH\BaseModel.php(1025): CodeIgniter\Model->doUpdate([...], [...])
+ 4 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [...])
+ 5 SYSTEMPATH\BaseModel.php(749): CodeIgniter\Model->update(3, [...])
+ 6 APPPATH\Controllers\Billing.php(404): CodeIgniter\BaseModel->save([...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 17:37:22 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'philhealth_member' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `billing` SET `payment_status` = \'paid\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 250, `primary_icd10_code` = \'\', `primary_rvs_code` = \'82947\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 250, `philhealth_rate_ids` = \'[\\"15\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:37:22\', `updated_at` = \'2025-11-18 17:37:22\'
+WHERE `billing`.`id` IN (3)')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `billing` SET `payment_status` = \'paid\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 250, `primary_icd10_code` = \'\', `primary_rvs_code` = \'82947\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 250, `philhealth_rate_ids` = \'[\\"15\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:37:22\', `updated_at` = \'2025-11-18 17:37:22\'
+WHERE `billing`.`id` IN (3)')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing` SET `payment_status` = :payment_status:, `bill_date` = :bill_date:, `philhealth_member` = :philhealth_member:, `philhealth_approved_amount` = :philhealth_approved_amount:, `primary_icd10_code` = :primary_icd10_code:, `primary_rvs_code` = :primary_rvs_code:, `admission_date` = :admission_date:, `final_amount` = :final_amount:, `philhealth_suggested_amount` = :philhealth_suggested_amount:, `philhealth_rate_ids` = :philhealth_rate_ids:, `philhealth_verified_by` = :philhealth_verified_by:, `philhealth_verified_at` = :philhealth_verified_at:, `updated_at` = :updated_at:
+WHERE `billing`.`id` IN :billing.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 5 SYSTEMPATH\BaseModel.php(1025): CodeIgniter\Model->doUpdate([...], [...])
+ 6 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [...])
+ 7 SYSTEMPATH\BaseModel.php(749): CodeIgniter\Model->update(3, [...])
+ 8 APPPATH\Controllers\Billing.php(404): CodeIgniter\BaseModel->save([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-18 17:37:22 --> [Caused by] mysqli_sql_exception: Unknown column 'philhealth_member' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('UPDATE `billing` SET `payment_status` = \'paid\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 250, `primary_icd10_code` = \'\', `primary_rvs_code` = \'82947\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 250, `philhealth_rate_ids` = \'[\\"15\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:37:22\', `updated_at` = \'2025-11-18 17:37:22\'
+WHERE `billing`.`id` IN (3)', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `billing` SET `payment_status` = \'paid\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 250, `primary_icd10_code` = \'\', `primary_rvs_code` = \'82947\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 250, `philhealth_rate_ids` = \'[\\"15\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:37:22\', `updated_at` = \'2025-11-18 17:37:22\'
+WHERE `billing`.`id` IN (3)')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `billing` SET `payment_status` = \'paid\', `bill_date` = \'2025-11-14\', `philhealth_member` = 1, `philhealth_approved_amount` = 250, `primary_icd10_code` = \'\', `primary_rvs_code` = \'82947\', `admission_date` = \'2025-11-14\', `final_amount` = 1680, `philhealth_suggested_amount` = 250, `philhealth_rate_ids` = \'[\\"15\\"]\', `philhealth_verified_by` = \'ADM-251114-0001\', `philhealth_verified_at` = \'2025-11-18 17:37:22\', `updated_at` = \'2025-11-18 17:37:22\'
+WHERE `billing`.`id` IN (3)')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `billing` SET `payment_status` = :payment_status:, `bill_date` = :bill_date:, `philhealth_member` = :philhealth_member:, `philhealth_approved_amount` = :philhealth_approved_amount:, `primary_icd10_code` = :primary_icd10_code:, `primary_rvs_code` = :primary_rvs_code:, `admission_date` = :admission_date:, `final_amount` = :final_amount:, `philhealth_suggested_amount` = :philhealth_suggested_amount:, `philhealth_rate_ids` = :philhealth_rate_ids:, `philhealth_verified_by` = :philhealth_verified_by:, `philhealth_verified_at` = :philhealth_verified_at:, `updated_at` = :updated_at:
+WHERE `billing`.`id` IN :billing.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(461): CodeIgniter\Database\BaseBuilder->update()
+ 6 SYSTEMPATH\BaseModel.php(1025): CodeIgniter\Model->doUpdate([...], [...])
+ 7 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [...])
+ 8 SYSTEMPATH\BaseModel.php(749): CodeIgniter\Model->update(3, [...])
+ 9 APPPATH\Controllers\Billing.php(404): CodeIgniter\BaseModel->save([...])
+10 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->update('3')
+11 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+12 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

@@ -130,6 +130,8 @@ $routes->post('billing/update/(:num)', 'Billing::update/$1', ['filter' => 'auth'
 $routes->get('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth']);
 $routes->post('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth']);
 $routes->get('billing/show/(:num)', 'Billing::show/$1', ['filter' => 'auth']);
+// PhilHealth case rates endpoint
+$routes->get('billing/caseRates', 'Billing::caseRates', ['filter' => 'auth']);
 
 // Laboratory Routes
 $routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,doctor,admin']);

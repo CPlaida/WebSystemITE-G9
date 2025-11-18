@@ -45,6 +45,18 @@ class BillingModel extends Model
         'service_id',        // added via migration to link to services
         'created_at',
         'updated_at',
+        // PhilHealth fields
+        'philhealth_member',
+        'philhealth_suggested_amount',
+        'philhealth_approved_amount',
+        'philhealth_codes_used',
+        'philhealth_rate_ids',
+        'philhealth_verified_by',
+        'philhealth_verified_at',
+        // Optional source fields captured on bill
+        'primary_icd10_code',
+        'primary_rvs_code',
+        'admission_date',
     ];
 
     protected $useTimestamps = true;
