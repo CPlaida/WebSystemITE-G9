@@ -82,16 +82,28 @@
                 </a>
             </li>
 
-            <!-- Inpatient Units / Wards -->
+            <!-- Hospital Patient Rooms -->
             <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Inpatient Units</span>
+                    <span class="text">Hospital Patient Rooms</span>
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
-                    <li><a href="<?= base_url('admin/rooms/pedia-ward') ?>"><span class="text">Pedia Ward</span></a></li>
-                    <li><a href="<?= base_url('admin/rooms/male-ward') ?>"><span class="text">Male Ward</span></a></li>
-                    <li><a href="<?= base_url('admin/rooms/female-ward') ?>"><span class="text">Female Ward</span></a></li>
+                    <li>
+                        <a href="<?= base_url('admin/rooms/general-inpatient') ?>" onclick="event.stopPropagation();">
+                            <span class="text">General Inpatient Rooms</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= base_url('admin/rooms/critical-care') ?>" onclick="event.stopPropagation();">
+                            <span class="text">Critical Care Units</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= base_url('admin/rooms/specialized') ?>" onclick="event.stopPropagation();">
+                            <span class="text">Specialized Patient Rooms</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
 
@@ -203,16 +215,28 @@
                     <li><a href="<?= site_url('receptionist/patients/view') ?>"><span class="text">View Patient</span></a></li>
                 </ul>
             </li>
-            <!-- Inpatient Units / Wards (Receptionist view) -->
+            <!-- Hospital Patient Rooms (Receptionist view) -->
             <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Inpatient Units</span>
+                    <span class="text">Hospital Patient Rooms</span>
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
-                    <li><a href="<?= site_url('receptionist/rooms/pedia-ward') ?>"><span class="text">Pedia Ward</span></a></li>
-                    <li><a href="<?= site_url('receptionist/rooms/male-ward') ?>"><span class="text">Male Ward</span></a></li>
-                    <li><a href="<?= site_url('receptionist/rooms/female-ward') ?>"><span class="text">Female Ward</span></a></li>
+                    <li>
+                        <a href="<?= site_url('receptionist/rooms/general-inpatient') ?>" onclick="event.stopPropagation();">
+                            <span class="text">General Inpatient Rooms</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= site_url('receptionist/rooms/critical-care') ?>" onclick="event.stopPropagation();">
+                            <span class="text">Critical Care Units</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= site_url('receptionist/rooms/specialized') ?>" onclick="event.stopPropagation();">
+                            <span class="text">Specialized Patient Rooms</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <!-- Appointments -->

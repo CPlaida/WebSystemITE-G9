@@ -15,6 +15,11 @@ class CreateBedsTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
+            'bed_type' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 50,
+                'comment'    => 'Critical Care, Specialized, General Inpatient',
+            ],
             'ward' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 50,
@@ -32,42 +37,21 @@ class CreateBedsTable extends Migration
                 'constraint' => 20,
                 'default'    => 'Available',
             ],
+            'created_at' => [
+                'type' => 'DATETIME',
+                'null' => true,
+            ],
+            'updated_at' => [
+                'type' => 'DATETIME',
+                'null' => true,
+            ],
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addKey('bed_type');
+        $this->forge->addKey('ward');
+        $this->forge->addKey(['ward', 'room', 'bed']);
         $this->forge->createTable('beds', true);
-
-        // Seed initial bed layout for Pedia, Male, and Female wards
-        $beds = [
-            // Pedia Ward
-            ['ward' => 'Pedia Ward', 'room' => 'P-101', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Pedia Ward', 'room' => 'P-101', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Pedia Ward', 'room' => 'P-102', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Pedia Ward', 'room' => 'P-102', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Pedia Ward', 'room' => 'P-103', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Pedia Ward', 'room' => 'P-103', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Pedia Ward', 'room' => 'P-104', 'bed' => 'Bed 1', 'status' => 'Available'],
-
-            // Male Ward
-            ['ward' => 'Male Ward', 'room' => 'M-201', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Male Ward', 'room' => 'M-201', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Male Ward', 'room' => 'M-202', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Male Ward', 'room' => 'M-202', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Male Ward', 'room' => 'M-203', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Male Ward', 'room' => 'M-203', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Male Ward', 'room' => 'M-204', 'bed' => 'Bed 1', 'status' => 'Available'],
-
-            // Female Ward
-            ['ward' => 'Female Ward', 'room' => 'F-301', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Female Ward', 'room' => 'F-301', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Female Ward', 'room' => 'F-302', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Female Ward', 'room' => 'F-302', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Female Ward', 'room' => 'F-303', 'bed' => 'Bed 1', 'status' => 'Available'],
-            ['ward' => 'Female Ward', 'room' => 'F-303', 'bed' => 'Bed 2', 'status' => 'Available'],
-            ['ward' => 'Female Ward', 'room' => 'F-304', 'bed' => 'Bed 1', 'status' => 'Available'],
-        ];
-
-        $this->db->table('beds')->insertBatch($beds);
     }
 
     public function down()
@@ -75,3 +59,4 @@ class CreateBedsTable extends Migration
         $this->forge->dropTable('beds', true);
     }
 }
+

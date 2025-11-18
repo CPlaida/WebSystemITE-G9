@@ -2441,3 +2441,1017 @@ body.receipt-page { font-family: Arial, sans-serif; line-height: 1.6; max-width:
 #amount_received::-webkit-outer-spin-button,
 #amount_received::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 #amount_received:focus { box-shadow: 0 0 0 3px rgba(59,130,246,0.15); border-color: #93c5fd; }
+
+/* ===== Patient Registration: Autocomplete Styles ===== */
+.autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.autocomplete-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.autocomplete-input:focus {
+    border-color: #4361ee;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: #ffffff;
+    border: 1px solid #ced4da;
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+    margin-top: -1px;
+}
+
+.autocomplete-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #212529;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover {
+    background-color: #f8f9fa;
+    color: #4361ee;
+}
+
+.autocomplete-item:active {
+    background-color: #e9ecef;
+}
+
+/* Input group adjustments for autocomplete */
+.autocomplete-wrapper .input-group-text {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.autocomplete-wrapper .autocomplete-input {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.autocomplete-wrapper .input-group-text + .autocomplete-input {
+    border-left: 1px solid #ced4da;
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.autocomplete-wrapper .input-group-text + .autocomplete-input:focus {
+    border-left-color: #4361ee;
+}
+
+/* Scrollbar styling for dropdown */
+.autocomplete-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+
+.autocomplete-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.autocomplete-dropdown::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ===== General Inpatient Rooms: Room Management Styles ===== */
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.table th {
+    font-weight: 600;
+    color: #495057;
+}
+.badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.875em;
+}
+.info-item {
+    padding: 0.5rem 0;
+}
+.info-item label {
+    display: block;
+    font-weight: 500;
+}
+.info-item p {
+    color: #212529;
+}
+
+/* Search Bar Main Container */
+.search-container-main {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 0;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Organized Header Styles */
+.card-header.organized-header {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem 1.5rem !important;
+    background: #f8f9fa !important;
+    border-bottom: 2px solid #e9ecef !important;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Inline Search Bar Styles */
+.search-section-inline {
+    flex: 1;
+    max-width: 400px;
+    margin-right: 1rem;
+}
+
+.search-wrapper-inline {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-icon-inline {
+    position: absolute;
+    left: 0.75rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.search-input-inline {
+    width: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.search-input-inline:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.search-input-inline::placeholder {
+    color: #adb5bd;
+    font-size: 0.85rem;
+}
+
+.search-clear-btn-inline {
+    position: absolute;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    width: 24px;
+    height: 24px;
+}
+
+.search-clear-btn-inline:hover {
+    background: #f1f3f5;
+    color: #495057;
+}
+
+.search-clear-btn-inline i {
+    font-size: 0.75rem;
+}
+
+.card-header.organized-header .filter-section {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto;
+    flex-shrink: 0;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    color: #6c757d;
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.search-input::placeholder {
+    color: #adb5bd;
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    width: 28px;
+    height: 28px;
+}
+
+.search-clear-btn:hover {
+    background: #f1f3f5;
+    color: #495057;
+}
+
+.search-clear-btn i {
+    font-size: 0.875rem;
+}
+
+/* Filter Section Styles */
+.filter-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 0 !important;
+    padding: 0 !important;
+    justify-content: flex-start;
+    width: auto;
+}
+
+.filter-label {
+    margin: 0;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.filter-label i {
+    color: #4361ee;
+}
+
+.filter-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .card-header.organized-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 1rem !important;
+        gap: 1rem;
+    }
+    
+    .search-section-inline {
+        max-width: 100%;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
+    .filter-label {
+        width: 100%;
+    }
+    
+    .filter-buttons {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    
+    .filter-buttons .btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+    }
+}
+
+/* ===== General Inpatient Rooms: Patient Modal Styles ===== */
+/* Modal Base Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.patient-modal-content {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease;
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Modal Header */
+.patient-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid #e9ecef;
+    background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
+    color: white;
+}
+
+.modal-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.modal-title-icon {
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.modal-title-main {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+
+.modal-subtitle {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: #fff;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Modal Body */
+.patient-modal-body {
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+    background: #f8f9fa;
+}
+
+/* Info Sections */
+.info-section {
+    background: #fff;
+    margin: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.info-section:first-child {
+    margin-top: 1.5rem;
+}
+
+.info-section:last-child {
+    margin-bottom: 1.5rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+}
+
+.section-icon {
+    font-size: 1.25rem;
+    color: #4361ee;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2c3e50;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.section-content {
+    padding: 1.25rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+}
+
+.info-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-field-full {
+    grid-column: 1 / -1;
+}
+
+.field-label {
+    color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.field-value {
+    margin: 0;
+    color: #212529;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.field-value-primary {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.field-value-medical {
+    margin: 0;
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.medical-history-box {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem;
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Modal Footer */
+.patient-modal-footer {
+    padding: 1rem 2rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: flex-end;
+    background: #fff;
+}
+
+.btn-close-modal {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    padding: 0.625rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.btn-close-modal:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* View Button Styles */
+.view-patient-btn {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-patient-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+}
+
+/* Scrollbar Styling */
+.patient-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.patient-modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.patient-modal-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.patient-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.medical-history-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.medical-history-box::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.medical-history-box::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+/* ===== Critical Care Units: Room Management Styles ===== */
+.icu-table tbody tr { 
+    transition: background-color .15s ease; 
+}
+
+.icu-table tbody tr:hover { 
+    background-color: #f8fafc; 
+}
+
+.badge { 
+    padding:.45rem .6rem; 
+    font-weight:600; 
+}
+
+/* Unit Category Header Styles */
+.unit-category-header {
+    margin: 0 0 0.75rem 0;
+    padding: 0;
+    width: 100%;
+}
+
+.unit-category-title {
+    margin: 0;
+    padding: 0;
+    color: #4361ee;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: none;
+}
+
+/* Filter Select Styles */
+.filter-select {
+    min-width: 260px;
+    max-width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+@media (max-width: 768px) {
+    .card-header.organized-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 1rem !important;
+        gap: 1rem;
+    }
+    
+    .search-section-inline {
+        max-width: 100%;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
+    .filter-label {
+        width: 100%;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+}
+
+/* ===== Specialized Patient Rooms: Room Management Styles ===== */
+.specialized-table tbody tr { 
+    transition: background-color .15s ease; 
+}
+
+.specialized-table tbody tr:hover { 
+    background-color: #f8fafc; 
+}
+
+/* ===== Formal Address Input Styling - Professional Structure ===== */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section .section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section .section-title i {
+  color: #495057;
+  font-size: 1rem;
+}
+
+.form-section .form-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  align-items: start;
+}
+
+.form-section .form-group {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section .form-label {
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 0.625rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.form-section .form-label .text-danger {
+  color: #dc3545;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.form-section .input-group {
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+  background-color: #fff;
+  overflow: visible;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.form-section .input-group:focus-within {
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: #0d6efd;
+}
+
+.form-section .input-group-text {
+  background-color: #f8f9fa;
+  border: none;
+  color: #6c757d;
+  font-weight: 500;
+  min-width: 48px;
+  justify-content: center;
+  padding: 0.625rem 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-section .input-group-text i {
+  font-size: 0.95rem;
+}
+
+.form-section .input-group .form-control {
+  border: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.form-section .input-group .form-control:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.form-section .input-group #provinceSearch,
+.form-section .input-group #citySearch,
+.form-section .input-group #barangaySearch {
+  border: none;
+  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  background-color: #fff;
+  color: #495057;
+  flex: 1;
+  width: 100%;
+}
+
+.form-section .input-group #provinceSearch:focus,
+.form-section .input-group #citySearch:focus,
+.form-section .input-group #barangaySearch:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+  z-index: 2;
+  background-color: #fff;
+}
+
+.form-section .input-group #provinceSearch:disabled,
+.form-section .input-group #citySearch:disabled,
+.form-section .input-group #barangaySearch:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.form-section .input-group #provinceSearch::placeholder,
+.form-section .input-group #citySearch::placeholder,
+.form-section .input-group #barangaySearch::placeholder {
+  color: #adb5bd;
+  opacity: 1;
+}
+
+/* Override: Show form-select in input-group and match form-control styling */
+.form-section .input-group .form-select {
+  display: block !important;
+  border: none;
+  flex: 1;
+  min-width: 0;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  background-color: #fff;
+  color: #495057;
+  width: 100%;
+  min-height: auto;
+  height: auto;
+  line-height: 1.5;
+}
+
+.form-section .input-group .form-select:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+  z-index: 2;
+  background-color: #fff;
+}
+
+/* Ensure all form-select in input-groups match form-control styling */
+.input-group .form-select {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  min-height: auto;
+  height: auto;
+  line-height: 1.5;
+}
+
+/* Specific overrides for patient registration selects */
+#insuranceContainer .input-group .form-select,
+.insurance-row .input-group .form-select,
+select[name="blood_type"].form-select,
+select[name="gender"].form-select,
+select[name="civil_status"].form-select,
+select[name="name_extension"].form-select,
+.form-section select[name="blood_type"].form-select,
+.form-section select[name="gender"].form-select,
+.form-section select[name="civil_status"].form-select,
+.form-section select[name="name_extension"].form-select {
+  display: block !important;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  min-height: auto;
+  height: auto;
+  line-height: 1.5;
+}
+
+.form-section .autocomplete-wrapper {
+  position: relative;
+}
+
+.form-section .autocomplete-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 2px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  z-index: 1000;
+  background-color: #fff;
+  width: 100%;
+}
+
+.form-section .autocomplete-dropdown.show {
+  display: block;
+}
+
+.form-section .autocomplete-dropdown .dropdown-item {
+  padding: 0.625rem 0.875rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #495057;
+  border-bottom: 1px solid #f8f9fa;
+  transition: background-color 0.15s ease;
+}
+
+.form-section .autocomplete-dropdown .dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.form-section .autocomplete-dropdown .dropdown-item:hover,
+.form-section .autocomplete-dropdown .dropdown-item.active {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}
+
+.form-section .autocomplete-dropdown .dropdown-item:active {
+  background-color: #e9ecef;
+}
+
+.form-section .input-group #streetInput {
+  border: none;
+  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  background-color: #fff;
+  color: #495057;
+  flex: 1;
+  width: 100%;
+}
+
+.form-section .input-group #streetInput:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.form-section .input-group #streetInput::placeholder {
+  color: #adb5bd;
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .form-section .form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .form-section .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .form-section .section-title {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* Hover states for better interactivity */
+.form-section .input-group:hover:not(:focus-within) {
+  border-color: #adb5bd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}

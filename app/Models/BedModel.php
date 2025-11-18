@@ -10,9 +10,14 @@ class BedModel extends Model
     protected $primaryKey = 'id';
 
     protected $allowedFields = [
+        'bed_type',
         'ward',
         'room',
         'bed',
         'status',
     ];
+
+    protected $useTimestamps = true;
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
 }

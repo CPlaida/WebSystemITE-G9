@@ -38,7 +38,7 @@
               <datalist id="patients_list">
                 <?php if (isset($patients) && !empty($patients)): ?>
                   <?php foreach ($patients as $p): ?>
-                    <option value="<?= esc($p['first_name'] . ' ' . $p['last_name']) ?>"></option>
+                    <option value="<?= esc(trim(($p['first_name'] ?? '') . ' ' . ($p['middle_name'] ?? '') . ' ' . ($p['last_name'] ?? '') . ' ' . ($p['name_extension'] ?? ''))) ?>"></option>
                   <?php endforeach; ?>
                 <?php endif; ?>
               </datalist>

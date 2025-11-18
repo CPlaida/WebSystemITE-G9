@@ -51,7 +51,8 @@ class Patients extends BaseController
             'emergency_contact' => 'permit_empty|string|max_length[100]',
             'insurance_provider' => 'permit_empty|string|max_length[255]',
             'insurance_number' => 'permit_empty|string|max_length[100]',
-            'medical_history' => 'permit_empty|string'
+            'medical_history' => 'permit_empty|string',
+            'bed_id' => 'permit_empty|integer|is_not_unique[beds.id]'
         ];
 
         $type = $this->request->getPost('type') ?? 'outpatient';
@@ -68,6 +69,7 @@ class Patients extends BaseController
                 'emergency_contact_person' => 'required|max_length[100]',
                 'emergency_contact_relationship' => 'permit_empty|max_length[50]',
                 'emergency_contact_phone' => 'required|min_length[10]|max_length[15]',
+                'bed_id' => 'required|integer|is_not_unique[beds.id]'
             ]);
         }
 
@@ -81,31 +83,42 @@ class Patients extends BaseController
 
         // Prepare patient data
         $emergencyContact = $this->request->getPost('emergency_contact');
-        if ($type === 'inpatient') {
-            // For inpatients, store the primary emergency contact number in the existing column
-            $emergencyContact = $this->request->getPost('emergency_contact_phone');
-        }
+        $bedId = $this->request->getPost('bed_id');
+        $bedId = ($bedId !== null && $bedId !== '') ? (int) $bedId : null;
 
         $data = [
             'first_name' => $this->request->getPost('first_name'),
+            'middle_name' => $this->request->getPost('middle_name') ?: null,
             'last_name' => $this->request->getPost('last_name'),
+            'name_extension' => $this->request->getPost('name_extension') ?: null,
             'email' => $this->request->getPost('email'),
             'phone' => $this->request->getPost('phone'),
             'gender' => $this->request->getPost('gender'),
             'date_of_birth' => $this->request->getPost('date_of_birth'),
             'address' => $this->request->getPost('address'),
             'type' => $type,
-            'ward' => $this->request->getPost('ward'),
-            'room' => $this->request->getPost('room'),
-            'bed' => $this->request->getPost('bed'),
+            'bed_id' => $bedId,
             'blood_type' => $this->request->getPost('blood_type'),
-            'emergency_contact' => $emergencyContact,
+            'emergency_contact' => $this->request->getPost('emergency_contact'),
             'insurance_provider' => $this->request->getPost('insurance_provider'),
             'insurance_number' => $this->request->getPost('insurance_number'),
             'medical_history' => $this->request->getPost('medical_history'),
             'status' => 'active',
             'created_at' => date('Y-m-d H:i:s')
         ];
+
+        if ($type === 'inpatient') {
+            // Persist full emergency contact details for room dashboards
+            $data['emergency_contact_person'] = $this->request->getPost('emergency_contact_person');
+            $data['emergency_contact_relationship'] = $this->request->getPost('emergency_contact_relationship');
+            $data['emergency_contact_phone'] = $this->request->getPost('emergency_contact_phone');
+            $data['emergency_contact'] = $data['emergency_contact_phone'];
+        } else {
+            // Optional contact info for outpatients
+            $data['emergency_contact_person'] = $this->request->getPost('emergency_contact_person') ?: null;
+            $data['emergency_contact_relationship'] = $this->request->getPost('emergency_contact_relationship') ?: null;
+            $data['emergency_contact_phone'] = $this->request->getPost('emergency_contact_phone') ?: null;
+        }
 
         // Save to database
         if ($this->patientModel->save($data)) {
@@ -132,7 +145,7 @@ class Patients extends BaseController
             'patients' => $this->patientModel->findAll()
         ];
         
-        return view('Roles/admin/patients/index', $data);
+        return view('Roles/admin/patients/view', $data);
     }
 
     public function inpatient()

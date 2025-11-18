@@ -44,7 +44,7 @@ $title = $wardName . ' – Room & Bed Management';
                 <td><?= esc($row['room'] ?? '') ?></td>
                 <td><?= esc($row['bed'] ?? '') ?></td>
                 <td><?= esc($patient['id'] ?? '') ?></td>
-                <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''))) ?></td>
+                <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''))) ?></td>
                 <td><span class="badge <?= esc($badge) ?>"><?= esc($status) ?></span></td>
                 <td>
                   <?php if ($status === 'Occupied'): ?>

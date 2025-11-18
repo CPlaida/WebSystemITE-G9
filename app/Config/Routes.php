@@ -67,9 +67,9 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
 // Admin user CRUD endpoints
 $routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin']);
-$routes->post('admin/users/update/(:num)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/users/delete/(:num)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/users/reset-password/(:num)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/update/(:segment)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/delete/(:segment)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/users/reset-password/(:segment)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin']);
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
@@ -84,7 +84,8 @@ $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse'
 $routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes) {
     $routes->get('register', 'Patients::register');
     $routes->post('register', 'Patients::processRegister');
-    $routes->get('view', 'Patients::view');
+    // Map to Admin\Patients index to display list and avoid 404
+    $routes->get('view', 'Admin\Patients::index');
     $routes->get('search', 'Patients::search');
     $routes->get('get/(:num)', 'Patients::getPatient/$1');
 });
@@ -154,9 +155,9 @@ $routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestRe
  //Medicine Routes
 $routes->get('/medicines', 'Medicine::index');
 $routes->post('/medicines/store', 'Medicine::store');
-$routes->get('/medicines/edit/(:num)', 'Medicine::edit/$1');
-$routes->post('/medicines/update/(:num)', 'Medicine::update/$1');
-$routes->get('/medicines/delete/(:num)', 'Medicine::delete/$1');
+$routes->get('/medicines/edit/(:segment)', 'Medicine::edit/$1');
+$routes->post('/medicines/update/(:segment)', 'Medicine::update/$1');
+$routes->get('/medicines/delete/(:segment)', 'Medicine::delete/$1');
  // Sidebar alias
 $routes->get('admin/inventory/medicine', 'Medicine::index');
 
@@ -243,6 +244,9 @@ $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransact
             $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
             $routes->get('male-ward', 'Admin\\Rooms::maleWard');
             $routes->get('female-ward', 'Admin\\Rooms::femaleWard');
+            $routes->get('general-inpatient', 'Admin\\Rooms::generalInpatient');
+            $routes->get('critical-care', 'Admin\\Rooms::criticalCare');
+            $routes->get('specialized', 'Admin\\Rooms::specialized');
             $routes->post('beds/update-status', 'Admin\\Rooms::updateBedStatus');
         });
     });
@@ -263,6 +267,11 @@ $routes->group('receptionist/patients', ['namespace' => 'App\\Views', 'filter' =
 });
 
 // Receptionist ward/room pages (reuse Admin\Rooms dynamic wards)
+$routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers\\Admin', 'filter' => 'auth:receptionist,admin'], function($routes) {
+    $routes->get('general-inpatient', 'Rooms::generalInpatient');
+    $routes->get('critical-care', 'Rooms::criticalCare');
+    $routes->get('specialized', 'Rooms::specialized');
+});
 $routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers', 'filter' => 'auth:receptionist,admin'], function($routes) {
     $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
     $routes->get('male-ward', 'Admin\\Rooms::maleWard');

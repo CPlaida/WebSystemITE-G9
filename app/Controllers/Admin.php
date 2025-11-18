@@ -124,7 +124,7 @@ class Admin extends BaseController
         if ($password !== '') {
             $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
-        $model->update((int)$id, $data);
+        $model->update($id, $data);
         return redirect()->to('/admin/Administration/ManageUser')->with('success', 'User updated successfully.');
     }
 
@@ -134,7 +134,7 @@ class Admin extends BaseController
             return redirect()->back();
         }
         $model = new UserModel();
-        $model->delete((int)$id);
+        $model->delete($id);
         return redirect()->to('/admin/Administration/ManageUser')->with('success', 'User deleted successfully.');
     }
 
@@ -158,7 +158,7 @@ class Admin extends BaseController
         }
 
         $model = new UserModel();
-        $model->update((int)$id, [
+        $model->update($id, [
             'password' => password_hash($new, PASSWORD_DEFAULT),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
