@@ -47,14 +47,83 @@ class CreatePatientsTable extends Migration
                 'type'       => 'ENUM',
                 'constraint' => ['male', 'female', 'other'],
             ],
+            'civil_status' => [
+                'type'       => 'ENUM',
+                'constraint' => ['single', 'married', 'widowed', 'separated', 'divorced'],
+                'null'       => true,
+            ],
+            'place_of_birth' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
             'address' => [
                 'type'       => 'TEXT',
+                'null'       => true,
+            ],
+            'province' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
+            'province_code' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 10,
+                'null'       => true,
+            ],
+            'city' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
+            'city_code' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 10,
+                'null'       => true,
+            ],
+            'barangay' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
+            'barangay_code' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 10,
+                'null'       => true,
+            ],
+            'street' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
                 'null'       => true,
             ],
             'type' => [
                 'type'       => 'ENUM',
                 'constraint' => ['inpatient', 'outpatient'],
                 'default'    => 'outpatient',
+            ],
+            'bed_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'null'       => true,
+            ],
+            'admission_date' => [
+                'type' => 'DATE',
+                'null' => true,
+            ],
+            'admission_time' => [
+                'type' => 'TIME',
+                'null' => true,
+            ],
+            'admission_type' => [
+                'type'       => 'ENUM',
+                'constraint' => ['emergency', 'elective', 'transfer'],
+                'null'       => true,
+            ],
+            'attending_physician' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
+                'null'       => true,
             ],
             'blood_type' => [
                 'type'       => 'VARCHAR',
@@ -64,6 +133,16 @@ class CreatePatientsTable extends Migration
             'emergency_contact' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 20,
+                'null'       => true,
+            ],
+            'insurance_provider' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
+            'insurance_number' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
                 'null'       => true,
             ],
             'emergency_contact_person' => [
@@ -79,6 +158,30 @@ class CreatePatientsTable extends Migration
             'emergency_contact_phone' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 20,
+                'null'       => true,
+            ],
+            'admitting_diagnosis' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+            'reason_admission' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+            'vitals_bp' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
+                'null'       => true,
+            ],
+            'vitals_hr' => [
+                'type'       => 'SMALLINT',
+                'constraint' => 3,
+                'unsigned'   => true,
+                'null'       => true,
+            ],
+            'vitals_temp' => [
+                'type'       => 'DECIMAL',
+                'constraint' => '4,1',
                 'null'       => true,
             ],
             'medical_history' => [
@@ -101,6 +204,7 @@ class CreatePatientsTable extends Migration
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addKey('type');
+        $this->forge->addKey('bed_id');
         $this->forge->createTable('patients');
     }
 
