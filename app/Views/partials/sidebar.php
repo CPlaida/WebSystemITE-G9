@@ -75,7 +75,7 @@
             </li>
 
             <!-- Inventory Management -->
-            <li class="nav-item">
+            <li class="nav-item expandable">
                 <a href="<?= site_url('admin/inventory/medicine') ?>">
                     <span class="text">Inventory Management</span>
                     <span class="arrow">›</span>
