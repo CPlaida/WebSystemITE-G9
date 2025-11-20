@@ -4,14 +4,17 @@ namespace App\Controllers\Doctor;
 
 use App\Controllers\BaseController;
 use App\Models\PatientVitalModel;
+use App\Models\PatientModel;
 
 class VitalsController extends BaseController
 {
     protected $vitalModel;
+    protected $patientModel;
 
     public function __construct()
     {
         $this->vitalModel = new PatientVitalModel();
+        $this->patientModel = new PatientModel();
     }
 
     /**
@@ -25,8 +28,9 @@ class VitalsController extends BaseController
                 ->setJSON(['success' => false, 'message' => 'Not authenticated']);
         }
 
-        // Allow doctors, nurses, and admins to view vitals
-        if (!in_array(session()->get('role'), ['doctor', 'nurse', 'admin'])) {
+        // Allow same roles as the route filter (doctors, nurses, admins, receptionists)
+        $allowedViewerRoles = ['doctor', 'nurse', 'admin', 'receptionist'];
+        if (!in_array(session()->get('role'), $allowedViewerRoles, true)) {
             return $this->response->setStatusCode(403)
                 ->setJSON(['success' => false, 'message' => 'Access denied']);
         }
@@ -38,6 +42,23 @@ class VitalsController extends BaseController
         }
 
         $vitals = $this->vitalModel->getLatestForPatient($patientId);
+
+        if (!$vitals) {
+            $patient = $this->patientModel
+                ->select('id, vitals_bp, vitals_hr, vitals_temp, updated_at, created_at')
+                ->find($patientId);
+
+            if ($patient) {
+                $vitals = [
+                    'patient_id'     => (string) $patient['id'],
+                    'blood_pressure' => $patient['vitals_bp'],
+                    'heart_rate'     => $patient['vitals_hr'],
+                    'temperature'    => $patient['vitals_temp'],
+                    'created_at'     => $patient['updated_at'] ?? $patient['created_at'],
+                    'source'         => 'patient_record',
+                ];
+            }
+        }
 
         return $this->response->setJSON([
             'success' => true,
