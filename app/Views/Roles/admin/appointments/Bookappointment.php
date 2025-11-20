@@ -42,7 +42,6 @@
                   <?php endforeach; ?>
                 <?php endif; ?>
               </datalist>
-              <div class="error-message">Please select or enter patient name</div>
             </div>
 
             <!-- Date (Dynamic from schedules) -->
@@ -51,7 +50,6 @@
               <select name="appointment_date" id="appointment_date" class="form-select" required disabled>
                 <option value="" selected>Loading available dates...</option>
               </select>
-              <div class="error-message">Please select a date</div>
             </div>
 
             <!-- Doctor Selection (Dynamic by date) -->
@@ -60,7 +58,6 @@
               <select name="doctor_id" id="doctor_id" class="form-select" required disabled>
                 <option value="" selected>Select a date first</option>
               </select>
-              <div class="error-message">Please select a doctor</div>
             </div>
 
             <!-- Time (Dynamic by doctor + date) -->
@@ -69,7 +66,6 @@
               <select name="appointment_time" id="appointment_time" class="form-select" required disabled>
                 <option value="" selected>Select a doctor first</option>
               </select>
-              <div class="error-message">Please select a time</div>
             </div>
 
             <!-- Appointment Type -->
@@ -82,7 +78,6 @@
                 <option value="emergency" <?= old('appointment_type') == 'emergency' ? 'selected' : '' ?>>Emergency</option>
                 <option value="routine_checkup" <?= old('appointment_type') == 'routine_checkup' ? 'selected' : '' ?>>Routine Checkup</option>
               </select>
-              <div class="error-message">Please select appointment type</div>
             </div>
 
             <!-- Reason -->

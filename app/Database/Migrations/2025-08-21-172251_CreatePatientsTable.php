@@ -17,9 +17,19 @@ class CreatePatientsTable extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
             ],
+            'middle_name' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => true,
+            ],
             'last_name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
+            ],
+            'name_extension' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 10,
+                'null'       => true,
             ],
             'email' => [
                 'type'       => 'VARCHAR',

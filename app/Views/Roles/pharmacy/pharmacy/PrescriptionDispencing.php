@@ -11,23 +11,23 @@
         <!-- Medicine Shelf -->
         <div class="card">
             <div class="card-header">
-                <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="medicine-shelf-header">
                     <i class="fas fa-pills"></i>
                     <span>Medicine Shelf</span>
                 </div>
             </div>
-            <div class="card-body" style="padding: 0;">
+            <div class="card-body medicine-shelf-body">
                 <!-- Search Bar -->
-                <div style="padding: 15px; border-bottom: 1px solid #e9ecef; background: #f8f9fa;">
-                    <input type="text" id="medicineSearch" class="form-control" placeholder="Search medicine" style="width: 100%;">
+                <div class="medicine-search-container">
+                    <input type="text" id="medicineSearch" class="form-control medicine-search-input" placeholder="Search medicine">
                 </div>
                 
                 <!-- Medicine Grid -->
                 <div id="medicineGrid" class="medicine-grid">
                     <!-- Medicine cards will be loaded here via JavaScript -->
-                    <div style="padding: 40px; text-align: center; color: #6c757d;">
-                        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
-                        <p style="margin-top: 10px;">Loading medicines...</p>
+                    <div class="loading-container">
+                        <i class="fas fa-spinner fa-spin loading-spinner"></i>
+                        <p class="loading-text">Loading medicines...</p>
                 </div>
                 </div>
             </div>
@@ -35,53 +35,53 @@
     </div>
     
     <!-- RIGHT SIDE - Cart & Checkout -->
-    <div class="prescription-sidebar" style="display: flex; flex-direction: column; height: calc(100vh - 120px); max-height: calc(100vh - 120px);">
+    <div class="prescription-sidebar">
         <!-- Total Amount -->
-        <div class="card" style="margin-bottom: 15px; border: 1px solid #e0e0e0; flex-shrink: 0;">
-            <div class="card-body" style="padding: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 16px; color: #2c3e50; font-weight: 700;">Total Amount:</span>
-                    <span id="total" style="font-size: 24px; font-weight: 700; color: #007bff;">₱0.00</span>
+        <div class="card total-amount-card">
+            <div class="card-body total-amount-body">
+                <div class="total-amount-row">
+                    <span class="total-amount-label">Total Amount:</span>
+                    <span id="total" class="total-amount-value">₱0.00</span>
                 </div>
             </div>
         </div>
 
         <!-- Cart -->
-        <div class="card" style="border: 1px solid #e0e0e0; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
-            <div class="card-header" style="background: #f8f9fa; border-bottom: 1px solid #e0e0e0; padding: 12px 16px; flex-shrink: 0;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #2c3e50;">
-                    <i class="fas fa-shopping-cart" style="margin-right: 8px;"></i>Cart Items
+        <div class="card cart-card">
+            <div class="card-header cart-header">
+                <h3>
+                    <i class="fas fa-shopping-cart cart-header-icon"></i>Cart Items
                 </h3>
             </div>
-            <div class="card-body" style="padding: 0; flex: 1; overflow: hidden; display: flex; flex-direction: column;">
-                <div id="cartItems" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0;">
-                    <div style="padding: 40px; text-align: center; color: #6c757d;">
-                        <i class="fas fa-shopping-cart" style="font-size: 32px; opacity: 0.3;"></i>
-                        <p style="margin-top: 10px; font-size: 14px;">Your cart is empty</p>
+            <div class="card-body cart-body">
+                <div id="cartItems" class="cart-items-container">
+                    <div class="cart-empty">
+                        <i class="fas fa-shopping-cart cart-empty-icon"></i>
+                        <p class="cart-empty-text">Your cart is empty</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Checkout Area -->
-        <div class="card" style="margin-top: 15px; border: 1px solid #e0e0e0; flex-shrink: 0;">
-            <div class="card-header" style="background: #f8f9fa; border-bottom: 1px solid #e0e0e0; padding: 12px 16px;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #2c3e50;">Payment</h3>
+        <div class="card payment-card">
+            <div class="card-header payment-header">
+                <h3>Payment</h3>
             </div>
-            <div class="card-body" style="padding: 16px;">
-                <div class="form-group" style="margin-bottom: 16px;">
-                    <label for="amount_received" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 8px; font-size: 14px;">Amount Received</label>
-                    <div style="display: flex; align-items: stretch;">
-                        <span style="background: #f3f4f6; border: 1px solid #d1d5db; border-right: 0; color: #374151; padding: 10px 12px; border-radius: 6px 0 0 6px; font-weight: 600; display: flex; align-items: center; font-size: 14px;">₱</span>
-                        <input type="number" id="amount_received" class="form-control" min="0" step="0.01" placeholder="0.00" style="border-radius: 0 6px 6px 0; text-align: right; border-left: 0; border: 1px solid #d1d5db; padding: 10px 12px; font-size: 14px;">
+            <div class="card-body payment-body">
+                <div class="form-group payment-form-group">
+                    <label for="amount_received" class="payment-label">Amount Received</label>
+                    <div class="amount-input-group">
+                        <span class="amount-prefix">₱</span>
+                        <input type="number" id="amount_received" class="form-control amount-input" min="0" step="0.01" placeholder="0.00">
                     </div>
-                    <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 8px;">
-                        <span id="change_badge" style="background: #eafaf1; color: #0f7a43; border: 1px solid #b7f0cf; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px;">Change: ₱0.00</span>
+                    <div class="change-badge">
+                        <span id="change_badge">Change: ₱0.00</span>
                     </div>
                 </div>
                 
-                <button class="btn btn-primary btn-block" id="checkoutBtn" style="padding: 12px; font-size: 15px; font-weight: 600; border-radius: 6px; background: #007bff; border: none; color: white; cursor: pointer; transition: background 0.2s; width: 100%;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
-                    <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Process Checkout
+                <button class="btn btn-primary btn-block checkout-btn" id="checkoutBtn">
+                    <i class="fas fa-check-circle checkout-btn-icon"></i> Process Checkout
                 </button>
             </div>
         </div>
@@ -116,7 +116,7 @@ $(document).ready(function() {
             })
             .catch(err => {
                 console.error('Error loading medicines:', err);
-                $('#medicineGrid').html('<div style="padding: 40px; text-align: center; color: #dc3545;">Error loading medicines. Please refresh the page.</div>');
+                $('#medicineGrid').html('<div class="error-message">Error loading medicines. Please refresh the page.</div>');
             });
     }
 
@@ -126,7 +126,7 @@ $(document).ready(function() {
         $grid.empty();
 
         if (filteredMedicines.length === 0) {
-            $grid.html('<div style="padding: 40px; text-align: center; color: #6c757d;">No medicines found</div>');
+            $grid.html('<div class="loading-container">No medicines found</div>');
             return;
         }
 
@@ -159,7 +159,7 @@ $(document).ready(function() {
                     </div>
                     <div class="medicine-card-info">
                         <div class="medicine-name">${med.name}</div>
-                        <div class="medicine-price" style="color: #dc3545; font-weight: 600; font-size: 14px; margin: 4px 0;">₱${Number(med.price || 0).toFixed(2)}</div>
+                        <div class="medicine-price">₱${Number(med.price || 0).toFixed(2)}</div>
                         <div class="medicine-stock">Stock: ${stock}</div>
                     </div>
                 </div>
@@ -357,9 +357,9 @@ $(document).ready(function() {
         
         if (cart.length === 0) {
             $cartItems.html(`
-                <div style="padding: 40px; text-align: center; color: #6c757d;">
-                    <i class="fas fa-shopping-cart" style="font-size: 32px; opacity: 0.3;"></i>
-                    <p style="margin-top: 10px;">Your cart is empty</p>
+                <div class="cart-empty">
+                    <i class="fas fa-shopping-cart cart-empty-icon"></i>
+                    <p class="cart-empty-text">Your cart is empty</p>
                 </div>
             `);
             updateTotal();
@@ -368,18 +368,18 @@ $(document).ready(function() {
         
         cart.forEach((item, index) => {
             const $item = $(`
-                <div class="cart-item-row" style="padding: 12px 16px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
-                    <div class="cart-item-info" style="flex: 1;">
-                        <div class="cart-item-name" style="font-weight: 600; color: #2c3e50; font-size: 14px; margin-bottom: 4px;">${item.name}</div>
-                        <div class="cart-item-details" style="font-size: 13px; color: #6c757d;">
-                            Quantity: <span class="cart-item-qty" style="font-weight: 600; color: #2c3e50;">${item.quantity}</span> × 
-                            <span style="color: #2c3e50;">₱${item.price.toFixed(2)}</span> = 
-                            <span style="font-weight: 600; color: #007bff;">₱${(item.price * item.quantity).toFixed(2)}</span>
+                <div class="cart-item-row">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-details">
+                            Quantity: <span class="cart-item-qty">${item.quantity}</span> × 
+                            <span class="cart-item-price">₱${item.price.toFixed(2)}</span> = 
+                            <span class="cart-item-total">₱${(item.price * item.quantity).toFixed(2)}</span>
                         </div>
                     </div>
-                    <div class="cart-item-controls" style="display: flex; gap: 6px; margin-left: 12px;">
-                        <button type="button" class="btn-qty btn-decrease" data-index="${index}" style="width: 32px; height: 32px; border: 1px solid #d1d5db; background: #fff; color: #6c757d; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">-</button>
-                        <button type="button" class="btn-remove" data-index="${index}" style="width: 32px; height: 32px; border: 1px solid #dc3545; background: #fff; color: #dc3545; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">×</button>
+                    <div class="cart-item-controls">
+                        <button type="button" class="btn-qty btn-decrease" data-index="${index}">-</button>
+                        <button type="button" class="btn-remove" data-index="${index}">×</button>
                     </div>
                 </div>
             `);

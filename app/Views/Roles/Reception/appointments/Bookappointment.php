@@ -44,7 +44,6 @@
                   <?php endforeach; ?>
                 <?php endif; ?>
               </datalist>
-              <div class="error-message">Please select or enter patient name</div>
             </div>
 
             <!-- Doctor Selection -->
@@ -60,7 +59,6 @@
                   <?php endforeach; ?>
                 <?php endif; ?>
               </select>
-              <div class="error-message">Please select a doctor</div>
             </div>
 
             <!-- Date -->
@@ -68,7 +66,6 @@
               <label class="form-label required-field" for="appointment_date">Date</label>
               <input type="date" name="appointment_date" id="appointment_date" class="form-control" 
                      min="<?= date('Y-m-d') ?>" value="<?= old('appointment_date', date('Y-m-d', strtotime('+1 day'))) ?>" required>
-              <div class="error-message">Please select a date</div>
             </div>
 
             <!-- Time -->
@@ -86,7 +83,6 @@
                 <option value="16:00:00" <?= old('appointment_time') == '16:00:00' ? 'selected' : '' ?>>04:00 PM</option>
                 <option value="17:00:00" <?= old('appointment_time') == '17:00:00' ? 'selected' : '' ?>>05:00 PM</option>
               </select>
-              <div class="error-message">Please select a time</div>
             </div>
 
             <!-- Appointment Type -->
@@ -99,7 +95,6 @@
                 <option value="emergency" <?= old('appointment_type') == 'emergency' ? 'selected' : '' ?>>Emergency</option>
                 <option value="routine_checkup" <?= old('appointment_type') == 'routine_checkup' ? 'selected' : '' ?>>Routine Checkup</option>
               </select>
-              <div class="error-message">Please select appointment type</div>
             </div>
 
             <!-- Reason -->
