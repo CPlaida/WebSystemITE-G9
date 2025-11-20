@@ -251,7 +251,7 @@ class Laboratory extends Controller
             return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
         }
 
-        $patientId = (int) ($this->request->getGet('patient_id') ?? 0);
+        $patientId = trim((string) ($this->request->getGet('patient_id') ?? ''));
         $name = trim((string) ($this->request->getGet('name') ?? ''));
 
         try {
@@ -262,39 +262,141 @@ class Laboratory extends Controller
                     ->orderBy('test_date', 'DESC')
                     ->limit(20);
 
+            // Check if patient_id column exists in laboratory table
+            $labFields = $db->getFieldNames('laboratory');
+            $hasPatientId = in_array('patient_id', $labFields);
+
             // Build robust name filters based on patient_id and/or provided name
             $fullName = '';
             $first = '';
             $last = '';
-            if ($patientId > 0 && $db->tableExists('patients')) {
+            $middle = '';
+            
+            if ($patientId !== '' && $db->tableExists('patients')) {
                 try {
                     $pf = $db->getFieldNames('patients');
                     $fn = in_array('first_name',$pf) ? 'first_name' : (in_array('firstname',$pf) ? 'firstname' : null);
                     $ln = in_array('last_name',$pf) ? 'last_name' : (in_array('lastname',$pf) ? 'lastname' : null);
+                    $mn = in_array('middle_name',$pf) ? 'middle_name' : null;
                     $nm = in_array('name',$pf) ? 'name' : (in_array('full_name',$pf) ? 'full_name' : null);
-                    $rowP = $db->table('patients')->select($nm?"$nm as name":($fn?"$fn as first_name":'') . ($ln?",".$ln." as last_name":''))
-                                   ->where('id', $patientId)->get()->getRowArray();
+                    
+                    $selectFields = [];
+                    if ($nm) {
+                        $selectFields[] = "$nm as name";
+                    } else {
+                        if ($fn) $selectFields[] = "$fn as first_name";
+                        if ($ln) $selectFields[] = "$ln as last_name";
+                        if ($mn) $selectFields[] = "$mn as middle_name";
+                    }
+                    
+                    $rowP = $db->table('patients')
+                               ->select(implode(',', $selectFields))
+                               ->where('id', $patientId)
+                               ->get()
+                               ->getRowArray();
+                    
                     if ($rowP) {
-                        if (!empty($rowP['name'])) { $fullName = trim($rowP['name']); }
-                        else {
+                        if (!empty($rowP['name'])) { 
+                            $fullName = trim($rowP['name']); 
+                        } else {
                             $first = trim((string)($rowP['first_name'] ?? ''));
+                            $middle = trim((string)($rowP['middle_name'] ?? ''));
                             $last  = trim((string)($rowP['last_name'] ?? ''));
-                            $fullName = trim($first . ' ' . $last);
+                            // Build full name with middle name
+                            $nameParts = array_filter([$first, $middle, $last]);
+                            $fullName = trim(implode(' ', $nameParts));
                         }
                     }
-                } catch (\Throwable $e) { /* ignore */ }
+                } catch (\Throwable $e) { 
+                    log_message('error', 'Error fetching patient for lab records: ' . $e->getMessage());
+                }
             }
 
-            if ($name !== '' || $fullName !== '' || $first !== '' || $last !== '') {
+            // Match by patient_id OR name (in case patient_id wasn't set in lab record)
+            $hasNameFilter = ($name !== '' || $fullName !== '' || $first !== '' || $last !== '');
+            
+            // Build flexible name search terms (handle variations like "Criszel Joy Quinones" vs "Criszel Joy B. Quinones Jr.")
+            $searchTerms = [];
+            
+            // Most important: First + Last name (this is what's usually in test_name)
+            if ($first !== '' && $last !== '') {
+                $searchTerms[] = trim($first . ' ' . $last);
+                // Also try with middle initial
+                if ($middle !== '') {
+                    $middleInitial = trim(substr($middle, 0, 1));
+                    $searchTerms[] = trim($first . ' ' . $middleInitial . ' ' . $last);
+                    $searchTerms[] = trim($first . ' ' . $middleInitial . '. ' . $last);
+                }
+            }
+            
+            // Full name variations
+            if ($fullName !== '') {
+                $searchTerms[] = $fullName;
+                // Remove common suffixes (Jr., Sr., II, III, etc.)
+                $nameWithoutSuffix = preg_replace('/\s+(Jr\.?|Sr\.?|II|III|IV|V)$/i', '', $fullName);
+                if ($nameWithoutSuffix !== $fullName) {
+                    $searchTerms[] = trim($nameWithoutSuffix);
+                }
+            }
+            
+            // Individual name parts
+            if ($first !== '') {
+                $searchTerms[] = $first;
+            }
+            if ($last !== '') {
+                $searchTerms[] = $last;
+            }
+            if ($name !== '' && !in_array($name, $searchTerms)) {
+                $searchTerms[] = $name;
+            }
+            
+            // Remove duplicates and empty values
+            $searchTerms = array_unique(array_filter($searchTerms));
+            
+            if ($patientId !== '' && $hasPatientId && !empty($searchTerms)) {
+                // Match by patient_id OR name (grouped)
+                $builder->groupStart()
+                        ->where('patient_id', $patientId)
+                        ->orGroupStart();
+                
+                $firstTerm = true;
+                foreach ($searchTerms as $term) {
+                    if ($firstTerm) {
+                        $builder->like('test_name', $term);
+                        $firstTerm = false;
+                    } else {
+                        $builder->orLike('test_name', $term);
+                    }
+                }
+                
+                $builder->groupEnd()
+                        ->groupEnd();
+            } 
+            else if ($patientId !== '' && $hasPatientId) {
+                // Only patient_id match
+                $builder->where('patient_id', $patientId);
+            }
+            else if (!empty($searchTerms)) {
+                // Only name matching
                 $builder->groupStart();
-                if ($fullName !== '') { $builder->like('test_name', $fullName); }
-                if ($first !== '') { $builder->orLike('test_name', $first); }
-                if ($last !== '') { $builder->orLike('test_name', $last); }
-                if ($name !== '') { $builder->orLike('test_name', $name); }
+                
+                $firstTerm = true;
+                foreach ($searchTerms as $term) {
+                    if ($firstTerm) {
+                        $builder->like('test_name', $term);
+                        $firstTerm = false;
+                    } else {
+                        $builder->orLike('test_name', $term);
+                    }
+                }
+                
                 $builder->groupEnd();
             }
 
             $rows = $builder->get()->getResultArray();
+            
+            // Debug logging (can be removed in production)
+            log_message('debug', 'Lab records query - Patient ID: ' . $patientId . ', Name: ' . $name . ', Full Name: ' . $fullName . ', First: ' . $first . ', Last: ' . $last . ', Search Terms: ' . implode(', ', $searchTerms ?? []) . ', Records found: ' . count($rows));
 
             return $this->response->setJSON([
                 'success' => true,
