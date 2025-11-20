@@ -3,98 +3,85 @@
 <?= $this->section('title') ?>Prescription Dispensing<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<!-- Add Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>" />
 
 <div class="prescription-container">
-    <!-- Main Content -->
+    <!-- LEFT SIDE - Medicine Shelf -->
     <div class="prescription-main">
+        <!-- Medicine Shelf -->
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-prescription"></i> Prescription Details
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-pills"></i>
+                    <span>Medicine Shelf</span>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="patientInput">Patient Name</label>
-                            <div class="patient-autocomplete">
-                                <input type="text" class="form-control" id="patientInput" placeholder="Type patient name" autocomplete="off" required>
-                                <div id="patientSuggestions" class="autocomplete-menu" hidden></div>
-                                <input type="hidden" id="patientId">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="prescriptionDate">Date</label>
-                            <input type="date" class="form-control" id="prescriptionDate" value="<?= date('Y-m-d') ?>">
-                        </div>
-                    </div>
+            <div class="card-body" style="padding: 0;">
+                <!-- Search Bar -->
+                <div style="padding: 15px; border-bottom: 1px solid #e9ecef; background: #f8f9fa;">
+                    <input type="text" id="medicineSearch" class="form-control" placeholder="Search medicine" style="width: 100%;">
                 </div>
                 
-                <div class="form-group">
-                    <label for="medicationSelect">Select Medication</label>
-                    <select class="form-control" id="medicationSelect" style="width: 100%;">
-                        <option></option>
-                    </select>
+                <!-- Medicine Grid -->
+                <div id="medicineGrid" class="medicine-grid">
+                    <!-- Medicine cards will be loaded here via JavaScript -->
+                    <div style="padding: 40px; text-align: center; color: #6c757d;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                        <p style="margin-top: 10px;">Loading medicines...</p>
                 </div>
-                
-                <div class="form-group">
-                    <label for="quantity">Quantity</label>
-                    <input type="number" class="form-control" id="quantity" value="1">
                 </div>
-                
-                <button class="btn btn-primary" id="addToCartBtn">
-                    <i class="fas fa-plus"></i> Add to Cart
-                </button>
             </div>
         </div>
     </div>
     
-    <!-- Sidebar -->
-    <div class="prescription-sidebar">
-        <!-- Cart -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-shopping-cart"></i> Cart</span>
-                <span class="badge badge-primary" id="cartCount">0</span>
+    <!-- RIGHT SIDE - Cart & Checkout -->
+    <div class="prescription-sidebar" style="display: flex; flex-direction: column; height: calc(100vh - 120px); max-height: calc(100vh - 120px);">
+        <!-- Total Amount -->
+        <div class="card" style="margin-bottom: 15px; border: 1px solid #e0e0e0; flex-shrink: 0;">
+            <div class="card-body" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 16px; color: #2c3e50; font-weight: 700;">Total Amount:</span>
+                    <span id="total" style="font-size: 24px; font-weight: 700; color: #007bff;">₱0.00</span>
+                </div>
             </div>
-            <div class="card-body">
-                <div id="cartItems">
-                    <p class="text-muted mb-0">Your cart is empty</p>
-                </div>
-                
-                <div class="cart-summary">
-                    <div class="summary-row">
-                        <span>Subtotal:</span>
-                        <span id="subtotal">₱0.00</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Tax (12%):</span>
-                        <span id="tax">₱0.00</span>
-                    </div>
-                    <div class="summary-row summary-total">
-                        <span>Total:</span>
-                        <span id="total">₱0.00</span>
+        </div>
+
+        <!-- Cart -->
+        <div class="card" style="border: 1px solid #e0e0e0; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
+            <div class="card-header" style="background: #f8f9fa; border-bottom: 1px solid #e0e0e0; padding: 12px 16px; flex-shrink: 0;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #2c3e50;">
+                    <i class="fas fa-shopping-cart" style="margin-right: 8px;"></i>Cart Items
+                </h3>
+            </div>
+            <div class="card-body" style="padding: 0; flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+                <div id="cartItems" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0;">
+                    <div style="padding: 40px; text-align: center; color: #6c757d;">
+                        <i class="fas fa-shopping-cart" style="font-size: 32px; opacity: 0.3;"></i>
+                        <p style="margin-top: 10px; font-size: 14px;">Your cart is empty</p>
                     </div>
                 </div>
-                
-                <!-- Payment -->
-                <div class="form-group mt-3">
-                    <label for="amount_received" style="font-weight:600;">Amount Received</label>
-                    <div style="display:flex; align-items:stretch;">
-                        <span style="background:#f3f4f6; border:1px solid #e5e7eb; border-right:0; color:#374151; padding:8px 10px; border-radius:6px 0 0 6px; font-weight:600;">₱</span>
-                        <input type="number" id="amount_received" class="form-control" min="0" step="0.01" placeholder="Enter cash received" style="border-radius:0 6px 6px 0; text-align:left;">
+            </div>
+        </div>
+
+        <!-- Checkout Area -->
+        <div class="card" style="margin-top: 15px; border: 1px solid #e0e0e0; flex-shrink: 0;">
+            <div class="card-header" style="background: #f8f9fa; border-bottom: 1px solid #e0e0e0; padding: 12px 16px;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #2c3e50;">Payment</h3>
+            </div>
+            <div class="card-body" style="padding: 16px;">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="amount_received" style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 8px; font-size: 14px;">Amount Received</label>
+                    <div style="display: flex; align-items: stretch;">
+                        <span style="background: #f3f4f6; border: 1px solid #d1d5db; border-right: 0; color: #374151; padding: 10px 12px; border-radius: 6px 0 0 6px; font-weight: 600; display: flex; align-items: center; font-size: 14px;">₱</span>
+                        <input type="number" id="amount_received" class="form-control" min="0" step="0.01" placeholder="0.00" style="border-radius: 0 6px 6px 0; text-align: right; border-left: 0; border: 1px solid #d1d5db; padding: 10px 12px; font-size: 14px;">
                     </div>
-                    <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:6px;">
-                        <span id="change_badge" style="background:#eafaf1; color:#0f7a43; border:1px solid #b7f0cf; padding:4px 10px; border-radius:9999px; font-weight:600; font-size:12px;">Change: ₱0.00</span>
+                    <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 8px;">
+                        <span id="change_badge" style="background: #eafaf1; color: #0f7a43; border: 1px solid #b7f0cf; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px;">Change: ₱0.00</span>
                     </div>
                 </div>
                 
-                <button class="btn btn-primary btn-block mt-3" id="checkoutBtn">
-                    <i class="fas fa-check-circle"></i> Checkout
+                <button class="btn btn-primary btn-block" id="checkoutBtn" style="padding: 12px; font-size: 15px; font-weight: 600; border-radius: 6px; background: #007bff; border: none; color: white; cursor: pointer; transition: background 0.2s; width: 100%;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+                    <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Process Checkout
                 </button>
             </div>
         </div>
@@ -102,196 +89,266 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Base URL helper
    const API_BASE = '<?= site_url('api/pharmacy') ?>';
 
-    let patientList = [];
-    let activeIndex = -1;
-    function debounce(fn, wait){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a), wait); } }
+    let allMedicines = [];
+    let filteredMedicines = [];
+    let cart = [];
 
-    function renderPatientSuggestions(list){
-        const $menu = $('#patientSuggestions');
-
-        // Ensure wrapper context and menu styled as a card
-        $('.patient-autocomplete').css({ position: 'relative' });
-        $menu.css({
-            position: 'absolute',
-            top: 'calc(100% + 4px)',
-            left: 0,
-            right: 0,
-            zIndex: 2000,
-            background: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '10px',
-            boxShadow: '0 10px 24px rgba(17, 24, 39, 0.10)',
-            padding: '6px 0',
-            maxHeight: '320px',
-            overflowY: 'auto',
-            display: 'block'
-        });
-
-        $menu.empty();
-        activeIndex = -1;
-
-        if (!list || list.length === 0){
-            $menu.attr('hidden', true);
-            return;
-        }
-
-        list.forEach((p,i)=>{
-            $menu.append(
-                `<div class="autocomplete-item" data-index="${i}" data-id="${p.id}" data-name="${p.name}" style="
-                    display:flex;align-items:center;justify-content:space-between;
-                    padding:12px 14px;font-size:15px;line-height:1.3;color:#111827;cursor:pointer;background:#fff;text-align:left;
-                    border-bottom: 1px solid #eef2f7;
-                ">
-                    <span>${p.name}</span>
-                </div>`
-            );
-        });
-
-        // Add hover styles inline for reliability
-        // Add dividers and hover behavior inline
-        $menu.find('.autocomplete-item + .autocomplete-item').css('border-top','1px solid #eef2f7');
-        $menu.off('mouseenter mouseleave', '.autocomplete-item')
-             .on('mouseenter', '.autocomplete-item', function(){ $(this).css('background', '#f5f7fb'); })
-             .on('mouseleave', '.autocomplete-item', function(){ $(this).css('background', '#fff'); });
-
-        $menu.removeAttr('hidden');
+    function debounce(fn, wait) {
+        let t;
+        return function(...a) {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, a), wait);
+        };
     }
 
-    const fetchPatients = debounce(function(q){
-        if (!q || q.length < 1){ $('#patientSuggestions').attr('hidden', true).empty(); return; }
-        fetch(API_BASE + '/patients?term=' + encodeURIComponent(q))
-            .then(r=>r.json())
-            .then(list=>{ patientList = list || []; renderPatientSuggestions(patientList); })
-            .catch(()=>{ $('#patientSuggestions').attr('hidden', true).empty(); });
-    },200);
+    // Load all medicines
+    function loadMedicines() {
+        fetch(API_BASE + '/medications?term=')
+            .then(r => r.json())
+            .then(data => {
+                allMedicines = data || [];
+                filteredMedicines = allMedicines;
+                renderMedicineGrid();
+            })
+            .catch(err => {
+                console.error('Error loading medicines:', err);
+                $('#medicineGrid').html('<div style="padding: 40px; text-align: center; color: #dc3545;">Error loading medicines. Please refresh the page.</div>');
+            });
+    }
 
-    $('#patientInput').on('input', function(){
-        $('#patientId').val('');
-        const v = this.value.trim();
-        fetchPatients(v);
-    });
+    // Render medicine grid
+    function renderMedicineGrid() {
+        const $grid = $('#medicineGrid');
+        $grid.empty();
 
-    $(document).on('mousedown', '#patientSuggestions .autocomplete-item', function(e){
-        const name = $(this).data('name');
-        const id = Number($(this).data('id')) || 0;
-        $('#patientInput').val(name);
-        $('#patientId').val(id);
-        $('#patientSuggestions').attr('hidden', true).empty();
-    });
+        if (filteredMedicines.length === 0) {
+            $grid.html('<div style="padding: 40px; text-align: center; color: #6c757d;">No medicines found</div>');
+            return;
+        }
 
-    $('#patientInput').on('keydown', function(e){
-        const $items = $('#patientSuggestions .autocomplete-item');
-        if ($items.length === 0) return;
-        if (e.key === 'ArrowDown'){ e.preventDefault(); activeIndex = (activeIndex + 1) % $items.length; $items.removeClass('active').eq(activeIndex).addClass('active'); }
-        else if (e.key === 'ArrowUp'){ e.preventDefault(); activeIndex = (activeIndex - 1 + $items.length) % $items.length; $items.removeClass('active').eq(activeIndex).addClass('active'); }
-        else if (e.key === 'Enter'){ if (activeIndex >= 0){ e.preventDefault(); $items.eq(activeIndex).trigger('mousedown'); } }
-        else if (e.key === 'Escape'){ $('#patientSuggestions').attr('hidden', true).empty(); }
-    });
-
-    $(document).on('click', function(e){
-        if (!$(e.target).closest('.patient-autocomplete').length){ $('#patientSuggestions').attr('hidden', true).empty(); }
-    });
-    
-    // Initialize Select2 for medication dropdown with AJAX
-    $('#medicationSelect').select2({
-        placeholder: 'Select a medication',
-        allowClear: true,
-        ajax: {
-            url: API_BASE + '/medications',
-            dataType: 'json',
-            delay: 200,
-            data: params => ({ term: params.term || '' }),
-            processResults: data => ({
-                results: (data || [])
-                    .filter(m => Number(m.stock) > 0)
-                    .map(m => ({
-                        id: m.id,
-                        text: `${m.name}${m.brand ? ' (' + m.brand + ')' : ''}`,
-                        name: m.name,
-                        price: parseFloat(m.price),
-                        stock: m.stock
-                    }))
-            }),
-            transport: function (params, success, failure) {
-                const request = $.ajax(params);
-                request.then(success);
-                request.fail((jqXHR) => { console.error('Medications load failed', jqXHR.responseText); failure(jqXHR); });
-                return request;
+        filteredMedicines.forEach(med => {
+            const stock = Number(med.stock || 0);
+            // Skip medicines with 0 stock
+            if (stock <= 0) {
+                return;
             }
-        },
-        minimumInputLength: 0,
-        width: '100%'
-    }).on('select2:open', function() {
-        const searchField = document.querySelector('.select2-container--open .select2-search__field');
-        if (searchField) {
-            searchField.value = '';
-            const e = new Event('input', { bubbles: true });
-            searchField.dispatchEvent(e);
-        }
-    }).on('select2:select', function(e) {
-        const data = e.params.data || {};
-        const stock = Number(data.stock || 0);
-        // Reflect stock limit in quantity input
-        $('#quantity').attr('min', 1).attr('max', Math.max(stock, 1));
+            
+            // Determine image URL
+            const placeholderUrl = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\'%3E%3Crect fill=\'%23e9ecef\' width=\'120\' height=\'120\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236c757d\' font-family=\'Arial\' font-size=\'14\'%3ENo Image%3C/text%3E%3C/svg%3E';
+            
+            let imageUrl = placeholderUrl;
+            
+            // Use image_url if it exists and is valid
+            if (med.image_url && typeof med.image_url === 'string' && med.image_url.trim() !== '' && med.image_url !== 'null') {
+                imageUrl = med.image_url;
+            }
+            // Fallback: construct from image field if image_url is not available
+            else if (med.image && typeof med.image === 'string' && med.image.trim() !== '' && med.image !== 'null') {
+                const baseUrl = '<?= rtrim(config("App")->baseURL, "/") ?>';
+                imageUrl = baseUrl + '/uploads/medicines/' + med.image;
+            }
+            
+            const $card = $(`
+                <div class="medicine-card" data-medicine-id="${med.id}">
+                    <div class="medicine-card-image">
+                        <img src="${imageUrl}" alt="${med.name}" onerror="this.onerror=null; this.src='${placeholderUrl}'" loading="lazy">
+                    </div>
+                    <div class="medicine-card-info">
+                        <div class="medicine-name">${med.name}</div>
+                        <div class="medicine-price" style="color: #dc3545; font-weight: 600; font-size: 14px; margin: 4px 0;">₱${Number(med.price || 0).toFixed(2)}</div>
+                        <div class="medicine-stock">Stock: ${stock}</div>
+                    </div>
+                </div>
+            `);
+
+            $card.on('click', function() {
+                addToCart(med.id);
+            });
+
+            $grid.append($card);
+        });
+    }
+
+    // Add to cart function
+    function addToCart(medicineId) {
+        const medicine = allMedicines.find(m => m.id === medicineId);
+        if (!medicine) return;
+
+        const stock = Number(medicine.stock || 0);
         if (stock <= 0) {
-            alert('Selected medicine is out of stock.');
-        }
-    });
-    
-    let cart = [];
-    
-    // Handle add to cart button click
-    $('#addToCartBtn').on('click', function() {
-        const selected = $('#medicationSelect').select2('data')[0];
-        const medicationId = String(selected?.id ?? '');
-        const medicationName = selected?.name || selected?.text || '';
-        const price = Number(selected?.price || 0);
-        const quantity = Number($('#quantity').val());
-        const stock = Number(selected?.stock || 0);
-        
-        if (!medicationId || !quantity) {
-            alert('Please select a medication and quantity');
-            return;
-        }
-        if (quantity <= 0) {
-            alert('Quantity must be at least 1');
-            return;
-        }
-        // Compute how many of this med already in cart
-        const inCartQty = cart.reduce((sum, i) => i.medicationId === medicationId ? sum + Number(i.quantity) : sum, 0);
-        const remaining = stock - inCartQty;
-        if (stock <= 0 || quantity > remaining) {
-            alert(`Insufficient stock. Available: ${Math.max(remaining, 0)}`);
+            alert('This medicine is out of stock.');
             return;
         }
         
-        // Merge with existing item of same med if present
-        const existing = cart.find(i => i.medicationId === medicationId);
+        // Check if already in cart
+        const existing = cart.find(item => item.medicationId === medicineId);
         if (existing) {
-            existing.quantity += quantity;
+            // Check stock availability - use current stock, not original
+            if (stock <= 0) {
+                alert(`Insufficient stock. Available: ${stock}`);
+                return;
+            }
+            existing.quantity += 1;
         } else {
-            const item = {
+            cart.push({
                 id: Date.now(),
-                medicationId: medicationId,
-                name: medicationName,
-                quantity: quantity,
-                price: price,
+                medicationId: medicineId,
+                name: medicine.name,
+                quantity: 1,
+                price: Number(medicine.price || 0),
                 stock: stock
-            };
-            cart.push(item);
+            });
         }
-        updateCart();
+
+        // Reserve stock on server
+        fetch(API_BASE + '/stock/reserve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                medicine_id: medicineId,
+                quantity: 1
+            })
+        })
+        .then(res => res.json())
+        .then(resp => {
+            if (!resp.success) {
+                // Revert cart change if stock reservation failed
+                if (existing) {
+                    existing.quantity -= 1;
+                } else {
+                    cart.pop();
+                }
+                alert(resp.message || 'Failed to reserve stock');
+                updateCart();
+                return;
+            }
+            
+            // Update local stock in medicine data
+            if (medicine) {
+                medicine.stock = resp.remaining_stock;
+            }
+            
+            // Update stock display in the grid
+            updateStockDisplay(medicineId, resp.remaining_stock);
+            
+            updateCart();
+        })
+        .catch(err => {
+            // Revert cart change on error
+            if (existing) {
+                existing.quantity -= 1;
+            } else {
+                cart.pop();
+            }
+            alert('Error reserving stock: ' + err.message);
+            updateCart();
+        });
+    }
+    
+    // Update stock display in medicine grid
+    function updateStockDisplay(medicineId, newStock) {
+        const $card = $(`.medicine-card[data-medicine-id="${medicineId}"]`);
+        const med = allMedicines.find(m => m.id === medicineId);
         
-        // Reset form
-        $('#medicationSelect').val(null).trigger('change');
-        $('#quantity').val('1').attr('max', '');
-    });
+        // Update in allMedicines array
+        if (med) {
+            med.stock = newStock;
+        }
+        
+        if ($card.length) {
+            // Card exists, update stock display
+            const $stockEl = $card.find('.medicine-stock');
+            $stockEl.text('Stock: ' + newStock);
+            
+            // Hide card if stock is 0
+            if (newStock <= 0) {
+                $card.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }
+        } else if (newStock > 0 && med) {
+            // Card doesn't exist but stock is > 0, recreate it
+            // Check if it should be visible (matches current filter)
+            const shouldShow = filteredMedicines.some(m => m.id === medicineId);
+            if (!shouldShow) {
+                // Add to filteredMedicines if it matches the current search
+                const searchTerm = $('#medicineSearch').val().toLowerCase().trim();
+                if (searchTerm === '' || 
+                    (med.name && med.name.toLowerCase().includes(searchTerm)) ||
+                    (med.brand && med.brand.toLowerCase().includes(searchTerm))) {
+                    filteredMedicines.push(med);
+                } else {
+                    return; // Don't show if it doesn't match search
+                }
+            }
+            
+            // Recreate the card
+            recreateMedicineCard(med);
+        }
+    }
+    
+    // Recreate a medicine card in the grid
+    function recreateMedicineCard(med) {
+        const stock = Number(med.stock || 0);
+        if (stock <= 0) return;
+        
+        // Check if card already exists
+        const $existing = $(`.medicine-card[data-medicine-id="${med.id}"]`);
+        if ($existing.length) return;
+        
+        // Determine image URL
+        const placeholderUrl = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\'%3E%3Crect fill=\'%23e9ecef\' width=\'120\' height=\'120\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236c757d\' font-family=\'Arial\' font-size=\'14\'%3ENo Image%3C/text%3E%3C/svg%3E';
+        
+        let imageUrl = placeholderUrl;
+        
+        if (med.image_url && typeof med.image_url === 'string' && med.image_url.trim() !== '' && med.image_url !== 'null') {
+            imageUrl = med.image_url;
+        } else if (med.image && typeof med.image === 'string' && med.image.trim() !== '' && med.image !== 'null') {
+            const baseUrl = '<?= rtrim(config("App")->baseURL, "/") ?>';
+            imageUrl = baseUrl + '/uploads/medicines/' + med.image;
+        }
+        
+        const $card = $(`
+            <div class="medicine-card" data-medicine-id="${med.id}">
+                <div class="medicine-card-image">
+                    <img src="${imageUrl}" alt="${med.name}" onerror="this.onerror=null; this.src='${placeholderUrl}'" loading="lazy">
+                </div>
+                <div class="medicine-card-info">
+                    <div class="medicine-name">${med.name}</div>
+                    <div class="medicine-price" style="color: #dc3545; font-weight: 600; font-size: 14px; margin: 4px 0;">₱${Number(med.price || 0).toFixed(2)}</div>
+                    <div class="medicine-stock">Stock: ${stock}</div>
+                </div>
+            </div>
+        `);
+        
+        $card.on('click', function() {
+            addToCart(med.id);
+        });
+        
+        // Insert card in appropriate position (maintain grid order)
+        const $grid = $('#medicineGrid');
+        let inserted = false;
+        $grid.find('.medicine-card').each(function() {
+            const cardId = $(this).data('medicine-id');
+            const cardMed = allMedicines.find(m => m.id === cardId);
+            if (cardMed && med.name && cardMed.name && med.name.localeCompare(cardMed.name) < 0) {
+                $card.insertBefore($(this));
+                inserted = true;
+                return false; // break
+            }
+        });
+        
+        if (!inserted) {
+            $grid.append($card);
+        }
+        
+        // Fade in animation
+        $card.hide().fadeIn(300);
+    }
     
     // Update cart display
     function updateCart() {
@@ -299,137 +356,174 @@ $(document).ready(function() {
         $cartItems.empty();
         
         if (cart.length === 0) {
-            $cartItems.html('<p class="text-muted mb-0">Your cart is empty</p>');
-            $('#cartCount').text('0');
+            $cartItems.html(`
+                <div style="padding: 40px; text-align: center; color: #6c757d;">
+                    <i class="fas fa-shopping-cart" style="font-size: 32px; opacity: 0.3;"></i>
+                    <p style="margin-top: 10px;">Your cart is empty</p>
+                </div>
+            `);
+            updateTotal();
             return;
         }
         
         cart.forEach((item, index) => {
             const $item = $(`
-                <div class="cart-item">
-                    <div class="cart-item-details">
-                        <div class="font-weight-bold">${item.name}</div>
-                        <div class="text-muted small">
-                            ${item.quantity} pcs • 
-                            ₱${(item.price * item.quantity).toFixed(2)}
+                <div class="cart-item-row" style="padding: 12px 16px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="cart-item-info" style="flex: 1;">
+                        <div class="cart-item-name" style="font-weight: 600; color: #2c3e50; font-size: 14px; margin-bottom: 4px;">${item.name}</div>
+                        <div class="cart-item-details" style="font-size: 13px; color: #6c757d;">
+                            Quantity: <span class="cart-item-qty" style="font-weight: 600; color: #2c3e50;">${item.quantity}</span> × 
+                            <span style="color: #2c3e50;">₱${item.price.toFixed(2)}</span> = 
+                            <span style="font-weight: 600; color: #007bff;">₱${(item.price * item.quantity).toFixed(2)}</span>
                         </div>
                     </div>
-                    <div class="cart-item-actions">
-                        <button type="button" class="btn btn-sm btn-outline-secondary btn-decrease" data-index="${index}">-</button>
-                        <span class="quantity">${item.quantity}</span>
-                        <button type="button" class="btn btn-sm btn-outline-secondary btn-increase" data-index="${index}">+</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger btn-remove" data-index="${index}">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="cart-item-controls" style="display: flex; gap: 6px; margin-left: 12px;">
+                        <button type="button" class="btn-qty btn-decrease" data-index="${index}" style="width: 32px; height: 32px; border: 1px solid #d1d5db; background: #fff; color: #6c757d; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">-</button>
+                        <button type="button" class="btn-remove" data-index="${index}" style="width: 32px; height: 32px; border: 1px solid #dc3545; background: #fff; color: #dc3545; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">×</button>
                     </div>
                 </div>
             `);
-            
             $cartItems.append($item);
         });
         
-        // Update cart count
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        $('#cartCount').text(totalItems);
-        
-        // Update total
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        $('#subtotal').text(`₱${subtotal.toFixed(2)}`);
-        
-        // Calculate tax (12% of subtotal)
-        const tax = subtotal * 0.12;
-        $('#tax').text(`₱${tax.toFixed(2)}`);
-        
-        // Calculate total
-        const total = subtotal + tax;
-        $('#total').text(`₱${total.toFixed(2)}`);
-        // Refresh change preview if payment input is present
-        if (document.getElementById('amount_received')) { setTimeout(updateChange, 0); }
+        updateTotal();
     }
-    
-    // Handle cart item actions
-    $(document).on('click', '.btn-increase', function() {
-        const index = $(this).data('index');
-        const item = cart[index];
-        const totalOther = cart.reduce((sum, i, idx) => (i.medicationId === item.medicationId && idx !== index) ? sum + Number(i.quantity) : sum, 0);
-        const remaining = Number(item.stock || 0) - totalOther;
-        if (item.quantity + 1 > remaining) {
-            alert('Insufficient stock for this medicine');
-            return;
+        
+    // Update total amount
+    function updateTotal() {
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Update display
+        $('#total').text('₱' + total.toFixed(2));
+        
+        if (document.getElementById('amount_received')) {
+            setTimeout(updateChange, 0);
         }
-        cart[index].quantity++;
-        updateCart();
-    });
-    
+    }
+
+    // Cart item actions
     $(document).on('click', '.btn-decrease', function() {
         const index = $(this).data('index');
-        if (cart[index].quantity > 1) {
-            cart[index].quantity--;
-            updateCart();
+        const item = cart[index];
+        if (!item) return;
+        
+        if (item.quantity > 1) {
+            item.quantity--;
+            // Restore 1 unit of stock
+            restoreStockFromCart(item.medicationId, 1, index);
+        } else {
+            // Remove if quantity becomes 0
+            restoreStockFromCart(item.medicationId, item.quantity, index, true);
         }
     });
     
     $(document).on('click', '.btn-remove', function() {
         const index = $(this).data('index');
-        cart.splice(index, 1);
-        updateCart();
+        const item = cart[index];
+        if (!item) return;
+        
+        // Restore all quantity back to stock
+        restoreStockFromCart(item.medicationId, item.quantity, index, true);
     });
     
-    // Change calculator for cash payment
-    const formatMoney = v => '₱' + (Number(v)||0).toFixed(2);
-    function getTotal(){ return parseFloat($('#total').text().replace('₱','')) || 0; }
-    function updateChange(){
+    // Restore stock when removing from cart
+    function restoreStockFromCart(medicineId, quantity, cartIndex, removeFromCart = false) {
+        fetch(API_BASE + '/stock/restore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                medicine_id: medicineId,
+                quantity: quantity
+            })
+        })
+        .then(res => res.json())
+        .then(resp => {
+            if (!resp.success) {
+                alert(resp.message || 'Failed to restore stock');
+                return;
+            }
+            
+            // Update local stock in medicine data
+            const medicine = allMedicines.find(m => m.id === medicineId);
+            if (medicine) {
+                medicine.stock = resp.remaining_stock;
+            }
+            
+            // Update stock display in the grid (will recreate card if stock > 0)
+            updateStockDisplay(medicineId, resp.remaining_stock);
+            
+            // Remove from cart if needed
+            if (removeFromCart) {
+                cart.splice(cartIndex, 1);
+            }
+            
+            updateCart();
+        })
+        .catch(err => {
+            alert('Error restoring stock: ' + err.message);
+        });
+    }
+    
+    // Search medicines
+    $('#medicineSearch').on('input', debounce(function() {
+        const term = $(this).val().toLowerCase().trim();
+        if (term === '') {
+            filteredMedicines = allMedicines;
+        } else {
+            filteredMedicines = allMedicines.filter(m => 
+                (m.name && m.name.toLowerCase().includes(term)) ||
+                (m.brand && m.brand.toLowerCase().includes(term))
+            );
+        }
+        renderMedicineGrid();
+    }, 300));
+
+    // Change calculator
+    const formatMoney = v => '₱' + (Number(v) || 0).toFixed(2);
+    function getTotal() {
+        return parseFloat($('#total').text().replace('₱', '')) || 0;
+    }
+    function updateChange() {
         const paid = parseFloat($('#amount_received').val() || '0');
         const change = paid - getTotal();
-        $('#change_badge').text('Change: ' + formatMoney(Math.max(change,0)));
+        $('#change_badge').text('Change: ' + formatMoney(Math.max(change, 0)));
     }
     $(document).on('input', '#amount_received', updateChange);
     
-    // Handle checkout button
+    // Checkout
     $('#checkoutBtn').on('click', function() {
         if (cart.length === 0) {
             alert('Your cart is empty');
             return;
         }
         
-        const paymentMethod = 'cash';
         const amountReceived = parseFloat($('#amount_received').val() || '0');
-        const totalDue = parseFloat($('#total').text().replace('₱','')) || 0;
+        const totalDue = getTotal();
         if (amountReceived < totalDue) {
             alert('Amount received is insufficient to cover the total.');
             return;
         }
         
-        
-        // Validate patient selection (must match a suggestion so we have an ID)
-        const pid = Number($('#patientId').val() || 0);
-        const pname = $('#patientInput').val().trim();
-        if (!pname || pid <= 0) {
-            alert('Please select a valid patient from the suggestions.');
-            return;
-        }
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-        // Prepare data for submission
         const orderData = {
-            patient_id: pid,
-            patient_name: pname,
+            patient_id: '',
+            patient_name: '',
             items: cart.map(i => ({
                 medicine_id: i.medicationId,
                 medicine_name: i.name,
                 quantity: i.quantity,
                 price: Number(i.price)
             })),
-            payment_method: paymentMethod,
-            subtotal: parseFloat($('#subtotal').text().replace('₱', '')),
-            tax: parseFloat($('#tax').text().replace('₱', '')),
-            total: parseFloat($('#total').text().replace('₱', '')),
+            payment_method: 'cash',
+            subtotal: total,
+            tax: 0,
+            total: total,
             amount_paid: amountReceived,
-            change: Math.max(amountReceived - (parseFloat($('#total').text().replace('₱', '')) || 0), 0),
-            date: $('#prescriptionDate').val()
+            change: Math.max(amountReceived - total, 0),
+            date: '<?= date('Y-m-d') ?>'
         };
 
-        
-        // Submit to backend
         fetch(API_BASE + '/transaction/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -437,22 +531,33 @@ $(document).ready(function() {
         })
         .then(res => res.json())
         .then(resp => {
-            if (!resp.success) throw new Error(resp.message || 'Transaction failed');
+            if (!resp.success) {
+                let errorMsg = resp.message || 'Transaction failed';
+                if (resp.errors) {
+                    const errorList = Object.values(resp.errors).join(', ');
+                    errorMsg += ': ' + errorList;
+                }
+                throw new Error(errorMsg);
+            }
             alert(`Transaction created! #${resp.transaction_number}`);
+            
+            // Reset form
+            cart = [];
+            updateCart();
+            $('#amount_received').val('');
+            
+            // Reload medicines to update stock and remove out-of-stock items
+            // Note: Stock was already decreased when items were added to cart,
+            // so this reload will show the updated stock
+            loadMedicines();
         })
         .catch(err => {
             alert('Error: ' + err.message);
-            return;
         });
-        
-        // Reset form after submission
-        cart = [];
-        updateCart();
-        $('#payment_method').val('').trigger('change');
-        $('#patientInput').val('');
-        $('#patientId').val('');
-        $('#patientSuggestions').attr('hidden', true).empty();
     });
+
+    // Initialize
+    loadMedicines();
 });
 </script>
 

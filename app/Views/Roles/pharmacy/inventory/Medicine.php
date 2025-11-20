@@ -64,6 +64,22 @@ $currentSubmenu = 'inventory';
             </div>
         </div>
 
+        <!-- Search Medicine -->
+        <div style="margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-search" style="color: #6c757d; font-size: 18px;"></i>
+                <input type="text" id="medicineSearch" placeholder="Search medicine by name, brand, category, or ID..." 
+                    style="flex: 1; padding: 10px 15px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s;"
+                    onfocus="this.style.borderColor='#007bff'" 
+                    onblur="this.style.borderColor='#d1d5db'">
+                <button type="button" id="clearSearch" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; display: none;"
+                    onmouseover="this.style.background='#5a6268'" 
+                    onmouseout="this.style.background='#6c757d'">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <div class="table-responsive">
             <table class="data-table">
                 <thead>
@@ -343,9 +359,79 @@ $currentSubmenu = 'inventory';
         }
     });
     
+    // Search functionality
+    function filterMedicineTable() {
+        const searchInput = document.getElementById('medicineSearch');
+        const clearBtn = document.getElementById('clearSearch');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        
+        // Show/hide clear button
+        if (searchTerm.length > 0) {
+            clearBtn.style.display = 'block';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+        
+        const rows = document.querySelectorAll('#medicineTableBody tr');
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const tds = row.querySelectorAll('td');
+            const id = (tds[0]?.textContent || '').toLowerCase();
+            const name = (tds[1]?.textContent || '').toLowerCase();
+            const brand = (tds[2]?.textContent || '').toLowerCase();
+            const category = (tds[3]?.textContent || '').toLowerCase();
+            
+            const matches = id.includes(searchTerm) || 
+                           name.includes(searchTerm) || 
+                           brand.includes(searchTerm) || 
+                           category.includes(searchTerm);
+            
+            if (matches) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Show "No results" message if no matches
+        let noResultsMsg = document.getElementById('noResultsMessage');
+        if (visibleCount === 0 && searchTerm.length > 0) {
+            if (!noResultsMsg) {
+                noResultsMsg = document.createElement('tr');
+                noResultsMsg.id = 'noResultsMessage';
+                noResultsMsg.innerHTML = '<td colspan="8" style="text-align: center; padding: 40px; color: #6c757d;"><i class="fas fa-search" style="font-size: 32px; opacity: 0.3; margin-bottom: 10px; display: block;"></i><p>No medicines found matching "' + searchTerm + '"</p></td>';
+                document.getElementById('medicineTableBody').appendChild(noResultsMsg);
+            }
+        } else if (noResultsMsg) {
+            noResultsMsg.remove();
+        }
+    }
+    
+    // Clear search
+    document.getElementById('clearSearch')?.addEventListener('click', function() {
+        document.getElementById('medicineSearch').value = '';
+        this.style.display = 'none';
+        filterMedicineTable();
+    });
+
     // Initialize autocomplete options after table is populated
     document.addEventListener('DOMContentLoaded', function() {
         refreshAutocompleteLists();
+        
+        // Initialize search
+        const searchInput = document.getElementById('medicineSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterMedicineTable);
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Escape') {
+                    this.value = '';
+                    document.getElementById('clearSearch').style.display = 'none';
+                    filterMedicineTable();
+                }
+            });
+        }
 
         <?php if (isset($isEdit) && $isEdit): ?>
             const form = document.getElementById('medicineForm');

@@ -189,6 +189,10 @@ $routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($ro
     // Expiry endpoints
     $routes->get('medicines/expiring-soon', 'Pharmacy::getExpiringMedicines');
     $routes->get('medicines/expired', 'Pharmacy::getExpiredMedicines');
+    
+    // Stock management for cart
+    $routes->post('stock/reserve', 'Pharmacy::reserveStock');
+    $routes->post('stock/restore', 'Pharmacy::restoreStock');
 });
 
 // Beds/Wards availability API for inpatient assignment

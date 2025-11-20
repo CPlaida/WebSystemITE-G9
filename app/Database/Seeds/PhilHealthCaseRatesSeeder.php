@@ -8,6 +8,8 @@ class PhilHealthCaseRatesSeeder extends Seeder
 {
     public function run()
     {
+        $timestamp = date('Y-m-d H:i:s');
+
         $data = [
             // RVS-based (Case B preferred). Appendectomy
             [
@@ -387,6 +389,18 @@ class PhilHealthCaseRatesSeeder extends Seeder
             ],
         ];
 
-        $this->db->table('philhealth_case_rates')->insertBatch($data);
+        $normalizedData = array_map(function (array $row) use ($timestamp) {
+            $row['id'] = $row['id'] ?? null; // satisfy implicit column list
+            $row['facility_share'] = $row['facility_share'] ?? 0;
+            $row['professional_share'] = $row['professional_share'] ?? 0;
+            $row['description'] = $row['description'] ?? null;
+            $row['active'] = $row['active'] ?? 1;
+            $row['updated_by'] = $row['updated_by'] ?? 'seeder';
+            $row['created_at'] = $row['created_at'] ?? $timestamp;
+            $row['updated_at'] = $row['updated_at'] ?? $timestamp;
+            return $row;
+        }, $data);
+
+        $this->db->table('philhealth_case_rates')->insertBatch($normalizedData);
     }
 }

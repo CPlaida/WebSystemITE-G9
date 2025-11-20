@@ -201,11 +201,10 @@ class Pharmacy extends Controller
             return redirect()->to('/login')->with('error', 'Access denied.');
         }
 
-        // Load transaction + patient
+        // Load transaction (no patient connection)
         $builder = $this->db->table('pharmacy_transactions pt');
-        $builder->select("pt.id, pt.transaction_number, pt.date, pt.patient_id, pt.total_amount, p.first_name, p.last_name, pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount as prescription_total");
-        $builder->join('patients p', 'p.id = pt.patient_id', 'left');
-        $builder->join('prescriptions pr', 'pr.patient_id = pt.patient_id AND pr.date = pt.date', 'left');
+        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount as prescription_total");
+        $builder->join('prescriptions pr', 'pr.date = pt.date', 'left');
         $builder->where('pt.id', $transactionId);
         $row = $builder->get()->getRowArray();
 
@@ -218,21 +217,18 @@ class Pharmacy extends Controller
             'id' => (int)$row['id'],
             'transaction_number' => $row['transaction_number'] ?? null,
             'date' => $row['date'] ?? null,
-            'patient_id' => (int)($row['patient_id'] ?? 0),
-            'patient_name' => trim(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? '')),
             'subtotal' => (float)($row['subtotal'] ?? 0),
             'tax' => (float)($row['tax'] ?? 0),
             'total_amount' => (float)($row['prescription_total'] ?? $row['total_amount'] ?? 0),
             'items' => []
         ];
 
-        // Determine prescription (fallback to latest for patient if needed)
+        // Get prescription by date (no patient connection)
         $prescriptionId = $row['prescription_id'] ?? null;
-        if (empty($prescriptionId)) {
+        if (empty($prescriptionId) && !empty($row['date'])) {
             $latest = $this->db->table('prescriptions')
                 ->select('id, subtotal, tax, total_amount')
-                ->where('patient_id', (int)$row['patient_id'])
-                ->orderBy('date', 'DESC')
+                ->where('date', $row['date'])
                 ->orderBy('id', 'DESC')
                 ->get()->getRowArray();
             if ($latest) {
@@ -291,8 +287,28 @@ class Pharmacy extends Controller
     {
         $term = (string) $this->request->getGet('term');
         
+        // Check if image column exists
+        $fields = $this->db->getFieldNames('medicines');
+        $hasImageColumn = in_array('image', $fields);
+        
+        // If column doesn't exist, try to add it automatically (fallback)
+        if (!$hasImageColumn) {
+            try {
+                $this->db->query("ALTER TABLE medicines ADD COLUMN image VARCHAR(255) NULL AFTER expiry_date");
+                $hasImageColumn = true;
+                // Refresh field list
+                $fields = $this->db->getFieldNames('medicines');
+            } catch (\Exception $e) {
+                log_message('error', 'Failed to add image column: ' . $e->getMessage());
+            }
+        }
+        
         $builder = $this->db->table('medicines');
+        // Always try to select image column - if it doesn't exist, it will be null
         $builder->select('id, name, brand, price, stock, expiry_date');
+        if ($hasImageColumn) {
+            $builder->select('image', true); // Add image to select
+        }
         
         if ($term !== '') {
             $builder->groupStart()
@@ -309,14 +325,18 @@ class Pharmacy extends Controller
                 ->orWhere('expiry_date IS NULL', null, false)
                 ->groupEnd();
         
-        // Show even if stock is 0 so user understands availability
+        // Only show medicines with stock > 0
+        $builder->where('stock >', 0);
+        
         $builder->orderBy('id','DESC');
         $builder->limit(50);
         
         $medications = $builder->get()->getResultArray();
         
-        // Normalize types and compute days_left until expiry
+        // Normalize types and compute days_left until expiry, add image URL
         $today = date('Y-m-d');
+        $baseUrl = rtrim(config('App')->baseURL, '/');
+        
         foreach ($medications as &$m) {
             if (isset($m['price'])) $m['price'] = (float)$m['price'];
             if (isset($m['stock'])) $m['stock'] = (int)$m['stock'];
@@ -326,6 +346,39 @@ class Pharmacy extends Controller
                 $m['days_left'] = (int)ceil($diff);
             } else {
                 $m['days_left'] = null;
+            }
+            
+            // Handle image and image_url fields - ALWAYS include these fields
+            // Initialize image_url to null
+            $m['image_url'] = null;
+            
+            // Only process if image column exists
+            if ($hasImageColumn) {
+                // Get the image value from database (don't overwrite it yet)
+                $imageValue = $m['image'] ?? null;
+                
+                // Process image if it exists and is valid
+                if (!empty($imageValue) && is_string($imageValue) && trim($imageValue) !== '') {
+                    $imageFilename = trim($imageValue);
+                    // Check if file exists
+                    $imagePath = FCPATH . 'uploads/medicines/' . $imageFilename;
+                    if (file_exists($imagePath)) {
+                        // Construct the full URL
+                        $imageUrl = $baseUrl . '/uploads/medicines/' . $imageFilename;
+                        $m['image_url'] = $imageUrl;
+                        // Keep the image filename
+                        $m['image'] = $imageFilename;
+                    } else {
+                        // Keep the image value even if file doesn't exist (might be a path issue)
+                        $m['image'] = $imageFilename;
+                    }
+                } else {
+                    // No image value in database
+                    $m['image'] = null;
+                }
+            } else {
+                // Image column doesn't exist
+                $m['image'] = null;
             }
         }
         
@@ -414,7 +467,7 @@ class Pharmacy extends Controller
         
         $validation->setRules([
             'patient_id' => 'permit_empty',
-            'patient_name' => 'required',
+            'patient_name' => 'permit_empty',
             'date' => 'required',
             'payment_method' => 'required',
             'items' => 'required'
@@ -430,53 +483,10 @@ class Pharmacy extends Controller
         
         $data = $this->request->getJSON(true);
 
-        // Resolve patient_id: if missing, try to find by name or auto-create minimal patient
+        // Patient is optional - set to null if not provided
         $pid = trim((string)($data['patient_id'] ?? ''));
-        $pname = trim((string)($data['patient_name'] ?? ''));
-        if ($pid === '' && $pname !== '') {
-            // Find by exact full name or partial match
-            $row = $this->db->table('patients')
-                ->select("id, CONCAT(first_name, ' ', last_name) AS name")
-                ->groupStart()
-                    ->where("CONCAT(first_name, ' ', last_name)", $pname)
-                    ->orLike('first_name', $pname)
-                    ->orLike('last_name', $pname)
-                ->groupEnd()
-                ->orderBy('id', 'DESC')
-                ->get()->getRowArray();
-            if ($row && !empty($row['id'])) {
-                $pid = (string)$row['id'];
-            } else {
-                // Auto-create a minimal patient
-                $parts = preg_split('/\s+/', $pname, 2);
-                $first = $parts[0] ?: 'Unknown';
-                $last = $parts[1] ?? 'Unknown';
-                $email = strtolower(str_replace(' ', '.', $first . '.' . $last)) . rand(1000,9999) . '@temp.com';
-                $phone = '09' . rand(100000000, 999999999);
-                $this->db->table('patients')->insert([
-                    'first_name' => $first,
-                    'last_name' => $last,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'date_of_birth' => '1990-01-01',
-                    'gender' => 'other',
-                    'address' => 'Not provided',
-                    'status' => 'active',
-                    'type' => 'walkin',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ]);
-                // For string IDs generated via model triggers, fetch last inserted by name
-                $created = $this->db->table('patients')
-                    ->select('id')
-                    ->where('email', $email)
-                    ->orderBy('id', 'DESC')
-                    ->get()->getRowArray();
-                if ($created && !empty($created['id'])) {
-                    $pid = (string)$created['id'];
-                }
-            }
-            $data['patient_id'] = $pid;
+        if ($pid === '') {
+            $data['patient_id'] = null;
         }
 
         // Validate stock availability and expiry BEFORE starting transaction
@@ -552,8 +562,7 @@ class Pharmacy extends Controller
             $total = $subtotal + $tax;
 
             // Insert prescription
-            $this->db->table('prescriptions')->insert([
-                'patient_id' => (string)$data['patient_id'],
+            $prescriptionData = [
                 'date' => $data['date'],
                 'payment_method' => $data['payment_method'],
                 'subtotal' => $subtotal,
@@ -561,10 +570,17 @@ class Pharmacy extends Controller
                 'total_amount' => $total,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
-            ]);
+            ];
+            
+            // Only add patient_id if it's not null/empty
+            if (!empty($data['patient_id'])) {
+                $prescriptionData['patient_id'] = (string)$data['patient_id'];
+            }
+            
+            $this->db->table('prescriptions')->insert($prescriptionData);
             $prescriptionId = $this->db->insertID();
 
-            // Insert items and update stock
+            // Insert items (stock was already decreased when items were added to cart)
             $totalItems = 0;
             foreach ($data['items'] as $item) {
                 $lineTotal = $item['price'] * $item['quantity'];
@@ -577,30 +593,27 @@ class Pharmacy extends Controller
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
                 $totalItems += (int)$item['quantity'];
-                // Safe stock deduction: never allow negative stock
-                $deductQty = (int)$item['quantity'];
-                $medId = (string)$item['medicine_id'];
-                $this->db->table('medicines')
-                    ->set('stock', 'stock - ' . $deductQty, false)
-                    ->where('id', $medId)
-                    ->where('stock >=', $deductQty)
-                    ->update();
-                if ($this->db->affectedRows() === 0) {
-                    throw new \RuntimeException('Stock update failed for medicine ID ' . $medId . ' due to insufficient stock.');
-                }
+                // Note: Stock was already decreased when items were added to cart via reserveStock API
+                // No need to decrease again here
             }
 
             // Transaction number and record
             $transactionNumber = $this->generateTransactionNumber();
-            $this->db->table('pharmacy_transactions')->insert([
+            $transactionData = [
                 'transaction_number' => $transactionNumber,
-                'patient_id' => (string)$data['patient_id'],
                 'date' => $data['date'],
                 'total_items' => $totalItems,
                 'total_amount' => $total,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
-            ]);
+            ];
+            
+            // Only add patient_id if it's not null/empty
+            if (!empty($data['patient_id'])) {
+                $transactionData['patient_id'] = (string)$data['patient_id'];
+            }
+            
+            $this->db->table('pharmacy_transactions')->insert($transactionData);
             $transactionId = $this->db->insertID();
             
             $this->db->transComplete();
@@ -633,19 +646,12 @@ class Pharmacy extends Controller
         $search = $this->request->getGet('search');
         
         $builder = $this->db->table('pharmacy_transactions pt');
-        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, COUNT(pi.id) as items_count, CONCAT(p.first_name, ' ', p.last_name) as patient_name");
-        $builder->join('prescriptions pr', 'pr.patient_id = pt.patient_id AND pr.date = pt.date', 'left');
-        $builder->join('prescription_items pi', 'pi.prescription_id = pr.id', 'left');
-        $builder->join('patients p', 'p.id = pt.patient_id', 'left');
+        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, pt.total_items as items_count");
         
         if ($search) {
-            $builder->groupStart();
             $builder->like('pt.transaction_number', $search);
-            $builder->orLike("CONCAT(p.first_name, ' ', p.last_name)", $search, 'both', null, true);
-            $builder->groupEnd();
         }
         
-        $builder->groupBy('pt.id');
         $builder->orderBy('pt.created_at', 'DESC');
         
         $transactions = $builder->get()->getResultArray();
@@ -659,11 +665,10 @@ class Pharmacy extends Controller
     // Get transaction details
     public function getTransactionDetails($transactionId)
     {
-        // Load transaction joined with patient and matching prescription (by patient and date)
+        // Load transaction joined with matching prescription (by date only, no patient connection)
         $builder = $this->db->table('pharmacy_transactions pt');
-        $builder->select("pt.id, pt.transaction_number, pt.date, pt.patient_id, pt.total_amount, p.first_name, p.last_name, pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount as prescription_total");
-        $builder->join('patients p', 'p.id = pt.patient_id', 'left');
-        $builder->join('prescriptions pr', 'pr.patient_id = pt.patient_id AND pr.date = pt.date', 'left');
+        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount as prescription_total");
+        $builder->join('prescriptions pr', 'pr.date = pt.date', 'left');
         $builder->where('pt.id', $transactionId);
         $row = $builder->get()->getRowArray();
 
@@ -679,21 +684,18 @@ class Pharmacy extends Controller
             'id' => (int)$row['id'],
             'transaction_number' => $row['transaction_number'] ?? null,
             'date' => $row['date'] ?? null,
-            'patient_id' => (int)($row['patient_id'] ?? 0),
-            'patient_name' => trim(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? '')),
             'subtotal' => (float)($row['subtotal'] ?? 0),
             'tax' => (float)($row['tax'] ?? 0),
             'total_amount' => (float)($row['prescription_total'] ?? $row['total_amount'] ?? 0),
             'items' => []
         ];
 
-        // Load items from prescription_items. If no prescription matched by date, fallback to latest for the patient.
+        // Get prescription by date (no patient connection)
         $prescriptionId = $row['prescription_id'] ?? null;
-        if (empty($prescriptionId)) {
+        if (empty($prescriptionId) && !empty($row['date'])) {
             $latest = $this->db->table('prescriptions')
                 ->select('id, subtotal, tax, total_amount')
-                ->where('patient_id', (int)$row['patient_id'])
-                ->orderBy('date', 'DESC')
+                ->where('date', $row['date'])
                 ->orderBy('id', 'DESC')
                 ->get()->getRowArray();
             if ($latest) {
@@ -766,6 +768,152 @@ class Pharmacy extends Controller
                 'low_stock_count' => $lowStock
             ]
         ]);
+    }
+
+    // Reserve stock when adding to cart
+    public function reserveStock()
+    {
+        $data = $this->request->getJSON(true);
+        
+        if (!isset($data['medicine_id']) || !isset($data['quantity'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Missing required fields: medicine_id and quantity'
+            ])->setStatusCode(400);
+        }
+        
+        $medicineId = (string)$data['medicine_id'];
+        $quantity = (int)$data['quantity'];
+        
+        if ($quantity <= 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Quantity must be greater than 0'
+            ])->setStatusCode(400);
+        }
+        
+        try {
+            // Check current stock
+            $medicine = $this->db->table('medicines')
+                ->select('id, stock, name')
+                ->where('id', $medicineId)
+                ->get()
+                ->getRowArray();
+            
+            if (!$medicine) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Medicine not found'
+                ])->setStatusCode(404);
+            }
+            
+            $currentStock = (int)($medicine['stock'] ?? 0);
+            
+            if ($currentStock < $quantity) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Insufficient stock. Available: ' . $currentStock,
+                    'available_stock' => $currentStock
+                ])->setStatusCode(400);
+            }
+            
+            // Decrease stock
+            $this->db->table('medicines')
+                ->set('stock', 'stock - ' . $quantity, false)
+                ->where('id', $medicineId)
+                ->where('stock >=', $quantity)
+                ->update();
+            
+            if ($this->db->affectedRows() === 0) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Failed to reserve stock. Stock may have changed.'
+                ])->setStatusCode(400);
+            }
+            
+            // Get updated stock
+            $updated = $this->db->table('medicines')
+                ->select('stock')
+                ->where('id', $medicineId)
+                ->get()
+                ->getRowArray();
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Stock reserved successfully',
+                'remaining_stock' => (int)($updated['stock'] ?? 0)
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error reserving stock: ' . $e->getMessage()
+            ])->setStatusCode(500);
+        }
+    }
+    
+    // Restore stock when removing from cart
+    public function restoreStock()
+    {
+        $data = $this->request->getJSON(true);
+        
+        if (!isset($data['medicine_id']) || !isset($data['quantity'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Missing required fields: medicine_id and quantity'
+            ])->setStatusCode(400);
+        }
+        
+        $medicineId = (string)$data['medicine_id'];
+        $quantity = (int)$data['quantity'];
+        
+        if ($quantity <= 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Quantity must be greater than 0'
+            ])->setStatusCode(400);
+        }
+        
+        try {
+            // Check if medicine exists
+            $medicine = $this->db->table('medicines')
+                ->select('id, stock, name')
+                ->where('id', $medicineId)
+                ->get()
+                ->getRowArray();
+            
+            if (!$medicine) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Medicine not found'
+                ])->setStatusCode(404);
+            }
+            
+            // Increase stock
+            $this->db->table('medicines')
+                ->set('stock', 'stock + ' . $quantity, false)
+                ->where('id', $medicineId)
+                ->update();
+            
+            // Get updated stock
+            $updated = $this->db->table('medicines')
+                ->select('stock')
+                ->where('id', $medicineId)
+                ->get()
+                ->getRowArray();
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Stock restored successfully',
+                'remaining_stock' => (int)($updated['stock'] ?? 0)
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error restoring stock: ' . $e->getMessage()
+            ])->setStatusCode(500);
+        }
     }
 
     // Helper function to generate transaction number

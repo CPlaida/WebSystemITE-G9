@@ -39,6 +39,11 @@ class CreateMedicinesTable extends Migration
                 'type' => 'DATE',
                 'null' => true,
             ],
+            'image' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
             // Use a raw definition to support DEFAULT CURRENT_TIMESTAMP
             'created_at DATETIME DEFAULT CURRENT_TIMESTAMP',
         ]);

@@ -10,6 +10,21 @@ class MedicineModel extends Model
     protected $allowedFields = [
         'id', 'name', 'brand', 'category', 'stock', 'price', 'expiry_date'
     ];
+    
+    // Dynamically check if image column exists and add it to allowedFields
+    protected function initialize()
+    {
+        parent::initialize();
+        try {
+            $db = \Config\Database::connect();
+            $fields = $db->getFieldNames($this->table);
+            if (in_array('image', $fields)) {
+                $this->allowedFields[] = 'image';
+            }
+        } catch (\Exception $e) {
+            // If table doesn't exist or error, just continue without image field
+        }
+    }
 
     protected $beforeInsert = ['generateId'];
 

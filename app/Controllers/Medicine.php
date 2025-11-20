@@ -60,8 +60,41 @@ class Medicine extends Controller
             }
         }
 
+        // Ensure uploads directory exists
+        $uploadPath = FCPATH . 'uploads/medicines/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        // Check if image column exists in database
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames('medicines');
+        $hasImageColumn = in_array('image', $fields);
+
         foreach ($names as $index => $name) {
             if (trim((string)$name) === '') continue;
+
+            $imageName = null;
+            // Handle image upload - support both single file and array
+            if ($hasImageColumn) {
+                $imageFile = $this->request->getFile('image');
+                if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+                    // Single file upload
+                    $newName = $imageFile->getRandomName();
+                    $imageFile->move($uploadPath, $newName);
+                    $imageName = $newName;
+                } elseif (isset($_FILES['image']) && is_array($_FILES['image']['name'])) {
+                    // Multiple file uploads (array)
+                    if (isset($_FILES['image']['name'][$index]) && $_FILES['image']['error'][$index] === UPLOAD_ERR_OK) {
+                        $file = $this->request->getFile("image.{$index}");
+                        if ($file && $file->isValid() && !$file->hasMoved()) {
+                            $newName = $file->getRandomName();
+                            $file->move($uploadPath, $newName);
+                            $imageName = $newName;
+                        }
+                    }
+                }
+            }
 
             $data = [
                 'name' => $name,
@@ -71,6 +104,12 @@ class Medicine extends Controller
                 'price' => (float)($prices[$index] ?? 0),
                 'expiry_date' => $expiries[$index] ?? null,
             ];
+            
+            // Only include image if column exists
+            if ($hasImageColumn) {
+                $data['image'] = $imageName;
+            }
+            
             $model->insert($data);
         }
 
@@ -97,6 +136,17 @@ class Medicine extends Controller
             return redirect()->to('/medicines?edit=' . $id)->with('error', 'Expiry date is within 30 days and cannot be saved.');
         }
 
+        // Check if image column exists in database
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames('medicines');
+        $hasImageColumn = in_array('image', $fields);
+
+        // Ensure uploads directory exists
+        $uploadPath = FCPATH . 'uploads/medicines/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
         $data = [
             'name' => $this->request->getPost('name'),
             'brand' => $this->request->getPost('brand'),
@@ -105,6 +155,37 @@ class Medicine extends Controller
             'price' => floatval($this->request->getPost('price')),
             'expiry_date' => $expiry,
         ];
+
+        // Handle image upload only if column exists
+        if ($hasImageColumn) {
+            $removeImage = $this->request->getPost('remove_image') === '1';
+            $imageFile = $this->request->getFile('image');
+            
+            if ($removeImage) {
+                // Remove existing image
+                $existing = $model->find($id);
+                if ($existing && !empty($existing['image'])) {
+                    $oldImagePath = $uploadPath . $existing['image'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+                $data['image'] = null;
+            } elseif ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+                // Delete old image if exists
+                $existing = $model->find($id);
+                if ($existing && !empty($existing['image'])) {
+                    $oldImagePath = $uploadPath . $existing['image'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+                // Upload new image
+                $newName = $imageFile->getRandomName();
+                $imageFile->move($uploadPath, $newName);
+                $data['image'] = $newName;
+            }
+        }
 
         $model->update($id, $data);
         return redirect()->to('/medicines')->with('success', 'Medicine updated successfully!');

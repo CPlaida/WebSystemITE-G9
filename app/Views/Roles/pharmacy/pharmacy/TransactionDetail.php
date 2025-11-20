@@ -10,7 +10,6 @@
       <div class="rc-meta">
         <div class="k">Transaction #</div><div class="v" id="trxNo">…</div>
         <div class="k">Date</div><div class="v" id="trxDate">…</div>
-        <div class="k">Patient</div><div class="v" id="trxPatient">…</div>
         <div class="k">Total</div><div class="v" id="trxTotal">…</div>
       </div>
     </div>
@@ -38,10 +37,6 @@
     <div class="rc-footer">
       <div class="sig">
         <div class="line"></div>
-        <div>Received By: <span id="rcvName">…</span></div>
-      </div>
-      <div class="sig">
-        <div class="line"></div>
         <div>Released By: St. Peter Hospital</div>
       </div>
     </div>
@@ -62,9 +57,6 @@ async function loadDetails() {
   const d = json.data || {};
   document.getElementById('trxNo').textContent = d.transaction_number || '-';
   document.getElementById('trxDate').textContent = d.date || '-';
-  const patientName = d.patient_name || d.patient_id || '-';
-  document.getElementById('trxPatient').textContent = patientName;
-  const rcv = document.getElementById('rcvName'); if (rcv) rcv.textContent = patientName;
   document.getElementById('trxTotal').textContent = peso(d.total_amount || 0);
 
   const list = d.items || [];

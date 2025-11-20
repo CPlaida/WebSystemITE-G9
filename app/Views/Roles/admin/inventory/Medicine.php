@@ -59,6 +59,22 @@ $currentSubmenu = 'inventory';
             </div>
         </div>
 
+        <!-- Search Medicine -->
+        <div style="margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-search" style="color: #6c757d; font-size: 18px;"></i>
+                <input type="text" id="medicineSearch" placeholder="Search medicine by name, brand, category, or ID..." 
+                    style="flex: 1; padding: 10px 15px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s;"
+                    onfocus="this.style.borderColor='#007bff'" 
+                    onblur="this.style.borderColor='#d1d5db'">
+                <button type="button" id="clearSearch" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; display: none;"
+                    onmouseover="this.style.background='#5a6268'" 
+                    onmouseout="this.style.background='#6c757d'">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <div class="table-responsive">
             <table class="data-table">
                 <thead>
@@ -76,11 +92,14 @@ $currentSubmenu = 'inventory';
                 <tbody id="medicineTableBody">
                     <?php if (!empty($medicines)) : ?>
                         <?php foreach ($medicines as $m): ?>
+                            <?php
+                                $nameText = $m['name'] ?? '';
+                            ?>
                             <tr>
-                                <td><?= esc($m['id']) ?></td>
-                                <td><?= esc($m['name']) ?></td>
-                                <td><?= esc($m['brand']) ?></td>
-                                <td><?= esc($m['category']) ?></td>
+                                <td data-col="id"><?= esc($m['id']) ?></td>
+                                <td data-col="name"><span class="medicine-name-text"><?= esc($nameText) ?></span></td>
+                                <td data-col="brand"><?= esc($m['brand']) ?></td>
+                                <td data-col="category"><?= esc($m['category']) ?></td>
                                 <td class="<?= ((int)$m['stock'] === 0 ? 'out-of-stock' : 'in-stock') ?>"><?= (int)$m['stock'] ?></td>
                                 <td>₱<?= number_format((float)$m['price'], 2) ?></td>
                                 <?php
@@ -133,7 +152,7 @@ $currentSubmenu = 'inventory';
                 <span class="close" onclick="closeForm()" style="font-size: 24px; cursor: pointer; color: #666;">&times;</span>
             </div>
             
-            <form id="medicineFormElement" style="margin: 0;" method="post" action="<?= $isEdit ? base_url('medicines/update/' . $edit_medicine['id']) : base_url('medicines/store') ?>">
+            <form id="medicineFormElement" style="margin: 0;" method="post" action="<?= $isEdit ? base_url('medicines/update/' . $edit_medicine['id']) : base_url('medicines/store') ?>" enctype="multipart/form-data">
                 <?= csrf_field() ?>
             <!-- Autocomplete suggestion lists -->
             <datalist id="medicineNamesList"></datalist>
@@ -141,18 +160,19 @@ $currentSubmenu = 'inventory';
             <div id="medicineEntries">
                 <div class="medicine-entry" style="margin-bottom: 20px;">
                     <!-- Header Row -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; padding: 10px 5px; background: #f8f9fa; border-radius: 6px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; padding: 10px 5px; background: #f8f9fa; border-radius: 6px;">
                         <div style="font-weight: 500; color: #495057;">Medicine Name</div>
                         <div style="font-weight: 500; color: #495057;">Brand</div>
                         <div style="font-weight: 500; color: #495057;">Category</div>
                         <div style="font-weight: 500; color: #495057; text-align: center;">Stock</div>
                         <div style="font-weight: 500; color: #495057; text-align: right;">Price (₱)</div>
                         <div style="font-weight: 500; color: #495057;">Expiry Date</div>
+                        <div style="font-weight: 500; color: #495057;">Image</div>
                         <div></div>
                     </div>
                     
                     <!-- Data Row -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; align-items: center; padding: 5px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; align-items: center; padding: 5px;">
                         <div>
                             <input type="text" name="<?= $isEdit ? 'name' : 'name[]' ?>" value="<?= $isEdit ? esc($edit_medicine['name']) : '' ?>" list="medicineNamesList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         </div>
@@ -176,6 +196,44 @@ $currentSubmenu = 'inventory';
                         </div>
                         <div>
                             <input type="date" name="<?= $isEdit ? 'expiry_date' : 'expiry_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['expiry_date']) : '' ?>" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                        </div>
+                        <div>
+                            <?php if ($isEdit && !empty($edit_medicine['image'])): 
+                                $currentImagePath = FCPATH . 'uploads/medicines/' . $edit_medicine['image'];
+                                $currentImageUrl = base_url('uploads/medicines/' . esc($edit_medicine['image']));
+                                $hasCurrentImage = file_exists($currentImagePath);
+                            ?>
+                                <div style="margin-bottom: 12px;" id="currentImageContainer">
+                                    <div style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px;">
+                                        <?php if ($hasCurrentImage): ?>
+                                            <img src="<?= $currentImageUrl ?>" alt="Current image" id="currentImagePreview" style="width: 100px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #e0e0e0; flex-shrink: 0;">
+                                        <?php else: ?>
+                                            <div style="width: 100px; height: 100px; background: #f5f5f5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 11px; text-align: center; border: 1px solid #e0e0e0; flex-shrink: 0;">No Image</div>
+                                        <?php endif; ?>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div style="font-size: 12px; color: #666; font-weight: 500; margin-bottom: 6px;">Current Image</div>
+                                            <div style="font-size: 11px; color: #888; word-break: break-all; margin-bottom: 10px; line-height: 1.4;"><?= esc($edit_medicine['image']) ?></div>
+                                            <button type="button" onclick="removeCurrentImage()" style="padding: 6px 14px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#c82333'" onmouseout="this.style.background='#dc3545'">Remove</button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="remove_image" id="removeImageFlag" value="0">
+                                </div>
+                                <!-- Hide file input when current image exists -->
+                                <div class="image-input-wrapper" style="width: 100%; display: none;">
+                                    <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control image-input" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; background: #fff;" onchange="previewImage(this)">
+                                </div>
+                            <?php else: ?>
+                                <!-- Show file input when no current image -->
+                                <div class="image-input-wrapper" style="width: 100%;">
+                                    <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control image-input" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; background: #fff;" onchange="previewImage(this)">
+                                </div>
+                            <?php endif; ?>
+                            <div class="newImagePreviewContainer" style="display: none; margin-top: 12px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px;">
+                                <div style="text-align: center;">
+                                    <img class="previewImg" src="" alt="Preview" style="width: 100%; max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 6px; border: 1px solid #e0e0e0; display: block; margin: 0 auto 12px;">
+                                    <button type="button" onclick="clearImagePreview(this)" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 500; transition: background 0.2s;" onmouseover="this.style.background='#c82333'" onmouseout="this.style.background='#dc3545'">Remove Image</button>
+                                </div>
+                            </div>
                         </div>
                         <div style="display: flex; justify-content: center;">
                             <button type="button" onclick="removeMedicineEntry(this)" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 18px; padding: 0 8px;" <?= $isEdit ? 'disabled style="opacity:.3;cursor:not-allowed;background:none;border:none;color:#ccc;"' : '' ?>>
@@ -255,8 +313,30 @@ $currentSubmenu = 'inventory';
         const entries = document.getElementById('medicineEntries');
         const newEntry = entries.querySelector('.medicine-entry').cloneNode(true);
         // Clear input values in the new entry
-        newEntry.querySelectorAll('input').forEach(input => input.value = '');
+        newEntry.querySelectorAll('input').forEach(input => {
+            input.value = '';
+            // Clear image preview if it exists
+            if (input.type === 'file') {
+                const preview = newEntry.querySelector('.newImagePreviewContainer');
+                const inputWrapper = newEntry.querySelector('.image-input-wrapper');
+                if (preview) {
+                    preview.style.display = 'none';
+                }
+                if (inputWrapper) {
+                    inputWrapper.style.display = 'block';
+                }
+            }
+        });
         newEntry.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        // Remove current image container if it exists in the new entry
+        const currentImageContainer = newEntry.querySelector('#currentImageContainer');
+        if (currentImageContainer) {
+            currentImageContainer.remove();
+        }
+        const removeImageFlag = newEntry.querySelector('#removeImageFlag');
+        if (removeImageFlag) {
+            removeImageFlag.remove();
+        }
         entries.appendChild(newEntry);
     }
 
@@ -270,6 +350,105 @@ $currentSubmenu = 'inventory';
             const entry = button.closest('.medicine-entry');
             entry.querySelectorAll('input').forEach(input => input.value = '');
             entry.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        }
+    }
+
+    // Preview image when file is selected
+    function previewImage(input) {
+        if (!input || !input.files || !input.files[0]) {
+            return;
+        }
+        
+        // Find the closest medicine entry container
+        const entry = input.closest('.medicine-entry');
+        if (!entry) return;
+        
+        // Find preview container and input wrapper within this entry
+        const preview = entry.querySelector('.newImagePreviewContainer');
+        const previewImg = preview ? preview.querySelector('.previewImg') : null;
+        const inputWrapper = entry.querySelector('.image-input-wrapper');
+        const currentPreview = entry.querySelector('#currentImagePreview');
+        const removeFlag = entry.querySelector('#removeImageFlag');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            if (previewImg) {
+                previewImg.src = e.target.result;
+            }
+            if (preview) {
+                preview.style.display = 'block';
+            }
+            // Hide the file input when image is selected
+            if (inputWrapper) {
+                inputWrapper.style.display = 'none';
+            }
+            // Dim current image preview when new image is selected
+            if (currentPreview) {
+                currentPreview.style.opacity = '0.5';
+            }
+            // Reset remove flag when new image is selected
+            if (removeFlag) {
+                removeFlag.value = '0';
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+    
+    // Clear image preview
+    function clearImagePreview(button) {
+        const entry = button.closest('.medicine-entry');
+        if (!entry) return;
+        
+        const preview = entry.querySelector('.newImagePreviewContainer');
+        const input = entry.querySelector('.image-input');
+        const inputWrapper = entry.querySelector('.image-input-wrapper');
+        const currentContainer = entry.querySelector('#currentImageContainer');
+        
+        if (input) {
+            input.value = '';
+        }
+        if (preview) {
+            preview.style.display = 'none';
+        }
+        // Show the file input again when image is removed
+        if (inputWrapper) {
+            inputWrapper.style.display = 'block';
+        }
+        // Show current image container again if it exists
+        if (currentContainer) {
+            currentContainer.style.display = 'block';
+        }
+    }
+
+
+    // Remove current image
+    function removeCurrentImage() {
+        const entry = document.querySelector('.medicine-entry');
+        if (!entry) return;
+        
+        const container = entry.querySelector('#currentImageContainer');
+        const removeFlag = entry.querySelector('#removeImageFlag');
+        const input = entry.querySelector('.image-input');
+        const inputWrapper = entry.querySelector('.image-input-wrapper');
+        const preview = entry.querySelector('.newImagePreviewContainer');
+        
+        if (confirm('Are you sure you want to remove the current image?')) {
+            if (container) {
+                container.style.display = 'none';
+            }
+            if (removeFlag) {
+                removeFlag.value = '1';
+            }
+            if (input) {
+                input.value = '';
+            }
+            if (preview) {
+                preview.style.display = 'none';
+            }
+            // Show the file input when current image is removed
+            if (inputWrapper) {
+                inputWrapper.style.display = 'block';
+            }
         }
     }
 
@@ -295,9 +474,10 @@ $currentSubmenu = 'inventory';
         const names = [];
         const brands = [];
         rows.forEach(r => {
-            const tds = r.querySelectorAll('td');
-            if (tds[1]) names.push(tds[1].textContent.trim());
-            if (tds[2]) brands.push(tds[2].textContent.trim());
+            const nameCell = r.querySelector('[data-col="name"]');
+            const brandCell = r.querySelector('[data-col="brand"]');
+            if (nameCell) names.push(nameCell.textContent.trim());
+            if (brandCell) brands.push(brandCell.textContent.trim());
         });
         return { names: uniqueSorted(names), brands: uniqueSorted(brands) };
     }
@@ -316,9 +496,78 @@ $currentSubmenu = 'inventory';
         renderDatalist('brandList', brands);
     }
     
+    // Search functionality
+    function filterMedicineTable() {
+        const searchInput = document.getElementById('medicineSearch');
+        const clearBtn = document.getElementById('clearSearch');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        
+        // Show/hide clear button
+        if (searchTerm.length > 0) {
+            clearBtn.style.display = 'block';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+        
+        const rows = document.querySelectorAll('#medicineTableBody tr');
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const id = (row.querySelector('td[data-col="id"]') || row.querySelector('td:first-child'))?.textContent.toLowerCase() || '';
+            const name = (row.querySelector('td[data-col="name"]') || row.querySelector('td:nth-child(2)'))?.textContent.toLowerCase() || '';
+            const brand = (row.querySelector('td[data-col="brand"]') || row.querySelector('td:nth-child(3)'))?.textContent.toLowerCase() || '';
+            const category = (row.querySelector('td[data-col="category"]') || row.querySelector('td:nth-child(4)'))?.textContent.toLowerCase() || '';
+            
+            const matches = id.includes(searchTerm) || 
+                           name.includes(searchTerm) || 
+                           brand.includes(searchTerm) || 
+                           category.includes(searchTerm);
+            
+            if (matches) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Show "No results" message if no matches
+        let noResultsMsg = document.getElementById('noResultsMessage');
+        if (visibleCount === 0 && searchTerm.length > 0) {
+            if (!noResultsMsg) {
+                noResultsMsg = document.createElement('tr');
+                noResultsMsg.id = 'noResultsMessage';
+                noResultsMsg.innerHTML = '<td colspan="8" style="text-align: center; padding: 40px; color: #6c757d;"><i class="fas fa-search" style="font-size: 32px; opacity: 0.3; margin-bottom: 10px; display: block;"></i><p>No medicines found matching "' + searchTerm + '"</p></td>';
+                document.getElementById('medicineTableBody').appendChild(noResultsMsg);
+            }
+        } else if (noResultsMsg) {
+            noResultsMsg.remove();
+        }
+    }
+    
+    // Clear search
+    document.getElementById('clearSearch')?.addEventListener('click', function() {
+        document.getElementById('medicineSearch').value = '';
+        this.style.display = 'none';
+        filterMedicineTable();
+    });
+
     // Initialize autocomplete options after table is populated
     document.addEventListener('DOMContentLoaded', function() {
         refreshAutocompleteLists();
+        
+        // Initialize search
+        const searchInput = document.getElementById('medicineSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterMedicineTable);
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Escape') {
+                    this.value = '';
+                    document.getElementById('clearSearch').style.display = 'none';
+                    filterMedicineTable();
+                }
+            });
+        }
 
         <?php if (isset($isEdit) && $isEdit): ?>
             const form = document.getElementById('medicineForm');
