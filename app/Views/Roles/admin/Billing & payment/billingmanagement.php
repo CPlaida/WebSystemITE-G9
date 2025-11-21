@@ -153,58 +153,7 @@
                 </div>
 
                 <div style="height:1px; background:#e5e7eb; margin:16px 0;"></div>
-                <h3 style="margin:0 0 10px; color:#1d4ed8; font-weight:700;">Step 2 — HMO (if applicable)</h3>
-                <div id="hmo_section" style="background:#eff6ff; border:1px solid #dbeafe; border-radius:6px; padding:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Provider</label>
-                            <select id="em_hmo_provider" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                                <option value="">Select HMO Provider</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Member Number</label>
-                            <input id="em_hmo_member_no" type="text" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="e.g., MAXI-123456">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">LOA Number</label>
-                            <input id="em_hmo_loa_number" type="text" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="LOA Reference">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Valid From</label>
-                            <input id="em_hmo_valid_from" type="date" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Valid To</label>
-                            <input id="em_hmo_valid_to" type="date" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Limit (₱)</label>
-                            <input id="em_hmo_coverage_limit" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Approved Amount (₱)</label>
-                            <input id="em_hmo_approved_amount" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Patient Share (₱)</label>
-                            <input id="em_hmo_patient_share" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Status</label>
-                            <select id="em_hmo_status" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                                ${['pending','for-approval','approved','submitted','denied','paid'].map(s => `<option value="${s}">${s.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                    <div style="margin-top:12px;">
-                        <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Notes</label>
-                        <textarea id="em_hmo_notes" rows="2" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="Additional details for HMO claim"></textarea>
-                    </div>
-                </div>
-
-                <div style="height:1px; background:#e5e7eb; margin:16px 0;"></div>
-                <h3 style="margin:0 0 10px; color:#065f46; font-weight:700;">Step 3 — PhilHealth (if member)</h3>
+                <h3 style="margin:0 0 10px; color:#065f46; font-weight:700;">Step 2 — PhilHealth (if member)</h3>
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                     <label for="em_ph_member" style="margin:0; font-weight:600; min-width:160px;">PhilHealth Member</label>
                     <input id="em_ph_member" type="checkbox" ${String(bill.philhealth_member||'0')==='1' ? 'checked' : ''}>
@@ -239,12 +188,74 @@
                         </div>
                         <div>
                             <label style="margin:0; color:#374151; font-weight:600;">Remaining Balance</label>
-                            <input id="em_remaining" type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${(() => { const gross=(+bill.final_amount||0); const ph=(+bill.philhealth_approved_amount||0); const net=Math.max(gross - ph,0); return net.toFixed(2); })()}" disabled>
+                            <input id="em_remaining" type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${(() => {
+                                const gross = +bill.final_amount || 0;
+                                const ph = +bill.philhealth_approved_amount || 0;
+                                return Math.max(gross - ph, 0).toFixed(2);
+                            })()}" disabled>
                         </div>
                         <div style="grid-column: 1 / -1;">
                             <label style="margin:0; color:#374151; font-weight:600;">Reason / Note</label>
-                            <textarea id="em_ph_note" rows="2" placeholder="Required if codes missing or approved < suggested" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;"></textarea>
+                            <textarea id="em_ph_note" rows="2" placeholder="Required if codes missing or approved < suggested" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;">${bill.philhealth_note || ''}</textarea>
                         </div>
+                    </div>
+                </div>
+
+                <div style="height:1px; background:#e5e7eb; margin:16px 0;"></div>
+                <h3 style="margin:0 0 10px; color:#1d4ed8; font-weight:700;">Step 3 — HMO (if applicable)</h3>
+                <div id="hmo_section" style="background:#eff6ff; border:1px solid #dbeafe; border-radius:6px; padding:12px;">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Provider</label>
+                            <select id="em_hmo_provider" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
+                                <option value="">Select HMO Provider</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Member Number</label>
+                            <input id="em_hmo_member_no" type="text" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="e.g., MAXI-123456" value="${bill.hmo_member_no || ''}">
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">LOA Number</label>
+                            <input id="em_hmo_loa_number" type="text" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="LOA Reference" value="${bill.hmo_loa_number || ''}">
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Valid From</label>
+                            <input id="em_hmo_valid_from" type="date" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_valid_from || ''}">
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Valid To</label>
+                            <input id="em_hmo_valid_to" type="date" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_valid_to || ''}">
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Limit (₱)</label>
+                            <input id="em_hmo_coverage_limit" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_coverage_limit || ''}">
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Approved Amount (₱)</label>
+                            <input id="em_hmo_approved_amount" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_approved_amount || ''}">
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Patient Share (₱)</label>
+                            <input id="em_hmo_patient_share" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${(() => {
+                                const gross = +bill.final_amount || 0;
+                                const ph = +bill.philhealth_approved_amount || 0;
+                                const hmo = +bill.hmo_approved_amount || 0;
+                                const afterPh = Math.max(gross - ph, 0);
+                                const remaining = Math.max(afterPh - hmo, 0);
+                                return remaining.toFixed(2);
+                            })()}" readonly>
+                        </div>
+                        <div>
+                            <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Status</label>
+                            <select id="em_hmo_status" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
+                                ${['pending','for-approval','approved','submitted','denied','paid'].map(s => `<option value="${s}" ${String(bill.hmo_status||'').toLowerCase()===s?'selected':''}>${s.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Notes</label>
+                        <textarea id="em_hmo_notes" rows="2" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="Additional details for HMO claim">${bill.hmo_notes || ''}</textarea>
                     </div>
                 </div>
             </div>`;
@@ -355,46 +366,99 @@
         const hmoSection = document.getElementById('hmo_section');
         const finalAmountEl = document.getElementById('em_final_amount');
         const remainingEl = document.getElementById('em_remaining');
+        const hmoProviderEl = document.getElementById('em_hmo_provider');
+        const hmoApprovedEl = document.getElementById('em_hmo_approved_amount');
+        const hmoPatientShareEl = document.getElementById('em_hmo_patient_share');
+        const phNoteEl = document.getElementById('em_ph_note');
 
-                function applySelected(){
-                    const opt = rateSel?.selectedOptions?.[0];
-                    const amt = opt ? parseFloat(opt.dataset.amount || '0') : 0;
-                    if (rateId && rateSel) rateId.value = rateSel.value || '';
-                    if (rateAmt) rateAmt.value = isFinite(amt) ? amt.toFixed(2) : '';
-                    // Autofill codes based on selected rate
-                    const ctype = opt ? (opt.dataset.codeType || '').toUpperCase() : '';
-                    const cval = opt ? (opt.dataset.code || '') : '';
-                    if (ctype === 'RVS') {
-                        if (document.getElementById('em_primary_rvs')) document.getElementById('em_primary_rvs').value = cval;
-                        if (document.getElementById('em_primary_icd')) document.getElementById('em_primary_icd').value = '';
-                    } else if (ctype === 'ICD') {
-                        if (document.getElementById('em_primary_icd')) document.getElementById('em_primary_icd').value = cval;
-                        if (document.getElementById('em_primary_rvs')) document.getElementById('em_primary_rvs').value = '';
-                    }
-                    // Prefill Approved with selected amount (editable)
-                    if (approvedEl && isFinite(amt)) {
-                        approvedEl.value = amt.toFixed(2);
-                    }
-                    // Enable Approved only when a rate is selected
-                    if (approvedEl) approvedEl.disabled = !(rateSel && rateSel.value);
-        }
+        const parseRateIds = raw => {
+            if (!raw) return [];
+            if (Array.isArray(raw)) return raw;
+            if (typeof raw === 'string') {
+                try {
+                    const parsed = JSON.parse(raw);
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+            return [];
+        };
+        const savedRateIds = (() => {
+            const stored = parseRateIds(bill.philhealth_rate_ids);
+            if (stored.length) return stored;
+            return parseRateIds(bill.philhealth_rate_ids_calc);
+        })();
+        const savedRateId = savedRateIds.length ? String(savedRateIds[0]) : '';
+        if (rateId && savedRateId) rateId.value = savedRateId;
+        if (phNoteEl && bill.philhealth_note) phNoteEl.value = bill.philhealth_note;
 
-        function updateRemaining(){
+        const updateRemaining = () => {
             if (!remainingEl) return;
             const gross = parseFloat(finalAmountEl?.value || bill.final_amount || 0) || 0;
-            const appr = parseFloat(approvedEl?.value || 0) || 0;
-            const net = Math.max(gross - appr, 0);
-            remainingEl.value = net.toFixed(2);
-        }
+            const phAppr = parseFloat(approvedEl?.value || 0) || 0;
+            const hmoAppr = parseFloat(hmoApprovedEl?.value || 0) || 0;
+            const remainingAfterPh = Math.max(gross - phAppr, 0);
+            remainingEl.value = remainingAfterPh.toFixed(2);
+            if (hmoPatientShareEl) {
+                const base = parseFloat(remainingEl.value || '0') || 0;
+                const patientShare = Math.max(base - hmoAppr, 0);
+                hmoPatientShareEl.value = patientShare.toFixed(2);
+            }
+        };
 
-        function toggleHmo(){
+        const applySelected = () => {
+            if (!rateSel) return;
+            const opt = rateSel.value ? rateSel.selectedOptions?.[0] : null;
+            if (!opt) {
+                if (rateId) rateId.value = '';
+                if (rateAmt) rateAmt.value = '';
+                if (approvedEl) approvedEl.disabled = false;
+                updateRemaining();
+                return;
+            }
+            const amt = parseFloat(opt.dataset.amount || '0');
+            if (rateId) rateId.value = rateSel.value;
+            if (rateAmt) rateAmt.value = Number.isFinite(amt) ? amt.toFixed(2) : '';
+            const ctype = (opt.dataset.codeType || '').toUpperCase();
+            const cval = opt.dataset.code || '';
+            if (ctype === 'RVS') {
+                if (rvsEl) rvsEl.value = cval;
+                if (icdEl) icdEl.value = '';
+            } else if (ctype === 'ICD') {
+                if (icdEl) icdEl.value = cval;
+                if (rvsEl) rvsEl.value = '';
+            }
+            if (approvedEl && Number.isFinite(amt)) {
+                approvedEl.disabled = false;
+                approvedEl.value = amt.toFixed(2);
+            }
+            updateRemaining();
+        };
+
+        const toggleHmo = () => {
             const method = (paymentMethodEl?.value || '').toLowerCase();
             if (hmoSection) hmoSection.style.display = method === 'hmo' ? '' : 'none';
-        }
-        paymentMethodEl?.addEventListener('change', toggleHmo);
-        toggleHmo();
+            updateRemaining();
+        };
 
-        async function loadRates(){
+        const populateHmoProviders = () => {
+            if (!hmoProviderEl) return;
+            const providers = Array.isArray(window.hmoProviders) ? window.hmoProviders : [];
+            const selected = String(bill.hmo_provider_id ?? '');
+            hmoProviderEl.innerHTML = '<option value="">Select HMO Provider</option>';
+            providers.forEach(provider => {
+                const opt = document.createElement('option');
+                opt.value = String(provider.id ?? provider.provider_id ?? '');
+                opt.textContent = provider.name ?? provider.provider_name ?? 'Unnamed Provider';
+                if (opt.value && opt.value === selected) {
+                    opt.selected = true;
+                }
+                hmoProviderEl.appendChild(opt);
+            });
+        };
+
+        const loadRates = async () => {
             if (!rateSel) return;
             const rvs = (rvsEl?.value || '').trim();
             const icd = (icdEl?.value || '').trim();
@@ -424,6 +488,10 @@
                     opt.dataset.code = r.code || '';
                     rateSel.appendChild(opt);
                 });
+                if (savedRateId) {
+                    const hasSaved = Array.from(rateSel.options).some(opt => opt.value === savedRateId);
+                    if (hasSaved) rateSel.value = savedRateId;
+                }
                 if (rates.length === 0) {
                     console.warn('No rates found for the given criteria');
                     rateSel.innerHTML = '<option value="">No matching rates found</option>';
@@ -432,61 +500,36 @@
                 console.error('Error loading rates:', e);
                 rateSel.innerHTML = '<option value="">Error loading rates</option>';
             }
-        }
+        };
 
-        function applySelected(){
-            const opt = rateSel?.selectedOptions?.[0];
-            const amt = opt ? parseFloat(opt.dataset.amount || '0') : 0;
-            if (rateId && rateSel) rateId.value = rateSel.value || '';
-            if (rateAmt) rateAmt.value = isFinite(amt) ? amt.toFixed(2) : '';
-            // Autofill codes based on selected rate
-            const ctype = opt ? (opt.dataset.codeType || '').toUpperCase() : '';
-            const cval = opt ? (opt.dataset.code || '') : '';
-            if (ctype === 'RVS') {
-                if (document.getElementById('em_primary_rvs')) document.getElementById('em_primary_rvs').value = cval;
-                if (document.getElementById('em_primary_icd')) document.getElementById('em_primary_icd').value = '';
-            } else if (ctype === 'ICD') {
-                if (document.getElementById('em_primary_icd')) document.getElementById('em_primary_icd').value = cval;
-                if (document.getElementById('em_primary_rvs')) document.getElementById('em_primary_rvs').value = '';
+        const togglePh = () => {
+            const on = !!phMemberEl?.checked;
+            if (phSection) phSection.style.display = on ? '' : 'none';
+            if (!on && approvedEl) {
+                approvedEl.value = '';
             }
-            // Prefill Approved with selected amount (editable)
-            if (approvedEl && isFinite(amt)) {
-                approvedEl.value = amt.toFixed(2);
-            }
-            // Enable Approved only when a rate is selected
-            if (approvedEl) approvedEl.disabled = !(rateSel && rateSel.value);
-
-            // Recompute remaining balance whenever a rate is applied
             updateRemaining();
-        }
+        };
 
-        // Add both 'change' and 'input' event listeners for better responsiveness
         ['change', 'input'].forEach(event => {
             rvsEl?.addEventListener(event, loadRates);
             icdEl?.addEventListener(event, loadRates);
             adEl?.addEventListener(event, loadRates);
         });
         rateSel?.addEventListener('change', applySelected);
-
-        // When user edits Approved Deduction or Final Amount, recompute remaining balance
-        approvedEl?.addEventListener('input', updateRemaining);
-        finalAmountEl?.addEventListener('input', updateRemaining);
-        // Toggle PhilHealth section visibility
-        function togglePh(){
-            const on = !!phMemberEl?.checked;
-            if (phSection) phSection.style.display = on ? '' : 'none';
-            if (!on) {
-                // If PhilHealth is turned off, clear deduction and reset remaining to full amount
-                if (approvedEl) approvedEl.value = '';
-                updateRemaining();
-            } else {
-                updateRemaining();
-            }
-        }
+        ['input','change'].forEach(evt => {
+            approvedEl?.addEventListener(evt, updateRemaining);
+            hmoApprovedEl?.addEventListener(evt, updateRemaining);
+            finalAmountEl?.addEventListener(evt, updateRemaining);
+        });
         phMemberEl?.addEventListener('change', togglePh);
+        paymentMethodEl?.addEventListener('change', toggleHmo);
+
+        populateHmoProviders();
         togglePh();
-        // initial load
-        loadRates().then(applySelected);
+        toggleHmo();
+        updateRemaining();
+        loadRates()?.then(applySelected);
     }
 </script>
 <?= $this->endSection() ?>
