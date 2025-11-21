@@ -258,8 +258,9 @@ class Laboratory extends Controller
             $db = \Config\Database::connect();
             $builder = $db->table('laboratory');
             $builder->select('id, test_type, test_date, status, notes, test_name')
-                    ->where('status', 'completed')
+                    ->whereIn('status', ['pending', 'in_progress', 'completed'])
                     ->orderBy('test_date', 'DESC')
+                    ->orderBy('created_at', 'DESC')
                     ->limit(20);
 
             // Check if patient_id column exists in laboratory table
@@ -315,7 +316,7 @@ class Laboratory extends Controller
             // Match by patient_id OR name (in case patient_id wasn't set in lab record)
             $hasNameFilter = ($name !== '' || $fullName !== '' || $first !== '' || $last !== '');
             
-            // Build flexible name search terms (handle variations like "Criszel Joy Quinones" vs "Criszel Joy B. Quinones Jr.")
+            // Build flexible name search terms 
             $searchTerms = [];
             
             // Most important: First + Last name (this is what's usually in test_name)
@@ -350,6 +351,17 @@ class Laboratory extends Controller
                 $searchTerms[] = $name;
             }
             
+            // If name parameter is provided but we couldn't build search terms from patient lookup,
+            // use the name parameter directly (it might be in a different format)
+            if (empty($searchTerms) && $name !== '') {
+                $searchTerms[] = $name;
+                // Also try splitting the name and using first/last parts
+                $nameParts = preg_split('/\s+/', trim($name));
+                if (count($nameParts) >= 2) {
+                    $searchTerms[] = trim($nameParts[0] . ' ' . end($nameParts)); // First and last
+                }
+            }
+            
             // Remove duplicates and empty values
             $searchTerms = array_unique(array_filter($searchTerms));
             
@@ -373,8 +385,27 @@ class Laboratory extends Controller
                         ->groupEnd();
             } 
             else if ($patientId !== '' && $hasPatientId) {
-                // Only patient_id match
-                $builder->where('patient_id', $patientId);
+                // Only patient_id match (but still try name if provided)
+                if (!empty($searchTerms)) {
+                    $builder->groupStart()
+                            ->where('patient_id', $patientId)
+                            ->orGroupStart();
+                    
+                    $firstTerm = true;
+                    foreach ($searchTerms as $term) {
+                        if ($firstTerm) {
+                            $builder->like('test_name', $term);
+                            $firstTerm = false;
+                        } else {
+                            $builder->orLike('test_name', $term);
+                        }
+                    }
+                    
+                    $builder->groupEnd()
+                            ->groupEnd();
+                } else {
+                    $builder->where('patient_id', $patientId);
+                }
             }
             else if (!empty($searchTerms)) {
                 // Only name matching

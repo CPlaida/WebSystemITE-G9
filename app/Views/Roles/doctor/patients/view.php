@@ -262,7 +262,7 @@
 
       // If opening Lab tab, refresh records for currently viewed patient
       if (tabName === 'lab') {
-        loadLabRecords(pid ? parseInt(pid) : 0, pname);
+        loadLabRecords(pid || '', pname);
       }
       // If opening Vitals tab, ensure vitals are refreshed
       if (tabName === 'vitals') {
@@ -286,16 +286,32 @@
       .then(data => {
         if (!data || !data.success) { cont.innerHTML = '<span style="color:#dc3545">Failed to load lab records.</span>'; return; }
         const rows = Array.isArray(data.records) ? data.records : [];
-        if (rows.length === 0) { cont.innerHTML = '<span style="color:#6c757d">No completed lab records found.</span>'; return; }
+        if (rows.length === 0) { cont.innerHTML = '<span style="color:#6c757d">No lab records found.</span>'; return; }
         let html = '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse">'+
                    '<thead><tr style="text-align:left; border-bottom:1px solid #e9ecef">'+
-                   '<th style="padding:6px 8px">Date</th><th style="padding:6px 8px">Test</th><th style="padding:6px 8px">Notes</th><th style="padding:6px 8px">Action</th></tr></thead><tbody>';
+                   '<th style="padding:6px 8px">Date</th><th style="padding:6px 8px">Test</th><th style="padding:6px 8px">Status</th><th style="padding:6px 8px">Notes</th><th style="padding:6px 8px">Action</th></tr></thead><tbody>';
         rows.forEach(r => {
           const d = r.test_date ? new Date(r.test_date).toLocaleDateString() : '-';
           const t = r.test_type || '-';
           const n = r.notes ? String(r.notes).substring(0,120) : '—';
+          const status = (r.status || 'pending').toLowerCase();
+          let statusBadge = '';
+          let statusColor = '#6c757d';
+          if (status === 'completed') {
+            statusColor = '#28a745';
+            statusBadge = '<span style="background:#28a745; color:#fff; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">Completed</span>';
+          } else if (status === 'in_progress') {
+            statusColor = '#007bff';
+            statusBadge = '<span style="background:#007bff; color:#fff; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">In Progress</span>';
+          } else {
+            statusColor = '#ffc107';
+            statusBadge = '<span style="background:#ffc107; color:#212529; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">Pending</span>';
+          }
           const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (r.id || '');
-          html += `<tr style="border-bottom:1px solid #f1f3f5"><td style=\"padding:6px 8px\">${d}</td><td style=\"padding:6px 8px\">${t}</td><td style=\"padding:6px 8px\">${n}</td><td style=\"padding:6px 8px\"><a href=\"${viewUrl}\" class=\"btn btn-sm btn-primary\">View</a></td></tr>`;
+          const actionBtn = status === 'completed' 
+            ? `<a href="${viewUrl}" class="btn btn-sm btn-primary">View</a>`
+            : `<span style="color:#6c757d; font-size:12px;">${status === 'in_progress' ? 'Processing...' : 'Pending'}</span>`;
+          html += `<tr style="border-bottom:1px solid #f1f3f5"><td style="padding:6px 8px">${d}</td><td style="padding:6px 8px">${t}</td><td style="padding:6px 8px">${statusBadge}</td><td style="padding:6px 8px">${n}</td><td style="padding:6px 8px">${actionBtn}</td></tr>`;
         });
         html += '</tbody></table></div>';
         cont.innerHTML = html;
