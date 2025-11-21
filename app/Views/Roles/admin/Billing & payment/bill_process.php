@@ -1,7 +1,32 @@
 <?php $this->extend('partials/header') ?>
 <?php $hmoProviders = $hmoProviders ?? []; ?>
+<?php
+    $hasHmoDetails = false;
+    if (!empty($bill) && is_array($bill)) {
+        $hmoFields = [
+            'hmo_provider_id',
+            'hmo_member_no',
+            'hmo_valid_from',
+            'hmo_valid_to',
+            'hmo_loa_number',
+            'hmo_coverage_limit',
+            'hmo_approved_amount',
+            'hmo_patient_share',
+            'hmo_status',
+            'hmo_notes'
+        ];
+        foreach ($hmoFields as $field) {
+            if (!empty($bill[$field])) {
+                $hasHmoDetails = true;
+                break;
+            }
+        }
+    }
+?>
+
 
 <?= $this->section('title') ?>Bill Process<?= $this->endSection() ?>
+
 
 <?= $this->section('content') ?>
 
@@ -30,20 +55,19 @@
                         <div class="form-group">
                             <label for="payment_method">Payment Method</label>
                             <select id="payment_method" name="payment_method" class="form-control">
-                                <?php $pm = strtolower($bill['payment_method'] ?? 'cash'); ?>
+                                <?php $pm = strtolower($bill['payment_method'] ?? 'cash'); $pm = $pm === 'hmo' ? 'insurance' : $pm; ?>
                                 <option value="cash" <?= $pm==='cash'?'selected':'' ?>>Cash</option>
                                 <option value="insurance" <?= $pm==='insurance'?'selected':'' ?>>Insurance</option>
-                                <option value="hmo" <?= $pm==='hmo'?'selected':'' ?>>HMO</option>
                             </select>
                         </div>
                     </div>
                     <div id="payment_details" class="mt-2"></div>
                 </div>
 
-                <div id="hmoSection" class="form-section" style="margin-top:15px; background:#fef6f0; border:1px solid #fcd9c1; border-radius:8px; padding:15px; display: <?= (isset($bill['payment_method']) && strtolower($bill['payment_method']) === 'hmo') ? 'block' : 'none' ?>;">
+                <div id="hmoSection" class="form-section" data-visible="<?= $hasHmoDetails ? '1' : '0' ?>" style="margin-top:15px; background:#fef6f0; border:1px solid #fcd9c1; border-radius:8px; padding:15px; display: <?= $hasHmoDetails ? 'block' : 'none' ?>;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <h3 class="section-header" style="color:#d97706; margin:0;">HMO Details</h3>
-                        <small style="color:#92400e;">Only required when payment method is set to HMO</small>
+                        <small style="color:#92400e;"></small>
                     </div>
                     <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:12px;">
                         <div class="form-group">
@@ -315,7 +339,7 @@ if (patientInput) {
                     patientList.style.display = 'none';
                     // Auto-load patient's services
                     loadPatientServices(p.id);
-                    if (paymentMethod?.value === 'insurance' || paymentMethod?.value === 'hmo') { loadPatientInsurance(p.id); }
+                    if (paymentMethod?.value === 'insurance') { loadPatientInsurance(p.id); }
                 };
                 patientList.appendChild(item);
             });
@@ -350,7 +374,7 @@ if (patientInput) {
                             patientList.innerHTML = '';
                             patientList.style.display = 'none';
                             loadPatientServices(results[0].id);
-                            if (paymentMethod?.value === 'insurance' || paymentMethod?.value === 'hmo') { loadPatientInsurance(results[0].id); }
+                            if (paymentMethod?.value === 'insurance') { loadPatientInsurance(results[0].id); }
                         }
                     } catch {}
                 }
@@ -395,6 +419,8 @@ function updateTotals() {
 const paymentMethod = document.getElementById('payment_method');
 const paymentDetails = document.getElementById('payment_details');
 const hmoSection = document.getElementById('hmoSection');
+const hasExistingHmo = <?= $hasHmoDetails ? 'true' : 'false' ?>;
+let hmoSectionVisible = hasExistingHmo;
 
 async function loadPatientInsurance(pid){
     if (!pid) return;
@@ -428,6 +454,43 @@ async function loadPatientInsurance(pid){
     } catch(e) { /* ignore */ }
 }
 
+function isHmoVisible(){
+    if (!hmoSection) { return false; }
+    const explicit = hmoSection.dataset.visible;
+    if (explicit === '1' || explicit === '0') {
+        return explicit === '1';
+    }
+    return window.getComputedStyle(hmoSection).display !== 'none';
+}
+
+function updateHmoButtonState(){
+    const btn = document.getElementById('hmoAddBtn');
+    if (!btn) return;
+    const visible = isHmoVisible();
+    btn.innerHTML = visible
+        ? '<i class="fas fa-minus"></i> Remove Insurance'
+        : '<i class="fas fa-plus"></i> Add Insurance';
+    btn.classList.toggle('btn-outline-primary', !visible);
+    btn.classList.toggle('btn-outline-danger', visible);
+}
+
+function setHmoVisibility(visible){
+    if (!hmoSection) return;
+    hmoSection.style.display = visible ? 'block' : 'none';
+    hmoSection.dataset.visible = visible ? '1' : '0';
+    hmoSectionVisible = !!visible;
+    updateHmoButtonState();
+}
+
+function attachHmoButton(){
+    const btn = document.getElementById('hmoAddBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+        setHmoVisibility(!isHmoVisible());
+    });
+    updateHmoButtonState();
+}
+
 if (paymentMethod && paymentDetails) {
     function renderPaymentDetails(method){
         paymentDetails.innerHTML = '';
@@ -443,31 +506,35 @@ if (paymentMethod && paymentDetails) {
                         <input type="text" id="insurance_number" name="insurance_number" class="form-control" readonly>
                     </div>
                 </div>
+                <div style="margin-top:12px;">
+                    <button type="button" id="hmoAddBtn" class="btn btn-sm btn-outline-primary" style="display:inline-flex; align-items:center; gap:6px;">
+                        <i class="fas fa-plus"></i>
+                        Add Insurance
+                    </button>
+                    <small style="display:block; margin-top:6px; color:#6b7280;"></small>
+                </div>
             `;
             const pid = document.getElementById('patientID')?.value?.trim();
             if (pid) loadPatientInsurance(pid);
-        }
-        if (method !== 'hmo' && hmoSection) {
-            hmoSection.style.display = 'none';
+            attachHmoButton();
+            setHmoVisibility(hmoSectionVisible);
+        } else {
+            setHmoVisibility(false);
         }
     }
     paymentMethod.addEventListener('change', function(){
         renderPaymentDetails(this.value);
-        toggleHmoSection();
-        if (this.value === 'hmo') {
-            const pid = document.getElementById('patientID')?.value?.trim();
-            if (pid) loadPatientInsurance(pid);
+        if (this.value !== 'insurance') {
+            hmoSectionVisible = false;
         }
     });
     // Initial render
     renderPaymentDetails(paymentMethod.value);
 }
 
-function toggleHmoSection(){
-    if (!hmoSection || !paymentMethod) return;
-    hmoSection.style.display = paymentMethod.value === 'hmo' ? 'block' : 'none';
+if (paymentMethod?.value !== 'insurance' && hmoSection) {
+    setHmoVisibility(false);
 }
-toggleHmoSection();
 
 // On submit, ensure a selected patient and at least one valid item
 document.getElementById('billForm')?.addEventListener('submit', function(e) {
