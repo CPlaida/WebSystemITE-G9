@@ -179,27 +179,15 @@
             else if (e.key === 'Escape') { suggestionsDiv.hide(); }
         });
 
-        $('#labRequestForm').on('submit', function(e) {
-            e.preventDefault();
-            const formData = {
-                patient_name: $('#patientName').val(),
-                patient_id: $('#patientId').val(),
-                test_type: $('#testType').val(),
-                priority: $('#priority').val(),
-                clinical_notes: $('#clinicalNotes').val(),
-                test_date: $('#testDate').val()
-            };
-            if (!formData.patient_name || !formData.test_type) { alert('Please fill in all required fields'); return; }
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: formData,
-                success: function(response) {
-                    if (response.success) { alert('Lab request submitted successfully!'); $('#labRequestForm')[0].reset(); }
-                    else { alert('Error: ' + (response.message || 'Failed to submit request')); }
-                },
-                error: function() { $('#labRequestForm')[0].submit(); }
-            });
+        // Allow native form submission so server-side redirect to test results works
+        $('#labRequestForm').on('submit', function() {
+            const patientName = $('#patientName').val();
+            const testType = $('#testType').val();
+            if (!patientName || !testType) {
+                alert('Please fill in all required fields');
+                return false;
+            }
+            return true;
         });
     });
     </script>

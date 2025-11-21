@@ -5,16 +5,19 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\PatientModel;
 use App\Models\UserModel;
+use App\Models\Financial\HmoProviderModel;
 
 class Patients extends BaseController
 {
     protected $patientModel;
     protected $userModel;
+    protected $hmoProviderModel;
     
     public function __construct()
     {
         $this->patientModel = new PatientModel();
         $this->userModel = new UserModel();
+        $this->hmoProviderModel = new HmoProviderModel();
         helper(['form', 'url', 'auth']);
     }
 
@@ -22,7 +25,11 @@ class Patients extends BaseController
     {
         $data = [
             'title' => 'Register New Patient',
-            'validation' => \Config\Services::validation()
+            'validation' => \Config\Services::validation(),
+            'hmoProviders' => $this->hmoProviderModel
+                ->where('active', 1)
+                ->orderBy('name', 'ASC')
+                ->findAll(),
         ];
         
         return view('Roles/admin/patients/register', $data);
@@ -142,6 +149,10 @@ class Patients extends BaseController
             'insurance_number' => $this->request->getPost('insurance_number'),
             'admitting_diagnosis' => $this->request->getPost('admitting_diagnosis') ?: null,
             'reason_admission' => $this->request->getPost('reason_admission') ?: null,
+            'hmo_provider_id' => $this->request->getPost('hmo_provider_id') ?: null,
+            'hmo_member_no' => $this->request->getPost('hmo_member_no') ?: null,
+            'hmo_valid_from' => $this->request->getPost('hmo_valid_from') ?: null,
+            'hmo_valid_to' => $this->request->getPost('hmo_valid_to') ?: null,
             'vitals_bp' => $this->request->getPost('vitals_bp') ?: null,
             'vitals_hr' => $this->request->getPost('vitals_hr') ?: null,
             'vitals_temp' => $this->request->getPost('vitals_temp') ?: null,
@@ -207,6 +218,10 @@ class Patients extends BaseController
             'title' => 'Register Inpatient',
             'validation' => \Config\Services::validation(),
             'doctors' => $doctors,
+            'hmoProviders' => $this->hmoProviderModel
+                ->where('active', 1)
+                ->orderBy('name', 'ASC')
+                ->findAll(),
         ];
         
         return view('Roles/admin/patients/Inpatient', $data);

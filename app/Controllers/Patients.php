@@ -1,28 +1,73 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace App\Controllers;
 
-use App\Controllers\BaseController;
 use App\Models\PatientModel;
 use App\Models\UserModel;
+use App\Models\Financial\HmoProviderModel;
 
 class Patients extends BaseController
 {
     protected $patientModel;
     protected $userModel;
+    protected $hmoProviderModel;
     
     public function __construct()
     {
         $this->patientModel = new PatientModel();
         $this->userModel = new UserModel();
+        $this->hmoProviderModel = new HmoProviderModel();
         helper(['form', 'url', 'auth']);
+    }
+
+    /**
+     * Lightweight JSON endpoint consumed by billing autocomplete.
+     */
+    public function search()
+    {
+        $term = trim((string)$this->request->getGet('term'));
+        if ($term === '') {
+            return $this->response->setJSON(['patients' => []]);
+        }
+
+        try {
+            $results = $this->patientModel->searchPatients($term);
+        } catch (\Throwable $e) {
+            log_message('error', 'Patient search failed: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'error' => 'Unable to search patients right now.'
+            ]);
+        }
+
+        return $this->response->setJSON(['patients' => $results]);
+    }
+
+    /**
+     * Return a single patient record for insurance autofill/use in billing.
+     */
+    public function getPatient($id = null)
+    {
+        if (!$id) {
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'Patient ID is required']);
+        }
+
+        $patient = $this->patientModel->find($id);
+        if (!$patient) {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'Patient not found']);
+        }
+
+        return $this->response->setJSON(['patient' => $patient]);
     }
 
     public function register()
     {
         $data = [
             'title' => 'Register New Patient',
-            'validation' => \Config\Services::validation()
+            'validation' => \Config\Services::validation(),
+            'hmoProviders' => $this->hmoProviderModel
+                ->where('active', 1)
+                ->orderBy('name', 'ASC')
+                ->findAll(),
         ];
         
         return view('Roles/admin/patients/register', $data);
@@ -51,6 +96,10 @@ class Patients extends BaseController
             'emergency_contact' => 'permit_empty|string|max_length[100]',
             'insurance_provider' => 'permit_empty|string|max_length[255]',
             'insurance_number' => 'permit_empty|string|max_length[100]',
+            'hmo_provider_id' => 'permit_empty|integer',
+            'hmo_member_no' => 'permit_empty|string|max_length[100]',
+            'hmo_valid_from' => 'permit_empty|valid_date',
+            'hmo_valid_to' => 'permit_empty|valid_date',
             'medical_history' => 'permit_empty|string'
         ];
 
@@ -95,6 +144,10 @@ class Patients extends BaseController
             'blood_type' => $this->request->getPost('blood_type'),
             'insurance_provider' => $this->request->getPost('insurance_provider'),
             'insurance_number' => $this->request->getPost('insurance_number'),
+            'hmo_provider_id' => $this->request->getPost('hmo_provider_id') ?: null,
+            'hmo_member_no' => $this->request->getPost('hmo_member_no') ?: null,
+            'hmo_valid_from' => $this->request->getPost('hmo_valid_from') ?: null,
+            'hmo_valid_to' => $this->request->getPost('hmo_valid_to') ?: null,
             'medical_history' => $this->request->getPost('medical_history'),
             'status' => 'active',
             'created_at' => date('Y-m-d H:i:s')

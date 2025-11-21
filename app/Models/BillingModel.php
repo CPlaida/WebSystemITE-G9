@@ -39,6 +39,16 @@ class BillingModel extends Model
         'final_amount',      // amount equivalent
         'payment_status',    // status equivalent (pending/partial/paid/overdue)
         'payment_method',
+        'hmo_provider_id',
+        'hmo_member_no',
+        'hmo_valid_from',
+        'hmo_valid_to',
+        'hmo_loa_number',
+        'hmo_coverage_limit',
+        'hmo_approved_amount',
+        'hmo_patient_share',
+        'hmo_status',
+        'hmo_notes',
         'bill_date',         // billing_date equivalent
         'due_date',
         'notes',
@@ -76,6 +86,10 @@ class BillingModel extends Model
         if ($this->tableHas('billing', 'service_id') && $this->tableHas('services')) {
             $builder->select('s.name AS service_name, s.base_price AS service_price')
                     ->join('services s', 's.id = b.service_id', 'left');
+        }
+        if ($this->tableHas('hmo_providers')) {
+            $builder->select('hp.name AS hmo_provider_name')
+                    ->join('hmo_providers hp', 'hp.id = b.hmo_provider_id', 'left');
         }
         return $builder;
     }

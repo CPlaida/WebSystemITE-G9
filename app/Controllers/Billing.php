@@ -8,6 +8,9 @@ use App\Models\LaboratoryModel;
 use App\Models\ServiceModel;
 use App\Models\Financial\PhilHealthAuditModel;
 use App\Models\Financial\PhilHealthCaseRateModel;
+use App\Models\Financial\HmoProviderModel;
+use App\Models\Financial\HmoAuthorizationModel;
+use App\Models\PatientModel;
 use App\Services\PhilHealthCaseRateService;
 
 class Billing extends BaseController
@@ -59,6 +62,72 @@ class Billing extends BaseController
         try { $db->query("CREATE INDEX IF NOT EXISTS idx_billing_items_lab_id ON billing_items(lab_id)"); } catch (\Throwable $e) { /* ignore */ }
     }
 
+    private function syncHmoAuthorization(int $billId, ?string $patientId, array $payload): void
+    {
+        $authModel = new HmoAuthorizationModel();
+        $fields = [
+            'hmo_provider_id', 'hmo_loa_number', 'hmo_coverage_limit',
+            'hmo_approved_amount', 'hmo_patient_share', 'hmo_status', 'hmo_notes'
+        ];
+        $hasData = false;
+        foreach ($fields as $field) {
+            if (!empty($payload[$field])) { $hasData = true; break; }
+        }
+
+        if (!$hasData) {
+            $authModel->where('billing_id', $billId)->delete();
+            return;
+        }
+
+        $record = [
+            'billing_id' => $billId,
+            'patient_id' => $patientId,
+            'provider_id' => $payload['hmo_provider_id'] ?: null,
+            'loa_number' => $payload['hmo_loa_number'] ?: null,
+            'coverage_limit' => $payload['hmo_coverage_limit'] !== null ? (float)$payload['hmo_coverage_limit'] : null,
+            'approved_amount' => $payload['hmo_approved_amount'] !== null ? (float)$payload['hmo_approved_amount'] : null,
+            'patient_share' => $payload['hmo_patient_share'] !== null ? (float)$payload['hmo_patient_share'] : null,
+            'status' => $payload['hmo_status'] ?: null,
+            'notes' => $payload['hmo_notes'] ?: null,
+        ];
+
+        $existing = $authModel->where('billing_id', $billId)->first();
+        if ($existing) {
+            $record['id'] = $existing['id'];
+        }
+        $authModel->save($record);
+    }
+
+    private function normalizeCoverageSplits(array $payload, array $existing = []): array
+    {
+        $final = $payload['final_amount'] ?? ($existing['final_amount'] ?? null);
+        if ($final === null) {
+            return $payload;
+        }
+        $final = (float)$final;
+        $payload['final_amount'] = $final;
+
+        $philhealthApproved = $payload['philhealth_approved_amount'] ?? ($existing['philhealth_approved_amount'] ?? null);
+        if ($philhealthApproved === null || $philhealthApproved === '') {
+            $philhealthApproved = 0.0;
+        }
+        $philhealthApproved = max(0.0, min((float)$philhealthApproved, $final));
+        $payload['philhealth_approved_amount'] = $philhealthApproved;
+
+        $remainingAfterPhilhealth = max($final - $philhealthApproved, 0.0);
+
+        $hmoApproved = $payload['hmo_approved_amount'] ?? ($existing['hmo_approved_amount'] ?? null);
+        if ($hmoApproved === null || $hmoApproved === '') {
+            $hmoApproved = 0.0;
+        }
+        $hmoApproved = max(0.0, min((float)$hmoApproved, $remainingAfterPhilhealth));
+        $payload['hmo_approved_amount'] = $hmoApproved;
+
+        $payload['hmo_patient_share'] = max($remainingAfterPhilhealth - $hmoApproved, 0.0);
+
+        return $payload;
+    }
+
     public function index()
     {
         $term = $this->request->getGet('q');
@@ -68,6 +137,10 @@ class Billing extends BaseController
             'bills' => $bills,
             'totals' => $totals,
             'query' => (string)($term ?? ''),
+            'hmoProviders' => (new HmoProviderModel())
+                ->where('active', 1)
+                ->orderBy('name', 'ASC')
+                ->findAll(),
         ]);
     }
 
@@ -79,6 +152,10 @@ class Billing extends BaseController
             'validation' => \Config\Services::validation(),
             'bill' => null,
             'billItems' => [],
+            'hmoProviders' => (new HmoProviderModel())
+                ->where('active', 1)
+                ->orderBy('name', 'ASC')
+                ->findAll(),
         ];
 
         if ($id) {
@@ -124,8 +201,13 @@ class Billing extends BaseController
             'patient_id' => 'required',
             'final_amount' => 'required|numeric',
             'payment_status' => 'required|in_list[pending,partial,paid,overdue]',
+            'payment_method' => 'required|in_list[cash,insurance,hmo]',
             'bill_date' => 'required|valid_date',
         ];
+        if (strtolower($this->request->getPost('payment_method')) === 'hmo') {
+            $rules['hmo_provider_id'] = 'required';
+            $rules['hmo_loa_number'] = 'required|min_length[3]';
+        }
         if (!$this->validate($rules)) {
             if ($this->request->isAJAX()) {
                 return $this->response->setStatusCode(422)->setJSON(['errors' => $this->validator->getErrors()]);
@@ -156,11 +238,29 @@ class Billing extends BaseController
             'final_amount' => $computedFinal,
             'payment_status' => $this->request->getPost('payment_status'),
             'payment_method' => $this->request->getPost('payment_method'),
+            'philhealth_member' => $this->request->getPost('philhealth_member') ? 1 : 0,
+            'philhealth_approved_amount' => $this->request->getPost('philhealth_approved_amount') !== null ? (float)$this->request->getPost('philhealth_approved_amount') : 0.0,
+            'primary_icd10_code' => $this->request->getPost('primary_icd10_code') ?: null,
+            'primary_rvs_code' => $this->request->getPost('primary_rvs_code') ?: null,
+            'admission_date' => $this->request->getPost('admission_date') ?: null,
+            'hmo_provider_id' => $this->request->getPost('hmo_provider_id') ?: null,
+            'hmo_member_no' => $this->request->getPost('hmo_member_no') ?: null,
+            'hmo_valid_from' => $this->request->getPost('hmo_valid_from') ?: null,
+            'hmo_valid_to' => $this->request->getPost('hmo_valid_to') ?: null,
+            'hmo_loa_number' => $this->request->getPost('hmo_loa_number') ?: null,
+            'hmo_coverage_limit' => $this->request->getPost('hmo_coverage_limit') ?: null,
+            'hmo_approved_amount' => $this->request->getPost('hmo_approved_amount') ?: null,
+            'hmo_patient_share' => $this->request->getPost('hmo_patient_share') ?: null,
+            'hmo_status' => $this->request->getPost('hmo_status') ?: null,
+            'hmo_notes' => $this->request->getPost('hmo_notes') ?: null,
             'bill_date' => $this->request->getPost('bill_date'),
             'notes' => $this->request->getPost('notes'),
         ];
 
+        $payload = $this->normalizeCoverageSplits($payload);
+
         $id = $this->billingModel->insert($payload, true);
+        $this->syncHmoAuthorization($id, $payload['patient_id'], $payload);
 
         if ($this->request->isAJAX()) {
             return $this->response->setJSON(['status' => 'success', 'id' => $id]);
@@ -252,6 +352,28 @@ class Billing extends BaseController
         // Return JSON for modal editing
         $bill = $this->billingModel->findWithRelations((int)$id);
         if (!$bill) return $this->response->setStatusCode(404)->setJSON(['error' => 'Not found']);
+        if (!empty($bill['patient_id'])) {
+            $needsHydration = empty($bill['hmo_provider_id']) && empty($bill['hmo_member_no']);
+            if ($needsHydration) {
+                $patient = (new PatientModel())->find($bill['patient_id']);
+                if ($patient) {
+                    foreach ([
+                        'hmo_provider_id',
+                        'hmo_member_no',
+                        'hmo_valid_from',
+                        'hmo_valid_to',
+                        'hmo_loa_number',
+                        'hmo_coverage_limit',
+                        'hmo_status',
+                        'hmo_notes'
+                    ] as $field) {
+                        if (empty($bill[$field]) && isset($patient[$field])) {
+                            $bill[$field] = $patient[$field];
+                        }
+                    }
+                }
+            }
+        }
         try {
             $svc = new PhilHealthCaseRateService();
             $adate = $bill['admission_date'] ?? ($bill['bill_date'] ?? date('Y-m-d'));
@@ -273,15 +395,22 @@ class Billing extends BaseController
             'final_amount' => 'permit_empty|numeric',
             'payment_status' => 'permit_empty|in_list[pending,partial,paid,overdue]',
             'bill_date' => 'permit_empty|valid_date',
+            'payment_method' => 'permit_empty|in_list[cash,insurance,hmo]',
             'philhealth_member' => 'permit_empty|in_list[0,1]',
             'philhealth_approved_amount' => 'permit_empty|numeric',
             'primary_icd10_code' => 'permit_empty|string',
             'primary_rvs_code' => 'permit_empty|string',
             'admission_date' => 'permit_empty|valid_date',
         ];
+        if (strtolower($this->request->getPost('payment_method') ?? '') === 'hmo') {
+            $rules['hmo_provider_id'] = 'required';
+            $rules['hmo_loa_number'] = 'required|min_length[3]';
+        }
         if (!$this->validate($rules)) {
             return $this->response->setStatusCode(422)->setJSON(['errors' => $this->validator->getErrors()]);
         }
+
+        $existingBill = $this->billingModel->find((int)$id) ?: [];
 
         // Recompute totals if any component fields are present; else allow direct final_amount update
         $hasComponents = $this->request->getPost('consultation_fee') !== null
@@ -297,6 +426,14 @@ class Billing extends BaseController
             'service_id' => $this->request->getPost('service_id') !== null ? (int)$this->request->getPost('service_id') : null,
             'payment_status' => $this->request->getPost('payment_status') ?? null,
             'payment_method' => $this->request->getPost('payment_method') ?? null,
+            'hmo_provider_id' => $this->request->getPost('hmo_provider_id') ?: null,
+            'hmo_member_no' => $this->request->getPost('hmo_member_no') ?: null,
+            'hmo_loa_number' => $this->request->getPost('hmo_loa_number') ?: null,
+            'hmo_coverage_limit' => $this->request->getPost('hmo_coverage_limit') ?: null,
+            'hmo_approved_amount' => $this->request->getPost('hmo_approved_amount') ?: null,
+            'hmo_patient_share' => $this->request->getPost('hmo_patient_share') ?: null,
+            'hmo_status' => $this->request->getPost('hmo_status') ?: null,
+            'hmo_notes' => $this->request->getPost('hmo_notes') ?: null,
             'bill_date' => $this->request->getPost('bill_date') ?? null,
             'notes' => $this->request->getPost('notes') ?? null,
             'philhealth_member' => $this->request->getPost('philhealth_member') !== null ? (int)$this->request->getPost('philhealth_member') : null,
@@ -332,10 +469,9 @@ class Billing extends BaseController
         $approved = $this->request->getPost('philhealth_approved_amount');
         $approved = $approved !== null ? (float)$approved : null;
         if ($isMember) {
-            $current = $this->billingModel->find((int)$id) ?: [];
             $gross = null;
             if (isset($data['final_amount'])) { $gross = (float)$data['final_amount']; }
-            else if (isset($current['final_amount'])) { $gross = (float)$current['final_amount']; }
+            else if (isset($existingBill['final_amount'])) { $gross = (float)$existingBill['final_amount']; }
             else { $gross = 0.0; }
 
             $selectedRateId = (string)($this->request->getPost('philhealth_selected_rate_id') ?? '');
@@ -346,8 +482,15 @@ class Billing extends BaseController
                 return $this->response->setStatusCode(422)->setJSON(['errors' => ['philhealth_approved_amount' => 'PhilHealth Approved Deduction Amount is required.']]);
             }
 
-            // Determine suggested cap from selected rate if provided; otherwise 0
-            $suggested = 0.0;
+            if ($approved > $gross) {
+                $approved = $gross;
+            }
+
+            if ($selectedRateId && $selectedAmount !== null && $approved > $selectedAmount) {
+                $approved = $selectedAmount;
+            }
+
+            $data['philhealth_approved_amount'] = $approved;
             $codesUsed = [];
             $rateIds = [];
             if ($selectedRateId !== '') {
@@ -386,7 +529,7 @@ class Billing extends BaseController
             $audit = new PhilHealthAuditModel();
             $audit->insert([
                 'bill_id' => (int)$id,
-                'patient_id' => (string)($data['patient_id'] ?? ($current['patient_id'] ?? '')),
+                'patient_id' => (string)($data['patient_id'] ?? ($existingBill['patient_id'] ?? '')),
                 'suggested_amount' => $suggested,
                 'approved_amount' => $approved,
                 'officer_user_id' => (string)($data['philhealth_verified_by'] ?? ''),
@@ -398,16 +541,22 @@ class Billing extends BaseController
             ]);
         }
 
+        $data = $this->normalizeCoverageSplits($data, $existingBill);
+
         // Remove nulls to avoid overwriting
         $data = array_filter($data, fn($v) => $v !== null);
 
         $this->billingModel->save($data);
+        $targetPatient = $data['patient_id'] ?? ($existingBill['patient_id'] ?? null);
+        $hmoPayload = array_merge($existingBill, $data);
+        $this->syncHmoAuthorization((int)$id, $targetPatient, $hmoPayload);
         return $this->response->setJSON(['status' => 'success', 'message' => 'Bill updated successfully']);
     }
 
     public function delete($id)
     {
         $this->billingModel->delete($id);
+        (new HmoAuthorizationModel())->where('billing_id', (int)$id)->delete();
         return $this->response->setJSON(['status' => 'success', 'message' => 'Bill deleted successfully']);
     }
 
@@ -416,8 +565,12 @@ class Billing extends BaseController
         $rules = [
             'patient_id' => 'required',
             'bill_date' => 'required|valid_date',
-            'payment_method' => 'permit_empty|string'
+            'payment_method' => 'permit_empty|in_list[cash,insurance,hmo]'
         ];
+        if (strtolower($this->request->getPost('payment_method')) === 'hmo') {
+            $rules['hmo_provider_id'] = 'required';
+            $rules['hmo_loa_number'] = 'required|min_length[3]';
+        }
         if (!$this->validate($rules)) {
             if ($this->request->isAJAX()) {
                 return $this->response->setStatusCode(422)->setJSON(['errors' => $this->validator->getErrors()]);
@@ -467,11 +620,28 @@ class Billing extends BaseController
                 'tax' => $tax,
                 'final_amount' => $total,
                 'payment_status' => $this->request->getPost('payment_status') ?: 'pending',
-                'payment_method' => $this->request->getPost('payment_method'),
+                'payment_method' => $this->request->getPost('payment_method') ?: 'cash',
+                'philhealth_member' => $this->request->getPost('philhealth_member') ? 1 : 0,
+                'philhealth_approved_amount' => $this->request->getPost('philhealth_approved_amount') !== null ? (float)$this->request->getPost('philhealth_approved_amount') : 0.0,
+                'primary_icd10_code' => $this->request->getPost('primary_icd10_code') ?: null,
+                'primary_rvs_code' => $this->request->getPost('primary_rvs_code') ?: null,
+                'admission_date' => $this->request->getPost('admission_date') ?: null,
+                'hmo_provider_id' => $this->request->getPost('hmo_provider_id') ?: null,
+                'hmo_member_no' => $this->request->getPost('hmo_member_no') ?: null,
+                'hmo_valid_from' => $this->request->getPost('hmo_valid_from') ?: null,
+                'hmo_valid_to' => $this->request->getPost('hmo_valid_to') ?: null,
+                'hmo_loa_number' => $this->request->getPost('hmo_loa_number') ?: null,
+                'hmo_coverage_limit' => $this->request->getPost('hmo_coverage_limit') ?: null,
+                'hmo_approved_amount' => $this->request->getPost('hmo_approved_amount') ?: null,
+                'hmo_patient_share' => $this->request->getPost('hmo_patient_share') ?: null,
+                'hmo_status' => $this->request->getPost('hmo_status') ?: null,
+                'hmo_notes' => $this->request->getPost('hmo_notes') ?: null,
                 'bill_date' => $this->request->getPost('bill_date'),
                 'notes' => $this->request->getPost('notes'),
             ];
+            $payload = $this->normalizeCoverageSplits($payload);
             $billId = $this->billingModel->insert($payload, true);
+            $this->syncHmoAuthorization((int)$billId, $payload['patient_id'], $payload);
 
             if ($billId && !empty($items)) {
                 $this->ensureBillingItemsTable();
@@ -772,7 +942,12 @@ class Billing extends BaseController
         log_message('debug', 'Found ' . count($rows) . ' matching case rates');
 
         $rates = array_map(function($r){
-            $amount = (float)(($r['professional_share'] ?? 0) + ($r['facility_share'] ?? 0));
+            $facility = (float)($r['facility_share'] ?? 0);
+            $professional = (float)($r['professional_share'] ?? 0);
+            $amount = $facility + $professional;
+            if ($amount <= 0 && isset($r['rate_total'])) {
+                $amount = (float)$r['rate_total'];
+            }
             $label = sprintf('%s %s - %s (%s) - ₱%s', 
                 $r['code_type'], 
                 $r['code'], 

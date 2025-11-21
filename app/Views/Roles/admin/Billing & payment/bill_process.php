@@ -1,4 +1,5 @@
 <?php $this->extend('partials/header') ?>
+<?php $hmoProviders = $hmoProviders ?? []; ?>
 
 <?= $this->section('title') ?>Bill Process<?= $this->endSection() ?>
 
@@ -32,12 +33,81 @@
                                 <?php $pm = strtolower($bill['payment_method'] ?? 'cash'); ?>
                                 <option value="cash" <?= $pm==='cash'?'selected':'' ?>>Cash</option>
                                 <option value="insurance" <?= $pm==='insurance'?'selected':'' ?>>Insurance</option>
+                                <option value="hmo" <?= $pm==='hmo'?'selected':'' ?>>HMO</option>
                             </select>
                         </div>
                     </div>
                     <div id="payment_details" class="mt-2"></div>
                 </div>
 
+                <div id="hmoSection" class="form-section" style="margin-top:15px; background:#fef6f0; border:1px solid #fcd9c1; border-radius:8px; padding:15px; display: <?= (isset($bill['payment_method']) && strtolower($bill['payment_method']) === 'hmo') ? 'block' : 'none' ?>;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 class="section-header" style="color:#d97706; margin:0;">HMO Details</h3>
+                        <small style="color:#92400e;">Only required when payment method is set to HMO</small>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:12px;">
+                        <div class="form-group">
+                            <label for="hmo_provider_id">HMO Provider</label>
+                            <select id="hmo_provider_id" name="hmo_provider_id" class="form-control">
+                                <option value="">Select Provider</option>
+                                <?php $selectedProvider = $bill['hmo_provider_id'] ?? ''; ?>
+                                <?php foreach ($hmoProviders as $provider): ?>
+                                    <option value="<?= esc($provider['id']) ?>" <?= (string)$selectedProvider === (string)$provider['id'] ? 'selected' : '' ?>>
+                                        <?= esc($provider['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_member_no">Member Number</label>
+                            <input type="text" id="hmo_member_no" name="hmo_member_no" class="form-control" placeholder="e.g., MAXI-123456" value="<?= esc($bill['hmo_member_no'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_valid_from">Coverage Valid From</label>
+                            <input type="date" id="hmo_valid_from" name="hmo_valid_from" class="form-control" value="<?= esc($bill['hmo_valid_from'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_valid_to">Coverage Valid To</label>
+                            <input type="date" id="hmo_valid_to" name="hmo_valid_to" class="form-control" value="<?= esc($bill['hmo_valid_to'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_loa_number">Letter of Authorization (LOA) #</label>
+                            <input type="text" id="hmo_loa_number" name="hmo_loa_number" class="form-control" placeholder="Enter LOA number" value="<?= esc($bill['hmo_loa_number'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_coverage_limit">Coverage Limit (₱)</label>
+                            <input type="number" step="0.01" min="0" id="hmo_coverage_limit" name="hmo_coverage_limit" class="form-control" value="<?= esc($bill['hmo_coverage_limit'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_approved_amount">Approved Amount (₱)</label>
+                            <input type="number" step="0.01" min="0" id="hmo_approved_amount" name="hmo_approved_amount" class="form-control" value="<?= esc($bill['hmo_approved_amount'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_patient_share">Patient Share (₱)</label>
+                            <input type="number" step="0.01" min="0" id="hmo_patient_share" name="hmo_patient_share" class="form-control" value="<?= esc($bill['hmo_patient_share'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="hmo_status">HMO Status</label>
+                            <?php $hmoStatus = strtolower($bill['hmo_status'] ?? 'pending'); ?>
+                            <select id="hmo_status" name="hmo_status" class="form-control">
+                                <?php $statuses = [
+                                    'pending' => 'Pending Pre-Auth',
+                                    'submitted' => 'Submitted to HMO',
+                                    'approved' => 'Approved',
+                                    'denied' => 'Denied',
+                                    'paid' => 'Paid'
+                                ]; ?>
+                                <?php foreach ($statuses as $value => $label): ?>
+                                    <option value="<?= esc($value) ?>" <?= $hmoStatus === $value ? 'selected' : '' ?>><?= esc($label) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column:1 / -1;">
+                            <label for="hmo_notes">HMO Notes</label>
+                            <textarea id="hmo_notes" name="hmo_notes" class="form-control" rows="2" placeholder="Add reminders, denial reasons, coordination notes..."><?= esc($bill['hmo_notes'] ?? '') ?></textarea>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Bill Items -->
                 <div class="form-section">
@@ -213,7 +283,6 @@ document.getElementById('patientID')?.addEventListener('change', function(){
     if (pid) { loadPatientServices(pid); }
 });
 
-
 if (patientInput) {
     patientInput.addEventListener('input', async function() {
         // Clear stale selection when user types
@@ -246,7 +315,7 @@ if (patientInput) {
                     patientList.style.display = 'none';
                     // Auto-load patient's services
                     loadPatientServices(p.id);
-                    if (paymentMethod?.value === 'insurance') { loadPatientInsurance(p.id); }
+                    if (paymentMethod?.value === 'insurance' || paymentMethod?.value === 'hmo') { loadPatientInsurance(p.id); }
                 };
                 patientList.appendChild(item);
             });
@@ -281,6 +350,7 @@ if (patientInput) {
                             patientList.innerHTML = '';
                             patientList.style.display = 'none';
                             loadPatientServices(results[0].id);
+                            if (paymentMethod?.value === 'insurance' || paymentMethod?.value === 'hmo') { loadPatientInsurance(results[0].id); }
                         }
                     } catch {}
                 }
@@ -324,6 +394,7 @@ function updateTotals() {
 // Payment method details + Insurance autofill
 const paymentMethod = document.getElementById('payment_method');
 const paymentDetails = document.getElementById('payment_details');
+const hmoSection = document.getElementById('hmoSection');
 
 async function loadPatientInsurance(pid){
     if (!pid) return;
@@ -337,6 +408,23 @@ async function loadPatientInsurance(pid){
         const numInput = document.getElementById('insurance_number');
         if (provInput) provInput.value = prov;
         if (numInput) numInput.value = num;
+
+        const hmoProviderSelect = document.getElementById('hmo_provider_id');
+        const hmoMemberInput = document.getElementById('hmo_member_no');
+        const hmoValidFrom = document.getElementById('hmo_valid_from');
+        const hmoValidTo = document.getElementById('hmo_valid_to');
+        if (hmoProviderSelect && !hmoProviderSelect.value && p.hmo_provider_id) {
+            hmoProviderSelect.value = p.hmo_provider_id;
+        }
+        if (hmoMemberInput && !hmoMemberInput.value && p.hmo_member_no) {
+            hmoMemberInput.value = p.hmo_member_no;
+        }
+        if (hmoValidFrom && !hmoValidFrom.value && p.hmo_valid_from) {
+            hmoValidFrom.value = p.hmo_valid_from;
+        }
+        if (hmoValidTo && !hmoValidTo.value && p.hmo_valid_to) {
+            hmoValidTo.value = p.hmo_valid_to;
+        }
     } catch(e) { /* ignore */ }
 }
 
@@ -359,13 +447,27 @@ if (paymentMethod && paymentDetails) {
             const pid = document.getElementById('patientID')?.value?.trim();
             if (pid) loadPatientInsurance(pid);
         }
+        if (method !== 'hmo' && hmoSection) {
+            hmoSection.style.display = 'none';
+        }
     }
     paymentMethod.addEventListener('change', function(){
         renderPaymentDetails(this.value);
+        toggleHmoSection();
+        if (this.value === 'hmo') {
+            const pid = document.getElementById('patientID')?.value?.trim();
+            if (pid) loadPatientInsurance(pid);
+        }
     });
     // Initial render
     renderPaymentDetails(paymentMethod.value);
 }
+
+function toggleHmoSection(){
+    if (!hmoSection || !paymentMethod) return;
+    hmoSection.style.display = paymentMethod.value === 'hmo' ? 'block' : 'none';
+}
+toggleHmoSection();
 
 // On submit, ensure a selected patient and at least one valid item
 document.getElementById('billForm')?.addEventListener('submit', function(e) {

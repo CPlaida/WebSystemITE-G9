@@ -87,7 +87,7 @@ $routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes
     // Map to Admin\Patients index to display list and avoid 404
     $routes->get('view', 'Admin\Patients::index');
     $routes->get('search', 'Patients::search');
-    $routes->get('get/(:num)', 'Patients::getPatient/$1');
+    $routes->get('get/(:segment)', 'Patients::getPatient/$1');
 });
 
 // Appointment Routes
