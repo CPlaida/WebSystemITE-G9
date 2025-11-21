@@ -314,49 +314,56 @@
           </button>
 
           <div class="form-section" style="margin-top:1rem;">
-            <h4 class="section-title" style="font-size:1rem;"><i class="fas fa-hand-holding-medical"></i> HMO Enrollment</h4>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">HMO Provider</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-building text-muted"></i></span>
-                  <select name="hmo_provider_id" class="form-select">
-                    <option value="">Select HMO Provider</option>
-                    <?php $oldHmoProvider = old('hmo_provider_id'); ?>
-                    <?php if (!empty($hmoProviders)): ?>
-                      <?php foreach ($hmoProviders as $provider): ?>
-                        <option value="<?= esc($provider['id']) ?>" <?= (string)$oldHmoProvider === (string)$provider['id'] ? 'selected' : '' ?>>
-                          <?= esc($provider['name']) ?>
-                        </option>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                  </select>
+            <h4 class="section-title" style="font-size:1rem;"><i class="fas fa-hand-holding-medical"></i> Health Maintenance Organization</h4>
+            <div id="hmoContainer">
+              <div class="hmo-entry">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">HMO Provider</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-building text-muted"></i></span>
+                      <select name="hmo_provider_id" class="form-select">
+                        <option value="">Select HMO Provider</option>
+                        <?php $oldHmoProvider = old('hmo_provider_id'); ?>
+                        <?php if (!empty($hmoProviders)): ?>
+                          <?php foreach ($hmoProviders as $provider): ?>
+                            <option value="<?= esc($provider['id']) ?>" <?= (string)$oldHmoProvider === (string)$provider['id'] ? 'selected' : '' ?>>
+                              <?= esc($provider['name']) ?>
+                            </option>
+                          <?php endforeach; ?>
+                        <?php endif; ?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">HMO Member Number</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-id-card-alt text-muted"></i></span>
+                      <input type="text" name="hmo_member_no" class="form-control" placeholder="e.g., MAXI-123456" value="<?= old('hmo_member_no') ?>">
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">HMO Member Number</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-id-card-alt text-muted"></i></span>
-                  <input type="text" name="hmo_member_no" class="form-control" placeholder="e.g., MAXI-123456" value="<?= old('hmo_member_no') ?>">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Coverage Valid From</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-calendar-plus text-muted"></i></span>
+                      <input type="date" name="hmo_valid_from" class="form-control" value="<?= old('hmo_valid_from') ?>">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Coverage Valid To</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-calendar-check text-muted"></i></span>
+                      <input type="date" name="hmo_valid_to" class="form-control" value="<?= old('hmo_valid_to') ?>">
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Coverage Valid From</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-calendar-plus text-muted"></i></span>
-                  <input type="date" name="hmo_valid_from" class="form-control" value="<?= old('hmo_valid_from') ?>">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Coverage Valid To</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-calendar-check text-muted"></i></span>
-                  <input type="date" name="hmo_valid_to" class="form-control" value="<?= old('hmo_valid_to') ?>">
-                </div>
-              </div>
-            </div>
+            <button type="button" id="addHmoBtn" class="btn btn-sm btn-outline-primary" style="margin-top: 0.5rem;">
+              <i class="fas fa-plus"></i> Add HMO
+            </button>
           </div>
         </div>
 
@@ -579,6 +586,44 @@ document.addEventListener('DOMContentLoaded', function () {
     addInsuranceBtn.addEventListener('click', () => {
       const newRow = createRemovableRow();
       insuranceContainer.appendChild(newRow);
+    });
+  }
+
+  const hmoContainer = document.getElementById('hmoContainer');
+  const addHmoBtn = document.getElementById('addHmoBtn');
+  if (hmoContainer && addHmoBtn) {
+    const templateEntry = hmoContainer.querySelector('.hmo-entry');
+
+    const createHmoEntry = () => {
+      const clone = templateEntry.cloneNode(true);
+
+      const select = clone.querySelector('select[name="hmo_provider_id"]');
+      if (select) {
+        select.selectedIndex = 0;
+      }
+
+      clone.querySelectorAll('input').forEach(input => {
+        input.value = '';
+      });
+
+      const actionsWrapper = document.createElement('div');
+      actionsWrapper.className = 'text-end mt-2';
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn btn-sm btn-outline-danger';
+      removeBtn.textContent = 'Remove HMO';
+      removeBtn.addEventListener('click', () => {
+        hmoContainer.removeChild(clone);
+      });
+      actionsWrapper.appendChild(removeBtn);
+      clone.appendChild(actionsWrapper);
+
+      return clone;
+    };
+
+    addHmoBtn.addEventListener('click', () => {
+      const newEntry = createHmoEntry();
+      hmoContainer.appendChild(newEntry);
     });
   }
 
