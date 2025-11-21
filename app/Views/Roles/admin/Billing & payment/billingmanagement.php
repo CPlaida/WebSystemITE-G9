@@ -120,8 +120,11 @@
         
         const content = `
             <div style="text-align:left;">
-                <h3 style=\"margin:0 0 10px; color:#111827; font-weight:700;\">Step 1 — Bill Details</h3>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                    <h3 style=\"margin:0; color:#111827; font-weight:700;\">Step 1 — Bill Details</h3>
+                    <button type="button" class="step-toggle" data-target="step1_body" style="border:none; background:#e5e7eb; color:#374151; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
+                </div>
+                <div id="step1_body" class="step-body" style="margin-top:12px; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
                     <div>
                         <label style="margin:0; color:#374151; font-weight:600;">Invoice #</label>
                         <input type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${('INV-' + String(bill.id).padStart(6, '0'))}" disabled>
@@ -153,7 +156,11 @@
                 </div>
 
                 <div style="height:1px; background:#e5e7eb; margin:16px 0;"></div>
-                <h3 style="margin:0 0 10px; color:#065f46; font-weight:700;">Step 2 — PhilHealth (if member)</h3>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                    <h3 style="margin:0; color:#065f46; font-weight:700;">Step 2 — PhilHealth (if member)</h3>
+                    <button type="button" class="step-toggle" data-target="step2_body" style="border:none; background:#d1fae5; color:#065f46; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
+                </div>
+                <div id="step2_body" class="step-body" style="margin-top:12px;">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                     <label for="em_ph_member" style="margin:0; font-weight:600; min-width:160px;">PhilHealth Member</label>
                     <input id="em_ph_member" type="checkbox" ${String(bill.philhealth_member||'0')==='1' ? 'checked' : ''}>
@@ -200,9 +207,14 @@
                         </div>
                     </div>
                 </div>
+                </div>
 
                 <div style="height:1px; background:#e5e7eb; margin:16px 0;"></div>
-                <h3 style="margin:0 0 10px; color:#1d4ed8; font-weight:700;">Step 3 — HMO (if applicable)</h3>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                    <h3 style="margin:0 0 10px; color:#1d4ed8; font-weight:700;">Step 3 — HMO (if applicable)</h3>
+                    <button type="button" class="step-toggle" data-target="step3_body" style="border:none; background:#dbeafe; color:#1d4ed8; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
+                </div>
+                <div id="step3_body" class="step-body" style="margin-top:12px;">
                 <div id="hmo_section" style="background:#eff6ff; border:1px solid #dbeafe; border-radius:6px; padding:12px;">
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
                         <div>
@@ -257,6 +269,32 @@
                         <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Notes</label>
                         <textarea id="em_hmo_notes" rows="2" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="Additional details for HMO claim">${bill.hmo_notes || ''}</textarea>
                     </div>
+                </div>
+                </div>
+
+                <div style="height:1px; background:#e5e7eb; margin:24px 0 12px;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                    <h3 style="margin:0 0 10px; color:#92400e; font-weight:700;">Step 4 — Total Billing Summary</h3>
+                    <button type="button" class="step-toggle" data-target="step4_body" style="border:none; background:#fde68a; color:#92400e; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
+                </div>
+                <div id="step4_body" class="step-body" style="margin-top:12px;">
+                <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:10px; padding:18px; display:flex; justify-content:space-between; align-items:center; gap:16px;">
+                    <div>
+                        <p style="margin:0; color:#92400e; font-weight:600;">Remaining Balance to Collect</p>
+                        <p style="margin:4px 0 0; color:#7c2d12; font-size:14px;">(After PhilHealth & HMO deductions)</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="display:block; font-size:30px; font-weight:800; color:#92400e;">₱<span id="em_total_billing_display">${(() => {
+                            const gross = +bill.final_amount || 0;
+                            const ph = +bill.philhealth_approved_amount || 0;
+                            const hmo = +bill.hmo_approved_amount || 0;
+                            const afterPh = Math.max(gross - ph, 0);
+                            const remaining = Math.max(afterPh - hmo, 0);
+                            return remaining.toFixed(2);
+                        })()}</span></span>
+                        <small style="color:#92400e;">Patient share to collect</small>
+                    </div>
+                </div>
                 </div>
             </div>`;
 
@@ -369,6 +407,8 @@
         const hmoProviderEl = document.getElementById('em_hmo_provider');
         const hmoApprovedEl = document.getElementById('em_hmo_approved_amount');
         const hmoPatientShareEl = document.getElementById('em_hmo_patient_share');
+        const totalBillingDisplayEl = document.getElementById('em_total_billing_display');
+        const totalBillingEl = document.getElementById('em_total_billing');
         const phNoteEl = document.getElementById('em_ph_note');
 
         const parseRateIds = raw => {
@@ -404,6 +444,14 @@
                 const base = parseFloat(remainingEl.value || '0') || 0;
                 const patientShare = Math.max(base - hmoAppr, 0);
                 hmoPatientShareEl.value = patientShare.toFixed(2);
+            }
+            if (totalBillingDisplayEl) {
+                const base = parseFloat(remainingEl.value || '0') || 0;
+                const patientShare = Math.max(base - hmoAppr, 0);
+                totalBillingDisplayEl.textContent = patientShare.toFixed(2);
+            }
+            if (totalBillingEl) {
+                totalBillingEl.value = gross.toFixed(2);
             }
         };
 
@@ -530,6 +578,18 @@
         toggleHmo();
         updateRemaining();
         loadRates()?.then(applySelected);
+
+        // Step toggle buttons
+        document.querySelectorAll('.step-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const body = targetId ? document.getElementById(targetId) : null;
+                if (!body) return;
+                const isHidden = body.style.display === 'none';
+                body.style.display = isHidden ? '' : 'none';
+                btn.textContent = isHidden ? 'Hide' : 'Show';
+            });
+        });
     }
 </script>
 <?= $this->endSection() ?>
