@@ -351,6 +351,10 @@
         const phSection = document.getElementById('ph_section');
         const phMemberEl = document.getElementById('em_ph_member');
         const approvedEl = document.getElementById('em_ph_approved');
+        const paymentMethodEl = document.getElementById('em_payment_method');
+        const hmoSection = document.getElementById('hmo_section');
+        const finalAmountEl = document.getElementById('em_final_amount');
+        const remainingEl = document.getElementById('em_remaining');
 
                 function applySelected(){
                     const opt = rateSel?.selectedOptions?.[0];
