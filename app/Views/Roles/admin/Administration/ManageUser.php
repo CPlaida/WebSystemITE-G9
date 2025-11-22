@@ -4,7 +4,7 @@
 
 <?= $this->section('content') ?>
   <div class="container">
-    <div class="page-header">
+    <div class="header">
       <h1 class="page-title">User Management</h1>
     </div>
     <?php 
@@ -25,11 +25,23 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card"><h3>Total Users</h3><p id="totalUsers"><?= esc($stats['total'] ?? 0) ?></p></div>
-      <div class="stat-card"><h3>Doctors</h3><p><?= esc($stats['doctors'] ?? 0) ?></p></div>
-      <div class="stat-card"><h3>Nurses</h3><p><?= esc($stats['nurses'] ?? 0) ?></p></div>
-      <div class="stat-card"><h3>Active Users</h3><p><?= esc($stats['active'] ?? 0) ?></p></div>
+    <div class="card-container">
+      <div class="card">
+        <h3>Total Users</h3>
+        <div class="value" id="totalUsers"><?= esc($stats['total'] ?? 0) ?></div>
+      </div>
+      <div class="card">
+        <h3>Doctors</h3>
+        <div class="value"><?= esc($stats['doctors'] ?? 0) ?></div>
+      </div>
+      <div class="card">
+        <h3>Nurses</h3>
+        <div class="value"><?= esc($stats['nurses'] ?? 0) ?></div>
+      </div>
+      <div class="card">
+        <h3>Active Users</h3>
+        <div class="value"><?= esc($stats['active'] ?? 0) ?></div>
+      </div>
     </div>
 
     <!-- Search and Filter Section -->

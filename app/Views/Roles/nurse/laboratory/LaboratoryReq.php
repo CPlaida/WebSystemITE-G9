@@ -10,9 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <div class="main-content" id="mainContent">
-        <div class="page-header">
-            <h1 class="page-title">Laboratory Request Form</h1>
-        </div>
+        <div class="container">
+            <div class="header">
+                <h1 class="page-title">Laboratory Request Form</h1>
+            </div>
 
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">

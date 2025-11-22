@@ -4,9 +4,10 @@
 
 <?= $this->section('content') ?>
 <div class="main-content" id="mainContent">
-  <div class="page-header">
-    <h1 class="page-title">Male Ward – Room & Bed Management</h1>
-  </div>
+  <div class="container">
+    <div class="header">
+      <h1 class="page-title">Male Ward – Room & Bed Management</h1>
+    </div>
   <p class="mb-3">This is a placeholder page for managing rooms and beds in the Male Ward. The data below is sample only.</p>
 
   <div class="card">

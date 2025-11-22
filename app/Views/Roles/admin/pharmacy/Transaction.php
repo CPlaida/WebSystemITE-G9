@@ -5,17 +5,20 @@
 <?= $this->section('content') ?>
 
 
-<div class="bg-white rounded-lg shadow overflow-hidden">
-    <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl font-bold">Pharmacy Transactions</h1>
-            <div class="unified-search-wrapper">
-                <form id="trxSearchForm" class="unified-search-row" style="margin:0;">
-                    <i class="fas fa-search unified-search-icon"></i>
-                    <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="unified-search-field" placeholder="Search by Transaction #...">
-                </form>
-            </div>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1 class="page-title">Pharmacy Transactions</h1>
+    </div>
+    
+    <div class="unified-search-wrapper">
+        <form id="trxSearchForm" class="unified-search-row" style="margin:0;">
+            <i class="fas fa-search unified-search-icon"></i>
+            <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="unified-search-field" placeholder="Search by Transaction #...">
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
         <div class="overflow-x-auto">
             <table class="data-table">
                 <thead>
@@ -31,6 +34,7 @@
                     <tr><td colspan="5" style="text-align:center; color:#666; padding:20px;">Loading...</td></tr>
                 </tbody>
             </table>
+        </div>
         </div>
     </div>
 </div>

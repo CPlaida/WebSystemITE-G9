@@ -4,9 +4,10 @@
 
 <?= $this->section('content') ?>
 <div class="main-content" id="mainContent">
-    <div class="page-header">
-        <h1 class="page-title">General Inpatient Rooms</h1>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">General Inpatient Rooms</h1>
+        </div>
 
     <div class="card">
         <div class="card-header organized-header">

@@ -3,52 +3,53 @@
 <?= $this->section('title') ?>Billing Management<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="bg-white rounded-lg shadow overflow-hidden">
-    <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl font-bold">Billing Management</h1>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1 class="page-title">Billing Management</h1>
+    </div>
 
-        <div class="summary">
-            <div class="box">
-                <h3>Total Revenue</h3>
-                <p>₱<?= number_format($totals['totalRevenue'] ?? 0, 2) ?></p>
-            </div>
-            <div class="box">
-                <h3>Pending Bills</h3>
-                <p><?= (int)($totals['pendingCount'] ?? 0) ?></p>
-            </div>
-            <div class="box">
-                <h3>Paid This Month</h3>
-                <p>₱<?= number_format($totals['paidThisMonth'] ?? 0, 2) ?></p>
-            </div>
-            <div class="box">
-                <h3>Outstanding</h3>
-                <p>₱<?= number_format($totals['outstanding'] ?? 0, 2) ?></p>
-            </div>
+    <div class="card-container">
+        <div class="card">
+            <h3>Total Revenue</h3>
+            <div class="value">₱<?= number_format($totals['totalRevenue'] ?? 0, 2) ?></div>
         </div>
-
-        <div class="unified-search-wrapper">
-            <div class="unified-search-row" style="margin:0;">
-                <i class="fas fa-search unified-search-icon"></i>
-                <input type="text" id="searchInput" class="unified-search-field" placeholder="Search by Invoice # or Patient..." value="<?= esc($query ?? '') ?>">
-            </div>
+        <div class="card">
+            <h3>Pending Bills</h3>
+            <div class="value"><?= (int)($totals['pendingCount'] ?? 0) ?></div>
         </div>
+        <div class="card">
+            <h3>Paid This Month</h3>
+            <div class="value">₱<?= number_format($totals['paidThisMonth'] ?? 0, 2) ?></div>
+        </div>
+        <div class="card">
+            <h3>Outstanding</h3>
+            <div class="value">₱<?= number_format($totals['outstanding'] ?? 0, 2) ?></div>
+        </div>
+    </div>
 
-        <div class="overflow-x-auto">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Bill #</th>
-                        <th>Patient Name</th>
-                        <th>Date</th>
-                        <th>Service</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="billingTableBody">
+    <div class="unified-search-wrapper">
+        <div class="unified-search-row" style="margin:0;">
+            <i class="fas fa-search unified-search-icon"></i>
+            <input type="text" id="searchInput" class="unified-search-field" placeholder="Search by Invoice # or Patient..." value="<?= esc($query ?? '') ?>">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="overflow-x-auto">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Bill #</th>
+                            <th>Patient Name</th>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="billingTableBody">
                     <?php if (!empty($bills)): ?>
                         <?php foreach ($bills as $bill): ?>
                             <?php 
