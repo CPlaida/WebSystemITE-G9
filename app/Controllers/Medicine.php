@@ -33,19 +33,25 @@ class Medicine extends Controller
     {
         $model = new MedicineModel();
 
+        $barcodes = $this->request->getPost('barcode');
         $names = $this->request->getPost('name');
         $brands = $this->request->getPost('brand');
         $categories = $this->request->getPost('category');
         $stocks = $this->request->getPost('stock');
-        $prices = $this->request->getPost('price');
+        $unitPrices = $this->request->getPost('unit_price');
+        $retailPrices = $this->request->getPost('retail_price');
+        $manufacturedDates = $this->request->getPost('manufactured_date');
         $expiries = $this->request->getPost('expiry_date');
 
         if (!is_array($names)) {
+            $barcodes = [$barcodes];
             $names = [$names];
             $brands = [$brands];
             $categories = [$categories];
             $stocks = [$stocks];
-            $prices = [$prices];
+            $unitPrices = [$unitPrices];
+            $retailPrices = [$retailPrices];
+            $manufacturedDates = [$manufacturedDates];
             $expiries = [$expiries];
         }
 
@@ -97,11 +103,14 @@ class Medicine extends Controller
             }
 
             $data = [
+                'barcode' => !empty($barcodes[$index]) ? trim($barcodes[$index]) : null,
                 'name' => $name,
                 'brand' => $brands[$index] ?? null,
                 'category' => $categories[$index] ?? null,
                 'stock' => intval($stocks[$index] ?? 0),
-                'price' => (float)($prices[$index] ?? 0),
+                'unit_price' => !empty($unitPrices[$index]) ? (float)$unitPrices[$index] : null,
+                'retail_price' => !empty($retailPrices[$index]) ? (float)$retailPrices[$index] : null,
+                'manufactured_date' => !empty($manufacturedDates[$index]) ? $manufacturedDates[$index] : null,
                 'expiry_date' => $expiries[$index] ?? null,
             ];
             
@@ -148,11 +157,14 @@ class Medicine extends Controller
         }
 
         $data = [
+            'barcode' => $this->request->getPost('barcode') ? trim($this->request->getPost('barcode')) : null,
             'name' => $this->request->getPost('name'),
             'brand' => $this->request->getPost('brand'),
             'category' => $this->request->getPost('category'),
             'stock' => intval($this->request->getPost('stock')),
-            'price' => floatval($this->request->getPost('price')),
+            'unit_price' => $this->request->getPost('unit_price') ? floatval($this->request->getPost('unit_price')) : null,
+            'retail_price' => $this->request->getPost('retail_price') ? floatval($this->request->getPost('retail_price')) : null,
+            'manufactured_date' => $this->request->getPost('manufactured_date') ? $this->request->getPost('manufactured_date') : null,
             'expiry_date' => $expiry,
         ];
 
@@ -191,10 +203,4 @@ class Medicine extends Controller
         return redirect()->to('/medicines')->with('success', 'Medicine updated successfully!');
     }
 
-    public function delete($id = null)
-    {
-        $model = new MedicineModel();
-        $model->delete($id);
-        return redirect()->to('/medicines')->with('success', 'Medicine deleted successfully!');
-    }
 }

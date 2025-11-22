@@ -159,7 +159,7 @@ $(document).ready(function() {
                     </div>
                     <div class="medicine-card-info">
                         <div class="medicine-name">${med.name}</div>
-                        <div class="medicine-price">₱${Number(med.price || 0).toFixed(2)}</div>
+                        <div class="medicine-price">₱${Number(med.retail_price || med.price || 0).toFixed(2)}</div>
                         <div class="medicine-stock">Stock: ${stock}</div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@ $(document).ready(function() {
                 medicationId: medicineId,
                 name: medicine.name,
                 quantity: 1,
-                price: Number(medicine.price || 0),
+                price: Number(medicine.retail_price || medicine.price || 0),
                 stock: stock
             });
         }
@@ -319,7 +319,7 @@ $(document).ready(function() {
                 </div>
                 <div class="medicine-card-info">
                     <div class="medicine-name">${med.name}</div>
-                    <div class="medicine-price" style="color: #dc3545; font-weight: 600; font-size: 14px; margin: 4px 0;">₱${Number(med.price || 0).toFixed(2)}</div>
+                    <div class="medicine-price" style="color: #dc3545; font-weight: 600; font-size: 14px; margin: 4px 0;">₱${Number(med.retail_price || med.price || 0).toFixed(2)}</div>
                     <div class="medicine-stock">Stock: ${stock}</div>
                 </div>
             </div>

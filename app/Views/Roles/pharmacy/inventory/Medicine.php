@@ -68,7 +68,7 @@ $currentSubmenu = 'inventory';
         <div class="medicine-search-wrapper">
             <div class="medicine-search-row">
                 <i class="fas fa-search medicine-search-icon"></i>
-                <input type="text" id="medicineSearch" class="medicine-search-field" placeholder="Search medicine by name, brand, category, or ID...">
+                <input type="text" id="medicineSearch" class="medicine-search-field" placeholder="Search medicine by ID, barcode, name, brand, category...">
                 <button type="button" id="clearSearch" class="medicine-search-clear">Clear</button>
             </div>
         </div>
@@ -77,12 +77,14 @@ $currentSubmenu = 'inventory';
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Medicine Barcode</th>
                         <th>Medicine Name</th>
                         <th>Brand</th>
                         <th>Category</th>
                         <th>Stock</th>
-                        <th>Price</th>
+                        <th>Unit Price</th>
+                        <th>Retail Price</th>
+                        <th>Manufactured Date</th>
                         <th>Expiry Date</th>
                         <th>Actions</th>
                     </tr>
@@ -91,12 +93,14 @@ $currentSubmenu = 'inventory';
                     <?php if (!empty($medicines)) : ?>
                         <?php foreach ($medicines as $m): ?>
                             <tr>
-                                <td><?= esc($m['id']) ?></td>
+                                <td><?= esc($m['barcode'] ?? $m['id']) ?></td>
                                 <td><?= esc($m['name']) ?></td>
                                 <td><?= esc($m['brand']) ?></td>
                                 <td><?= esc($m['category']) ?></td>
                                 <td class="<?= ((int)$m['stock'] === 0 ? 'out-of-stock' : 'in-stock') ?>"><?= (int)$m['stock'] ?></td>
-                                <td>₱<?= number_format((float)$m['price'], 2) ?></td>
+                                <td>₱<?= number_format((float)($m['unit_price'] ?? $m['price'] ?? 0), 2) ?></td>
+                                <td>₱<?= number_format((float)($m['retail_price'] ?? $m['price'] ?? 0), 2) ?></td>
+                                <td><?= esc($m['manufactured_date'] ?? '-') ?></td>
                                 <?php
                                     $expDate = $m['expiry_date'] ?? null;
                                     $statusBadge = '';
@@ -110,7 +114,6 @@ $currentSubmenu = 'inventory';
                                 </td>
                                 <td class="actions">
                                     <a class="medicine-btn-edit" href="<?= base_url('medicines/edit/' . $m['id']) ?>">Edit</a>
-                                    <a class="medicine-btn-delete" href="<?= base_url('medicines/delete/' . $m['id']) ?>" onclick="return confirm('Delete this medicine?')">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -139,74 +142,139 @@ $currentSubmenu = 'inventory';
 <!-- Add/Edit Form Modal -->
     <?php $isEdit = isset($edit_medicine) && is_array($edit_medicine); ?>
     <div class="modal" id="medicineForm">
-        <div class="modal-content" style="width: 95%; max-width: 1000px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; font-size: 1.5rem; color: #333;">
-                    <?= $isEdit ? 'Edit Medicine' : 'Add New Medicine(s)' ?>
-                </h2>
-                <span class="close" onclick="closeForm()" style="font-size: 24px; cursor: pointer; color: #666;">&times;</span>
+        <div class="modal-content medicine-modal-content">
+            <div class="medicine-modal-header">
+                <div class="medicine-modal-title-section">
+                    <h2 class="medicine-modal-title">
+                        <?= $isEdit ? 'Edit Medicine' : 'Add New Medicine(s)' ?>
+                    </h2>
+                    <?php if (!$isEdit): ?>
+                        <p class="medicine-modal-subtitle">Fill in the details below to add new medicine entries to the inventory</p>
+                    <?php endif; ?>
+                </div>
+                <span class="close medicine-modal-close" onclick="closeForm()">&times;</span>
             </div>
             
-            <form id="medicineFormElement" style="margin: 0;" method="post" action="<?= $isEdit ? base_url('medicines/update/' . $edit_medicine['id']) : base_url('medicines/store') ?>">
+            <form id="medicineFormElement" style="margin: 0;" method="post" action="<?= $isEdit ? base_url('medicines/update/' . $edit_medicine['id']) : base_url('medicines/store') ?>" enctype="multipart/form-data">
                 <?= csrf_field() ?>
             <!-- Autocomplete suggestion lists -->
             <datalist id="medicineNamesList"></datalist>
             <datalist id="brandList"></datalist>
             <datalist id="categoryList"></datalist>
-            <div id="medicineEntries">
-                <div class="medicine-entry" style="margin-bottom: 20px;">
-                    <!-- Header Row -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; padding: 10px 5px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-weight: 500; color: #495057;">Medicine Name</div>
-                        <div style="font-weight: 500; color: #495057;">Brand</div>
-                        <div style="font-weight: 500; color: #495057;">Category</div>
-                        <div style="font-weight: 500; color: #495057; text-align: center;">Stock</div>
-                        <div style="font-weight: 500; color: #495057; text-align: right;">Price (₱)</div>
-                        <div style="font-weight: 500; color: #495057;">Expiry Date</div>
-                        <div></div>
-                    </div>
-                    
-                    <!-- Data Row -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr; gap: 10px; align-items: center; padding: 5px;">
-                        <div>
-                            <input type="text" name="<?= $isEdit ? 'name' : 'name[]' ?>" value="<?= $isEdit ? esc($edit_medicine['name']) : '' ?>" list="medicineNamesList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
-                        </div>
-                        <div>
-                            <input type="text" name="<?= $isEdit ? 'brand' : 'brand[]' ?>" value="<?= $isEdit ? esc($edit_medicine['brand']) : '' ?>" list="brandList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
-                        </div>
-                        <div>
-                            <input type="text" name="<?= $isEdit ? 'category' : 'category[]' ?>" value="<?= $isEdit ? esc($edit_medicine['category']) : '' ?>" list="categoryList" autocomplete="off" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
-                        </div>
-                        <div>
-                            <input type="number" name="<?= $isEdit ? 'stock' : 'stock[]' ?>" value="<?= $isEdit ? (int)$edit_medicine['stock'] : '' ?>" min="0" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: center;">
-                        </div>
-                        <div>
-                            <input type="number" name="<?= $isEdit ? 'price' : 'price[]' ?>" value="<?= $isEdit ? (float)$edit_medicine['price'] : '' ?>" min="0" step="0.01" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; text-align: right;">
-                        </div>
-                        <div>
-                            <input type="date" name="<?= $isEdit ? 'expiry_date' : 'expiry_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['expiry_date']) : '' ?>" class="form-control" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
-                        </div>
-                        <div style="display: flex; justify-content: center;">
-                            <button type="button" onclick="removeMedicineEntry(this)" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 18px; padding: 0 8px;" <?= $isEdit ? 'disabled style="opacity:.3;cursor:not-allowed;background:none;border:none;color:#ccc;"' : '' ?>>
-                                ×
-                            </button>
+            <div class="medicine-form-scrollable">
+                <div id="medicineEntries">
+                    <div class="medicine-entry">
+                        <div class="medicine-form-row">
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Medicine Barcode</label>
+                                <input type="text" name="<?= $isEdit ? 'barcode' : 'barcode[]' ?>" value="<?= $isEdit ? esc($edit_medicine['barcode'] ?? '') : '' ?>" class="form-control medicine-input" placeholder="Barcode" autocomplete="off">
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Medicine Name <span class="required-asterisk">*</span></label>
+                                <input type="text" name="<?= $isEdit ? 'name' : 'name[]' ?>" value="<?= $isEdit ? esc($edit_medicine['name']) : '' ?>" list="medicineNamesList" autocomplete="off" class="form-control medicine-input" required placeholder="Medicine Name">
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Brand <span class="required-asterisk">*</span></label>
+                                <select name="<?= $isEdit ? 'brand' : 'brand[]' ?>" class="form-control medicine-input" required>
+                                    <option value="">Select Brand</option>
+                                    <?php 
+                                    $brands = ['Biogesic','Amoxil','Vitacare','Loratin','Pfizer','Unilab','RiteMed','GSK'];
+                                    foreach ($brands as $b): 
+                                    ?>
+                                        <option value="<?= $b ?>" <?= $isEdit && isset($edit_medicine['brand']) && $edit_medicine['brand'] === $b ? 'selected' : '' ?>><?= $b ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Category <span class="required-asterisk">*</span></label>
+                                <select name="<?= $isEdit ? 'category' : 'category[]' ?>" class="form-control medicine-input" required>
+                                    <option value="">Select Category</option>
+                                    <?php $categories = ['Pain Relief','Antibiotics','Vitamins','Antihistamines']; ?>
+                                    <?php foreach ($categories as $c): ?>
+                                        <option value="<?= $c ?>" <?= $isEdit && isset($edit_medicine['category']) && $edit_medicine['category'] === $c ? 'selected' : '' ?>><?= $c ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Stock <span class="required-asterisk">*</span></label>
+                                <input type="number" name="<?= $isEdit ? 'stock' : 'stock[]' ?>" value="<?= $isEdit ? (int)$edit_medicine['stock'] : '' ?>" min="0" class="form-control medicine-input" required placeholder="0">
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Unit Price <span class="required-asterisk">*</span> (₱)</label>
+                                <input type="number" name="<?= $isEdit ? 'unit_price' : 'unit_price[]' ?>" value="<?= $isEdit ? (float)($edit_medicine['unit_price'] ?? $edit_medicine['price'] ?? '') : '' ?>" min="0" step="0.01" class="form-control medicine-input" required placeholder="0.00">
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Retail Price <span class="required-asterisk">*</span> (₱)</label>
+                                <input type="number" name="<?= $isEdit ? 'retail_price' : 'retail_price[]' ?>" value="<?= $isEdit ? (float)($edit_medicine['retail_price'] ?? $edit_medicine['price'] ?? '') : '' ?>" min="0" step="0.01" class="form-control medicine-input" required placeholder="0.00">
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Manufactured Date</label>
+                                <input type="date" name="<?= $isEdit ? 'manufactured_date' : 'manufactured_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['manufactured_date'] ?? '') : '' ?>" class="form-control medicine-input" placeholder="Date">
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Expiry Date <span class="required-asterisk">*</span></label>
+                                <input type="date" name="<?= $isEdit ? 'expiry_date' : 'expiry_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['expiry_date']) : '' ?>" class="form-control medicine-input" required>
+                            </div>
+                            <div class="medicine-field-group">
+                                <label class="medicine-field-label">Image</label>
+                                <?php if ($isEdit && !empty($edit_medicine['image'])): 
+                                    $currentImagePath = FCPATH . 'uploads/medicines/' . $edit_medicine['image'];
+                                    $currentImageUrl = base_url('uploads/medicines/' . esc($edit_medicine['image']));
+                                    $hasCurrentImage = file_exists($currentImagePath);
+                                ?>
+                                    <div style="margin-bottom: 12px;" id="currentImageContainer">
+                                        <div style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px;">
+                                            <?php if ($hasCurrentImage): ?>
+                                                <img src="<?= $currentImageUrl ?>" alt="Current image" id="currentImagePreview" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #e0e0e0; flex-shrink: 0;">
+                                            <?php else: ?>
+                                                <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 10px; text-align: center; border: 1px solid #e0e0e0; flex-shrink: 0;">No Image</div>
+                                            <?php endif; ?>
+                                            <div style="flex: 1; min-width: 0;">
+                                                <button type="button" onclick="removeCurrentImage()" style="padding: 4px 10px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500;">Remove</button>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="remove_image" id="removeImageFlag" value="0">
+                                    </div>
+                                    <div class="image-input-wrapper" style="width: 100%; display: none;">
+                                        <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control medicine-input image-input" onchange="previewImage(this)">
+                                    </div>
+                                <?php else: ?>
+                                    <div class="image-input-wrapper" style="width: 100%;">
+                                        <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control medicine-input image-input" onchange="previewImage(this)">
+                                    </div>
+                                <?php endif; ?>
+                                <div class="newImagePreviewContainer" style="display: none; margin-top: 8px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px;">
+                                    <div style="text-align: center;">
+                                        <img class="previewImg" src="" alt="Preview" style="width: 100%; max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #e0e0e0; display: block; margin: 0 auto 8px;">
+                                        <button type="button" onclick="clearImagePreview(this)" style="padding: 4px 10px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500;">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="medicine-field-group medicine-remove-group">
+                                <label class="medicine-field-label">&nbsp;</label>
+                                <button type="button" onclick="removeMedicineEntry(this)" class="medicine-remove-btn" <?= $isEdit ? 'disabled' : '' ?> title="Remove this entry">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div style="display: flex; justify-content: space-between; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e9ecef;">
-                <?php if (!$isEdit): ?>
-                <button type="button" onclick="addMoreMedicine()" style="background: #6c757d; color: white; border: none; border-radius: 4px; padding: 8px 15px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px;">
-                    <i class="fas fa-plus" style="font-size: 12px;"></i> Add More
-                </button>
-                <?php endif; ?>
-                <div style="display: flex; gap: 10px;">
-                    <button type="button" onclick="closeForm()" style="background: #6c757d; color: white; border: none; border-radius: 4px; padding: 8px 20px; cursor: pointer; font-size: 14px;">
+            <div class="medicine-form-footer">
+                <div class="medicine-form-footer-left">
+                    <?php if (!$isEdit): ?>
+                    <button type="button" onclick="addMoreMedicine()" class="btn-medicine-add-more">
+                        <i class="fas fa-plus"></i> Add More Medicine
+                    </button>
+                    <?php endif; ?>
+                </div>
+                <div class="medicine-form-footer-right">
+                    <button type="button" onclick="closeForm()" class="btn-medicine-cancel">
                         Cancel
                     </button>
-                    <button type="submit" style="background: #007bff; color: white; border: none; border-radius: 4px; padding: 8px 20px; cursor: pointer; font-size: 14px;">
-                        <?= $isEdit ? 'Update' : 'Save All' ?>
+                    <button type="submit" class="btn-medicine-save">
+                        <i class="fas fa-save"></i> <?= $isEdit ? 'Update Medicine' : 'Save All Medicines' ?>
                     </button>
                 </div>
             </div>
@@ -264,8 +332,30 @@ $currentSubmenu = 'inventory';
         const entries = document.getElementById('medicineEntries');
         const newEntry = entries.querySelector('.medicine-entry').cloneNode(true);
         // Clear input values in the new entry
-        newEntry.querySelectorAll('input').forEach(input => input.value = '');
+        newEntry.querySelectorAll('input').forEach(input => {
+            input.value = '';
+            // Clear image preview if it exists
+            if (input.type === 'file') {
+                const preview = newEntry.querySelector('.newImagePreviewContainer');
+                const inputWrapper = newEntry.querySelector('.image-input-wrapper');
+                if (preview) {
+                    preview.style.display = 'none';
+                }
+                if (inputWrapper) {
+                    inputWrapper.style.display = 'block';
+                }
+            }
+        });
         newEntry.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        // Remove current image container if it exists in the new entry
+        const currentImageContainer = newEntry.querySelector('#currentImageContainer');
+        if (currentImageContainer) {
+            currentImageContainer.remove();
+        }
+        const removeImageFlag = newEntry.querySelector('#removeImageFlag');
+        if (removeImageFlag) {
+            removeImageFlag.remove();
+        }
         entries.appendChild(newEntry);
     }
 
@@ -279,6 +369,104 @@ $currentSubmenu = 'inventory';
             const entry = button.closest('.medicine-entry');
             entry.querySelectorAll('input').forEach(input => input.value = '');
             entry.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        }
+    }
+
+    // Preview image when file is selected
+    function previewImage(input) {
+        if (!input || !input.files || !input.files[0]) {
+            return;
+        }
+        
+        // Find the closest medicine entry container
+        const entry = input.closest('.medicine-entry');
+        if (!entry) return;
+        
+        // Find preview container and input wrapper within this entry
+        const preview = entry.querySelector('.newImagePreviewContainer');
+        const previewImg = preview ? preview.querySelector('.previewImg') : null;
+        const inputWrapper = entry.querySelector('.image-input-wrapper');
+        const currentPreview = entry.querySelector('#currentImagePreview');
+        const removeFlag = entry.querySelector('#removeImageFlag');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            if (previewImg) {
+                previewImg.src = e.target.result;
+            }
+            if (preview) {
+                preview.style.display = 'block';
+            }
+            // Hide the file input when image is selected
+            if (inputWrapper) {
+                inputWrapper.style.display = 'none';
+            }
+            // Dim current image preview when new image is selected
+            if (currentPreview) {
+                currentPreview.style.opacity = '0.5';
+            }
+            // Reset remove flag when new image is selected
+            if (removeFlag) {
+                removeFlag.value = '0';
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+    
+    // Clear image preview
+    function clearImagePreview(button) {
+        const entry = button.closest('.medicine-entry');
+        if (!entry) return;
+        
+        const preview = entry.querySelector('.newImagePreviewContainer');
+        const input = entry.querySelector('.image-input');
+        const inputWrapper = entry.querySelector('.image-input-wrapper');
+        const currentContainer = entry.querySelector('#currentImageContainer');
+        
+        if (input) {
+            input.value = '';
+        }
+        if (preview) {
+            preview.style.display = 'none';
+        }
+        // Show the file input again when image is removed
+        if (inputWrapper) {
+            inputWrapper.style.display = 'block';
+        }
+        // Show current image container again if it exists
+        if (currentContainer) {
+            currentContainer.style.display = 'block';
+        }
+    }
+
+    // Remove current image
+    function removeCurrentImage() {
+        const entry = document.querySelector('.medicine-entry');
+        if (!entry) return;
+        
+        const container = entry.querySelector('#currentImageContainer');
+        const removeFlag = entry.querySelector('#removeImageFlag');
+        const input = entry.querySelector('.image-input');
+        const inputWrapper = entry.querySelector('.image-input-wrapper');
+        const preview = entry.querySelector('.newImagePreviewContainer');
+        
+        if (confirm('Are you sure you want to remove the current image?')) {
+            if (container) {
+                container.style.display = 'none';
+            }
+            if (removeFlag) {
+                removeFlag.value = '1';
+            }
+            if (input) {
+                input.value = '';
+            }
+            if (preview) {
+                preview.style.display = 'none';
+            }
+            // Show the file input when current image is removed
+            if (inputWrapper) {
+                inputWrapper.style.display = 'block';
+            }
         }
     }
 
@@ -370,12 +558,12 @@ $currentSubmenu = 'inventory';
         
         rows.forEach(row => {
             const tds = row.querySelectorAll('td');
-            const id = (tds[0]?.textContent || '').toLowerCase();
+            const barcode = (tds[0]?.textContent || '').toLowerCase();
             const name = (tds[1]?.textContent || '').toLowerCase();
             const brand = (tds[2]?.textContent || '').toLowerCase();
             const category = (tds[3]?.textContent || '').toLowerCase();
             
-            const matches = id.includes(searchTerm) || 
+            const matches = barcode.includes(searchTerm) ||
                            name.includes(searchTerm) || 
                            brand.includes(searchTerm) || 
                            category.includes(searchTerm);
@@ -394,7 +582,7 @@ $currentSubmenu = 'inventory';
             if (!noResultsMsg) {
                 noResultsMsg = document.createElement('tr');
                 noResultsMsg.id = 'noResultsMessage';
-                noResultsMsg.innerHTML = '<td colspan="8" class="no-results-row"><i class="fas fa-search no-results-icon"></i><p>No medicines found matching "' + searchTerm + '"</p></td>';
+                noResultsMsg.innerHTML = '<td colspan="10" class="no-results-row"><i class="fas fa-search no-results-icon"></i><p>No medicines found matching "' + searchTerm + '"</p></td>';
                 document.getElementById('medicineTableBody').appendChild(noResultsMsg);
             }
         } else if (noResultsMsg) {

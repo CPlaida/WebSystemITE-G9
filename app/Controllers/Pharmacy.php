@@ -305,7 +305,7 @@ class Pharmacy extends Controller
         
         $builder = $this->db->table('medicines');
         // Always try to select image column - if it doesn't exist, it will be null
-        $builder->select('id, name, brand, price, stock, expiry_date');
+        $builder->select('id, name, brand, retail_price, unit_price, price, stock, expiry_date');
         if ($hasImageColumn) {
             $builder->select('image', true); // Add image to select
         }
@@ -338,7 +338,14 @@ class Pharmacy extends Controller
         $baseUrl = rtrim(config('App')->baseURL, '/');
         
         foreach ($medications as &$m) {
-            if (isset($m['price'])) $m['price'] = (float)$m['price'];
+            // Use retail_price if available, fallback to price for backward compatibility
+            if (isset($m['retail_price']) && $m['retail_price'] !== null) {
+                $m['price'] = (float)$m['retail_price'];
+            } elseif (isset($m['price'])) {
+                $m['price'] = (float)$m['price'];
+            } else {
+                $m['price'] = 0.00;
+            }
             if (isset($m['stock'])) $m['stock'] = (int)$m['stock'];
             $m['expiry_date'] = $m['expiry_date'] ?? null;
             if (!empty($m['expiry_date'])) {

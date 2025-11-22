@@ -157,7 +157,6 @@ $routes->get('/medicines', 'Medicine::index');
 $routes->post('/medicines/store', 'Medicine::store');
 $routes->get('/medicines/edit/(:segment)', 'Medicine::edit/$1');
 $routes->post('/medicines/update/(:segment)', 'Medicine::update/$1');
-$routes->get('/medicines/delete/(:segment)', 'Medicine::delete/$1');
  // Sidebar alias
 $routes->get('admin/inventory/medicine', 'Medicine::index');
 

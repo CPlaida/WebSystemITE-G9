@@ -12,6 +12,11 @@ class CreateMedicinesTable extends Migration
                 'constraint' => 20,
                 'null'       => false,
             ],
+            'barcode' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => true,
+            ],
             'name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
@@ -30,10 +35,21 @@ class CreateMedicinesTable extends Migration
                 'type'    => 'INT',
                 'default' => 0,
             ],
-            'price' => [
+            'unit_price' => [
                 'type'       => 'DECIMAL',
                 'constraint' => '10,2',
                 'default'    => 0.00,
+                'null'       => true,
+            ],
+            'retail_price' => [
+                'type'       => 'DECIMAL',
+                'constraint' => '10,2',
+                'default'    => 0.00,
+                'null'       => true,
+            ],
+            'manufactured_date' => [
+                'type' => 'DATE',
+                'null' => true,
             ],
             'expiry_date' => [
                 'type' => 'DATE',
