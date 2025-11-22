@@ -41,8 +41,11 @@
             $renderTable = function(array $rows, string $title = null) {
             ?>
                 <?php if ($title): ?>
-                    <div class="unit-category-header">
-                        <h5 class="unit-category-title"><?= esc($title) ?></h5>
+                    <div class="ward-header mb-4" style="border-bottom: 2px solid #4361ee; padding-bottom: 1rem;">
+                        <h3 style="color: #4361ee; margin-bottom: 0.5rem;">
+                            <i class="fas fa-hospital me-2"></i><?= esc($title) ?>
+                        </h3>
+                        <p class="text-muted mb-0">Room and bed management for <?= esc($title) ?></p>
                     </div>
                 <?php endif; ?>
                 <div class="table-responsive">

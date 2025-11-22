@@ -10,7 +10,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call('RolesSeeder');
         $this->call('UserSeeder');
-        $this->call('DoctorSeeder');
         $this->call('BedsSeeder');
         $this->call('LaboratoryServicesSeeder');
         $this->call('PhilHealthCaseRatesSeeder');

@@ -8,14 +8,12 @@
             <h1 class="page-title">Test Results</h1>
         </div>
 
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search patients...">
+            <button class="search-button" id="searchBtn">Search</button>
+        </div>
+
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Test Results</h3>
-                <div class="header-actions">
-                    <input type="text" class="form-control search-input" id="searchInput" placeholder="Search patients...">
-                    <button class="btn search-button" id="searchBtn">Search</button>
-                </div>
-            </div>
             <div class="card-body">
                 <div class="filter-section">
                     <button class="filter-btn active" data-filter="all">All</button>

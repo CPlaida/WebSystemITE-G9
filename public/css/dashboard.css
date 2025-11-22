@@ -1297,7 +1297,7 @@ body { background:#f8f9fa; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans
 .container { max-width:1200px; margin:auto; }
 .card { background:#fff; border-radius:8px; border:1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,.1); overflow:hidden; margin-bottom:20px; }
 .card-header { display:flex; justify-content:space-between; align-items:center; padding:20px 24px; background:#f8f9fc; border-bottom:1px solid #e3e6f0; flex-wrap:wrap; gap:15px; }
-.card-title { color:#4e73df; font-weight:600; margin:0; font-size:1.25rem; }
+.card-title { color:#000000; font-weight:600; margin:0; font-size:1.25rem; }
 .search-container { display:flex; gap:10px; }
 .search-input { flex:1; padding:10px 15px; border:1px solid #ddd; border-radius:4px; font-size:14px; min-width:200px; }
 .search-button { background:#2c3e50; color:#fff; border:none; border-radius:4px; padding:0 20px; cursor:pointer; font-weight:500; }
@@ -4030,4 +4030,98 @@ select[name="name_extension"].form-select,
     opacity: 0.3;
     margin-bottom: 10px;
     display: block;
+}
+
+/* ===== Search Bar Below Header - Consistent Styling ===== */
+/* Search container below page header (like Billing Management) */
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+.search-container .search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #374151;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.search-container .search-input:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.search-container .search-input::placeholder {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.search-container .search-button {
+    background-color: #2c3e50;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-container .search-button:hover {
+    background-color: #1a2332;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-container .search-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive search bars */
+@media (max-width: 768px) {
+    .search-wrapper {
+        padding: 12px;
+    }
+    
+    .search-row {
+        flex-wrap: wrap;
+    }
+    
+    .search-field {
+        min-width: 100%;
+    }
+    
+    .search-clear {
+        width: 100%;
+    }
+    
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container .search-input {
+        min-width: 100%;
+    }
+    
+    .search-container .search-button {
+        width: 100%;
+    }
 }
