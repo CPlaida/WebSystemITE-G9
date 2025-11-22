@@ -187,66 +187,36 @@ $(document).ready(function() {
         // Check if already in cart
         const existing = cart.find(item => item.medicationId === medicineId);
         if (existing) {
-            // Check stock availability - use current stock, not original
-            if (stock <= 0) {
-                alert(`Insufficient stock. Available: ${stock}`);
-                return;
-            }
-            existing.quantity += 1;
-        } else {
-            cart.push({
-                id: Date.now(),
-                medicationId: medicineId,
-                name: medicine.name,
-                quantity: 1,
-                price: Number(medicine.retail_price || medicine.price || 0),
-                stock: stock
-            });
-        }
-
-        // Reserve stock on server
-        fetch(API_BASE + '/stock/reserve', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                medicine_id: medicineId,
-                quantity: 1
-            })
-        })
-        .then(res => res.json())
-        .then(resp => {
-            if (!resp.success) {
-                // Revert cart change if stock reservation failed
-                if (existing) {
-                    existing.quantity -= 1;
-                } else {
-                    cart.pop();
+            // If already in cart, just focus the quantity input
+            updateCart();
+            setTimeout(() => {
+                const $input = $(`.cart-qty-input[data-medicine-id="${medicineId}"]`);
+                if ($input.length) {
+                    $input.focus();
                 }
-                alert(resp.message || 'Failed to reserve stock');
-                updateCart();
-                return;
-            }
-            
-            // Update local stock in medicine data
-            if (medicine) {
-                medicine.stock = resp.remaining_stock;
-            }
-            
-            // Update stock display in the grid
-            updateStockDisplay(medicineId, resp.remaining_stock);
-            
-            updateCart();
-        })
-        .catch(err => {
-            // Revert cart change on error
-            if (existing) {
-                existing.quantity -= 1;
-            } else {
-                cart.pop();
-            }
-            alert('Error reserving stock: ' + err.message);
-            updateCart();
+            }, 100);
+            return;
+        }
+        
+        // Add to cart with quantity 0 (empty field)
+        cart.push({
+            id: Date.now(),
+            medicationId: medicineId,
+            name: medicine.name,
+            quantity: 0,
+            price: Number(medicine.retail_price || medicine.price || 0),
+            stock: stock
         });
+
+        updateCart();
+        
+        // Focus the quantity input for the newly added item
+        setTimeout(() => {
+            const $input = $(`.cart-qty-input[data-medicine-id="${medicineId}"]`);
+            if ($input.length) {
+                $input.focus();
+            }
+        }, 100);
     }
     
     // Update stock display in medicine grid
@@ -350,7 +320,7 @@ $(document).ready(function() {
         $card.hide().fadeIn(300);
     }
     
-    // Update cart display
+    // Update cart display - Simple list format
     function updateCart() {
         const $cartItems = $('#cartItems');
         $cartItems.empty();
@@ -367,20 +337,28 @@ $(document).ready(function() {
         }
         
         cart.forEach((item, index) => {
+            const medicine = allMedicines.find(m => m.id === item.medicationId);
+            const availableStock = Number(medicine?.stock || 0);
+            const maxQuantity = (item.quantity || 0) + availableStock;
+            const displayValue = item.quantity > 0 ? item.quantity : '';
+            
             const $item = $(`
-                <div class="cart-item-row">
-                    <div class="cart-item-info">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-details">
-                            Quantity: <span class="cart-item-qty">${item.quantity}</span> × 
-                            <span class="cart-item-price">₱${item.price.toFixed(2)}</span> = 
-                            <span class="cart-item-total">₱${(item.price * item.quantity).toFixed(2)}</span>
-                        </div>
+                <div class="cart-item-simple-row" data-index="${index}">
+                    <div class="cart-item-simple-name">${item.name}</div>
+                    <div class="cart-item-simple-price">₱${item.price.toFixed(2)}</div>
+                    <div class="cart-item-simple-qty">
+                        <input type="number" 
+                               class="cart-qty-input" 
+                               data-index="${index}" 
+                               value="${displayValue}" 
+                               placeholder="0"
+                               min="1" 
+                               max="${maxQuantity}"
+                               data-medicine-id="${item.medicationId}">
                     </div>
-                    <div class="cart-item-controls">
-                        <button type="button" class="btn-qty btn-decrease" data-index="${index}">-</button>
-                        <button type="button" class="btn-remove" data-index="${index}">×</button>
-                    </div>
+                    <button type="button" class="cart-item-remove-btn" data-index="${index}" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             `);
             $cartItems.append($item);
@@ -391,7 +369,7 @@ $(document).ready(function() {
         
     // Update total amount
     function updateTotal() {
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 0)), 0);
         
         // Update display
         $('#total').text('₱' + total.toFixed(2));
@@ -401,30 +379,116 @@ $(document).ready(function() {
         }
     }
 
-    // Cart item actions
-    $(document).on('click', '.btn-decrease', function() {
-        const index = $(this).data('index');
+    // Handle quantity input changes
+    $(document).on('input change blur', '.cart-qty-input', function() {
+        const index = parseInt($(this).data('index'));
+        const medicineId = $(this).data('medicine-id');
+        const inputValue = $(this).val().trim();
+        let newQuantity = inputValue === '' ? 0 : parseInt(inputValue) || 0;
+        
         const item = cart[index];
         if (!item) return;
         
-        if (item.quantity > 1) {
-            item.quantity--;
-            // Restore 1 unit of stock
-            restoreStockFromCart(item.medicationId, 1, index);
+        const medicine = allMedicines.find(m => m.id === medicineId);
+        const availableStock = Number(medicine?.stock || 0);
+        const currentQuantity = item.quantity || 0;
+        const quantityDifference = newQuantity - currentQuantity;
+        
+        // If field is empty or 0, set quantity to 0 but don't remove item
+        if (newQuantity <= 0) {
+            if (currentQuantity > 0) {
+                // Restore all stock if there was a previous quantity
+                restoreStockFromCart(medicineId, currentQuantity, index, false);
+            }
+            item.quantity = 0;
+            updateCart();
+            return;
+        }
+        
+        // Validate stock availability
+        if (quantityDifference > 0 && quantityDifference > availableStock) {
+            alert('Not enough stock.');
+            $(this).val(currentQuantity > 0 ? currentQuantity : '');
+            return;
+        }
+        
+        // Update quantity
+        const oldQuantity = item.quantity || 0;
+        item.quantity = newQuantity;
+        
+        // Update stock
+        if (quantityDifference > 0) {
+            // Increasing quantity - reserve more stock
+            reserveStockForCart(medicineId, quantityDifference, index, oldQuantity);
+        } else if (quantityDifference < 0) {
+            // Decreasing quantity - restore stock
+            restoreStockFromCart(medicineId, Math.abs(quantityDifference), index, false);
         } else {
-            // Remove if quantity becomes 0
-            restoreStockFromCart(item.medicationId, item.quantity, index, true);
+            // No change, just update display
+            updateCart();
         }
     });
     
-    $(document).on('click', '.btn-remove', function() {
-        const index = $(this).data('index');
+    // Remove item from cart
+    $(document).on('click', '.cart-item-remove-btn', function() {
+        const index = parseInt($(this).data('index'));
         const item = cart[index];
         if (!item) return;
         
-        // Restore all quantity back to stock
-        restoreStockFromCart(item.medicationId, item.quantity, index, true);
+        // If item has quantity > 0, restore stock first
+        if (item.quantity > 0) {
+            restoreStockFromCart(item.medicationId, item.quantity, index, true);
+        } else {
+            // If quantity is 0, just remove from cart directly
+            cart.splice(index, 1);
+            updateCart();
+        }
     });
+    
+    // Reserve stock when increasing quantity
+    function reserveStockForCart(medicineId, quantity, cartIndex, oldQuantity) {
+        fetch(API_BASE + '/stock/reserve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                medicine_id: medicineId,
+                quantity: quantity
+            })
+        })
+        .then(res => res.json())
+        .then(resp => {
+            if (!resp.success) {
+                // Revert quantity change
+                const item = cart[cartIndex];
+                if (item) {
+                    item.quantity = oldQuantity;
+                }
+                alert(resp.message || 'Not enough stock.');
+                updateCart();
+                return;
+            }
+            
+            // Update local stock in medicine data
+            const medicine = allMedicines.find(m => m.id === medicineId);
+            if (medicine) {
+                medicine.stock = resp.remaining_stock;
+            }
+            
+            // Update stock display in the grid
+            updateStockDisplay(medicineId, resp.remaining_stock);
+            
+            updateCart();
+        })
+        .catch(err => {
+            // Revert quantity change
+            const item = cart[cartIndex];
+            if (item) {
+                item.quantity = oldQuantity;
+            }
+            alert('Error reserving stock: ' + err.message);
+            updateCart();
+        });
+    }
     
     // Restore stock when removing from cart
     function restoreStockFromCart(medicineId, quantity, cartIndex, removeFromCart = false) {
@@ -454,7 +518,10 @@ $(document).ready(function() {
             
             // Remove from cart if needed
             if (removeFromCart) {
-                cart.splice(cartIndex, 1);
+                // Remove item at the specified index
+                if (cartIndex >= 0 && cartIndex < cart.length) {
+                    cart.splice(cartIndex, 1);
+                }
             }
             
             updateCart();
@@ -492,8 +559,11 @@ $(document).ready(function() {
     
     // Checkout
     $('#checkoutBtn').on('click', function() {
-        if (cart.length === 0) {
-            alert('Your cart is empty');
+        // Filter out items with quantity 0 or empty
+        const validCartItems = cart.filter(item => item.quantity > 0);
+        
+        if (validCartItems.length === 0) {
+            alert('Your cart is empty or no items have quantity entered.');
             return;
         }
         
@@ -504,12 +574,12 @@ $(document).ready(function() {
             return;
         }
         
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = validCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
         const orderData = {
             patient_id: '',
             patient_name: '',
-            items: cart.map(i => ({
+            items: validCartItems.map(i => ({
                 medicine_id: i.medicationId,
                 medicine_name: i.name,
                 quantity: i.quantity,
@@ -541,14 +611,12 @@ $(document).ready(function() {
             }
             alert(`Transaction created! #${resp.transaction_number}`);
             
-            // Reset form
-            cart = [];
+            // Reset form - remove items that were checked out
+            cart = cart.filter(item => !validCartItems.some(v => v.id === item.id));
             updateCart();
             $('#amount_received').val('');
             
             // Reload medicines to update stock and remove out-of-stock items
-            // Note: Stock was already decreased when items were added to cart,
-            // so this reload will show the updated stock
             loadMedicines();
         })
         .catch(err => {

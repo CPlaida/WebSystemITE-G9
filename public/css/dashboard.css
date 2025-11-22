@@ -1997,6 +1997,7 @@ body.receipt-page { font-family: Arial, sans-serif; line-height: 1.6; max-width:
     transition: all 0.3s ease;
     border: 1px solid #e0e0e0;
     width: 100%;
+    cursor: pointer;
 }
 
 .medicine-card:hover {
@@ -3754,6 +3755,104 @@ select[name="name_extension"].form-select,
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
+}
+
+/* Simple Cart List Styles */
+.cart-item-simple-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 80px 40px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+    background: #fff;
+    transition: background 0.2s;
+}
+
+.cart-item-simple-row:hover {
+    background: #f8f9fa;
+}
+
+.cart-item-simple-row:last-child {
+    border-bottom: none;
+}
+
+.cart-item-simple-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cart-item-simple-price {
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+    text-align: right;
+}
+
+.cart-item-simple-qty {
+    display: flex;
+    justify-content: center;
+}
+
+.cart-qty-input {
+    width: 100%;
+    max-width: 70px;
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+    background: #fff;
+    color: #2c3e50;
+    transition: border-color 0.2s;
+}
+
+.cart-qty-input::placeholder {
+    color: #adb5bd;
+    opacity: 0.7;
+}
+
+.cart-qty-input:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.cart-qty-input:invalid {
+    border-color: #dc3545;
+}
+
+.cart-item-remove-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #dc3545;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 14px;
+    padding: 0;
+}
+
+.cart-item-remove-btn:hover {
+    background: #c82333;
+    transform: scale(1.05);
+}
+
+.cart-item-remove-btn:active {
+    transform: scale(0.95);
+}
+
+.cart-item-remove-btn i {
+    font-size: 12px;
 }
 
 .cart-empty {
