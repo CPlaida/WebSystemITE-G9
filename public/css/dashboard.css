@@ -1805,7 +1805,7 @@ body.receipt-page { font-family: Arial, sans-serif; line-height: 1.6; max-width:
 }
 
 .bill-info {
-    text-align: right;
+    text-align: left;
 }
 
 .receipt-info p {

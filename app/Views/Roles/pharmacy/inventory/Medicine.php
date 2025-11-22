@@ -146,8 +146,8 @@ $currentSubmenu = 'inventory';
             <div class="medicine-modal-header">
                 <div class="medicine-modal-title-section">
                     <h2 class="medicine-modal-title">
-                        <?= $isEdit ? 'Edit Medicine' : 'Add New Medicine(s)' ?>
-                    </h2>
+                    <?= $isEdit ? 'Edit Medicine' : 'Add New Medicine(s)' ?>
+                </h2>
                     <?php if (!$isEdit): ?>
                         <p class="medicine-modal-subtitle">Fill in the details below to add new medicine entries to the inventory</p>
                     <?php endif; ?>
@@ -162,7 +162,7 @@ $currentSubmenu = 'inventory';
             <datalist id="brandList"></datalist>
             <datalist id="categoryList"></datalist>
             <div class="medicine-form-scrollable">
-                <div id="medicineEntries">
+            <div id="medicineEntries">
                     <div class="medicine-entry">
                         <div class="medicine-form-row">
                             <div class="medicine-field-group">
@@ -232,29 +232,29 @@ $currentSubmenu = 'inventory';
                                             <div style="flex: 1; min-width: 0;">
                                                 <button type="button" onclick="removeCurrentImage()" style="padding: 4px 10px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500;">Remove</button>
                                             </div>
-                                        </div>
+                    </div>
                                         <input type="hidden" name="remove_image" id="removeImageFlag" value="0">
-                                    </div>
+                        </div>
                                     <div class="image-input-wrapper" style="width: 100%; display: none;">
                                         <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control medicine-input image-input" onchange="previewImage(this)">
-                                    </div>
+                        </div>
                                 <?php else: ?>
                                     <div class="image-input-wrapper" style="width: 100%;">
                                         <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control medicine-input image-input" onchange="previewImage(this)">
-                                    </div>
+                        </div>
                                 <?php endif; ?>
                                 <div class="newImagePreviewContainer" style="display: none; margin-top: 8px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px;">
                                     <div style="text-align: center;">
                                         <img class="previewImg" src="" alt="Preview" style="width: 100%; max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #e0e0e0; display: block; margin: 0 auto 8px;">
                                         <button type="button" onclick="clearImagePreview(this)" style="padding: 4px 10px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500;">Remove</button>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        </div>
+                        </div>
                             <div class="medicine-field-group medicine-remove-group">
                                 <label class="medicine-field-label">&nbsp;</label>
                                 <button type="button" onclick="removeMedicineEntry(this)" class="medicine-remove-btn" <?= $isEdit ? 'disabled' : '' ?> title="Remove this entry">
                                     <i class="fas fa-times"></i>
-                                </button>
+                            </button>
                             </div>
                         </div>
                     </div>
@@ -263,11 +263,11 @@ $currentSubmenu = 'inventory';
             
             <div class="medicine-form-footer">
                 <div class="medicine-form-footer-left">
-                    <?php if (!$isEdit): ?>
+                <?php if (!$isEdit): ?>
                     <button type="button" onclick="addMoreMedicine()" class="btn-medicine-add-more">
                         <i class="fas fa-plus"></i> Add More Medicine
-                    </button>
-                    <?php endif; ?>
+                </button>
+                <?php endif; ?>
                 </div>
                 <div class="medicine-form-footer-right">
                     <button type="button" onclick="closeForm()" class="btn-medicine-cancel">

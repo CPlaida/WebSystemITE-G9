@@ -562,11 +562,18 @@ class Pharmacy extends Controller
         try {
             $this->db->transStart();
             
-            // Calculate totals
-            $subtotal = 0;
-            foreach ($data['items'] as $item) { $subtotal += $item['price'] * $item['quantity']; }
-            $tax = $subtotal * 0.12;
-            $total = $subtotal + $tax;
+            // Use totals from request if provided, otherwise calculate
+            if (isset($data['subtotal']) && isset($data['tax']) && isset($data['total'])) {
+                $subtotal = (float)($data['subtotal'] ?? 0);
+                $tax = (float)($data['tax'] ?? 0);
+                $total = (float)($data['total'] ?? 0);
+            } else {
+                // Calculate totals (fallback if not provided)
+                $subtotal = 0;
+                foreach ($data['items'] as $item) { $subtotal += $item['price'] * $item['quantity']; }
+                $tax = $subtotal * 0.12;
+                $total = $subtotal + $tax;
+            }
 
             // Insert prescription
             $prescriptionData = [
@@ -653,7 +660,7 @@ class Pharmacy extends Controller
         $search = $this->request->getGet('search');
         
         $builder = $this->db->table('pharmacy_transactions pt');
-        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, pt.total_items as items_count");
+        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, pt.total_items as items_count, pt.date as transaction_date, pt.created_at");
         
         if ($search) {
             $builder->like('pt.transaction_number', $search);
@@ -662,6 +669,83 @@ class Pharmacy extends Controller
         $builder->orderBy('pt.created_at', 'DESC');
         
         $transactions = $builder->get()->getResultArray();
+        
+        // Calculate actual total from items (without tax) for each transaction
+        foreach ($transactions as &$trx) {
+            // Get transaction's created_at timestamp
+            $trxCreatedAt = $trx['created_at'] ?? null;
+            
+            $calculatedTotal = 0;
+            
+            if ($trxCreatedAt) {
+                // Find prescription created just before or at the same time as this transaction
+                // Prescriptions are created before transactions in the same transaction flow
+                $prescription = $this->db->table('prescriptions pr')
+                    ->select('pr.id as prescription_id')
+                    ->where('pr.date', $trx['transaction_date'])
+                    ->where('pr.created_at <=', $trxCreatedAt)
+                    ->orderBy('pr.created_at', 'DESC')
+                    ->orderBy('pr.id', 'DESC')
+                    ->limit(1)
+                    ->get()
+                    ->getRowArray();
+                
+                if (!empty($prescription['prescription_id'])) {
+                    // Sum all item totals for this prescription
+                    $itemSum = $this->db->table('prescription_items')
+                        ->selectSum('total', 'item_total')
+                        ->where('prescription_id', $prescription['prescription_id'])
+                        ->get()
+                        ->getRowArray();
+                    $calculatedTotal = (float)($itemSum['item_total'] ?? 0);
+                }
+            }
+            
+            // If no match by timestamp, try matching by date and order (fallback)
+            if ($calculatedTotal == 0) {
+                // Get all prescriptions for this date, ordered by creation
+                $allPrescriptions = $this->db->table('prescriptions pr')
+                    ->select('pr.id as prescription_id, pr.created_at')
+                    ->where('pr.date', $trx['transaction_date'])
+                    ->orderBy('pr.created_at', 'ASC')
+                    ->orderBy('pr.id', 'ASC')
+                    ->get()
+                    ->getResultArray();
+                
+                // Get all transactions for this date, ordered by creation
+                $allTransactions = $this->db->table('pharmacy_transactions')
+                    ->select('id, created_at')
+                    ->where('date', $trx['transaction_date'])
+                    ->orderBy('created_at', 'ASC')
+                    ->orderBy('id', 'ASC')
+                    ->get()
+                    ->getResultArray();
+                
+                // Find this transaction's index
+                $trxIndex = -1;
+                foreach ($allTransactions as $idx => $t) {
+                    if ($t['id'] == $trx['id']) {
+                        $trxIndex = $idx;
+                        break;
+                    }
+                }
+                
+                // Match by index (prescription and transaction created in same order)
+                if ($trxIndex >= 0 && isset($allPrescriptions[$trxIndex])) {
+                    $prescriptionId = $allPrescriptions[$trxIndex]['prescription_id'];
+                    $itemSum = $this->db->table('prescription_items')
+                        ->selectSum('total', 'item_total')
+                        ->where('prescription_id', $prescriptionId)
+                        ->get()
+                        ->getRowArray();
+                    $calculatedTotal = (float)($itemSum['item_total'] ?? 0);
+                }
+            }
+            
+            // Use calculated total from items if available, otherwise use stored total
+            $trx['total_amount'] = $calculatedTotal > 0 ? $calculatedTotal : (float)($trx['total_amount'] ?? 0);
+        }
+        unset($trx);
         
         return $this->response->setJSON([
             'success' => true,
@@ -672,10 +756,9 @@ class Pharmacy extends Controller
     // Get transaction details
     public function getTransactionDetails($transactionId)
     {
-        // Load transaction joined with matching prescription (by date only, no patient connection)
+        // Load transaction
         $builder = $this->db->table('pharmacy_transactions pt');
-        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount as prescription_total");
-        $builder->join('prescriptions pr', 'pr.date = pt.date', 'left');
+        $builder->select("pt.id, pt.transaction_number, pt.date, pt.total_amount, pt.created_at as transaction_created_at");
         $builder->where('pt.id', $transactionId);
         $row = $builder->get()->getRowArray();
 
@@ -686,31 +769,81 @@ class Pharmacy extends Controller
             ])->setStatusCode(404);
         }
 
+        // Find the correct prescription for this transaction
+        $prescriptionId = null;
+        $trxCreatedAt = $row['transaction_created_at'] ?? null;
+        
+        if ($trxCreatedAt && !empty($row['date'])) {
+            // Try matching by timestamp first
+            $prescription = $this->db->table('prescriptions pr')
+                ->select('pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount')
+                ->where('pr.date', $row['date'])
+                ->where('pr.created_at <=', $trxCreatedAt)
+                ->orderBy('pr.created_at', 'DESC')
+                ->orderBy('pr.id', 'DESC')
+                ->limit(1)
+                ->get()
+                ->getRowArray();
+            
+            if (!empty($prescription['prescription_id'])) {
+                $prescriptionId = $prescription['prescription_id'];
+            }
+        }
+        
+        // Fallback: match by creation order if timestamp matching didn't work
+        if (empty($prescriptionId) && !empty($row['date'])) {
+            $allPrescriptions = $this->db->table('prescriptions')
+                ->select('id, created_at')
+                ->where('date', $row['date'])
+                ->orderBy('created_at', 'ASC')
+                ->orderBy('id', 'ASC')
+                ->get()
+                ->getResultArray();
+            
+            $allTransactions = $this->db->table('pharmacy_transactions')
+                ->select('id, created_at')
+                ->where('date', $row['date'])
+                ->orderBy('created_at', 'ASC')
+                ->orderBy('id', 'ASC')
+                ->get()
+                ->getResultArray();
+            
+            $trxIndex = -1;
+            foreach ($allTransactions as $idx => $t) {
+                if ($t['id'] == $transactionId) {
+                    $trxIndex = $idx;
+                    break;
+                }
+            }
+            
+            if ($trxIndex >= 0 && isset($allPrescriptions[$trxIndex])) {
+                $prescriptionId = $allPrescriptions[$trxIndex]['id'];
+            }
+        }
+
         // Prepare base payload
         $payload = [
             'id' => (int)$row['id'],
             'transaction_number' => $row['transaction_number'] ?? null,
             'date' => $row['date'] ?? null,
-            'subtotal' => (float)($row['subtotal'] ?? 0),
-            'tax' => (float)($row['tax'] ?? 0),
-            'total_amount' => (float)($row['prescription_total'] ?? $row['total_amount'] ?? 0),
+            'subtotal' => 0,
+            'tax' => 0,
+            'total_amount' => 0,
             'items' => []
         ];
-
-        // Get prescription by date (no patient connection)
-        $prescriptionId = $row['prescription_id'] ?? null;
-        if (empty($prescriptionId) && !empty($row['date'])) {
-            $latest = $this->db->table('prescriptions')
-                ->select('id, subtotal, tax, total_amount')
-                ->where('date', $row['date'])
-                ->orderBy('id', 'DESC')
-                ->get()->getRowArray();
-            if ($latest) {
-                $prescriptionId = $latest['id'];
-                // If totals were missing on the primary row, use latest
-                if (empty($payload['subtotal'])) $payload['subtotal'] = (float)($latest['subtotal'] ?? 0);
-                if (empty($payload['tax'])) $payload['tax'] = (float)($latest['tax'] ?? 0);
-                if (empty($payload['total_amount'])) $payload['total_amount'] = (float)($latest['total_amount'] ?? 0);
+        
+        // Get prescription details if found
+        if (!empty($prescriptionId)) {
+            $prescription = $this->db->table('prescriptions')
+                ->select('subtotal, tax, total_amount')
+                ->where('id', $prescriptionId)
+                ->get()
+                ->getRowArray();
+            
+            if ($prescription) {
+                $payload['subtotal'] = (float)($prescription['subtotal'] ?? 0);
+                $payload['tax'] = (float)($prescription['tax'] ?? 0);
+                $payload['total_amount'] = (float)($prescription['total_amount'] ?? 0);
             }
         }
 

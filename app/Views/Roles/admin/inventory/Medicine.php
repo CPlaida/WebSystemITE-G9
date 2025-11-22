@@ -145,7 +145,7 @@ $currentSubmenu = 'inventory';
                 <div class="medicine-modal-title-section">
                     <h2 class="medicine-modal-title">
                         <?= $isEdit ? 'Edit Medicine' : 'Add New Medicine' ?>
-                    </h2>
+                </h2>
                     <?php if (!$isEdit): ?>
                         <p class="medicine-modal-subtitle">Fill in the details below to add new medicine entries to the inventory</p>
                     <?php endif; ?>
@@ -159,17 +159,17 @@ $currentSubmenu = 'inventory';
             <datalist id="medicineNamesList"></datalist>
             <datalist id="brandList"></datalist>
             <div class="medicine-form-scrollable">
-                <div id="medicineEntries">
+            <div id="medicineEntries">
                     <div class="medicine-entry">
                         <div class="medicine-form-row">
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Medicine Barcode</label>
                                 <input type="text" name="<?= $isEdit ? 'barcode' : 'barcode[]' ?>" value="<?= $isEdit ? esc($edit_medicine['barcode'] ?? '') : '' ?>" class="form-control medicine-input" placeholder="Barcode" autocomplete="off">
-                            </div>
+                    </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Medicine Name <span class="required-asterisk">*</span></label>
                                 <input type="text" name="<?= $isEdit ? 'name' : 'name[]' ?>" value="<?= $isEdit ? esc($edit_medicine['name']) : '' ?>" list="medicineNamesList" autocomplete="off" class="form-control medicine-input" required placeholder="Medicine Name">
-                            </div>
+                        </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Brand <span class="required-asterisk">*</span></label>
                                 <select name="<?= $isEdit ? 'brand' : 'brand[]' ?>" class="form-control medicine-input" required>
@@ -181,17 +181,17 @@ $currentSubmenu = 'inventory';
                                         <option value="<?= $b ?>" <?= $isEdit && isset($edit_medicine['brand']) && $edit_medicine['brand'] === $b ? 'selected' : '' ?>><?= $b ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                            </div>
+                        </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Category <span class="required-asterisk">*</span></label>
                                 <select name="<?= $isEdit ? 'category' : 'category[]' ?>" class="form-control medicine-input" required>
                                     <option value="">Select Category</option>
-                                    <?php $categories = ['Pain Relief','Antibiotics','Vitamins','Antihistamines']; ?>
-                                    <?php foreach ($categories as $c): ?>
+                                <?php $categories = ['Pain Relief','Antibiotics','Vitamins','Antihistamines']; ?>
+                                <?php foreach ($categories as $c): ?>
                                         <option value="<?= $c ?>" <?= $isEdit && isset($edit_medicine['category']) && $edit_medicine['category'] === $c ? 'selected' : '' ?>><?= $c ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Stock <span class="required-asterisk">*</span></label>
                                 <input type="number" name="<?= $isEdit ? 'stock' : 'stock[]' ?>" value="<?= $isEdit ? (int)$edit_medicine['stock'] : '' ?>" min="0" class="form-control medicine-input" required placeholder="0">
@@ -203,45 +203,45 @@ $currentSubmenu = 'inventory';
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Retail Price <span class="required-asterisk">*</span> (₱)</label>
                                 <input type="number" name="<?= $isEdit ? 'retail_price' : 'retail_price[]' ?>" value="<?= $isEdit ? (float)($edit_medicine['retail_price'] ?? $edit_medicine['price'] ?? '') : '' ?>" min="0" step="0.01" class="form-control medicine-input" required placeholder="0.00">
-                            </div>
+                        </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Manufactured Date</label>
                                 <input type="date" name="<?= $isEdit ? 'manufactured_date' : 'manufactured_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['manufactured_date'] ?? '') : '' ?>" class="form-control medicine-input" placeholder="Date">
-                            </div>
+                        </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Expiry Date <span class="required-asterisk">*</span></label>
                                 <input type="date" name="<?= $isEdit ? 'expiry_date' : 'expiry_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['expiry_date']) : '' ?>" class="form-control medicine-input" required>
-                            </div>
+                        </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Image</label>
-                                <?php if ($isEdit && !empty($edit_medicine['image'])): 
-                                    $currentImagePath = FCPATH . 'uploads/medicines/' . $edit_medicine['image'];
-                                    $currentImageUrl = base_url('uploads/medicines/' . esc($edit_medicine['image']));
-                                    $hasCurrentImage = file_exists($currentImagePath);
-                                ?>
-                                    <div style="margin-bottom: 12px;" id="currentImageContainer">
-                                        <div style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px;">
-                                            <?php if ($hasCurrentImage): ?>
+                            <?php if ($isEdit && !empty($edit_medicine['image'])): 
+                                $currentImagePath = FCPATH . 'uploads/medicines/' . $edit_medicine['image'];
+                                $currentImageUrl = base_url('uploads/medicines/' . esc($edit_medicine['image']));
+                                $hasCurrentImage = file_exists($currentImagePath);
+                            ?>
+                                <div style="margin-bottom: 12px;" id="currentImageContainer">
+                                    <div style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px;">
+                                        <?php if ($hasCurrentImage): ?>
                                                 <img src="<?= $currentImageUrl ?>" alt="Current image" id="currentImagePreview" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #e0e0e0; flex-shrink: 0;">
-                                            <?php else: ?>
+                                        <?php else: ?>
                                                 <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 10px; text-align: center; border: 1px solid #e0e0e0; flex-shrink: 0;">No Image</div>
-                                            <?php endif; ?>
-                                            <div style="flex: 1; min-width: 0;">
+                                        <?php endif; ?>
+                                        <div style="flex: 1; min-width: 0;">
                                                 <button type="button" onclick="removeCurrentImage()" style="padding: 4px 10px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500;">Remove</button>
                                             </div>
                                         </div>
                                         <input type="hidden" name="remove_image" id="removeImageFlag" value="0">
                                     </div>
-                                    <div class="image-input-wrapper" style="width: 100%; display: none;">
+                                <div class="image-input-wrapper" style="width: 100%; display: none;">
                                         <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control medicine-input image-input" onchange="previewImage(this)">
-                                    </div>
-                                <?php else: ?>
-                                    <div class="image-input-wrapper" style="width: 100%;">
+                                </div>
+                            <?php else: ?>
+                                <div class="image-input-wrapper" style="width: 100%;">
                                         <input type="file" name="<?= $isEdit ? 'image' : 'image[]' ?>" accept="image/*" class="form-control medicine-input image-input" onchange="previewImage(this)">
-                                    </div>
-                                <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
                                 <div class="newImagePreviewContainer" style="display: none; margin-top: 8px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px;">
-                                    <div style="text-align: center;">
+                                <div style="text-align: center;">
                                         <img class="previewImg" src="" alt="Preview" style="width: 100%; max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #e0e0e0; display: block; margin: 0 auto 8px;">
                                         <button type="button" onclick="clearImagePreview(this)" style="padding: 4px 10px; background: #dc3545; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500;">Remove</button>
                                     </div>
@@ -252,7 +252,7 @@ $currentSubmenu = 'inventory';
                                 <button type="button" onclick="removeMedicineEntry(this)" class="medicine-remove-btn" <?= $isEdit ? 'disabled' : '' ?> title="Remove this entry">
                                     <i class="fas fa-times"></i>
                                 </button>
-                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -260,11 +260,11 @@ $currentSubmenu = 'inventory';
             
             <div class="medicine-form-footer">
                 <div class="medicine-form-footer-left">
-                    <?php if (!$isEdit): ?>
+                <?php if (!$isEdit): ?>
                     <button type="button" onclick="addMoreMedicine()" class="btn-medicine-add-more">
                         <i class="fas fa-plus"></i> Add More Medicine
-                    </button>
-                    <?php endif; ?>
+                </button>
+                <?php endif; ?>
                 </div>
                 <div class="medicine-form-footer-right">
                     <button type="button" onclick="closeForm()" class="btn-medicine-cancel">
