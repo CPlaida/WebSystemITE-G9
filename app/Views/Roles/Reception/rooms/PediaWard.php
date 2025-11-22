@@ -11,7 +11,7 @@
 
   <div class="card">
     <div class="card-body">
-      <table class="table">
+      <table class="data-table">
         <thead>
           <tr>
             <th>Room No.</th>

@@ -58,8 +58,8 @@
 
                 <?php if (!empty($rows)): ?>
                     <div class="table-responsive">
-                        <table class="table table-hover" id="wardTable">
-                            <thead class="table-light">
+                        <table class="data-table" id="wardTable">
+                            <thead>
                                 <tr>
                                     <th>Room No.</th>
                                     <th>Bed No.</th>
@@ -127,8 +127,8 @@
                     
                     <?php if (!empty($allRows)): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
+                            <table class="data-table">
+                                <thead>
                                     <tr>
                                         <th>Ward</th>
                                         <th>Room No.</th>

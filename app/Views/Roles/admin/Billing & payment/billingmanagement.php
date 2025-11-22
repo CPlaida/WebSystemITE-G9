@@ -7,12 +7,6 @@
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-xl font-bold">Billing Management</h1>
-            <div class="search-container">
-                <form method="get" action="<?= base_url('billing') ?>" style="display:flex; gap:10px; width:100%">
-                    <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="search-input" placeholder="Search by Invoice # or Patient...">
-                    <button id="searchButton" class="search-button" type="submit">Search</button>
-                </form>
-            </div>
         </div>
 
         <div class="summary">
@@ -34,8 +28,15 @@
             </div>
         </div>
 
+        <div class="unified-search-wrapper">
+            <div class="unified-search-row" style="margin:0;">
+                <i class="fas fa-search unified-search-icon"></i>
+                <input type="text" id="searchInput" class="unified-search-field" placeholder="Search by Invoice # or Patient..." value="<?= esc($query ?? '') ?>">
+            </div>
+        </div>
+
         <div class="overflow-x-auto">
-            <table>
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th>Bill #</th>
@@ -47,14 +48,21 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="billingTableBody">
                     <?php if (!empty($bills)): ?>
                         <?php foreach ($bills as $bill): ?>
-                            <tr data-id="<?= (int)$bill['id'] ?>">
-                                <td>#<?= 'INV-' . str_pad((string)$bill['id'], 6, '0', STR_PAD_LEFT) ?></td>
-                                <td><?= esc($bill['patient_name'] ?? 'N/A') ?></td>
-                                <td><?= esc($bill['bill_date'] ?? '') ?></td>
-                                <td><?= esc($bill['service_name'] ?? '—') ?></td>
+                            <?php 
+                                $billNumber = 'INV-' . str_pad((string)$bill['id'], 6, '0', STR_PAD_LEFT);
+                                $patientName = esc($bill['patient_name'] ?? 'N/A');
+                                $billDate = esc($bill['bill_date'] ?? '');
+                                $serviceName = esc($bill['service_name'] ?? '—');
+                                $searchableText = strtolower($billNumber . ' ' . $patientName . ' ' . $billDate . ' ' . $serviceName);
+                            ?>
+                            <tr data-id="<?= (int)$bill['id'] ?>" data-search="<?= htmlspecialchars($searchableText) ?>">
+                                <td>#<?= $billNumber ?></td>
+                                <td><?= $patientName ?></td>
+                                <td><?= $billDate ?></td>
+                                <td><?= $serviceName ?></td>
                                 <td>₱<?= number_format((float)($bill['final_amount'] ?? 0), 2) ?></td>
                                 <td>
                                     <?php $ps = strtolower($bill['payment_status'] ?? 'pending'); ?>
@@ -71,7 +79,7 @@
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="7" style="text-align:center">No bills found</td></tr>
+                        <tr class="no-results-row"><td colspan="7" style="text-align:center">No bills found</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -591,5 +599,48 @@
             });
         });
     }
+
+    // Real-time search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const tableBody = document.getElementById('billingTableBody');
+        
+        if (searchInput && tableBody) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const rows = tableBody.querySelectorAll('tr[data-search]');
+                let hasVisibleRows = false;
+                
+                rows.forEach(function(row) {
+                    const searchableText = row.getAttribute('data-search') || '';
+                    if (searchableText.includes(searchTerm)) {
+                        row.style.display = '';
+                        hasVisibleRows = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide "No results" message
+                let noResultsRow = tableBody.querySelector('.no-results-row');
+                if (!hasVisibleRows && searchTerm !== '') {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.className = 'no-results-row';
+                        noResultsRow.innerHTML = '<td colspan="7" style="text-align:center">No bills found</td>';
+                        tableBody.appendChild(noResultsRow);
+                    }
+                    noResultsRow.style.display = '';
+                } else if (noResultsRow) {
+                    noResultsRow.style.display = 'none';
+                }
+            });
+            
+            // Trigger search on page load if there's a value
+            if (searchInput.value) {
+                searchInput.dispatchEvent(new Event('input'));
+            }
+        }
+    });
 </script>
 <?= $this->endSection() ?>

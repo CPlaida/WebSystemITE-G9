@@ -37,29 +37,17 @@
       <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
         <!-- Search Input -->
         <div style="flex: 1; min-width: 250px;">
-          <div style="position: relative;">
-            <input 
-              type="text" 
-              id="searchInput" 
-              placeholder="Search by name, email, or department..." 
-              style="
-                width: 100%;
-                padding: 0.6rem 1rem 0.6rem 2.5rem;
-                border: 1px solid #dee2e6;
-                border-radius: 6px;
-                font-size: 0.95rem;
-                transition: all 0.2s ease;
-              "
-              onkeyup="filterTable()"
-            >
-            <i class="fas fa-search" style="
-              position: absolute;
-              left: 1rem;
-              top: 50%;
-              transform: translateY(-50%);
-              color: #6c757d;
-              font-size: 0.9rem;
-            "></i>
+          <div class="unified-search-wrapper">
+            <div class="unified-search-row">
+              <i class="fas fa-search unified-search-icon"></i>
+              <input 
+                type="text" 
+                id="searchInput" 
+                class="unified-search-field"
+                placeholder="Search by name, email, or department..."
+                onkeyup="filterTable()"
+              >
+            </div>
           </div>
         </div>
         

@@ -18,9 +18,12 @@
             </div>
             <div class="card-body medicine-shelf-body">
                 <!-- Search Bar -->
-                <div class="medicine-search-container">
-                    <input type="text" id="medicineSearch" class="form-control medicine-search-input" placeholder="Search medicine">
-            </div>
+                <div class="unified-search-wrapper">
+                    <div class="unified-search-row">
+                        <i class="fas fa-search unified-search-icon"></i>
+                        <input type="text" id="medicineSearch" class="unified-search-field" placeholder="Search medicine">
+                    </div>
+                </div>
                 
                 <!-- Medicine Grid -->
                 <div id="medicineGrid" class="medicine-grid">

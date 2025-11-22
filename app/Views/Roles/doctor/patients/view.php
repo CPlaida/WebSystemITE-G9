@@ -8,10 +8,12 @@
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Patient Records</h2>
-        <div class="search-container">
-          <input type="text" id="searchInput" class="search-input" placeholder="Search patients..." onkeyup="if(event.key === 'Enter') filterPatients()">
-          <button id="searchButton" class="search-button" onclick="filterPatients()">Search</button>
-        </div>
+      </div>
+      <div class="unified-search-wrapper">
+          <div class="unified-search-row">
+              <i class="fas fa-search unified-search-icon"></i>
+              <input type="text" id="searchInput" class="unified-search-field" placeholder="Search patients..." onkeyup="if(event.key === 'Enter') filterPatients()">
+          </div>
       </div>
       <div class="card-body">
         <!-- Success/Error Messages -->
@@ -46,7 +48,7 @@
 
         <!-- Inpatients Section -->
         <h3 class="mt-4 mb-3">Inpatients</h3>
-        <table class="mb-5">
+        <table class="data-table mb-5">
           <thead>
             <tr>
               <th>Patient ID</th>
@@ -98,7 +100,7 @@
 
         <!-- Outpatients Section -->
         <h3 class="mt-5 mb-3">Outpatients</h3>
-        <table>
+        <table class="data-table">
           <thead>
             <tr>
               <th>Patient ID</th>

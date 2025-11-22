@@ -9,22 +9,22 @@
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-xl font-bold">Pharmacy Transactions</h1>
-            <div class="search-container">
-                <form id="trxSearchForm" style="display:flex; gap:10px; width:100%">
-                    <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="search-input" placeholder="Search by Transaction #...">
-                    <button id="searchButton" class="search-button" type="submit">Search</button>
+            <div class="unified-search-wrapper">
+                <form id="trxSearchForm" class="unified-search-row" style="margin:0;">
+                    <i class="fas fa-search unified-search-icon"></i>
+                    <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="unified-search-field" placeholder="Search by Transaction #...">
                 </form>
             </div>
         </div>
         <div class="overflow-x-auto">
-            <table class="transactions-table">
+            <table class="data-table">
                 <thead>
                     <tr>
-                        <th style="text-align:left; padding:12px;">Transaction #</th>
-                        <th style="text-align:left; padding:12px;">Date</th>
-                        <th style="text-align:left; padding:12px;">Items</th>
-                        <th style="text-align:right; padding:12px;">Total Amount</th>
-                        <th style="text-align:center; padding:12px; width:120px;">Actions</th>
+                        <th>Transaction #</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total Amount</th>
+                        <th style="text-align:center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="transactionsBody">
@@ -36,43 +36,29 @@
 </div>
 
 <style>
-.transactions-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-.transactions-table th,
-.transactions-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #e3e6f0;
-}
-.transactions-table th {
-    background-color: #f8f9fc;
-    color: #4e73df;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-}
-.transactions-table th:nth-child(4),
-.transactions-table td:nth-child(4) {
-    text-align: right;
+.data-table th:nth-child(4),
+.data-table td:nth-child(4) {
+    text-align: left !important;
     font-variant-numeric: tabular-nums;
-    width: 150px;
 }
-.transactions-table th:nth-child(5),
-.transactions-table td:nth-child(5) {
-    text-align: center;
+
+.data-table th:nth-child(5),
+.data-table td:nth-child(5) {
+    text-align: center !important;
+    vertical-align: middle !important;
     width: 140px;
 }
-.transactions-table tbody tr:hover {
-    background-color: rgba(78, 115, 223, 0.05);
+
+.data-table td.action-buttons {
+    text-align: center !important;
+    vertical-align: middle !important;
+    padding: 1rem 1.25rem !important;
 }
-@media (max-width: 768px) {
-    .transactions-table th,
-    .transactions-table td {
-        padding: 10px 12px;
-    }
+
+.data-table td.action-buttons .btn {
+    display: inline-block;
+    margin: 0;
+    vertical-align: middle;
 }
 </style>
 
@@ -105,11 +91,11 @@ async function loadTransactions(search = '') {
             const tr = document.createElement('tr');
             const itemCount = Number(r.items_count ?? 0);
             tr.innerHTML = `
-                <td style="padding:12px;">${r.transaction_number}</td>
-                <td style="padding:12px;">${r.date}</td>
-                <td style="padding:12px;">${itemCount} item${itemCount === 1 ? '' : 's'}</td>
-                <td style="padding:12px; text-align:right;">${peso(r.total_amount)}</td>
-                <td style="padding:12px; text-align:center;" class="action-buttons">
+                <td>${r.transaction_number}</td>
+                <td>${r.date}</td>
+                <td>${itemCount} item${itemCount === 1 ? '' : 's'}</td>
+                <td>${peso(r.total_amount)}</td>
+                <td class="action-buttons">
                     <button onclick="viewTransaction(${r.id})" class="btn btn-view" style="background:#2ecc71; color:#fff; border:none; padding:6px 16px; border-radius:4px; cursor:pointer; font-weight:500; transition:all 0.2s;">View</button>
                 </td>
             `;

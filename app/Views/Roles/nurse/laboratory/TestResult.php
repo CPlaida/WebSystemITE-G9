@@ -8,13 +8,16 @@
             <h1 class="page-title">Test Results</h1>
         </div>
 
+        <div class="test-result-search-wrapper">
+            <div class="test-result-search-row">
+                <i class="fas fa-search test-result-search-icon"></i>
+                <input type="text" class="test-result-search-field" id="searchInput" placeholder="Search patients...">
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Test Results</h3>
-                <div class="header-actions">
-                    <input type="text" class="form-control search-input" id="searchInput" placeholder="Search patients...">
-                    <button class="btn search-button" id="searchBtn">Search</button>
-                </div>
             </div>
             <div class="card-body">
                 <div class="filter-section">
@@ -79,7 +82,6 @@
             // Filter buttons functionality
             const filterButtons = document.querySelectorAll('.filter-btn');
             const searchInput = document.getElementById('searchInput');
-            const searchButton = document.getElementById('searchBtn');
 
             filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -190,7 +192,6 @@
                 applyFilters();
             }
 
-            searchButton.addEventListener('click', performSearch);
             searchInput.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') {
                     performSearch();

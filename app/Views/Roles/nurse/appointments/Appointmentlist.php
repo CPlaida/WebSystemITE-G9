@@ -13,13 +13,15 @@
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Appointment List</h2>
-        <div class="search-container">
-          <input type="text" id="searchInput" class="search-input" placeholder="Search appointments...">
-          <button id="searchButton" class="search-button">Search</button>
-        </div>
+      </div>
+      <div class="unified-search-wrapper">
+          <div class="unified-search-row">
+              <i class="fas fa-search unified-search-icon"></i>
+              <input type="text" id="searchInput" class="unified-search-field" placeholder="Search appointments...">
+          </div>
       </div>
       <div class="table-container">
-        <table>
+        <table class="data-table">
           <thead>
             <tr>
               <th>Time</th>

@@ -29,8 +29,14 @@
           </div>
         </div>
       </div>
+      <div class="unified-search-wrapper">
+          <div class="unified-search-row">
+              <i class="fas fa-search unified-search-icon"></i>
+              <input type="text" id="searchInput" class="unified-search-field" placeholder="Search appointments...">
+          </div>
+      </div>
       <div class="table-container" style="position: relative;">
-        <table>
+        <table class="data-table">
           <thead>
             <tr>
               <th>Time</th>

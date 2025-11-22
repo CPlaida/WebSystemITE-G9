@@ -49,8 +49,8 @@
                     </div>
                 <?php endif; ?>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle icu-table">
-                        <thead class="table-light">
+                    <table class="data-table icu-table">
+                        <thead>
                             <tr>
                                 <th>UNIT TYPE</th>
                                 <th>ROOM NO.</th>

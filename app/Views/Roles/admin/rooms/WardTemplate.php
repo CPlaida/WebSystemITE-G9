@@ -12,16 +12,18 @@ $title = $wardName . ' – Room & Bed Management';
   <div class="card">
     <div class="card-header">
       <h2 class="card-title mb-0"><?= esc($title) ?></h2>
-      <div class="search-container">
-        <input type="text" id="wardSearch" class="search-input" placeholder="Search rooms/beds/patients...">
-        <button id="wardSearchButton" class="search-button" type="button">Search</button>
+      <div class="unified-search-wrapper">
+        <div class="unified-search-row">
+          <i class="fas fa-search unified-search-icon"></i>
+          <input type="text" id="wardSearch" class="unified-search-field" placeholder="Search rooms/beds/patients...">
+        </div>
       </div>
     </div>
     <div class="card-body">
       <p class="mb-3">This page shows rooms and beds in the <?= esc($wardName) ?>, including whether each bed is Available or Occupied.</p>
 
       <?php if (!empty($rows)): ?>
-        <table class="table" id="wardTable">
+        <table class="data-table" id="wardTable">
           <thead>
             <tr>
               <th>Room No.</th>
