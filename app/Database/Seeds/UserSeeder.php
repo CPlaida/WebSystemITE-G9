@@ -94,6 +94,12 @@ class UserSeeder extends Seeder
 
         $model = new UserModel();
         foreach ($users as $user) {
+            $existing = $model->where('username', $user['username'])->first();
+            if ($existing) {
+                log_message('info', 'UserSeeder: skipped existing user {username}', ['username' => $user['username']]);
+                continue;
+            }
+
             // Insert via model to trigger beforeInsert ID generator
             $model->insert($user);
         }

@@ -141,6 +141,7 @@ $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter
     $routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,doctor,admin']);
     $routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
     $routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
+    $routes->get('laboratory/testresult/download/(:any)', 'Laboratory::downloadResultFile/$1', ['filter' => 'auth:labstaff,doctor,admin']);
     $routes->get('laboratory/testresult/data', 'Laboratory::getTestResultsData');
     $routes->get('laboratory/patient/suggest', 'Laboratory::patientSuggest');
     $routes->get('laboratory/patient/lab-records', 'Laboratory::patientLabRecords');

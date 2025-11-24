@@ -15,7 +15,8 @@ class LaboratoryModel extends Model
     protected $allowedFields = [
         'patient_id', 'doctor_id', 'service_id', 'test_name', 'test_type', 'priority',
         'test_date', 'test_time', 'test_results', 'normal_range', 'status', 'billed',
-        'cost', 'notes', 'created_at', 'updated_at'
+        'cost', 'notes', 'result_file_path', 'result_file_name', 'result_file_type',
+        'result_file_size', 'created_at', 'updated_at'
     ];
 
     protected $useTimestamps = false; 

@@ -80,6 +80,54 @@ class Laboratory extends Controller
         }
     }
 
+    private function resolveResultFilePath($relativePath)
+    {
+        if (empty($relativePath)) {
+            return null;
+        }
+
+        $cleanPath = ltrim(str_replace(['..', '\\'], ['', '/'], $relativePath), '/');
+        $fullPath = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $cleanPath);
+
+        if (!is_file($fullPath)) {
+            return null;
+        }
+
+        return $fullPath;
+    }
+
+    private function deleteResultFile($relativePath)
+    {
+        $fullPath = $this->resolveResultFilePath($relativePath);
+        if ($fullPath && file_exists($fullPath)) {
+            @unlink($fullPath);
+        }
+    }
+
+    public function downloadResultFile($testId = null)
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin', 'nurse', 'receptionist'])) {
+            return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to download this file.');
+        }
+
+        if (empty($testId)) {
+            return redirect()->back()->with('error', 'Test ID is required.');
+        }
+
+        $record = $this->labModel->find($testId);
+        if (!$record || empty($record['result_file_path'])) {
+            return redirect()->back()->with('error', 'No analyzer file is attached to this test result.');
+        }
+
+        $fullPath = $this->resolveResultFilePath($record['result_file_path']);
+        if (!$fullPath) {
+            return redirect()->back()->with('error', 'Analyzer file is missing on the server.');
+        }
+
+        $downloadName = !empty($record['result_file_name']) ? $record['result_file_name'] : basename($fullPath);
+        return $this->response->download($fullPath, null)->setFileName($downloadName);
+    }
+
     public function request()
     {
         // Check if user is logged in and has appropriate role
@@ -257,7 +305,7 @@ class Laboratory extends Controller
         try {
             $db = \Config\Database::connect();
             $builder = $db->table('laboratory');
-            $builder->select('id, test_type, test_date, status, notes, test_name')
+            $builder->select('id, test_type, test_date, status, notes, test_name, result_file_path, result_file_name')
                     ->whereIn('status', ['pending', 'in_progress', 'completed'])
                     ->orderBy('test_date', 'DESC')
                     ->orderBy('created_at', 'DESC')
@@ -425,6 +473,18 @@ class Laboratory extends Controller
             }
 
             $rows = $builder->get()->getResultArray();
+
+            if (!empty($rows)) {
+                foreach ($rows as $idx => $row) {
+                    if (!empty($row['result_file_path'])) {
+                        $rows[$idx]['result_file_url'] = base_url('laboratory/testresult/download/' . $row['id']);
+                        $rows[$idx]['result_file_label'] = !empty($row['result_file_name']) ? $row['result_file_name'] : basename($row['result_file_path']);
+                    } else {
+                        $rows[$idx]['result_file_url'] = null;
+                        $rows[$idx]['result_file_label'] = null;
+                    }
+                }
+            }
             
             // Debug logging (can be removed in production)
             log_message('debug', 'Lab records query - Patient ID: ' . $patientId . ', Name: ' . $name . ', Full Name: ' . $fullName . ', First: ' . $first . ', Last: ' . $last . ', Search Terms: ' . implode(', ', $searchTerms ?? []) . ', Records found: ' . count($rows));
@@ -471,6 +531,14 @@ class Laboratory extends Controller
                 $testResult['normal_ranges'] = json_decode($testResult['normal_range'], true) ?: [];
             } else {
                 $testResult['normal_ranges'] = [];
+            }
+
+            if (!empty($testResult['result_file_path'])) {
+                $testResult['result_file_url'] = base_url('laboratory/testresult/download/' . $testResult['id']);
+                $testResult['result_file_label'] = $testResult['result_file_name'] ?: basename($testResult['result_file_path']);
+            } else {
+                $testResult['result_file_url'] = null;
+                $testResult['result_file_label'] = null;
             }
 
             // Add patient name mapping for display
@@ -520,24 +588,45 @@ class Laboratory extends Controller
         // Handle form submission
         if (strtolower($this->request->getMethod()) === 'post') {
             try {
+                $testRecord = $this->labModel->find($testId);
+                if (!$testRecord) {
+                    return redirect()->to('laboratory/testresult')->with('error', 'Test not found');
+                }
 
-                // Get test parameters from form
-                $testParameters = [];
-                $normalRanges = [];
-                $parameterNames = $this->request->getPost('parameter_name') ?: [];
-                $parameterResults = $this->request->getPost('parameter_result') ?: [];
-                $parameterRanges = $this->request->getPost('parameter_range') ?: [];
+                // Handle analyzer result file upload
+                $fileMeta = [];
+                $resultFile = $this->request->getFile('result_file');
+                if ($resultFile && $resultFile->isValid() && $resultFile->getSize() > 0) {
+                    $allowedExtensions = ['pdf', 'csv', 'txt', 'xml', 'json', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+                    $extension = strtolower($resultFile->getClientExtension() ?: $resultFile->getExtension());
 
-                // Build test results array
-                if (is_array($parameterNames)) {
-                    foreach ($parameterNames as $index => $name) {
-                        if (!empty($name) && isset($parameterResults[$index])) {
-                            $testParameters[$name] = $parameterResults[$index];
-                            if (isset($parameterRanges[$index])) {
-                                $normalRanges[$name] = $parameterRanges[$index];
-                            }
-                        }
+                    if (!in_array($extension, $allowedExtensions)) {
+                        return redirect()->back()->withInput()->with('error', 'Unsupported file type. Please upload PDF, CSV, Excel, image, or text files.');
                     }
+
+                    $uploadDir = WRITEPATH . 'uploads/lab_results/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0775, true);
+                    }
+
+                    $safeName = $testId . '_' . time() . '.' . $extension;
+                    $resultFile->move($uploadDir, $safeName, true);
+
+                    // Remove any previously stored file to avoid orphaned files
+                    if (!empty($testRecord['result_file_path'])) {
+                        $this->deleteResultFile($testRecord['result_file_path']);
+                    }
+
+                    $fileMeta = [
+                        'result_file_path' => 'uploads/lab_results/' . $safeName,
+                        'result_file_name' => $resultFile->getClientName(),
+                        'result_file_type' => $resultFile->getClientMimeType(),
+                        'result_file_size' => $resultFile->getSize(),
+                    ];
+                }
+
+                if (empty($fileMeta)) {
+                    return redirect()->back()->withInput()->with('error', 'Please upload the analyzer output file.');
                 }
 
                 // Capture notes and (optional) interpretation from form
@@ -548,12 +637,16 @@ class Laboratory extends Controller
                 }
 
                 $updateData = [
-                    'test_results' => json_encode($testParameters),
-                    'normal_range' => json_encode($normalRanges),
+                    'test_results' => null,
+                    'normal_range' => null,
                     'notes' => $notes,
                     'status' => 'completed',
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
+
+                if (!empty($fileMeta)) {
+                    $updateData = array_merge($updateData, $fileMeta);
+                }
 
                 $result = $this->labModel->update($testId, $updateData);
 

@@ -82,6 +82,26 @@ class CreateLaboratoryTable extends Migration
                 'type' => 'TEXT',
                 'null' => true,
             ],
+            'result_file_path' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
+            'result_file_name' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
+            'result_file_type' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => true,
+            ],
+            'result_file_size' => [
+                'type'       => 'BIGINT',
+                'unsigned'   => true,
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
