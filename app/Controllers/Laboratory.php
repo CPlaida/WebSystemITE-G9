@@ -80,7 +80,7 @@ class Laboratory extends Controller
         }
     }
 
-    private function resolveResultFilePath($relativePath)
+    private function resolveResultFilePath($relativePath, bool $mustBeFile = true)
     {
         if (empty($relativePath)) {
             return null;
@@ -89,7 +89,11 @@ class Laboratory extends Controller
         $cleanPath = ltrim(str_replace(['..', '\\'], ['', '/'], $relativePath), '/');
         $fullPath = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $cleanPath);
 
-        if (!is_file($fullPath)) {
+        if (!file_exists($fullPath)) {
+            return null;
+        }
+
+        if ($mustBeFile && !is_file($fullPath)) {
             return null;
         }
 
@@ -98,10 +102,124 @@ class Laboratory extends Controller
 
     private function deleteResultFile($relativePath)
     {
-        $fullPath = $this->resolveResultFilePath($relativePath);
-        if ($fullPath && file_exists($fullPath)) {
-            @unlink($fullPath);
+        $fullPath = $this->resolveResultFilePath($relativePath, false);
+        if (!$fullPath || !file_exists($fullPath)) {
+            return;
         }
+
+        if (is_dir($fullPath)) {
+            $items = scandir($fullPath);
+            foreach ($items as $item) {
+                if (in_array($item, ['.', '..'])) {
+                    continue;
+                }
+                $itemPath = $fullPath . DIRECTORY_SEPARATOR . $item;
+                $relativeItem = rtrim($relativePath, '/\\') . '/' . $item;
+                if (is_dir($itemPath)) {
+                    $this->deleteResultFile($relativeItem);
+                } else {
+                    @unlink($itemPath);
+                }
+            }
+            @rmdir($fullPath);
+            return;
+        }
+
+        @unlink($fullPath);
+    }
+
+    private function getResultFileManifest(array $record): array
+    {
+        $relativePath = $record['result_file_path'] ?? '';
+        if (empty($relativePath)) {
+            return [];
+        }
+
+        $fullPath = $this->resolveResultFilePath($relativePath, false);
+        if (!$fullPath || !file_exists($fullPath)) {
+            return [];
+        }
+
+        $manifest = [];
+
+        if (is_dir($fullPath)) {
+            $manifestPath = rtrim($fullPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'manifest.json';
+            if (is_file($manifestPath)) {
+                $decoded = json_decode(file_get_contents($manifestPath), true);
+                if (is_array($decoded)) {
+                    foreach ($decoded as $idx => $entry) {
+                        $manifest[] = [
+                            'label' => $entry['label'] ?? basename($entry['stored_path'] ?? ''),
+                            'stored_path' => $entry['stored_path'] ?? null,
+                            'mime' => $entry['mime'] ?? 'application/octet-stream',
+                            'size' => $entry['size'] ?? null,
+                            'index' => $idx,
+                        ];
+                    }
+                    return $manifest;
+                }
+            }
+
+            $files = scandir($fullPath);
+            foreach ($files as $fileName) {
+                if (in_array($fileName, ['.', '..', 'manifest.json'])) {
+                    continue;
+                }
+                $filePath = $fullPath . DIRECTORY_SEPARATOR . $fileName;
+                if (!is_file($filePath)) {
+                    continue;
+                }
+                $manifest[] = [
+                    'label' => $fileName,
+                    'stored_path' => rtrim($relativePath, '/\\') . '/' . $fileName,
+                    'mime' => mime_content_type($filePath) ?: 'application/octet-stream',
+                    'size' => filesize($filePath),
+                    'index' => count($manifest),
+                ];
+            }
+
+            return $manifest;
+        }
+
+        return [[
+            'label' => $record['result_file_name'] ?? basename($relativePath),
+            'stored_path' => $relativePath,
+            'mime' => $record['result_file_type'] ?? 'application/octet-stream',
+            'size' => $record['result_file_size'] ?? null,
+            'index' => 0,
+        ]];
+    }
+
+    private function attachFileMetadata(array $record): array
+    {
+        if (empty($record)) {
+            return $record;
+        }
+
+        $attachments = $this->getResultFileManifest($record);
+        $record['attachments'] = $attachments;
+
+        if (!empty($attachments) && isset($record['id'])) {
+            $primary = $attachments[0];
+            $downloadUrl = base_url('laboratory/testresult/download/' . $record['id']);
+            if (isset($primary['index'])) {
+                $downloadUrl .= '?file=' . $primary['index'];
+            }
+
+            $label = $primary['label'] ?? 'Download Result File';
+            $additionalCount = max(count($attachments) - 1, 0);
+            if ($additionalCount > 0) {
+                $label .= ' (+' . $additionalCount . ' more)';
+            }
+
+            $record['result_file_url'] = $downloadUrl;
+            $record['result_file_label'] = $label;
+        } else {
+            $record['result_file_url'] = null;
+            $record['result_file_label'] = null;
+        }
+
+        return $record;
     }
 
     public function downloadResultFile($testId = null)
@@ -119,12 +237,25 @@ class Laboratory extends Controller
             return redirect()->back()->with('error', 'No analyzer file is attached to this test result.');
         }
 
-        $fullPath = $this->resolveResultFilePath($record['result_file_path']);
+        $manifest = $this->getResultFileManifest($record);
+        if (empty($manifest)) {
+            return redirect()->back()->with('error', 'Analyzer files are missing on the server.');
+        }
+
+        $index = $this->request->getGet('file');
+        $index = is_numeric($index) ? (int)$index : 0;
+        $entry = $manifest[$index] ?? $manifest[0];
+
+        if (empty($entry['stored_path'])) {
+            return redirect()->back()->with('error', 'Unable to locate the requested analyzer file.');
+        }
+
+        $fullPath = $this->resolveResultFilePath($entry['stored_path']);
         if (!$fullPath) {
             return redirect()->back()->with('error', 'Analyzer file is missing on the server.');
         }
 
-        $downloadName = !empty($record['result_file_name']) ? $record['result_file_name'] : basename($fullPath);
+        $downloadName = $entry['label'] ?? (!empty($record['result_file_name']) ? $record['result_file_name'] : basename($fullPath));
         return $this->response->download($fullPath, null)->setFileName($downloadName);
     }
 
@@ -281,10 +412,16 @@ class Laboratory extends Controller
         try {
             // test_id column removed; expose numeric id as test_id for UI compatibility
             $results = $this->labModel
-                ->select('id, id as test_id, test_name as patient_name, test_type, test_date, status, notes')
+                ->select('id, id as test_id, test_name as patient_name, test_name, test_type, test_date, status, notes, result_file_path, result_file_name, result_file_type, result_file_size')
                 ->orderBy('created_at', 'DESC')
                 ->findAll();
-            
+
+            if (!empty($results)) {
+                foreach ($results as $idx => $row) {
+                    $results[$idx] = $this->attachFileMetadata($row);
+                }
+            }
+
             return $this->response->setJSON($results);
         } catch (\Exception $e) {
             log_message('error', 'Failed to get test results data: ' . $e->getMessage());
@@ -305,7 +442,7 @@ class Laboratory extends Controller
         try {
             $db = \Config\Database::connect();
             $builder = $db->table('laboratory');
-            $builder->select('id, test_type, test_date, status, notes, test_name, result_file_path, result_file_name')
+            $builder->select('id, test_type, test_date, status, notes, test_name, result_file_path, result_file_name, result_file_type, result_file_size')
                     ->whereIn('status', ['pending', 'in_progress', 'completed'])
                     ->orderBy('test_date', 'DESC')
                     ->orderBy('created_at', 'DESC')
@@ -476,13 +613,7 @@ class Laboratory extends Controller
 
             if (!empty($rows)) {
                 foreach ($rows as $idx => $row) {
-                    if (!empty($row['result_file_path'])) {
-                        $rows[$idx]['result_file_url'] = base_url('laboratory/testresult/download/' . $row['id']);
-                        $rows[$idx]['result_file_label'] = !empty($row['result_file_name']) ? $row['result_file_name'] : basename($row['result_file_path']);
-                    } else {
-                        $rows[$idx]['result_file_url'] = null;
-                        $rows[$idx]['result_file_label'] = null;
-                    }
+                    $rows[$idx] = $this->attachFileMetadata($row);
                 }
             }
             
@@ -533,13 +664,7 @@ class Laboratory extends Controller
                 $testResult['normal_ranges'] = [];
             }
 
-            if (!empty($testResult['result_file_path'])) {
-                $testResult['result_file_url'] = base_url('laboratory/testresult/download/' . $testResult['id']);
-                $testResult['result_file_label'] = $testResult['result_file_name'] ?: basename($testResult['result_file_path']);
-            } else {
-                $testResult['result_file_url'] = null;
-                $testResult['result_file_label'] = null;
-            }
+            $testResult = $this->attachFileMetadata($testResult);
 
             // Add patient name mapping for display
             $testResult['patient_name'] = $testResult['test_name']; // test_name contains patient name
@@ -593,41 +718,69 @@ class Laboratory extends Controller
                     return redirect()->to('laboratory/testresult')->with('error', 'Test not found');
                 }
 
-                // Handle analyzer result file upload
-                $fileMeta = [];
-                $resultFile = $this->request->getFile('result_file');
-                if ($resultFile && $resultFile->isValid() && $resultFile->getSize() > 0) {
-                    $allowedExtensions = ['pdf', 'csv', 'txt', 'xml', 'json', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
-                    $extension = strtolower($resultFile->getClientExtension() ?: $resultFile->getExtension());
+                $allowedExtensions = ['pdf', 'csv', 'txt', 'xml', 'json', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+                $uploadedFiles = $this->request->getFileMultiple('result_files');
+                if (empty($uploadedFiles)) {
+                    $singleFile = $this->request->getFile('result_file');
+                    if ($singleFile) {
+                        $uploadedFiles = [$singleFile];
+                    }
+                }
 
+                $validFiles = [];
+                foreach ($uploadedFiles as $file) {
+                    if (!$file || !$file->isValid() || $file->getSize() <= 0) {
+                        continue;
+                    }
+                    $extension = strtolower($file->getClientExtension() ?: $file->getExtension());
                     if (!in_array($extension, $allowedExtensions)) {
-                        return redirect()->back()->withInput()->with('error', 'Unsupported file type. Please upload PDF, CSV, Excel, image, or text files.');
+                        return redirect()->back()->withInput()->with('error', 'Unsupported file type detected. Allowed: PDF, CSV, TXT, XML, JSON, Excel, Word, and common image formats.');
                     }
+                    $validFiles[] = [$file, $extension];
+                }
 
-                    $uploadDir = WRITEPATH . 'uploads/lab_results/';
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0775, true);
-                    }
+                if (empty($validFiles)) {
+                    return redirect()->back()->withInput()->with('error', 'Please upload at least one analyzer output file.');
+                }
 
-                    $safeName = $testId . '_' . time() . '.' . $extension;
-                    $resultFile->move($uploadDir, $safeName, true);
+                $timestamp = time();
+                $relativeDir = 'uploads/lab_results/' . $testId . '_' . $timestamp;
+                $uploadDir = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativeDir);
 
-                    // Remove any previously stored file to avoid orphaned files
-                    if (!empty($testRecord['result_file_path'])) {
-                        $this->deleteResultFile($testRecord['result_file_path']);
-                    }
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0775, true);
+                }
 
-                    $fileMeta = [
-                        'result_file_path' => 'uploads/lab_results/' . $safeName,
-                        'result_file_name' => $resultFile->getClientName(),
-                        'result_file_type' => $resultFile->getClientMimeType(),
-                        'result_file_size' => $resultFile->getSize(),
+                $manifestEntries = [];
+                $totalSize = 0;
+
+                foreach ($validFiles as $idx => [$file, $extension]) {
+                    $clientName = $file->getClientName();
+                    $safeBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo($clientName, PATHINFO_FILENAME) ?: ('attachment_' . ($idx + 1)));
+                    $storedName = $safeBase . '_' . uniqid('', true) . '.' . $extension;
+
+                    $file->move($uploadDir, $storedName, true);
+
+                    $storedRelative = rtrim($relativeDir, '/\\') . '/' . $storedName;
+                    $size = $file->getSize();
+                    $totalSize += $size;
+
+                    $manifestEntries[] = [
+                        'label' => $clientName,
+                        'stored_path' => $storedRelative,
+                        'mime' => $file->getClientMimeType(),
+                        'size' => $size,
                     ];
                 }
 
-                if (empty($fileMeta)) {
-                    return redirect()->back()->withInput()->with('error', 'Please upload the analyzer output file.');
-                }
+                file_put_contents($uploadDir . DIRECTORY_SEPARATOR . 'manifest.json', json_encode($manifestEntries, JSON_PRETTY_PRINT));
+
+                $fileMeta = [
+                    'result_file_path' => $relativeDir,
+                    'result_file_name' => count($manifestEntries) === 1 ? ($manifestEntries[0]['label'] ?? 'Result File') : 'Multiple files (' . count($manifestEntries) . ')',
+                    'result_file_type' => $manifestEntries[0]['mime'] ?? 'application/octet-stream',
+                    'result_file_size' => $totalSize,
+                ];
 
                 // Capture notes and (optional) interpretation from form
                 $notes = $this->request->getPost('notes');
@@ -644,13 +797,17 @@ class Laboratory extends Controller
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
 
-                if (!empty($fileMeta)) {
+                if (!empty($fileMeta ?? [])) {
                     $updateData = array_merge($updateData, $fileMeta);
                 }
 
                 $result = $this->labModel->update($testId, $updateData);
 
                 if ($result) {
+                    if (!empty($testRecord['result_file_path']) && $testRecord['result_file_path'] !== ($fileMeta['result_file_path'] ?? null)) {
+                        $this->deleteResultFile($testRecord['result_file_path']);
+                    }
+                    
                     if ($this->request->isAJAX()) {
                         return $this->response->setJSON([
                             'success' => true,
