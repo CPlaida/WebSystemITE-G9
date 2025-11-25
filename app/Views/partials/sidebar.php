@@ -115,6 +115,7 @@
                 </a>
                 <ul class="submenu">
                     <li><a href="<?= base_url('admin/Administration/ManageUser') ?>"><span class="text">User Management</span></a></li>
+                    <li><a href="<?= base_url('admin/Administration/StaffManagement') ?>"><span class="text">Staff Management</span></a></li>
                 </ul>
             </li>
         <?php endif; ?>

@@ -1,0 +1,546 @@
+ERROR - 2025-11-25 04:50:27 --> mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_p...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admin.php(182): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-11-25 04:50:27 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+[Method: GET, Route: admin/Administration/StaffManagement]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Admin.php(182): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 04:50:27 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Admin.php(182): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 04:50:27 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `r`.`name` as `role_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `r` ON `r`.`id` = `u`.`role_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Admin.php(182): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-25 05:30:32 --> mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_p...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-11-25 05:30:32 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+[Method: GET, Route: admin/Administration/StaffManagement]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:30:32 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:30:32 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-25 05:30:55 --> mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_p...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-11-25 05:30:56 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+[Method: GET, Route: admin/Administration/StaffManagement]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:30:56 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:30:56 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-25 05:30:56 --> mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_p...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-11-25 05:30:56 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+[Method: GET, Route: admin/Administration/StaffManagement]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:30:56 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:30:56 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-25 05:36:46 --> mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_p...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-11-25 05:36:46 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+[Method: GET, Route: admin/Administration/StaffManagement]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:36:46 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-25 05:36:46 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.staff_profiles' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `staff_profiles`.*, `u`.`username` as `user_username`, `u`.`email` as `user_email`, `u`.`status` as `user_status`, `ur`.`name` as `user_role_name`, `sr`.`name` as `staff_role_name`, `sd`.`name` as `department_name`, `ss`.`name` as `specialization_name`
+FROM `staff_profiles`
+LEFT JOIN `users` `u` ON `u`.`id` = `staff_profiles`.`user_id`
+LEFT JOIN `roles` `ur` ON `ur`.`id` = `u`.`role_id`
+LEFT JOIN `roles` `sr` ON `sr`.`id` = `staff_profiles`.`role_id`
+LEFT JOIN `staff_departments` `sd` ON `sd`.`id` = `staff_profiles`.`department_id`
+LEFT JOIN `staff_specializations` `ss` ON `ss`.`id` = `staff_profiles`.`specialization_id`
+ORDER BY `staff_profiles`.`last_name` ASC, `staff_profiles`.`first_name` ASC', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Admin.php(225): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->manageStaff()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

@@ -186,6 +186,35 @@
       <form id="userForm" method="post" action="<?= base_url('admin/users/create') ?>">
         <?= csrf_field() ?>
         <div class="form-grid">
+          <div style="grid-column: 1 / -1;">
+            <label for="staffSearch">Link Staff Profile (optional)</label>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <input
+                type="text"
+                id="staffSearch"
+                list="staffOptionsList"
+                placeholder="Type staff name or employee # to search..."
+                style="flex:1;"
+                autocomplete="off"
+              >
+              <button type="button" class="btn btn-secondary btn-sm" onclick="clearStaffSelection()">Clear</button>
+            </div>
+            <datalist id="staffOptionsList">
+              <?php if (!empty($staffOptions)): ?>
+                <?php foreach ($staffOptions as $staff): ?>
+                  <option value="<?= esc($staff['display_label'] ?? $staff['full_name'], 'attr') ?>"></option>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </datalist>
+            <input type="hidden" id="staff_id" name="staff_id" value="">
+            <small class="text-muted">Selecting a staff profile will auto-fill credentials and lock the corresponding role.</small>
+          </div>
+
+          <div id="staffLinkedInfo" class="alert-info" style="display:none; grid-column: 1 / -1; border:1px solid #bee3f8; background:#ebf8ff; padding:0.75rem; border-radius:6px;">
+            <strong>Linked Staff:</strong> <span id="staffInfoName"></span><br>
+            <small id="staffInfoMeta"></small>
+          </div>
+
           <div>
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required>
@@ -196,14 +225,22 @@
           </div>
           <div>
             <label for="role_id">User Role</label>
-            <select id="role_id" name="role_id" required>
+            <select id="role_id" name="role_id" required onchange="handleUserRoleChange()">
               <option value="">Select Role</option>
               <?php if (!empty($roles)): ?>
                 <?php foreach ($roles as $r): ?>
-                  <option value="<?= (int)$r['id'] ?>"><?= esc($r['name']) ?></option>
+                  <option value="<?= (int)$r['id'] ?>" data-scope="<?= esc(strtolower($r['name']), 'attr') ?>"><?= esc($r['name']) ?></option>
                 <?php endforeach; ?>
               <?php endif; ?>
             </select>
+          </div>
+          <div id="doctorSpecializationField" style="display:none;">
+            <label>Specialization</label>
+            <input type="text" id="doctorSpecialization" readonly>
+          </div>
+          <div id="nurseDepartmentField" style="display:none;">
+            <label>Department</label>
+            <input type="text" id="nurseDepartment" readonly>
           </div>
           <div>
             <label for="password">Password</label>
@@ -231,7 +268,8 @@
 
   <script>
     const modal = document.getElementById("userModal");
-    const totalUsers = document.getElementById("totalUsers");
+    const STAFF_OPTIONS = <?= json_encode($staffOptions ?? []) ?>;
+    const PREFILL_STAFF = <?= json_encode($prefillStaff ?? null) ?>;
 
     function openModal(mode) {
       const form = document.getElementById('userForm');
@@ -242,7 +280,6 @@
       const role = document.getElementById('role_id');
       const status = document.getElementById('status');
       const help = document.getElementById('passwordHelp');
-      const toggle = document.getElementById('togglePass');
       title.textContent = 'Add New User';
       form.action = '<?= base_url('admin/users/create') ?>';
       username.value = '';
@@ -255,6 +292,7 @@
       password.placeholder = '';
       help.textContent = '';
       document.getElementById('userFormSubmit').textContent = 'Create User';
+      clearStaffSelection();
       modal.style.display = 'flex';
     }
     function openEdit(el) {
@@ -283,6 +321,7 @@
   help.textContent = 'Leave blank to keep current password';
 
   document.getElementById('userFormSubmit').textContent = 'Update User';
+  clearStaffSelection();
   document.getElementById('userModal').style.display = 'flex';
 }
     function closeModal() { modal.style.display = 'none'; }
@@ -345,6 +384,96 @@
       input.value = pwd;
       input.type = 'text';
     }
+    const staffSearchInput = document.getElementById('staffSearch');
+    const staffIdInput = document.getElementById('staff_id');
+    staffSearchInput?.addEventListener('change', handleStaffSearch);
+
+    function handleStaffSearch() {
+      const value = staffSearchInput.value.trim();
+      if (!value) {
+        clearStaffSelection();
+        return;
+      }
+      const match = STAFF_OPTIONS.find(option => option.display_label === value || option.full_name === value);
+      if (match) {
+        applyStaffSelection(match);
+      }
+    }
+
+    function applyStaffSelection(staff) {
+      staffIdInput.value = staff.id;
+      document.getElementById('username').value = staff.username_suggestion || '';
+      if (staff.staff_email) {
+        document.getElementById('email').value = staff.staff_email;
+      }
+      const roleSelect = document.getElementById('role_id');
+      if (staff.role_id) {
+        roleSelect.value = staff.role_id;
+        roleSelect.dataset.locked = '1';
+        roleSelect.dataset.lockedValue = staff.role_id;
+      }
+      document.getElementById('staffLinkedInfo').style.display = 'block';
+      document.getElementById('staffInfoName').textContent = staff.full_name;
+      const meta = [];
+      if (staff.department_name) meta.push('Department: ' + staff.department_name);
+      if (staff.specialization_name) meta.push('Specialization: ' + staff.specialization_name);
+      document.getElementById('staffInfoMeta').textContent = meta.join(' • ');
+      if (staff.display_label) {
+        staffSearchInput.value = staff.display_label;
+      }
+      updateRoleSpecificFields(roleSelect.value, staff);
+    }
+
+    function clearStaffSelection() {
+      staffIdInput.value = '';
+      if (staffSearchInput) {
+        staffSearchInput.value = '';
+      }
+      const roleSelect = document.getElementById('role_id');
+      delete roleSelect.dataset.locked;
+      delete roleSelect.dataset.lockedValue;
+      document.getElementById('staffLinkedInfo').style.display = 'none';
+      updateRoleSpecificFields('', null);
+    }
+
+    function handleUserRoleChange() {
+      const roleSelect = document.getElementById('role_id');
+      if (roleSelect.dataset.locked === '1') {
+        roleSelect.value = roleSelect.dataset.lockedValue || roleSelect.value;
+        return;
+      }
+      updateRoleSpecificFields(roleSelect.value, null);
+    }
+
+    function updateRoleSpecificFields(roleId, staff) {
+      const doctorField = document.getElementById('doctorSpecializationField');
+      const nurseField = document.getElementById('nurseDepartmentField');
+      doctorField.style.display = 'none';
+      nurseField.style.display = 'none';
+      if (!roleId) {
+        return;
+      }
+      const roleName = getRoleNameById(roleId);
+      if (roleName.includes('doctor')) {
+        doctorField.style.display = 'block';
+        document.getElementById('doctorSpecialization').value = staff?.specialization_name || 'Linked specialization will appear here.';
+      } else if (roleName.includes('nurse')) {
+        nurseField.style.display = 'block';
+        document.getElementById('nurseDepartment').value = staff?.department_name || 'Linked department will appear here.';
+      }
+    }
+
+    function getRoleNameById(roleId) {
+      const option = document.querySelector(`#role_id option[value="${roleId}"]`);
+      return (option?.textContent || '').toLowerCase();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (PREFILL_STAFF) {
+        openModal('add');
+        applyStaffSelection(PREFILL_STAFF);
+      }
+    });
     window.onclick = function(e) { 
       if (e.target == modal) closeModal();
       if (e.target == document.getElementById('flashBackdrop')) closeFlashModal();

@@ -65,11 +65,17 @@ $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 
 // Admin management pages (not dashboards)
 $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
+$routes->get('admin/Administration/StaffManagement', 'Admin::manageStaff', ['filter' => 'auth:admin']);
 // Admin user CRUD endpoints
 $routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin']);
 $routes->post('admin/users/update/(:segment)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
 $routes->post('admin/users/delete/(:segment)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
 $routes->post('admin/users/reset-password/(:segment)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin']);
+
+// Admin staff management CRUD endpoints
+$routes->post('admin/staff/create', 'Admin::createStaff', ['filter' => 'auth:admin']);
+$routes->post('admin/staff/update/(:num)', 'Admin::updateStaff/$1', ['filter' => 'auth:admin']);
+$routes->post('admin/staff/delete/(:num)', 'Admin::deleteStaff/$1', ['filter' => 'auth:admin']);
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
