@@ -146,6 +146,7 @@
                     <button type="button" class="btn-action btn-view" onclick="openStaffView(this)"
                       data-name="<?= esc(trim(($member['first_name'] ?? '') . ' ' . ($member['last_name'] ?? '')), 'attr') ?>"
                       data-role="<?= esc($member['staff_role_name'] ?? '-', 'attr') ?>"
+                      data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
                       data-department="<?= esc($member['department_name'] ?? '-', 'attr') ?>"
                       data-specialization="<?= esc($member['specialization_name'] ?? '-', 'attr') ?>"
                       data-phone="<?= esc($member['phone'] ?? 'N/A', 'attr') ?>"
@@ -164,6 +165,7 @@
                       data-phone="<?= esc($member['phone'] ?? '', 'attr') ?>"
                       data-staff_email="<?= esc($member['email'] ?? '', 'attr') ?>"
                       data-role_id="<?= esc($member['role_id'] ?? '', 'attr') ?>"
+                      data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
                       data-department_id="<?= esc($member['department_id'] ?? '', 'attr') ?>"
                       data-specialization_id="<?= esc($member['specialization_id'] ?? '', 'attr') ?>"
                       data-address="<?= esc($member['address'] ?? '', 'attr') ?>"
@@ -297,16 +299,8 @@
                   <input type="text" id="address_street" name="address_street" class="form-control" placeholder="e.g., 23-A Mabini St." autocomplete="off">
                 </div>
               </div>
-              <div class="form-group" style="flex:1;">
-                <label class="form-label" for="address_preview">Full Address Preview</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-map-marked-alt text-muted"></i></span>
-                  <input type="text" id="address_preview" class="form-control" placeholder="Full address will appear here" readonly>
-                </div>
-                <small class="text-muted">We’ll store the combined address automatically.</small>
-                <input type="hidden" id="address" name="address">
-              </div>
             </div>
+            <input type="hidden" id="address" name="address">
           </div>
 
           <div class="form-section">
@@ -345,6 +339,14 @@
                     <?php endif; ?>
                   </select>
                 </div>
+              </div>
+              <div class="form-group" id="licenseFieldGroup" style="display:none;">
+                <label class="form-label" for="license_number">Professional License No.</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-id-card text-muted"></i></span>
+                  <input type="text" id="license_number" name="license_number" class="form-control" placeholder="PRC / license number (if applicable)">
+                </div>
+                <small class="text-muted">Fill out for doctors, nurses, and other licensed professionals.</small>
               </div>
               <div class="form-group">
                 <label class="form-label" for="department_id">Department</label>
@@ -413,21 +415,90 @@
   </div>
 
   <div class="modal" id="staffViewModal">
-    <div class="modal-content" style="max-width:600px;">
-      <h3>Staff Details</h3>
-      <div class="detail-list">
-        <p><strong>Name:</strong> <span id="viewName"></span></p>
-        <p><strong>Role:</strong> <span id="viewRole"></span></p>
-        <p><strong>Department:</strong> <span id="viewDepartment"></span></p>
-        <p><strong>Specialization:</strong> <span id="viewSpecialization"></span></p>
-        <p><strong>Contact:</strong> <span id="viewPhone"></span></p>
-        <p><strong>Email:</strong> <span id="viewEmail"></span></p>
-        <p><strong>Status:</strong> <span id="viewStatus"></span></p>
-        <p><strong>Hire Date:</strong> <span id="viewHireDate"></span></p>
-        <p><strong>Address:</strong> <span id="viewAddress"></span></p>
+    <div class="modal-content" style="max-width:640px; padding:0;">
+      <div style="background:#1e293b; color:#fff; padding:1.5rem; border-top-left-radius:12px; border-top-right-radius:12px;">
+        <h3 style="margin:0; font-size:1.5rem;">Staff Details</h3>
+        <p style="margin:0.35rem 0 0; color:#cbd5f5;">Quick snapshot of the selected staff member.</p>
       </div>
-      <div class="form-actions" style="margin-top:1rem;">
-        <button type="button" class="btn btn-primary" onclick="closeStaffView()">Close</button>
+      <div style="padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem;">
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-user"></i></div>
+            <div>
+              <p class="detail-label">Name</p>
+              <p class="detail-value" id="viewName"></p>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-user-tie"></i></div>
+            <div>
+              <p class="detail-label">Role</p>
+              <p class="detail-value" id="viewRole"></p>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-id-card"></i></div>
+            <div>
+              <p class="detail-label">License No.</p>
+              <p class="detail-value" id="viewLicense"></p>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-building"></i></div>
+            <div>
+              <p class="detail-label">Department</p>
+              <p class="detail-value" id="viewDepartment"></p>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-stethoscope"></i></div>
+            <div>
+              <p class="detail-label">Specialization</p>
+              <p class="detail-value" id="viewSpecialization"></p>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-toggle-on"></i></div>
+            <div>
+              <p class="detail-label">Status</p>
+              <p class="detail-value" id="viewStatus"></p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem;">
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-phone"></i></div>
+            <div>
+              <p class="detail-label">Contact</p>
+              <p class="detail-value" id="viewPhone"></p>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <p class="detail-label">Email</p>
+              <p class="detail-value" id="viewEmail"></p>
+            </div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-icon"><i class="fas fa-calendar-day"></i></div>
+            <div>
+              <p class="detail-label">Hire Date</p>
+              <p class="detail-value" id="viewHireDate"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-card" style="flex-direction:column; align-items:flex-start;">
+          <div class="detail-icon" style="margin-bottom:0.25rem;"><i class="fas fa-map-marker-alt"></i></div>
+          <p class="detail-label">Address</p>
+          <p class="detail-value" id="viewAddress" style="white-space:pre-line;"></p>
+        </div>
+
+        <div class="form-actions" style="margin-top:0.5rem; justify-content:flex-end;">
+          <button type="button" class="btn btn-primary" onclick="closeStaffView()">Close</button>
+        </div>
       </div>
     </div>
   </div>
@@ -474,7 +545,7 @@
       document.getElementById('staffModalTitle').textContent = 'Edit Staff Profile';
       document.getElementById('staffFormSubmit').textContent = 'Update Staff';
 
-      const fields = ['first_name','middle_name','last_name','gender','date_of_birth','phone','staff_email','role_id','department_id','specialization_id','address','hire_date','status','emergency_contact_name','emergency_contact_phone'];
+      const fields = ['first_name','middle_name','last_name','gender','date_of_birth','phone','staff_email','role_id','license_number','department_id','specialization_id','address','hire_date','status','emergency_contact_name','emergency_contact_phone'];
       fields.forEach((field) => {
         const element = document.getElementById(field);
         if (!element) return;
@@ -498,6 +569,7 @@
       const dataset = button.dataset;
       document.getElementById('viewName').textContent = dataset.name || 'N/A';
       document.getElementById('viewRole').textContent = dataset.role || '-';
+      document.getElementById('viewLicense').textContent = dataset.license_number || '—';
       document.getElementById('viewDepartment').textContent = dataset.department || '-';
       document.getElementById('viewSpecialization').textContent = dataset.specialization || '-';
       document.getElementById('viewPhone').textContent = dataset.phone || 'N/A';
@@ -547,7 +619,26 @@
       const scope = selectedRole ? selectedRole.dataset.scope : 'all';
       filterDepartmentOptions(scope || 'all');
       handleDepartmentChange();
+      toggleLicenseField(selectedRole ? selectedRole.textContent : '');
       updateStaffSummary();
+    }
+
+    function toggleLicenseField(roleLabel) {
+      const licenseGroup = document.getElementById('licenseFieldGroup');
+      if (!licenseGroup) return;
+      const shouldShow = shouldRequireLicense(roleLabel || '');
+      licenseGroup.style.display = shouldShow ? '' : 'none';
+      if (!shouldShow) {
+        const input = document.getElementById('license_number');
+        if (input) input.value = '';
+      }
+    }
+
+    function shouldRequireLicense(roleLabel) {
+      const text = (roleLabel || '').toLowerCase();
+      if (!text) return false;
+      const keywords = ['doctor','nurse','accounting','accountant','lab','laboratory','pharma','pharmacy'];
+      return keywords.some(keyword => text.includes(keyword));
     }
 
     function filterDepartmentOptions(scope) {

@@ -58,6 +58,12 @@ class CreateStaffProfilesTable extends Migration
                 'unsigned'   => true,
                 'null'       => true,
             ],
+            'license_number' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => true,
+                'after'      => 'role_id',
+            ],
             'department_id' => [
                 'type'       => 'INT',
                 'constraint' => 11,

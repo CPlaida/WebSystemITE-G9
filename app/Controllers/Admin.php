@@ -107,11 +107,14 @@ class Admin extends BaseController
         }
 
         $model = new UserModel();
+        $staffModel = new StaffProfileModel();
+
         $username = trim((string) $this->request->getPost('username'));
         $email = strtolower(trim((string) $this->request->getPost('email')));
         $password = (string) $this->request->getPost('password');
         $roleId = (int) ($this->request->getPost('role_id') ?? 0);
         $status = strtolower((string) $this->request->getPost('status'));
+        $staffId = (int) ($this->request->getPost('staff_id') ?? 0);
 
         if ($username === '' || $email === '' || $password === '' || empty($roleId)) {
             return redirect()->back()->withInput()->with('error', 'Please fill in all required fields.');
@@ -135,13 +138,30 @@ class Admin extends BaseController
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
+        $db = \Config\Database::connect();
+        $db->transBegin();
         try {
             $model->insert($data);
+            $newUserId = $model->getInsertID();
+
+            if ($staffId > 0) {
+                $staff = $staffModel->find($staffId);
+                if (!$staff) {
+                    throw new \RuntimeException('Selected staff profile not found.');
+                }
+                if (!empty($staff['user_id'])) {
+                    throw new \RuntimeException('This staff profile is already linked to a user.');
+                }
+                $staffModel->update($staffId, ['user_id' => $newUserId]);
+            }
+
+            $db->transCommit();
         } catch (\Throwable $e) {
+            $db->transRollback();
             // Fallback for any DB errors (e.g., race condition hitting unique index)
             $message = (strpos(strtolower($e->getMessage()), 'duplicate') !== false)
                 ? 'Email already exists.'
-                : 'Failed to create user. Please try again.';
+                : ($e->getMessage() ?: 'Failed to create user. Please try again.');
             return redirect()->back()->withInput()->with('error', $message);
         }
 
@@ -154,11 +174,13 @@ class Admin extends BaseController
             return redirect()->back();
         }
         $model = new UserModel();
+        $staffModel = new StaffProfileModel();
         $username = trim((string) $this->request->getPost('username'));
         $email = trim((string) $this->request->getPost('email'));
         $password = (string) $this->request->getPost('password');
         $roleId = (int) ($this->request->getPost('role_id') ?? 0);
         $status = strtolower((string) $this->request->getPost('status'));
+        $staffId = (int) ($this->request->getPost('staff_id') ?? 0);
 
         $data = [
             'username' => $username,
@@ -170,7 +192,28 @@ class Admin extends BaseController
         if ($password !== '') {
             $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
-        $model->update($id, $data);
+        $db = \Config\Database::connect();
+        $db->transBegin();
+        try {
+            $model->update($id, $data);
+
+            if ($staffId > 0) {
+                $staff = $staffModel->find($staffId);
+                if (!$staff) {
+                    throw new \RuntimeException('Selected staff profile not found.');
+                }
+                if (!empty($staff['user_id']) && (int)$staff['user_id'] !== (int)$id) {
+                    throw new \RuntimeException('This staff profile is already linked to another user.');
+                }
+                $staffModel->update($staffId, ['user_id' => $id]);
+            }
+
+            $db->transCommit();
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            return redirect()->back()->withInput()->with('error', $e->getMessage() ?: 'Failed to update user.');
+        }
+
         return redirect()->to('/admin/Administration/ManageUser')->with('success', 'User updated successfully.');
     }
 
@@ -374,6 +417,7 @@ class Admin extends BaseController
             'department_id' => $departmentId > 0 ? $departmentId : null,
             'specialization_id' => $specializationId > 0 ? $specializationId : null,
             'role_id' => $roleId > 0 ? $roleId : null,
+            'license_number' => trim((string)$this->request->getPost('license_number')) ?: null,
             'address' => trim((string)$this->request->getPost('address')) ?: null,
             'hire_date' => $this->nullableDate($this->request->getPost('hire_date')),
             'status' => in_array($status, ['active', 'inactive', 'on_leave'], true) ? $status : 'active',
