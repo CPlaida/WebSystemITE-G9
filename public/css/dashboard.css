@@ -1927,7 +1927,75 @@ body.receipt-page { font-family: Arial, sans-serif; line-height: 1.6; max-width:
 }
 
 /* Slight tightening of the section */
-.card-body .kv-grid { margin-top: 4px; }
+.kv > .k:last-child,
+.kv > .v:last-child {
+  border-bottom: none;
+}
+
+/* ================= Patient Records View ================= */
+.filter-buttons .btn {
+    min-width: 135px;
+}
+
+#patientsTable tbody tr:hover {
+    background: #f9fbff;
+}
+
+.patient-card {
+    border: 1px solid #e5e7eb;
+}
+
+.info-section-card {
+    border: 1px solid #edf1f7;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(15,23,42,0.08);
+}
+
+.info-section-card h6 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #1f2937;
+}
+
+.info-section-card h6 i {
+    color: #556ee6;
+}
+
+.info-section-card .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem 1rem;
+}
+
+.info-section-card .info-field label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 0.2rem;
+    display: block;
+}
+
+.info-section-card .info-field p {
+    margin: 0;
+    font-weight: 600;
+    color: #111827;
+}
+
+.info-section-card .info-field-full {
+    grid-column: 1 / -1;
+}
+
+.info-section-card .info-field-full p {
+    font-weight: 500;
+    color: #1f2937;
+}
 
 .section-title { font-size: 14px; font-weight: 700; color: #374151; margin: 8px 0 6px; }
 
