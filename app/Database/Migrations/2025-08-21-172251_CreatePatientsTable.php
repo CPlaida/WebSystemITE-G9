@@ -101,30 +101,6 @@ class CreatePatientsTable extends Migration
                 'constraint' => ['inpatient', 'outpatient'],
                 'default'    => 'outpatient',
             ],
-            'bed_id' => [
-                'type'       => 'INT',
-                'constraint' => 11,
-                'unsigned'   => true,
-                'null'       => true,
-            ],
-            'admission_date' => [
-                'type' => 'DATE',
-                'null' => true,
-            ],
-            'admission_time' => [
-                'type' => 'TIME',
-                'null' => true,
-            ],
-            'admission_type' => [
-                'type'       => 'ENUM',
-                'constraint' => ['emergency', 'elective', 'transfer'],
-                'null'       => true,
-            ],
-            'attending_physician' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 20,
-                'null'       => true,
-            ],
             'blood_type' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 5,
@@ -159,14 +135,6 @@ class CreatePatientsTable extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 20,
                 'null'       => true,
-            ],
-            'admitting_diagnosis' => [
-                'type' => 'TEXT',
-                'null' => true,
-            ],
-            'reason_admission' => [
-                'type' => 'TEXT',
-                'null' => true,
             ],
             'vitals_bp' => [
                 'type'       => 'VARCHAR',
@@ -204,7 +172,6 @@ class CreatePatientsTable extends Migration
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addKey('type');
-        $this->forge->addKey('bed_id');
         $this->forge->createTable('patients');
     }
 
