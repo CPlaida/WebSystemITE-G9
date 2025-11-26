@@ -5,16 +5,19 @@ namespace App\Controllers\Api;
 use App\Controllers\BaseController;
 use App\Models\BedModel;
 use App\Models\PatientModel;
+use App\Models\AdmissionModel;
 
 class Rooms extends BaseController
 {
     protected BedModel $beds;
     protected PatientModel $patients;
+    protected AdmissionModel $admissions;
 
     public function __construct()
     {
-        $this->beds     = new BedModel();
-        $this->patients = new PatientModel();
+        $this->beds       = new BedModel();
+        $this->patients   = new PatientModel();
+        $this->admissions = new AdmissionModel();
     }
 
     /**
@@ -206,21 +209,20 @@ class Rooms extends BaseController
         // Get all bed IDs
         $bedIds = array_column($beds, 'id');
 
-        // Load all current inpatients with assigned bed_id
-        $patients = [];
+        // Load all current admissions (status = admitted) with assigned bed_id
+        $occupiedBedIds = [];
         if (!empty($bedIds)) {
-            $patients = $this->patients
-                ->where('type', 'inpatient')
+            $admissions = $this->admissions
+                ->select('bed_id')
+                ->where('status', 'admitted')
                 ->where('bed_id IS NOT NULL')
                 ->whereIn('bed_id', $bedIds)
                 ->findAll();
-        }
 
-        // Map occupied bed IDs
-        $occupiedBedIds = [];
-        foreach ($patients as $p) {
-            if (isset($p['bed_id'])) {
-                $occupiedBedIds[$p['bed_id']] = true;
+            foreach ($admissions as $a) {
+                if (isset($a['bed_id'])) {
+                    $occupiedBedIds[(int)$a['bed_id']] = true;
+                }
             }
         }
 
