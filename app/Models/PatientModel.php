@@ -51,18 +51,11 @@ class PatientModel extends Model
         'barangay_code',
         'street',
         'type',
-        'bed_id',
-        'admission_date',
-        'admission_time',
-        'admission_type',
-        'attending_physician',
         'blood_type',
         'emergency_contact',
         'emergency_contact_person',
         'emergency_contact_relationship',
         'emergency_contact_phone',
-        'admitting_diagnosis',
-        'reason_admission',
         'vitals_bp',
         'vitals_hr',
         'vitals_temp',
@@ -100,19 +93,12 @@ class PatientModel extends Model
         'barangay_code' => 'permit_empty|max_length[10]',
         'street' => 'permit_empty|max_length[255]',
         'type' => 'permit_empty|in_list[inpatient,outpatient]',
-        'bed_id' => 'permit_empty|integer|is_not_unique[beds.id]',
-        'admission_date' => 'permit_empty|valid_date',
-        'admission_time' => 'permit_empty',
-        'admission_type' => 'permit_empty|in_list[emergency,elective,transfer]',
-        'attending_physician' => 'permit_empty|string|max_length[20]|is_not_unique[users.id]',
         'insurance_provider' => 'permit_empty|string|max_length[255]',
         'insurance_number' => 'permit_empty|string|max_length[100]',
         'hmo_provider_id' => 'permit_empty|integer',
         'hmo_member_no' => 'permit_empty|string|max_length[100]',
         'hmo_valid_from' => 'permit_empty|valid_date',
         'hmo_valid_to' => 'permit_empty|valid_date',
-        'admitting_diagnosis' => 'permit_empty|string',
-        'reason_admission' => 'permit_empty|string',
         'vitals_bp' => 'permit_empty|string|max_length[20]',
         'vitals_hr' => 'permit_empty|integer|greater_than_equal_to[0]|less_than_equal_to[300]',
         'vitals_temp' => 'permit_empty|decimal',
@@ -120,12 +106,7 @@ class PatientModel extends Model
     ];
 
     protected $beforeInsert = ['assignStringId','setCreatedAt'];
-    protected $beforeUpdate = ['setUpdatedAt', 'storeOldBedAssignment'];
-    protected $afterInsert = ['updateBedStatus'];
-    protected $afterUpdate = ['updateBedStatus'];
-    
-    // Store old bed assignment for updates
-    protected static $oldBedAssignment = [];
+    protected $beforeUpdate = ['setUpdatedAt'];
 
     protected $validationMessages = [
         'email' => [
@@ -168,77 +149,8 @@ class PatientModel extends Model
         return $data;
     }
 
-    /**
-     * Store old bed assignment before update
-     */
     protected function storeOldBedAssignment(array $data)
     {
-        if (isset($data['data']['id'])) {
-            $oldPatient = $this->find($data['data']['id']);
-            if ($oldPatient) {
-                self::$oldBedAssignment[$data['data']['id']] = [
-                    'bed_id' => $oldPatient['bed_id'] ?? null,
-                ];
-            }
-        }
-        return $data;
-    }
-
-    /**
-     * Update bed status when patient is assigned or unassigned from a bed
-     */
-    protected function updateBedStatus(array $data)
-    {
-        $bedModel = new BedModel();
-
-        // Get the patient ID from result
-        $patientId = $data['id'] ?? null;
-        if (!$patientId) {
-            return $data;
-        }
-
-        // Get the patient data
-        $patient = $this->find($patientId);
-        if (!$patient) {
-            return $data;
-        }
-
-        // Check if this is an update and we have old bed assignment
-        if (isset(self::$oldBedAssignment[$patientId])) {
-            $oldBed = self::$oldBedAssignment[$patientId];
-            $oldBedId = $oldBed['bed_id'] ?? null;
-            
-            // Get new bed assignment
-            $newBedId = $patient['bed_id'] ?? null;
-            
-            // If old bed assignment exists and is different from new, free it
-            if ($oldBedId && $oldBedId !== $newBedId) {
-                $bedModel->where('id', $oldBedId)
-                         ->set('status', 'Available')
-                         ->update();
-            }
-            
-            // Clear stored old assignment
-            unset(self::$oldBedAssignment[$patientId]);
-        }
-
-        // Get current bed assignment
-        $bedId = $patient['bed_id'] ?? null;
-        $type = $patient['type'] ?? '';
-
-        // Update bed status based on patient assignment
-        if ($type === 'inpatient' && $bedId) {
-            // Set bed status to Occupied for inpatients
-            $bedModel->where('id', $bedId)
-                     ->set('status', 'Occupied')
-                     ->update();
-        } elseif ($bedId) {
-            // Patient is not inpatient or was unassigned - free the bed
-            $bedModel->where('id', $bedId)
-                     ->set('status', 'Available')
-                     ->update();
-        }
-
         return $data;
     }
 }
