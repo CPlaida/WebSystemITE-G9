@@ -21,6 +21,7 @@
                 <ul class="submenu">
                     <li><a href="<?= base_url('admin/patients/register') ?>"><span class="text">Register Out Patient</span></a></li>
                     <li><a href="<?= base_url('admin/patients/inpatient') ?>"><span class="text">Register In Patient</span></a></li>
+                    <li><a href="<?= base_url('admin/patients/admission') ?>"><span class="text">Admission</span></a></li>
                     <li><a href="<?= base_url('patients/view') ?>"><span class="text">View Patient</span></a></li>
                 </ul>
             </li>
