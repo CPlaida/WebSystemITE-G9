@@ -6,18 +6,21 @@ use App\Controllers\BaseController;
 use App\Models\PatientModel;
 use App\Models\UserModel;
 use App\Models\Financial\HmoProviderModel;
+use App\Models\AdmissionModel;
 
 class Patients extends BaseController
 {
     protected $patientModel;
     protected $userModel;
     protected $hmoProviderModel;
+    protected $admissionModel;
     
     public function __construct()
     {
         $this->patientModel = new PatientModel();
         $this->userModel = new UserModel();
         $this->hmoProviderModel = new HmoProviderModel();
+        $this->admissionModel = new AdmissionModel();
         helper(['form', 'url', 'auth']);
     }
 
@@ -143,12 +146,24 @@ class Patients extends BaseController
     // Other methods will be added here
     public function index()
     {
-        $data = [
-            'title' => 'Manage Patients',
-            'patients' => $this->patientModel->findAll()
-        ];
-        
-        return view('Roles/admin/patients/view', $data);
+        $filter = $this->request->getGet('filter') ?? 'inpatient';
+        $filter = in_array($filter, ['inpatient', 'outpatient', 'admitted'], true) ? $filter : 'inpatient';
+
+        if ($filter === 'admitted') {
+            $patients = $this->getAdmittedPatients();
+        } else {
+            $patients = $this->patientModel
+                ->where('type', $filter === 'outpatient' ? 'outpatient' : 'inpatient')
+                ->orderBy('last_name', 'ASC')
+                ->orderBy('first_name', 'ASC')
+                ->findAll();
+        }
+
+        return view('Roles/admin/patients/view', [
+            'title' => 'Patient Records',
+            'patients' => $patients,
+            'currentFilter' => $filter,
+        ]);
     }
 
     public function inpatient()
@@ -190,5 +205,69 @@ class Patients extends BaseController
         ];
         
         return view('Roles/admin/patients/view', $data);
+    }
+
+    protected function countPatientsByType(string $type): int
+    {
+        return (int) $this->patientModel->where('type', $type)->countAllResults();
+    }
+
+    protected function countAdmittedPatients(): int
+    {
+        return count($this->getAdmittedPatients());
+    }
+
+    protected function getAdmittedPatients(): array
+    {
+        $rows = $this->admissionModel
+            ->select([
+                'admission_details.id AS admission_id',
+                'admission_details.patient_id AS admission_patient_id',
+                'admission_details.admission_date',
+                'admission_details.admission_time',
+                'admission_details.admission_type',
+                'admission_details.status AS admission_status',
+                'admission_details.admitting_diagnosis',
+                'admission_details.reason_admission',
+                'admission_details.ward AS admission_ward',
+                'admission_details.room AS admission_room',
+                'admission_details.bed_id',
+                'patients.*',
+                'beds.ward AS bed_ward',
+                'beds.room AS bed_room',
+                'beds.bed AS bed_label',
+                'users.username AS physician_username',
+                "COALESCE(CONCAT(doctors.first_name, ' ', doctors.last_name), users.username) AS physician_name",
+                'role.name AS physician_role',
+            ])
+            ->join('patients', 'patients.id = admission_details.patient_id', 'left')
+            ->join('beds', 'beds.id = admission_details.bed_id', 'left')
+            ->join('users', 'users.id = admission_details.attending_physician', 'left')
+            ->join('doctors', 'doctors.user_id = users.id', 'left')
+            ->join('roles role', 'role.id = users.role_id', 'left')
+            ->where('admission_details.status', 'admitted')
+            ->orderBy('CASE WHEN role.name = "doctor" THEN 0 ELSE 1 END', 'ASC', false)
+            ->orderBy('admission_details.created_at', 'DESC')
+            ->orderBy('admission_details.id', 'DESC')
+            ->orderBy('admission_details.admission_date', 'DESC')
+            ->orderBy('admission_details.admission_time', 'DESC')
+            ->findAll();
+
+        if (empty($rows)) {
+            return [];
+        }
+
+        $unique = [];
+        $seen = [];
+        foreach ($rows as $row) {
+            $patientId = $row['admission_patient_id'] ?? ($row['patient_id'] ?? ($row['id'] ?? null));
+            if (!$patientId || isset($seen[$patientId])) {
+                continue;
+            }
+            $seen[$patientId] = true;
+            $unique[] = $row;
+        }
+
+        return $unique;
     }
 }

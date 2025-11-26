@@ -101,6 +101,12 @@ class CreatePatientsTable extends Migration
                 'constraint' => ['inpatient', 'outpatient'],
                 'default'    => 'outpatient',
             ],
+            'bed_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'null'       => true,
+            ],
             'blood_type' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 5,
@@ -172,6 +178,8 @@ class CreatePatientsTable extends Migration
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addKey('type');
+        $this->forge->addKey('bed_id');
+        $this->forge->addForeignKey('bed_id', 'beds', 'id', 'SET NULL', 'CASCADE');
         $this->forge->createTable('patients');
     }
 

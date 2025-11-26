@@ -1,393 +1,269 @@
-<?php $this->extend('partials/header') ?>
+<?= $this->extend('partials/header') ?>
 
-<?= $this->section('title') ?>Patient Registration<?= $this->endSection() ?>
+<?= $this->section('title') ?>Patient Records<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  <div class="container">
-    <!-- Patient List Section -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Patient Records</h2>
-      </div>
-      <div class="unified-search-wrapper">
-          <div class="unified-search-row">
-              <i class="fas fa-search unified-search-icon"></i>
-              <input type="text" id="searchInput" class="unified-search-field" placeholder="Search patients..." onkeyup="if(event.key === 'Enter') filterPatients()">
-          </div>
-      </div>
-      <div class="card-body">
-        <!-- Success/Error Messages -->
+<?php
+    $filters = [
+        'inpatient' => ['label' => 'Inpatients', 'icon' => 'fa-procedures'],
+        'outpatient' => ['label' => 'Outpatients', 'icon' => 'fa-user-check'],
+        'admitted' => ['label' => 'Admitted Patients', 'icon' => 'fa-hospital-user'],
+    ];
+    $currentFilter = $currentFilter ?? 'inpatient';
+    $isAdmitted = $currentFilter === 'admitted';
+    $stats = $stats ?? ['total' => 0, 'inpatients' => 0, 'outpatients' => 0, 'admitted' => 0];
+?>
+
+<div class="main-content" id="mainContent">
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">Patient Records</h1>
+        </div>
+
         <?php if (session()->getFlashdata('success')): ?>
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>
-            <?= session()->getFlashdata('success') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">×</button>
-          </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <?= session()->getFlashdata('success') ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">×</button>
+            </div>
         <?php endif; ?>
 
         <?php if (session()->getFlashdata('error')): ?>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>
-            <?= session()->getFlashdata('error') ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">×</button>
-          </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <?= session()->getFlashdata('error') ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">×</button>
+            </div>
         <?php endif; ?>
 
-        <?php 
-        // Group patients by type (assuming there's a 'type' field in the patients table)
-        $inpatients = array_filter($patients, function($patient) {
-            return ($patient['type'] ?? 'outpatient') === 'inpatient';
-        });
-        
-        $outpatients = array_filter($patients, function($patient) {
-            return ($patient['type'] ?? 'outpatient') === 'outpatient';
-        });
-        ?>
-
-        <!-- Inpatients Section -->
-        <h3 class="mt-4 mb-3">Inpatients</h3>
-        <table class="data-table mb-5">
-          <thead>
-            <tr>
-              <th>Patient ID</th>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Address</th>
-              <th>Gender</th>
-              <th>Date of Birth</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="inpatientTable">
-            <?php if (!empty($inpatients)): ?>
-              <?php foreach ($inpatients as $patient): ?>
-                <tr>
-                  <td><?= esc($patient['id']) ?></td>
-                  <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''))) ?></td>
-                  <td><?= esc($patient['phone']) ?></td>
-                  <td><?= esc($patient['address'] ?? 'N/A') ?></td>
-                  <td><?= esc(ucfirst($patient['gender'])) ?></td>
-                  <td><?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?></td>
-                  <td>
-                    <span class="badge <?= $patient['status'] === 'active' ? 'badge-success' : 'badge-secondary' ?>">
-                      <?= esc(ucfirst($patient['status'])) ?>
-                    </span>
-                  </td>
-                  <td>
-                    <div class="action-buttons">
-                      <?php 
-                        $fullName = trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''));
-                      ?>
-                      <button class="btn-view" onclick="viewPatient('<?= esc($fullName) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>','<?= esc($patient['insurance_provider'] ?? 'N/A') ?>','<?= esc($patient['insurance_number'] ?? 'N/A') ?>')">View</button>
+        <div class="card patient-card">
+            <div class="card-header organized-header flex-column flex-md-row">
+                <div class="filter-buttons mb-3 mb-md-0">
+                    <?php foreach ($filters as $key => $info): ?>
+                        <a href="<?= base_url('admin/patients?filter=' . $key) ?>"
+                           class="btn btn-sm <?= $currentFilter === $key ? 'btn-primary' : 'btn-outline-primary' ?>">
+                            <i class="fas <?= esc($info['icon']) ?> me-1"></i> <?= esc($info['label']) ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+                <div class="search-wrapper-inline">
+                    <i class="fas fa-search search-icon-inline"></i>
+                    <input type="text" id="searchInput" class="search-input-inline"
+                           placeholder="Search by name, patient ID, ward, or status...">
+                    <button type="button" class="search-clear-btn-inline" id="clearSearch" style="display:none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <?php if (empty($patients)): ?>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No patients found for the selected filter.
                     </div>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <tr>
-                <td colspan="8" class="text-center">
-                  <p class="text-muted">No inpatients found.</p>
-                </td>
-              </tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
-
-        <!-- Outpatients Section -->
-        <h3 class="mt-5 mb-3">Outpatients</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Patient ID</th>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Address</th>
-              <th>Gender</th>
-              <th>Date of Birth</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="outpatientTable">
-            <?php if (!empty($outpatients)): ?>
-              <?php foreach ($outpatients as $patient): ?>
-                <tr>
-                  <td><?= esc($patient['id']) ?></td>
-                  <td><?= esc(trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''))) ?></td>
-                  <td><?= esc($patient['phone']) ?></td>
-                  <td><?= esc($patient['address'] ?? 'N/A') ?></td>
-                  <td><?= esc(ucfirst($patient['gender'])) ?></td>
-                  <td><?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?></td>
-                  <td>
-                    <span class="badge <?= $patient['status'] === 'active' ? 'badge-success' : 'badge-secondary' ?>">
-                      <?= esc(ucfirst($patient['status'])) ?>
-                    </span>
-                  </td>
-                  <td>
-                    <div class="action-buttons">
-                      <?php 
-                        $fullName = trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''));
-                      ?>
-                      <button class="btn-view" onclick="viewPatient('<?= esc($fullName) ?>','<?= esc($patient['phone']) ?>','<?= esc($patient['address'] ?? 'N/A') ?>','<?= esc(date('M d, Y', strtotime($patient['date_of_birth']))) ?>','<?= esc(ucfirst($patient['gender'])) ?>','<?= esc($patient['medical_history'] ?? 'No medical history recorded') ?>','<?= esc($patient['id']) ?>','<?= esc($patient['email'] ?? 'N/A') ?>','<?= esc($patient['blood_type'] ?? 'N/A') ?>','<?= esc($patient['emergency_contact'] ?? 'N/A') ?>')">View</button>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="data-table" id="patientsTable">
+                            <thead>
+                                <tr>
+                                    <th>Patient ID</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th><?= $isAdmitted ? 'Ward / Room / Bed' : 'Address' ?></th>
+                                    <th><?= $isAdmitted ? 'Physician' : 'Gender' ?></th>
+                                    <th><?= $isAdmitted ? 'Admission Date' : 'DOB' ?></th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($patients as $patient): ?>
+                                    <?php
+                                        $fullName = trim(($patient['first_name'] ?? '') . ' ' . ($patient['middle_name'] ?? '') . ' ' . ($patient['last_name'] ?? '') . ' ' . ($patient['name_extension'] ?? ''));
+                                        $contact = $patient['phone'] ?? '-';
+                                        $address = $patient['address'] ?? 'N/A';
+                                        $gender = isset($patient['gender']) ? ucfirst($patient['gender']) : '-';
+                                        $dob = isset($patient['date_of_birth']) ? date('M d, Y', strtotime($patient['date_of_birth'])) : '-';
+                                        $status = $isAdmitted ? ($patient['admission_status'] ?? 'admitted') : ($patient['status'] ?? 'active');
+                                        $statusClass = in_array(strtolower($status), ['admitted', 'active'], true) ? 'badge-success' : 'badge-secondary';
+                                        $wardRoom = trim(trim(($patient['admission_ward'] ?? $patient['bed_ward'] ?? '') . ' / ' . ($patient['admission_room'] ?? $patient['bed_room'] ?? '') . ' / ' . ($patient['bed_label'] ?? '')), ' /');
+                                        $physician = $patient['physician_name'] ?? '—';
+                                        $admissionDate = isset($patient['admission_date']) ? date('M d, Y', strtotime($patient['admission_date'])) : '-';
+                                        $payload = [
+                                            'id' => $patient['id'] ?? $patient['admission_patient_id'] ?? '-',
+                                            'full_name' => $fullName ?: '—',
+                                            'phone' => $contact,
+                                            'email' => $patient['email'] ?? 'N/A',
+                                            'address' => $address,
+                                            'dob' => $dob,
+                                            'gender' => $gender,
+                                            'blood_type' => $patient['blood_type'] ?? 'N/A',
+                                            'medical_history' => $patient['medical_history'] ?? 'No medical history recorded.',
+                                            'insurance_provider' => $patient['insurance_provider'] ?? 'N/A',
+                                            'insurance_number' => $patient['insurance_number'] ?? 'N/A',
+                                            'ward' => $patient['admission_ward'] ?? $patient['bed_ward'] ?? '—',
+                                            'room' => $patient['admission_room'] ?? $patient['bed_room'] ?? '—',
+                                            'bed' => $patient['bed_label'] ?? '—',
+                                            'physician' => $physician,
+                                            'admission_type' => $patient['admission_type'] ?? '—',
+                                            'admission_date' => $admissionDate,
+                                        ];
+                                    ?>
+                                    <tr>
+                                        <td><strong><?= esc($payload['id']) ?></strong></td>
+                                        <td><?= esc($fullName ?: '—') ?></td>
+                                        <td><?= esc($contact) ?></td>
+                                        <td><?= $isAdmitted ? esc($wardRoom ?: '—') : esc($address) ?></td>
+                                        <td><?= $isAdmitted ? esc($physician) : esc($gender) ?></td>
+                                        <td><?= $isAdmitted ? esc($admissionDate) : esc($dob) ?></td>
+                                        <td>
+                                            <span class="badge <?= esc($statusClass) ?> px-3 py-2">
+                                                <?= esc(ucfirst($status)) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary view-patient-btn"
+                                                data-patient='<?= esc(json_encode($payload, JSON_HEX_APOS | JSON_HEX_QUOT), 'attr') ?>'>
+                                                <i class="fas fa-eye me-1"></i>View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <tr>
-                <td colspan="8" class="text-center">
-                  <p class="text-muted">No outpatients found.</p>
-                </td>
-              </tr>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="patientModal" style="display: none;">
+    <div class="modal-content patient-modal-content">
+        <div class="modal-header patient-modal-header">
+            <div class="modal-title-wrapper">
+                <i class="fas fa-user-circle modal-title-icon"></i>
+                <div>
+                    <h5 class="modal-title-main">Patient Snapshot</h5>
+                    <p class="modal-subtitle">Demographics • Admission • Insurance</p>
+                </div>
+            </div>
+            <button type="button" class="close-btn" onclick="closePatientModal()" aria-label="Close">×</button>
+        </div>
+        <div class="modal-body patient-modal-body">
+            <div class="info-section-card">
+                <h6><i class="fas fa-id-card"></i> Personal Information</h6>
+                <div class="info-grid">
+                    <div class="info-field"><label>Patient ID</label><p id="patient-id">-</p></div>
+                    <div class="info-field"><label>Full Name</label><p id="patient-name">-</p></div>
+                    <div class="info-field"><label>Gender</label><p id="patient-gender">-</p></div>
+                    <div class="info-field"><label>Date of Birth</label><p id="patient-dob">-</p></div>
+                    <div class="info-field"><label>Blood Type</label><p id="patient-blood-type">-</p></div>
+                </div>
+            </div>
+
+            <div class="info-section-card">
+                <h6><i class="fas fa-address-book"></i> Contact Details</h6>
+                <div class="info-grid">
+                    <div class="info-field"><label>Phone</label><p id="patient-contact">-</p></div>
+                    <div class="info-field"><label>Address</label><p id="patient-address">-</p></div>
+                </div>
+            </div>
+
+            <?php if ($isAdmitted): ?>
+            <div class="info-section-card">
+                <h6><i class="fas fa-hospital"></i> Admission Overview</h6>
+                <div class="info-grid">
+                    <div class="info-field"><label>Ward</label><p id="patient-ward">-</p></div>
+                    <div class="info-field"><label>Room</label><p id="patient-room">-</p></div>
+                    <div class="info-field"><label>Bed</label><p id="patient-bed">-</p></div>
+                    <div class="info-field"><label>Physician</label><p id="patient-physician">-</p></div>
+                    <div class="info-field"><label>Admission Type</label><p id="patient-admission-type">-</p></div>
+                    <div class="info-field"><label>Admission Date</label><p id="patient-admission-date">-</p></div>
+                </div>
+            </div>
             <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 
-  <!-- Popup Modal -->
-  <div class="modal" id="ehrModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5>Electronic Health Records</h5>
-        <button class="close-btn" onclick="closeModal()">×</button>
-      </div>
-      <div class="ehr-container">
-        <div class="ehr-info">
-          <p><b>Patient ID:</b> <span id="ehrPatientId">-</span></p>
-          <p><b>Full Name:</b> <span id="ehrName">-</span></p>
-          <p><b>Mobile:</b> <span id="ehrMobile">-</span></p>
-          <p><b>Email:</b> <span id="ehrEmail">-</span></p>
-          <p><b>Address:</b> <span id="ehrAddress">-</span></p>
-          <p><b>Date of Birth:</b> <span id="ehrDOB">-</span></p>
-          <p><b>Gender:</b> <span id="ehrGender">-</span></p>
-          <p><b>Blood Type:</b> <span id="ehrBloodType">-</span></p>
-          <p><b>Insurance Provider:</b> <span id="ehrInsuranceProvider">-</span></p>
-          <p><b>Insurance No.:</b> <span id="ehrInsuranceNumber">-</span></p>
-          <p><b>Medical History:</b> <span id="ehrAilment">-</span></p>
-          <p><b>Date Recorded:</b> <span id="ehrDate">-</span></p>
+            <div class="info-section-card">
+                <h6><i class="fas fa-file-invoice"></i> Insurance</h6>
+                <div class="info-grid">
+                    <div class="info-field"><label>Provider</label><p id="patient-insurance-provider">-</p></div>
+                    <div class="info-field"><label>Policy No.</label><p id="patient-insurance-number">-</p></div>
+                </div>
+            </div>
+
+            <div class="info-section-card">
+                <h6><i class="fas fa-notes-medical"></i> Medical History</h6>
+                <div class="info-field-full">
+                    <p id="patient-medical-history">-</p>
+                </div>
+            </div>
         </div>
-        <div class="ehr-tabs">
-          <div class="tabs">
-            <button class="tab-btn active" onclick="openTab(event,'prescription')">Prescription</button>
-            <button class="tab-btn" onclick="openTab(event,'vitals')">Vitals</button>
-            <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
-          </div>
-          <div id="prescription" class="tab-content">
-            <div id="ehrPrescriptionContent" style="min-height:120px; padding:10px; border:1px solid #e5e7eb; border-radius:6px; color:#2c3e50; font-size:14px;">
-              Prescription details will appear here...
-            </div>
-          </div>
-          <div id="vitals" class="tab-content" style="display:none;">
-            <div class="vitals-section" style="font-size:14px; color:#2c3e50;">
-              <h6 style="font-weight:600; margin-bottom:8px;">
-                <i class="fas fa-heartbeat me-1"></i> Vitals
-              </h6>
-              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px 16px;">
-                <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
-                <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
-                <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
-                <div><strong>Last Updated:</strong> <span id="ehrVitalsUpdated">-</span></div>
-              </div>
-            </div>
-          </div>
-          <div id="lab" class="tab-content" style="display:none;">
-            <div id="ehrLabContainer" style="min-height:120px; padding:6px 0; color:#2c3e50; font-size:14px;">
-              <em>Loading lab records...</em>
-            </div>
-          </div>
+        <div class="modal-footer patient-modal-footer">
+            <button type="button" class="btn-close-modal" onclick="closePatientModal()">
+                <i class="fas fa-times me-2"></i>Close
+            </button>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <script>
-    function viewPatient(name, mobile, address, dob, gender, medicalHistory, patientId, email, bloodType, emergencyContact, insuranceProvider, insuranceNumber) {
-      document.getElementById("ehrName").innerText = name;
-      document.getElementById("ehrMobile").innerText = mobile;
-      document.getElementById("ehrAddress").innerText = address;
-      document.getElementById("ehrDOB").innerText = dob;
-      document.getElementById("ehrGender").innerText = gender;
-      document.getElementById("ehrAilment").innerText = medicalHistory;
-      document.getElementById("ehrDate").innerText = new Date().toLocaleDateString();
-
-      // Add additional patient info
-      document.getElementById("ehrPatientId").innerText = patientId;
-      document.getElementById("ehrEmail").innerText = email;
-      document.getElementById("ehrBloodType").innerText = bloodType;
-      document.getElementById("ehrInsuranceProvider").innerText = insuranceProvider || 'N/A';
-      document.getElementById("ehrInsuranceNumber").innerText = insuranceNumber || 'N/A';
-
-      document.getElementById("ehrModal").style.display = "flex";
-
-      // Load latest prescription, vitals and lab records for this patient
-      loadPrescription(patientId);
-      loadVitals(patientId);
-      loadLabRecords(patientId, name);
-    }
-
-    function closeModal() {
-      document.getElementById("ehrModal").style.display = "none";
-    }
-
-    function openTab(evt, tabName) {
-      var content = document.getElementsByClassName("tab-content");
-      for (let i = 0; i < content.length; i++) {
-        content[i].style.display = "none";
-      }
-      var btns = document.getElementsByClassName("tab-btn");
-      for (let i = 0; i < btns.length; i++) {
-        btns[i].classList.remove("active");
-      }
-      document.getElementById(tabName).style.display = "block";
-      evt.currentTarget.classList.add("active");
-
-      const pid = document.getElementById('ehrPatientId').innerText.trim();
-      const pname = document.getElementById('ehrName').innerText.trim();
-
-      // If opening Lab tab, refresh records for currently viewed patient
-      if (tabName === 'lab') {
-        loadLabRecords(pid || '', pname);
-      }
-      // If opening Vitals tab, refresh vitals for current patient
-      if (tabName === 'vitals' && pid) {
-        loadVitals(pid);
-      }
-      // Refresh prescription when tab is opened
-      if (tabName === 'prescription' && pid) {
-        loadPrescription(pid);
-      }
-    }
-
-    async function loadPrescription(patientId) {
-      const content = document.getElementById('ehrPrescriptionContent');
-      if (!content) return;
-      content.textContent = 'Loading prescription...';
-
-      try {
-        const res = await fetch(`<?= base_url('doctor/prescription') ?>?patient_id=${encodeURIComponent(patientId)}`, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.view-patient-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const payload = this.getAttribute('data-patient');
+                if (!payload) {
+                    alert('No patient data available');
+                    return;
+                }
+                try {
+                    const patient = JSON.parse(payload);
+                    fillPatientModal(patient);
+                    openPatientModal();
+                } catch (e) {
+                    console.error('Failed to parse patient payload', e);
+                    alert('Unable to load patient details');
+                }
+            });
         });
-        const data = await res.json();
-        if (!data || !data.success) {
-          content.textContent = (data && data.message) ? data.message : 'Failed to load prescription.';
-          return;
+    });
+
+    function fillPatientModal(data) {
+        document.getElementById('patient-id').innerText = data.id || '-';
+        document.getElementById('patient-name').innerText = data.full_name || '-';
+        document.getElementById('patient-contact').innerText = data.phone || '-';
+        document.getElementById('patient-address').innerText = data.address || '-';
+        document.getElementById('patient-dob').innerText = data.dob || '-';
+        document.getElementById('patient-gender').innerText = data.gender || '-';
+        document.getElementById('patient-blood-type').innerText = data.blood_type || '-';
+        document.getElementById('patient-medical-history').innerText = data.medical_history || '-';
+        document.getElementById('patient-insurance-provider').innerText = data.insurance_provider || '-';
+        document.getElementById('patient-insurance-number').innerText = data.insurance_number || '-';
+        <?php if ($isAdmitted): ?>
+            document.getElementById('patient-ward').innerText = data.ward || '-';
+            document.getElementById('patient-room').innerText = data.room || '-';
+            document.getElementById('patient-bed').innerText = data.bed || '-';
+            document.getElementById('patient-physician').innerText = data.physician || '-';
+            document.getElementById('patient-admission-type').innerText = data.admission_type || '-';
+            document.getElementById('patient-admission-date').innerText = data.admission_date || '-';
+        <?php endif; ?>
+    }
+
+    function openPatientModal() {
+        const modal = document.getElementById('patientModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closePatientModal() {
+        const modal = document.getElementById('patientModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('patientModal');
+        if (event.target === modal) {
+            closePatientModal();
         }
-        const note = data.note ? data.note.trim() : '';
-        content.textContent = note !== '' ? note : 'No prescription note recorded yet.';
-      } catch (e) {
-        content.textContent = 'Error loading prescription.';
-      }
-    }
-
-    async function loadVitals(patientId) {
-      const bpEl = document.getElementById('ehrVitalsBp');
-      const hrEl = document.getElementById('ehrVitalsHr');
-      const tempEl = document.getElementById('ehrVitalsTemp');
-      const updatedEl = document.getElementById('ehrVitalsUpdated');
-
-      if (!bpEl || !hrEl || !tempEl || !updatedEl) return;
-
-      // Indicate loading state
-      bpEl.innerText = hrEl.innerText = tempEl.innerText = '...';
-      updatedEl.innerText = 'Loading...';
-
-      try {
-        const res = await fetch(`<?= base_url('doctor/vitals') ?>?patient_id=${encodeURIComponent(patientId)}`, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        const data = await res.json();
-        if (!data || !data.success) {
-          bpEl.innerText = hrEl.innerText = tempEl.innerText = '-';
-          updatedEl.innerText = data && data.message ? data.message : 'No vitals data';
-          return;
-        }
-        const v = data.vitals || null;
-        bpEl.innerText = v && v.blood_pressure ? v.blood_pressure : '-';
-        hrEl.innerText = v && v.heart_rate ? v.heart_rate : '-';
-        tempEl.innerText = v && v.temperature ? v.temperature : '-';
-        updatedEl.innerText = v && v.created_at ? (new Date(v.created_at)).toLocaleString() : '-';
-      } catch (e) {
-        bpEl.innerText = hrEl.innerText = tempEl.innerText = '-';
-        updatedEl.innerText = 'Error loading vitals';
-      }
-    }
-
-    function loadLabRecords(patientId, name){
-      const cont = document.getElementById('ehrLabContainer');
-      if (!cont) return;
-      cont.innerHTML = '<em>Loading lab records...</em>';
-
-      const params = new URLSearchParams();
-      if (name) params.append('name', name);
-      if (patientId) params.append('patient_id', String(patientId));
-
-      fetch('<?= base_url('laboratory/patient/lab-records') ?>?' + params.toString(), {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (!data || !data.success) { cont.innerHTML = '<span style="color:#dc3545">Failed to load lab records.</span>'; return; }
-        const rows = Array.isArray(data.records) ? data.records : [];
-        if (rows.length === 0) { cont.innerHTML = '<span style="color:#6c757d">No lab records found.</span>'; return; }
-        let html = '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse">'+
-                   '<thead><tr style="text-align:left; border-bottom:1px solid #e9ecef">'+
-                   '<th style="padding:6px 8px">Date</th><th style="padding:6px 8px">Test</th><th style="padding:6px 8px">Status</th><th style="padding:6px 8px">Notes</th><th style="padding:6px 8px">Action</th></tr></thead><tbody>';
-        rows.forEach(r => {
-          const d = r.test_date ? new Date(r.test_date).toLocaleDateString() : '-';
-          const t = r.test_type || '-';
-          const n = r.notes ? String(r.notes).substring(0,120) : '—';
-          const status = (r.status || 'pending').toLowerCase();
-          let statusBadge = '';
-          let statusColor = '#6c757d';
-          if (status === 'completed') {
-            statusColor = '#28a745';
-            statusBadge = '<span style="background:#28a745; color:#fff; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">Completed</span>';
-          } else if (status === 'in_progress') {
-            statusColor = '#007bff';
-            statusBadge = '<span style="background:#007bff; color:#fff; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">In Progress</span>';
-          } else {
-            statusColor = '#ffc107';
-            statusBadge = '<span style="background:#ffc107; color:#212529; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">Pending</span>';
-          }
-          const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (r.id || '');
-          const actionBtn = status === 'completed' 
-            ? `<a href="${viewUrl}" class="btn btn-sm btn-primary">View</a>`
-            : `<span style="color:#6c757d; font-size:12px;">${status === 'in_progress' ? 'Processing...' : 'Pending'}</span>`;
-          html += `<tr style="border-bottom:1px solid #f1f3f5"><td style="padding:6px 8px">${d}</td><td style="padding:6px 8px">${t}</td><td style="padding:6px 8px">${statusBadge}</td><td style="padding:6px 8px">${n}</td><td style="padding:6px 8px">${actionBtn}</td></tr>`;
-        });
-        html += '</tbody></table></div>';
-        cont.innerHTML = html;
-      })
-      .catch(() => { cont.innerHTML = '<span style="color:#dc3545">Error loading lab records.</span>'; });
-    }
-
-    // Close modal on outside click
-    window.onclick = function(event) {
-      let modal = document.getElementById("ehrModal");
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    }
-
-    function filterPatients() {
-      const searchInput = document.getElementById('searchInput');
-      const searchTerm = searchInput.value.toLowerCase();
-      const tableRows = document.querySelectorAll('tbody tr');
-      
-      tableRows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        if (text.includes(searchTerm)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    }
-
-    // Add event listener for input changes (real-time search)
-    document.getElementById('searchInput').addEventListener('input', filterPatients);
-  </script>
+    });
+</script>
 <?= $this->endSection() ?>

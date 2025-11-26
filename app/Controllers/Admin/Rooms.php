@@ -5,16 +5,19 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\PatientModel;
 use App\Models\BedModel;
+use App\Models\AdmissionModel;
 
 class Rooms extends BaseController
 {
     protected PatientModel $patients;
     protected BedModel $beds;
+    protected AdmissionModel $admissions;
 
     public function __construct()
     {
-        $this->patients = new PatientModel();
-        $this->beds     = new BedModel();
+        $this->patients   = new PatientModel();
+        $this->beds       = new BedModel();
+        $this->admissions = new AdmissionModel();
     }
 
     public function pediaWard()
@@ -88,22 +91,8 @@ class Rooms extends BaseController
         // Get all bed IDs for this ward
         $bedIds = array_column($beds, 'id');
 
-        // Load all inpatients assigned to beds in this ward (using bed_id)
-        $patients = [];
-        if (!empty($bedIds)) {
-            $patients = $this->patients
-                ->where('type', 'inpatient')
-                ->whereIn('bed_id', $bedIds)
-                ->findAll();
-        }
-
-        // Map patients by bed_id for quick lookup
-        $patientsByBedId = [];
-        foreach ($patients as $p) {
-            if (isset($p['bed_id'])) {
-                $patientsByBedId[$p['bed_id']] = $p;
-            }
-        }
+        // Load current occupants (from admissions) mapped by bed ID
+        $patientsByBedId = $this->getBedOccupants($bedIds);
 
         // Build rows for view: every bed row from DB
         $rows = [];
@@ -123,8 +112,6 @@ class Rooms extends BaseController
                 $patient['ward'] = $wardAbbr ? $this->getWardDisplayName($wardAbbr) : '';
                 $patient['room'] = $bedRow['room'] ?? '';
                 $patient['bed'] = $bedRow['bed'] ?? '';
-                // Parse emergency contact JSON if present
-                $this->parseEmergencyContact($patient);
             }
 
             // Effective status: Occupied if there is an inpatient, otherwise use bed.status
@@ -142,6 +129,38 @@ class Rooms extends BaseController
         }
 
         return $rows;
+    }
+
+    protected function getBedOccupants(array $bedIds): array
+    {
+        $bedIds = array_filter(array_map('intval', $bedIds));
+        if (empty($bedIds)) {
+            return [];
+        }
+
+        $records = $this->admissions
+            ->select('admission_details.bed_id AS admission_bed_id, patients.*')
+            ->join('patients', 'patients.id = admission_details.patient_id', 'left')
+            ->where('admission_details.status', 'admitted')
+            ->whereIn('admission_details.bed_id', $bedIds)
+            ->orderBy('admission_details.created_at', 'DESC')
+            ->findAll();
+
+        $occupants = [];
+        foreach ($records as $record) {
+            $bedId = (int) ($record['admission_bed_id'] ?? $record['bed_id'] ?? 0);
+            if (!$bedId) {
+                continue;
+            }
+
+            $patient = $record;
+            // Keep reference to original patient ID even if other selects override key names
+            $patient['patient_id'] = $patient['id'] ?? null;
+            $this->parseEmergencyContact($patient);
+            $occupants[$bedId] = $patient;
+        }
+
+        return $occupants;
     }
 
     public function criticalCare()
@@ -211,22 +230,8 @@ class Rooms extends BaseController
         // Get all bed IDs for this ward
         $bedIds = array_column($beds, 'id');
 
-        // Load all inpatients assigned to beds in this ward (using bed_id)
-        $patients = [];
-        if (!empty($bedIds)) {
-            $patients = $this->patients
-                ->where('type', 'inpatient')
-                ->whereIn('bed_id', $bedIds)
-                ->findAll();
-        }
-
-        // Map patients by bed_id for quick lookup
-        $patientsByBedId = [];
-        foreach ($patients as $p) {
-            if (isset($p['bed_id'])) {
-                $patientsByBedId[$p['bed_id']] = $p;
-            }
-        }
+        // Load current occupants (from admissions) mapped by bed ID
+        $patientsByBedId = $this->getBedOccupants($bedIds);
 
         // Build rows for view: every bed row from DB
         $rows = [];
@@ -246,8 +251,6 @@ class Rooms extends BaseController
                 $patient['ward'] = $wardAbbr ? $this->getWardDisplayName($wardAbbr) : '';
                 $patient['room'] = $bedRow['room'] ?? '';
                 $patient['bed'] = $bedRow['bed'] ?? '';
-                // Parse emergency contact JSON if present
-                $this->parseEmergencyContact($patient);
             }
 
             // Effective status: Occupied if there is an inpatient, otherwise use bed.status
@@ -434,22 +437,8 @@ class Rooms extends BaseController
         // Get all bed IDs for this ward
         $bedIds = array_column($beds, 'id');
 
-        // Load all inpatients assigned to beds in this ward (using bed_id)
-        $patients = [];
-        if (!empty($bedIds)) {
-            $patients = $this->patients
-                ->where('type', 'inpatient')
-                ->whereIn('bed_id', $bedIds)
-                ->findAll();
-        }
-
-        // Map patients by bed_id for quick lookup
-        $patientsByBedId = [];
-        foreach ($patients as $p) {
-            if (isset($p['bed_id'])) {
-                $patientsByBedId[$p['bed_id']] = $p;
-            }
-        }
+        // Load current occupants (from admissions) mapped by bed ID
+        $patientsByBedId = $this->getBedOccupants($bedIds);
 
         // Build rows for view: every bed row from DB
         $rows = [];
@@ -520,22 +509,8 @@ class Rooms extends BaseController
         // Get all bed IDs for this ward
         $bedIds = array_column($beds, 'id');
 
-        // Load all inpatients assigned to beds in this ward (using bed_id)
-        $patients = [];
-        if (!empty($bedIds)) {
-            $patients = $this->patients
-                ->where('type', 'inpatient')
-                ->whereIn('bed_id', $bedIds)
-                ->findAll();
-        }
-
-        // Map patients by bed_id for quick lookup
-        $patientsByBedId = [];
-        foreach ($patients as $p) {
-            if (isset($p['bed_id'])) {
-                $patientsByBedId[$p['bed_id']] = $p;
-            }
-        }
+        // Load current occupants (from admissions) mapped by bed ID
+        $patientsByBedId = $this->getBedOccupants($bedIds);
 
         // Build rows for view: every bed row from DB
         $rows = [];

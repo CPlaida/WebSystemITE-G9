@@ -1,12 +1,12 @@
 <?php $this->extend('partials/header') ?>
 
-<?= $this->section('title') ?>Admission Registration<?= $this->endSection() ?>
+<?= $this->section('title') ?>Patient Admission<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <div class="main-content" id="mainContent">
   <div class="container">
     <div class="header">
-      <h1 class="page-title">Admission Registration</h1>
+      <h1 class="page-title">Patient Admission</h1>
     </div>
 
     <div class="card">

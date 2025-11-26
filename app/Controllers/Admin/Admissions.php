@@ -58,7 +58,7 @@ class Admissions extends BaseController
             'admission_date' => 'required|valid_date',
             'admission_time' => 'permit_empty',
             'admission_type' => 'required|in_list[emergency,elective,transfer]',
-            'attending_physician' => 'required|integer|is_not_unique[users.id]',
+            'attending_physician' => 'required|is_not_unique[users.id]',
             'ward' => 'permit_empty|max_length[100]',
             'room' => 'permit_empty|max_length[100]',
             'bed_id' => 'required|integer|is_not_unique[beds.id]',
@@ -105,7 +105,7 @@ class Admissions extends BaseController
             'admission_date' => $this->request->getPost('admission_date'),
             'admission_time' => $this->request->getPost('admission_time') ?: null,
             'admission_type' => $this->request->getPost('admission_type'),
-            'attending_physician' => (int) $this->request->getPost('attending_physician'),
+            'attending_physician' => $this->request->getPost('attending_physician'),
             'ward' => $this->request->getPost('ward') ?: null,
             'room' => $this->request->getPost('room') ?: null,
             'bed_id' => $bedId,
@@ -115,8 +115,14 @@ class Admissions extends BaseController
         ];
 
         if ($this->admissionModel->insert($payload)) {
-            // Mark patient as inpatient
-            try { $this->patientModel->update($patientId, ['type' => 'inpatient']); } catch (\Throwable $e) {}
+            // Mark patient as inpatient and persist bed assignment
+            try {
+                $this->patientModel->update($patientId, [
+                    'type' => 'inpatient',
+                    'bed_id' => $bedId,
+                ]);
+            } catch (\Throwable $e) {
+            }
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Admission registered successfully.',
