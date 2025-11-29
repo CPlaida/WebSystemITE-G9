@@ -8,12 +8,39 @@ class Medicine extends Controller
     public function index()
     {
         $model = new MedicineModel();
-        $data['medicines'] = $model->orderBy('id', 'DESC')->findAll();
+        $today = date('Y-m-d');
+        
+        // Filter out expired medicines from main list (only show non-expired or null expiry)
+        $data['medicines'] = $model->groupStart()
+                                   ->where('expiry_date >=', $today)
+                                   ->orWhere('expiry_date IS NULL', null, false)
+                                   ->groupEnd()
+                                   ->orderBy('id', 'DESC')
+                                   ->findAll();
 
-        // counts using fresh builders to avoid state leakage
-        $data['total'] = (new MedicineModel())->countAll();
-        $data['low_stock'] = (new MedicineModel())->where('stock <=', 5)->countAllResults();
-        $data['out_stock'] = (new MedicineModel())->where('stock', 0)->countAllResults();
+        // counts using fresh builders to avoid state leakage (excluding expired)
+        $totalModel = new MedicineModel();
+        $data['total'] = $totalModel->groupStart()
+                                    ->where('expiry_date >=', $today)
+                                    ->orWhere('expiry_date IS NULL', null, false)
+                                    ->groupEnd()
+                                    ->countAllResults();
+        
+        $lowStockModel = new MedicineModel();
+        $data['low_stock'] = $lowStockModel->where('stock <=', 5)
+                                           ->groupStart()
+                                           ->where('expiry_date >=', $today)
+                                           ->orWhere('expiry_date IS NULL', null, false)
+                                           ->groupEnd()
+                                           ->countAllResults();
+        
+        $outStockModel = new MedicineModel();
+        $data['out_stock'] = $outStockModel->where('stock', 0)
+                                           ->groupStart()
+                                           ->where('expiry_date >=', $today)
+                                           ->orWhere('expiry_date IS NULL', null, false)
+                                           ->groupEnd()
+                                           ->countAllResults();
 
         // if coming from edit link, load the record to prefill modal
         $editId = $this->request->getGet('edit');
@@ -201,6 +228,25 @@ class Medicine extends Controller
 
         $model->update($id, $data);
         return redirect()->to('/medicines')->with('success', 'Medicine updated successfully!');
+    }
+
+    /**
+     * Stock Out - Display expired medicines
+     */
+    public function stockOut()
+    {
+        $model = new MedicineModel();
+        $today = date('Y-m-d');
+        
+        // Get only expired medicines
+        $data['expired_medicines'] = $model->where('expiry_date <', $today)
+                                          ->where('expiry_date IS NOT NULL', null, false)
+                                          ->orderBy('expiry_date', 'ASC')
+                                          ->findAll();
+        
+        $data['total_expired'] = count($data['expired_medicines']);
+        
+        echo view('Roles/admin/inventory/StockOut', $data);
     }
 
 }

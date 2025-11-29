@@ -168,6 +168,7 @@ $routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestRe
 
 // Medicine Routes
 $routes->get('/medicines', 'Medicine::index');
+$routes->get('/medicines/stock-out', 'Medicine::stockOut');
 $routes->post('/medicines/store', 'Medicine::store');
 $routes->get('/medicines/edit/(:segment)', 'Medicine::edit/$1');
 $routes->post('/medicines/update/(:segment)', 'Medicine::update/$1');
@@ -180,6 +181,7 @@ $routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' =>
     $routes->get('transaction/(:any)', 'Pharmacy::viewTransaction/$1');
     $routes->get('medicines', 'Pharmacy::medicines');
     $routes->get('inventory/medicine', 'Medicine::index');  // Access via /admin/pharmacy/inventory/medicine
+    $routes->get('inventory/medicine/stock-out', 'Medicine::stockOut');  // Stock out via /admin/pharmacy/inventory/medicine/stock-out
 });
 
 // Pharmacy API Routes

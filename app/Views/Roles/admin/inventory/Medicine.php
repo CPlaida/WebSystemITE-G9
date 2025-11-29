@@ -14,7 +14,10 @@ $currentSubmenu = 'inventory';
         <div class="header-left">
             <h1 class="page-title">Medicine Inventory</h1>
         </div>
-        <div class="header-right">
+        <div class="header-right" style="display: flex; gap: 10px;">
+            <a href="<?= base_url('medicines/stock-out') ?>" class="btn" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;">
+                <i class="fas fa-box-open"></i> Stock Out
+            </a>
             <button class="btn btn-primary" onclick="toggleForm()">
                 <i class="fas fa-plus"></i> Add New Medicine
             </button>
