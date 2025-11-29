@@ -10,6 +10,562 @@
     --border-radius: 10px;
     --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
+    
+    /* Unified Button System Colors */
+    --btn-primary: #2563eb;           /* Blue - View, Edit, Save, Primary actions */
+    --btn-primary-hover: #1d4ed8;     /* Blue hover */
+    --btn-success: #2ecc71;            /* Green - Complete, Success, Positive actions */
+    --btn-success-hover: #27ae60;     /* Green hover */
+    --btn-secondary: #6c757d;          /* Gray - Cancel, Secondary, Neutral actions */
+    --btn-secondary-hover: #5a6268;   /* Gray hover */
+    --btn-danger: #ef4444;             /* Red - Delete, Danger actions */
+    --btn-danger-hover: #dc2626;       /* Red hover */
+    --btn-outline-border: #dee2e6;
+    --btn-outline-hover: #e9ecef;
+}
+
+/* ============================================
+   UNIFIED BUTTON SYSTEM - Apply to ALL buttons
+   ============================================
+   
+   BUTTON COLOR SCHEME:
+   - BLUE (#2563eb): View, Edit, Save, Primary actions
+   - GREEN (#2ecc71): Complete, Success, Positive actions
+   - GRAY (#6c757d): Cancel, Secondary, Neutral actions
+   - RED (#ef4444): Delete, Danger actions
+   
+   This system overrides all other button styles in this file.
+   ============================================ */
+
+/* Base Button Styles - Universal */
+.btn,
+button[class*="btn"],
+a[class*="btn"],
+input[type="submit"],
+input[type="button"],
+button:not([class]) {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+    user-select: none !important;
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06) !important;
+    min-height: 36px !important;
+}
+
+.btn:focus,
+button[class*="btn"]:focus,
+a[class*="btn"]:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
+}
+
+.btn:disabled,
+button[class*="btn"]:disabled,
+a[class*="btn"]:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+/* Button Sizes */
+.btn-sm,
+button.btn-sm,
+a.btn-sm {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    min-height: 32px !important;
+}
+
+.btn-lg,
+button.btn-lg,
+a.btn-lg {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    min-height: 44px !important;
+}
+
+/* Primary Button */
+.btn-primary,
+button.btn-primary,
+a.btn-primary,
+input[type="submit"]:not([class]),
+button:not([class]):not(.toggle-btn):not(.close):not(.close-btn) {
+    background-color: var(--btn-primary) !important;
+    border-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover,
+button.btn-primary:hover,
+a.btn-primary:hover,
+input[type="submit"]:not([class]):hover,
+button:not([class]):not(.toggle-btn):not(.close):not(.close-btn):hover {
+    background-color: var(--btn-primary-hover) !important;
+    border-color: var(--btn-primary-hover) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(16, 24, 40, 0.12) !important;
+}
+
+/* Secondary Button */
+.btn-secondary,
+button.btn-secondary,
+a.btn-secondary {
+    background-color: var(--btn-secondary) !important;
+    border-color: var(--btn-secondary) !important;
+    color: #ffffff !important;
+}
+
+.btn-secondary:hover,
+button.btn-secondary:hover,
+a.btn-secondary:hover {
+    background-color: var(--btn-secondary-hover) !important;
+    border-color: var(--btn-secondary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* View Button - Blue (same as primary) */
+.btn-view,
+button.btn-view,
+a.btn-view {
+    background-color: var(--btn-primary) !important;
+    border-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-view:hover,
+button.btn-view:hover,
+a.btn-view:hover {
+    background-color: var(--btn-primary-hover) !important;
+    border-color: var(--btn-primary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Edit Button - Blue (same as primary) */
+.btn-edit,
+button.btn-edit,
+a.btn-edit {
+    background-color: var(--btn-primary) !important;
+    border-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-edit:hover,
+button.btn-edit:hover,
+a.btn-edit:hover {
+    background-color: var(--btn-primary-hover) !important;
+    border-color: var(--btn-primary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Info Button - Blue (same as primary) */
+.btn-info,
+button.btn-info,
+a.btn-info {
+    background-color: var(--btn-primary) !important;
+    border-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-info:hover,
+button.btn-info:hover,
+a.btn-info:hover {
+    background-color: var(--btn-primary-hover) !important;
+    border-color: var(--btn-primary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Save Button - Blue (same as primary) */
+.btn-save,
+button.btn-save,
+a.btn-save,
+input[type="submit"].btn-save {
+    background-color: var(--btn-primary) !important;
+    border-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-save:hover,
+button.btn-save:hover,
+a.btn-save:hover,
+input[type="submit"].btn-save:hover {
+    background-color: var(--btn-primary-hover) !important;
+    border-color: var(--btn-primary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Success/Complete Button - Green */
+.btn-success,
+.btn-complete,
+button.btn-success,
+button.btn-complete,
+a.btn-success,
+a.btn-complete,
+button[class*="complete"],
+a[class*="complete"] {
+    background-color: var(--btn-success) !important;
+    border-color: var(--btn-success) !important;
+    color: #ffffff !important;
+}
+
+.btn-success:hover,
+.btn-complete:hover,
+button.btn-success:hover,
+button.btn-complete:hover,
+a.btn-success:hover,
+a.btn-complete:hover,
+button[class*="complete"]:hover,
+a[class*="complete"]:hover {
+    background-color: var(--btn-success-hover) !important;
+    border-color: var(--btn-success-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Cancel Button - Gray (secondary) */
+.btn-cancel,
+button.btn-cancel,
+a.btn-cancel {
+    background-color: var(--btn-secondary) !important;
+    border-color: var(--btn-secondary) !important;
+    color: #ffffff !important;
+}
+
+.btn-cancel:hover,
+button.btn-cancel:hover,
+a.btn-cancel:hover {
+    background-color: var(--btn-secondary-hover) !important;
+    border-color: var(--btn-secondary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Danger/Delete Button - Red */
+.btn-danger,
+.btn-delete,
+button.btn-danger,
+button.btn-delete,
+a.btn-danger,
+a.btn-delete {
+    background-color: var(--btn-danger) !important;
+    border-color: var(--btn-danger) !important;
+    color: #ffffff !important;
+}
+
+.btn-danger:hover,
+.btn-delete:hover,
+button.btn-danger:hover,
+button.btn-delete:hover,
+a.btn-danger:hover,
+a.btn-delete:hover {
+    background-color: var(--btn-danger-hover) !important;
+    border-color: var(--btn-danger-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Warning Button - Gray (secondary) */
+.btn-warning,
+button.btn-warning,
+a.btn-warning {
+    background-color: var(--btn-secondary) !important;
+    border-color: var(--btn-secondary) !important;
+    color: #ffffff !important;
+}
+
+.btn-warning:hover,
+button.btn-warning:hover,
+a.btn-warning:hover {
+    background-color: var(--btn-secondary-hover) !important;
+    border-color: var(--btn-secondary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Outline Buttons */
+.btn-outline,
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success,
+button.btn-outline,
+button.btn-outline-primary,
+button.btn-outline-secondary,
+button.btn-outline-success,
+a.btn-outline,
+a.btn-outline-primary,
+a.btn-outline-secondary,
+a.btn-outline-success {
+    background-color: transparent !important;
+    border: 1px solid var(--btn-outline-border) !important;
+    color: #333333 !important;
+}
+
+.btn-outline:hover,
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover,
+.btn-outline-success:hover,
+button.btn-outline:hover,
+button.btn-outline-primary:hover,
+button.btn-outline-secondary:hover,
+button.btn-outline-success:hover,
+a.btn-outline:hover,
+a.btn-outline-primary:hover,
+a.btn-outline-secondary:hover,
+a.btn-outline-success:hover {
+    background-color: var(--btn-outline-hover) !important;
+    border-color: var(--btn-outline-border) !important;
+    transform: translateY(-1px) !important;
+}
+
+.btn-outline-primary {
+    border-color: var(--btn-primary) !important;
+    color: var(--btn-primary) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-outline-success {
+    border-color: var(--btn-success) !important;
+    color: var(--btn-success) !important;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--btn-success) !important;
+    color: #ffffff !important;
+}
+
+/* Action Buttons (for tables) */
+.btn-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 36px !important;
+    min-width: 70px !important;
+    padding: 0 12px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    border: 1px solid transparent !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06) !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+}
+
+/* Action Group (for button containers) */
+.action-group,
+.action-buttons {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+}
+
+.action-group form,
+.action-buttons form {
+    display: inline-block !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+.action-group > *,
+.action-buttons > * {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+}
+
+.action-group button,
+.action-group a,
+.action-group .btn-action,
+.action-buttons button,
+.action-buttons a,
+.action-buttons .btn-action {
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+}
+
+/* When 3 buttons are together: Blue (View), Green (Complete), Gray (Cancel) pattern */
+/* Only apply if button doesn't have a specific color class */
+.action-group > .btn-action:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > button:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > a:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > form:nth-child(1) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > form:nth-child(1) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > .btn-action:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > button:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > a:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > form:nth-child(1) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > form:nth-child(1) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete) {
+    background-color: var(--btn-primary) !important;
+    border-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+}
+
+.action-group > .btn-action:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > button:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > a:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > form:nth-child(1) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > form:nth-child(1) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > .btn-action:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > button:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > a:nth-child(1):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > form:nth-child(1) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > form:nth-child(1) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover {
+    background-color: var(--btn-primary-hover) !important;
+    border-color: var(--btn-primary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+.action-group > .btn-action:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > button:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > a:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > form:nth-child(2) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-group > form:nth-child(2) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > .btn-action:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > button:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > a:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > form:nth-child(2) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete),
+.action-buttons > form:nth-child(2) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete) {
+    background-color: var(--btn-success) !important;
+    border-color: var(--btn-success) !important;
+    color: #ffffff !important;
+}
+
+.action-group > .btn-action:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > button:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > a:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > form:nth-child(2) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-group > form:nth-child(2) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > .btn-action:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > button:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > a:nth-child(2):not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > form:nth-child(2) button:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover,
+.action-buttons > form:nth-child(2) .btn-action:not(.btn-view):not(.btn-edit):not(.btn-success):not(.btn-complete):not(.btn-primary):not(.btn-secondary):not(.btn-danger):not(.btn-delete):hover {
+    background-color: var(--btn-success-hover) !important;
+    border-color: var(--btn-success-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+.action-group > .btn-action:nth-child(3),
+.action-group > button:nth-child(3),
+.action-group > a:nth-child(3),
+.action-group > form:nth-child(3) button,
+.action-group > form:nth-child(3) .btn-action,
+.action-buttons > .btn-action:nth-child(3),
+.action-buttons > button:nth-child(3),
+.action-buttons > a:nth-child(3),
+.action-buttons > form:nth-child(3) button,
+.action-buttons > form:nth-child(3) .btn-action {
+    background-color: var(--btn-secondary) !important;
+    border-color: var(--btn-secondary) !important;
+    color: #ffffff !important;
+}
+
+.action-group > .btn-action:nth-child(3):hover,
+.action-group > button:nth-child(3):hover,
+.action-group > a:nth-child(3):hover,
+.action-group > form:nth-child(3) button:hover,
+.action-group > form:nth-child(3) .btn-action:hover,
+.action-buttons > .btn-action:nth-child(3):hover,
+.action-buttons > button:nth-child(3):hover,
+.action-buttons > a:nth-child(3):hover,
+.action-buttons > form:nth-child(3) button:hover,
+.action-buttons > form:nth-child(3) .btn-action:hover {
+    background-color: var(--btn-secondary-hover) !important;
+    border-color: var(--btn-secondary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Close Button */
+.btn-close,
+.close,
+.close-btn {
+    background: transparent !important;
+    border: none !important;
+    color: #6c757d !important;
+    cursor: pointer !important;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 1.25rem !important;
+    line-height: 1 !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+}
+
+.btn-close:hover,
+.close:hover,
+.close-btn:hover {
+    color: #333333 !important;
+    background: transparent !important;
+    transform: none !important;
+}
+
+/* Search Button - Blue (primary) */
+.search-button,
+button.search-button {
+    background-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.5rem 1.25rem !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+}
+
+.search-button:hover,
+button.search-button:hover {
+    background-color: var(--btn-primary-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Special Buttons (Toggle, etc.) */
+.toggle-btn {
+    background: none !important;
+    border: none !important;
+    padding: 5px !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+}
+
+/* Full Width Button (for mobile) */
+.btn-block,
+.btn-full {
+    width: 100% !important;
+    justify-content: center !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .btn,
+    button[class*="btn"],
+    a[class*="btn"] {
+        padding: 0.5rem 0.875rem !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .action-group,
+    .action-buttons {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+    
+    .action-group .btn-action,
+    .action-buttons .btn-action {
+        width: 100% !important;
+    }
 }
 
 * {
@@ -1077,16 +1633,20 @@ tr:hover { background-color: rgba(78,115,223,0.05); }
 .status-completed { background-color:#d1e7dd; color:#0f5132; }
 .status-cancelled { background-color:#f8d7da; color:#721c24; }
 .status-no_show { background-color:#e2e3e5; color:#383d41; }
-.action-group { display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:nowrap; }
+.action-group { display:flex; gap:8px; align-items:center; justify-content:flex-start; flex-wrap:wrap; }
 .action-group form { display:inline-block; margin:0; }
-.action-group button { margin:0; }
+.action-group button, .action-group a { margin:0; white-space:nowrap; }
 .action-group > * { flex:0 0 auto; }
-.btn-action { display:inline-flex; align-items:center; justify-content:center; height:36px; min-width:84px; padding:0 .9rem; font-size:.85rem; font-weight:600; border-radius:6px; border:1px solid transparent; cursor:pointer; transition:background-color .15s ease, border-color .15s ease, box-shadow .15s ease; box-shadow: 0 1px 2px rgba(16,24,40,.06); }
+.btn-action { display:inline-flex; align-items:center; justify-content:center; height:36px; min-width:70px; padding:0 12px; font-size:.85rem; font-weight:600; border-radius:6px; border:1px solid transparent; cursor:pointer; transition:background-color .15s ease, border-color .15s ease, box-shadow .15s ease; box-shadow: 0 1px 2px rgba(16,24,40,.06); text-decoration:none; }
 .btn-action:focus { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.25); }
+.btn-view { background:#2ecc71; color:#ffffff; border-color:#2ecc71; }
+.btn-view:hover { background:#27ae60; border-color:#27ae60; }
 .btn-edit { background:#2563eb; color:#ffffff; border-color:#2563eb; }
 .btn-edit:hover { background:#1d4ed8; border-color:#1d4ed8; }
 .btn-delete { background:#ef4444; color:#ffffff; border-color:#ef4444; }
 .btn-delete:hover { background:#dc2626; border-color:#dc2626; }
+.btn-secondary { background:#6c757d; color:#ffffff; border-color:#6c757d; }
+.btn-secondary:hover { background:#5a6268; border-color:#5a6268; }
 .card-footer { padding:15px 24px; background-color:#f8f9fc; color:#858796; font-size:0.875rem; border-top:1px solid #e3e6f0; }
 @media (max-width:768px) { .header{flex-direction:column; align-items:flex-start;} .card-header{flex-direction:column; align-items:flex-start; gap:15px;} .search-container{flex-direction:column; align-items:flex-start;} }
 
@@ -1305,8 +1865,7 @@ body { background:#f8f9fa; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans
 .badge-secondary { color:#fff; background:#6c757d; }
 .text-center { text-align:center; }
 .text-muted { color:#6c757d; }
-.btn-primary { background:#0d6efd; border-color:#0d6efd; color:#fff; }
-.btn-primary:hover { background:#0b5ed7; border-color:#0a58ca; }
+/* Removed duplicate - using unified button system */
 .container { max-width:1200px; margin:auto; }
 .card { background:#fff; border-radius:8px; border:1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,.1); overflow:hidden; margin-bottom:20px; }
 .card-header { display:flex; justify-content:space-between; align-items:center; padding:20px 24px; background:#f8f9fc; border-bottom:1px solid #e3e6f0; flex-wrap:wrap; gap:15px; }
@@ -1667,9 +2226,29 @@ table tbody tr:last-child td {
 
 .btn-view { background-color: #2ecc71; color: white; }
 
-.btn-receipt { background-color: #6c757d; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; border: none; cursor: pointer; transition: background-color 0.2s; }
+/* Receipt Button - Blue (view action) */
+.btn-receipt {
+    background-color: var(--btn-primary) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 6px !important;
+    font-size: 0.875rem !important;
+    border: 1px solid var(--btn-primary) !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+}
 
-.btn-receipt:hover { background-color: #5a6268; color: white; }
+.btn-receipt:hover {
+    background-color: var(--btn-primary-hover) !important;
+    border-color: var(--btn-primary-hover) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
 
 .search-container { display: flex; gap: 10px; margin-bottom: 20px; }
 

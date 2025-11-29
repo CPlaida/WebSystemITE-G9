@@ -107,7 +107,7 @@
             <th>Contact</th>
             <th>Status</th>
             <th>Linked User</th>
-            <th style="width:200px;">Actions</th>
+            <th style="width:250px; min-width:250px;">Actions</th>
           </tr>
         </thead>
         <tbody id="staffTable">
@@ -141,7 +141,7 @@
                     <span class="status-badge status-inactive">Not linked</span>
                   <?php endif; ?>
                 </td>
-                <td>
+                <td style="white-space: nowrap;">
                   <div class="action-group">
                     <button type="button" class="btn-action btn-view" onclick="openStaffView(this)"
                       data-name="<?= esc(trim(($member['first_name'] ?? '') . ' ' . ($member['last_name'] ?? '')), 'attr') ?>"
@@ -502,6 +502,14 @@
       </div>
     </div>
   </div>
+
+  <style>
+    /* Table-specific layout for action buttons */
+    .data-table td:last-child {
+      white-space: nowrap !important;
+      overflow: visible !important;
+    }
+  </style>
 
   <script>
     const staffModal = document.getElementById('staffModal');

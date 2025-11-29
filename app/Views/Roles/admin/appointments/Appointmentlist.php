@@ -69,14 +69,14 @@
                   </td>
                   <td>
                     <div class="action-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 10;">
-                      <a href="<?= base_url('appointments/show/' . $appointment['id']) ?>" class="btn-action btn-warning js-view" data-appointment-id="<?= $appointment['id'] ?>" title="View Details">
+                      <a href="<?= base_url('appointments/show/' . $appointment['id']) ?>" class="btn-action btn-view js-view" data-appointment-id="<?= $appointment['id'] ?>" title="View Details">
                         View
                       </a>
                       <?php if ($appointment['status'] !== 'completed' && $appointment['status'] !== 'cancelled'): ?>
-                        <button type="button" class="btn-action btn-success js-complete" data-appointment-id="<?= $appointment['id'] ?>" title="Mark Complete">
+                        <button type="button" class="btn-action btn-complete js-complete" data-appointment-id="<?= $appointment['id'] ?>" title="Mark Complete">
                           Complete
                         </button>
-                        <button type="button" class="btn-action btn-warning js-cancel" data-appointment-id="<?= $appointment['id'] ?>" title="Cancel">
+                        <button type="button" class="btn-action btn-cancel js-cancel" data-appointment-id="<?= $appointment['id'] ?>" title="Cancel">
                           Cancel
                         </button>
                       <?php endif; ?>
