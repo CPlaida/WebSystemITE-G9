@@ -65,7 +65,7 @@ class DoctorScheduleModel extends Model
         'doctor_id' => 'required',
         'doctor_name' => 'required|max_length[255]',
         'department' => 'required|max_length[100]',
-        'shift_type' => 'required|in_list[morning,afternoon,night]',
+        'shift_type' => 'required|in_list[morning,afternoon,night,mid_shift]',
         'shift_date' => 'required|valid_date',
         'start_time' => 'required',
         'end_time' => 'required',
@@ -191,14 +191,15 @@ class DoctorScheduleModel extends Model
     }
 
     /**
-     * Get shift time ranges based on shift type - Standard 8-hour templates
+     * Get shift time ranges based on shift type - Standard templates
      */
     public function getShiftTimes($shiftType)
     {
         $times = [
-            'morning' => ['06:00:00', '14:00:00'],   // 6 AM - 2 PM
-            'afternoon' => ['14:00:00', '22:00:00'], // 2 PM - 10 PM
-            'night' => ['22:00:00', '06:00:00']     // 10 PM - 6 AM
+            'morning' => ['06:00:00', '12:00:00'],   // 6 AM - 12 PM
+            'afternoon' => ['12:00:00', '18:00:00'], // 12 PM - 6 PM
+            'night' => ['18:00:00', '06:00:00'],     // 6 PM - 6 AM
+            'mid_shift' => ['09:00:00', '17:00:00']  // Flexible: 9 AM - 5 PM (default)
         ];
         
         return $times[$shiftType] ?? ['08:00:00', '16:00:00'];
@@ -220,6 +221,133 @@ class DoctorScheduleModel extends Model
         return !$previousShift; // Can work if no night shift previous day
     }
 
+
+    /**
+     * Add schedules for a date range
+     */
+    public function addScheduleRange($data)
+    {
+        $startDate = $data['start_date'];
+        $endDate = $data['end_date'];
+        $doctorId = $data['doctor_id'];
+        $shiftType = $data['shift_type'];
+        
+        // Get shift times
+        $times = $this->getShiftTimes($shiftType);
+        $startTime = $times[0];
+        $endTime = $times[1];
+        
+        // Check for conflicts across the entire date range first
+        $conflicts = [];
+        $currentDate = new \DateTime($startDate);
+        $endDateTime = new \DateTime($endDate);
+        
+        while ($currentDate <= $endDateTime) {
+            $dateStr = $currentDate->format('Y-m-d');
+            $dateConflicts = $this->checkConflicts($doctorId, $dateStr, $startTime, $endTime);
+            if (!empty($dateConflicts)) {
+                $conflicts = array_merge($conflicts, $dateConflicts);
+            }
+            $currentDate->modify('+1 day');
+        }
+        
+        if (!empty($conflicts)) {
+            return [
+                'success' => false,
+                'message' => 'This doctor already has a schedule during the selected date and shift.',
+                'conflicts' => $conflicts
+            ];
+        }
+        
+        // Create schedules for each day in the range
+        $created = 0;
+        $skipped = 0;
+        $errors = [];
+        
+        $currentDate = new \DateTime($startDate);
+        $endDateTime = new \DateTime($endDate);
+        $tz = new \DateTimeZone('Asia/Manila');
+        $now = new \DateTime('now', $tz);
+        $today = $now->format('Y-m-d');
+        
+        while ($currentDate <= $endDateTime) {
+            $dateStr = $currentDate->format('Y-m-d');
+            
+            // Skip past dates
+            if (strtotime($dateStr) < strtotime($today)) {
+                $skipped++;
+                $currentDate->modify('+1 day');
+                continue;
+            }
+            
+            // Skip if today and shift time has passed
+            if ($dateStr === $today) {
+                $shiftStartMap = [
+                    'morning' => '06:00:00',
+                    'afternoon' => '12:00:00',
+                    'night' => '18:00:00',
+                    'mid_shift' => '00:00:00'
+                ];
+                if (isset($shiftStartMap[$shiftType]) && $shiftType !== 'mid_shift') {
+                    $shiftStart = new \DateTime($dateStr . ' ' . $shiftStartMap[$shiftType], $tz);
+                    if ($now >= $shiftStart) {
+                        $skipped++;
+                        $currentDate->modify('+1 day');
+                        continue;
+                    }
+                }
+            }
+            
+            // Check if doctor is on leave for this specific date (if you have leave dates table)
+            // For now, we'll skip if there's a general on_leave status
+            
+            // Prepare schedule data for this date
+            $scheduleData = [
+                'doctor_id' => $doctorId,
+                'doctor_name' => $data['doctor_name'],
+                'department' => $data['department'],
+                'shift_type' => $shiftType,
+                'shift_date' => $dateStr,
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'status' => 'scheduled',
+                'notes' => $data['notes'] ?? ''
+            ];
+            
+            // Insert schedule
+            $insertResult = $this->insert($scheduleData);
+            if ($insertResult) {
+                $created++;
+            } else {
+                $errors[] = "Failed to create schedule for {$dateStr}";
+                $skipped++;
+            }
+            
+            $currentDate->modify('+1 day');
+        }
+        
+        if ($created > 0) {
+            $message = "Doctor schedule successfully added for {$created} date(s).";
+            if ($skipped > 0) {
+                $message .= " {$skipped} date(s) were skipped (past dates or conflicts).";
+            }
+            return [
+                'success' => true,
+                'message' => $message,
+                'created' => $created,
+                'skipped' => $skipped,
+                'errors' => $errors
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'No schedules were created. All dates were skipped or had errors.',
+                'created' => 0,
+                'skipped' => $skipped,
+                'errors' => $errors
+            ];
+        }
+    }
 
     /**
      * Add a new schedule with automatic time setting

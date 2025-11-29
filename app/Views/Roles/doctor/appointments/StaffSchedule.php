@@ -2,6 +2,38 @@
 
 <?= $this->section('title') ?>Staff Schedule & Shift Management<?= $this->endSection() ?>
 
+<?php
+// Helper function to get department color class
+function getDepartmentColorClass($department) {
+    if (empty($department)) return 'dept-general';
+    
+    $dept = strtolower(trim($department));
+    
+    // Map department names to color classes
+    if (strpos($dept, 'emergency') !== false) {
+        return 'dept-emergency';
+    }
+    if (strpos($dept, 'cardiology') !== false) {
+        return 'dept-cardiology';
+    }
+    if (strpos($dept, 'neurology') !== false) {
+        return 'dept-neurology';
+    }
+    if (strpos($dept, 'orthopedic') !== false) {
+        return 'dept-orthopedics';
+    }
+    if (strpos($dept, 'pediatric') !== false) {
+        return 'dept-pediatrics';
+    }
+    if (strpos($dept, 'general') !== false) {
+        return 'dept-general';
+    }
+    
+    // Default fallback
+    return 'dept-general';
+}
+?>
+
 <?= $this->section('content') ?>
 <script src="https://cdn.tailwindcss.com"></script>
   <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -45,10 +77,10 @@
                     <?= date('g:i a', strtotime($schedule['end_time'] ?? '00:00:00')) ?>
                   </div>
                   <div class="col-span-8 p-3">
-                    <div class="shift dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1"
+                    <div class="shift <?= getDepartmentColorClass($schedule['department'] ?? '') ?> text-xs p-2 rounded"
                          data-schedule-id="<?= $schedule['id'] ?>">
                       <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
-                      <div class="opacity-75"><?= ucfirst($schedule['shift_type']) ?></div>
+                      <div class="opacity-90 text-xs mt-0.5"><?= ucfirst($schedule['shift_type']) ?> • <?= htmlspecialchars($schedule['department'] ?? 'General') ?></div>
                     </div>
                   </div>
                 </div>
@@ -85,10 +117,19 @@
               </div>
               <div class="space-y-1">
                 <?php foreach ($daySchedules as $schedule): ?>
-                  <div class="shift dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1" 
-                       data-schedule-id="<?= $schedule['id'] ?>">
-                    <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
-                    <div class="opacity-75"><?= ucfirst($schedule['shift_type']) ?></div>
+                  <?php 
+                  $startTime = isset($schedule['start_time']) ? date('g:i A', strtotime($schedule['start_time'])) : '';
+                  $endTime = isset($schedule['end_time']) ? date('g:i A', strtotime($schedule['end_time'])) : '';
+                  $timeDisplay = $startTime && $endTime ? $startTime . ' - ' . $endTime : ($startTime ? $startTime : '');
+                  $doctorName = htmlspecialchars($schedule['doctor_name'] ?? '');
+                  ?>
+                  <div class="shift <?= getDepartmentColorClass($schedule['department'] ?? '') ?> text-xs p-1.5 rounded cursor-pointer hover:opacity-90 transition-opacity" 
+                       data-schedule-id="<?= $schedule['id'] ?>"
+                       title="<?= htmlspecialchars($doctorName . ' - ' . ($schedule['department'] ?? 'General') . ' (' . $timeDisplay . ')') ?>">
+                    <div class="font-medium truncate"><?= $doctorName ?></div>
+                    <?php if ($timeDisplay): ?>
+                      <div class="text-[10px] opacity-90 mt-0.5 truncate"><?= $timeDisplay ?></div>
+                    <?php endif; ?>
                   </div>
                 <?php endforeach; ?>
               </div>
@@ -98,9 +139,44 @@
       </div>
 
       <!-- Month View -->
-      <div id="monthView" class="view-container hidden">
-        <div class="mb-4 text-center">
-          <h2 class="text-lg font-semibold">Month View - <?= date('F Y') ?></h2>
+      <div id="monthView" class="view-container hidden relative">
+        <!-- Loading Overlay -->
+        <div id="monthViewLoading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50 hidden">
+          <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+            <p class="text-sm text-gray-600">Loading calendar...</p>
+          </div>
+        </div>
+        
+        <?php 
+        $monthParam = $request->getGet('month');
+        // Validate and sanitize month parameter
+        if ($monthParam && preg_match('/^\d{4}-\d{2}$/', $monthParam)) {
+          $monthNum = (int)substr($monthParam, 5, 2);
+          if ($monthNum >= 1 && $monthNum <= 12) {
+            $viewMonth = date('Y-m-01', strtotime($monthParam . '-01'));
+          } else {
+            $monthParam = date('Y-m');
+            $viewMonth = date('Y-m-01');
+          }
+        } else {
+          $monthParam = date('Y-m');
+          $viewMonth = date('Y-m-01');
+        }
+        $prevMonth = date('Y-m', strtotime($viewMonth . ' -1 month'));
+        $nextMonth = date('Y-m', strtotime($viewMonth . ' +1 month'));
+        $currentMonth = date('Y-m');
+        ?>
+        <div class="mb-4">
+          <div class="flex justify-center items-center gap-3 mb-4">
+            <button type="button" id="btnMonthPrev" class="p-2 border rounded hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" data-month="<?= $prevMonth ?>" title="Previous Month">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <h2 class="text-lg font-semibold">Month View - <?= date('F Y', strtotime($viewMonth)) ?></h2>
+            <button type="button" id="btnMonthNext" class="p-2 border rounded hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" data-month="<?= $nextMonth ?>" title="Next Month">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
         <div class="grid grid-cols-7 gap-1 text-sm">
           <!-- Calendar headers -->
@@ -111,31 +187,43 @@
           
           <!-- Calendar days -->
           <?php 
-          $firstDay = date('Y-m-01');
-          $lastDay = date('Y-m-t');
+          $firstDay = date('Y-m-01', strtotime($viewMonth));
+          $lastDay = date('Y-m-t', strtotime($viewMonth));
           $startDate = date('Y-m-d', strtotime('last sunday', strtotime($firstDay)));
           $endDate = date('Y-m-d', strtotime('next saturday', strtotime($lastDay)));
           
           $currentDate = $startDate;
+          $viewMonthNum = date('m', strtotime($viewMonth));
+          $viewYear = date('Y', strtotime($viewMonth));
+          $today = date('Y-m-d');
+          
           while ($currentDate <= $endDate):
-            $isCurrentMonth = date('m', strtotime($currentDate)) === date('m');
+            $isCurrentMonth = date('m', strtotime($currentDate)) === $viewMonthNum;
+            $isToday = $currentDate === $today;
             $daySchedules = array_filter($schedules, function($schedule) use ($currentDate) {
-              return date('Y-m-d', strtotime($schedule['shift_date'])) === $currentDate;
+              return isset($schedule['shift_date']) && date('Y-m-d', strtotime($schedule['shift_date'])) === $currentDate;
             });
           ?>
-            <div class="border min-h-[80px] p-1 <?= $isCurrentMonth ? 'bg-white' : 'bg-gray-50' ?>">
-              <div class="text-xs <?= $isCurrentMonth ? 'text-gray-900' : 'text-gray-400' ?> mb-1">
+            <div class="border min-h-[100px] p-1 <?= $isCurrentMonth ? 'bg-white' : 'bg-gray-50' ?> <?= $isToday ? 'ring-2 ring-blue-500' : '' ?>">
+              <div class="text-xs <?= $isCurrentMonth ? 'text-gray-900' : 'text-gray-400' ?> mb-1 <?= $isToday ? 'font-bold text-blue-600' : '' ?>">
                 <?= date('j', strtotime($currentDate)) ?>
               </div>
               <div class="space-y-1">
                 <?php foreach (array_slice($daySchedules, 0, 2) as $schedule): ?>
-                  <div class="dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1 rounded" 
-                       data-schedule-id="<?= $schedule['id'] ?>">
-                    <?= htmlspecialchars(substr($schedule['doctor_name'], 0, 8)) ?>
+                  <?php 
+                  $startTime = isset($schedule['start_time']) ? date('g:i A', strtotime($schedule['start_time'])) : '';
+                  $endTime = isset($schedule['end_time']) ? date('g:i A', strtotime($schedule['end_time'])) : '';
+                  $timeDisplay = $startTime && $endTime ? $startTime . ' - ' . $endTime : ($startTime ? $startTime : '');
+                  $doctorName = htmlspecialchars($schedule['doctor_name'] ?? '');
+                  ?>
+                  <div class="shift <?= getDepartmentColorClass($schedule['department'] ?? '') ?> text-xs p-1.5 rounded cursor-pointer hover:opacity-90 transition-opacity" 
+                       data-schedule-id="<?= $schedule['id'] ?>"
+                       title="<?= htmlspecialchars($doctorName . ' - ' . ($schedule['department'] ?? 'General') . ' (' . $timeDisplay . ')') ?>">
+                    <div class="font-medium truncate"><?= $doctorName ?></div>
                   </div>
                 <?php endforeach; ?>
                 <?php if (count($daySchedules) > 2): ?>
-                  <div class="text-xs text-gray-500">+<?= count($daySchedules) - 2 ?> more</div>
+                  <div class="text-xs text-gray-500 px-1">+<?= count($daySchedules) - 2 ?> more</div>
                 <?php endif; ?>
               </div>
             </div>
@@ -391,6 +479,10 @@
   function navigateToDate(targetYmd) {
     const url = new URL(window.location.href);
     url.searchParams.set('date', targetYmd);
+    // Remove month parameter when switching to day view
+    url.searchParams.delete('month');
+    // Ensure we're in day view
+    url.searchParams.set('view', 'day');
     window.location.href = url.toString();
   }
   function formatYMD(d) {
@@ -403,7 +495,12 @@
   if (dayMeta) {
     const currentYmd = dayMeta.getAttribute('data-current-date');
     if (btnDayToday) {
-      btnDayToday.addEventListener('click', () => navigateToDate(formatYMD(new Date())));
+      btnDayToday.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Navigate to today's date and switch to day view
+        navigateToDate(formatYMD(new Date()));
+      });
     }
     if (btnDayPrev) {
       btnDayPrev.addEventListener('click', () => {
@@ -420,6 +517,205 @@
       });
     }
   }
+
+  // Month View navigation (Previous, Next, Today)
+  function formatMonth(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+  }
+
+  function getCurrentMonthFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const monthParam = urlParams.get('month');
+    if (monthParam) {
+      // Validate format YYYY-MM
+      if (/^\d{4}-\d{2}$/.test(monthParam)) {
+        // Validate month is between 01-12
+        const month = parseInt(monthParam.split('-')[1], 10);
+        if (month >= 1 && month <= 12) {
+          return monthParam;
+        }
+      }
+    }
+    // If no valid month in URL, default to current month
+    return formatMonth(new Date());
+  }
+
+  function getPreviousMonth(currentMonth) {
+    const [year, month] = currentMonth.split('-').map(Number);
+    let prevYear = year;
+    let prevMonth = month - 1;
+    
+    if (prevMonth < 1) {
+      prevMonth = 12;
+      prevYear = year - 1;
+    }
+    
+    return `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
+  }
+
+  function getNextMonth(currentMonth) {
+    const [year, month] = currentMonth.split('-').map(Number);
+    let nextYear = year;
+    let nextMonth = month + 1;
+    
+    if (nextMonth > 12) {
+      nextMonth = 1;
+      nextYear = year + 1;
+    }
+    
+    return `${nextYear}-${String(nextMonth).padStart(2, '0')}`;
+  }
+
+  function navigateToMonth(monthYmd) {
+    // Validate month format before navigating
+    if (!/^\d{4}-\d{2}$/.test(monthYmd)) {
+      console.error('Invalid month format:', monthYmd);
+      return;
+    }
+    
+    // Show loading state
+    const loadingOverlay = document.getElementById('monthViewLoading');
+    const btnMonthPrev = document.getElementById('btnMonthPrev');
+    const btnMonthNext = document.getElementById('btnMonthNext');
+    
+    if (loadingOverlay) {
+      loadingOverlay.classList.remove('hidden');
+    }
+    
+    // Disable buttons to prevent multiple clicks
+    if (btnMonthPrev) {
+      btnMonthPrev.disabled = true;
+      btnMonthPrev.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    if (btnMonthNext) {
+      btnMonthNext.disabled = true;
+      btnMonthNext.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    
+    const url = new URL(window.location.href);
+    url.searchParams.set('month', monthYmd);
+    // Remove date parameter when switching to month view
+    url.searchParams.delete('date');
+    
+    // Small delay to show loading state, then navigate
+    setTimeout(() => {
+      window.location.href = url.toString();
+    }, 100);
+  }
+
+  // Set up event listeners when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const btnMonthPrev = document.getElementById('btnMonthPrev');
+    const btnMonthNext = document.getElementById('btnMonthNext');
+    
+    // Check URL parameters to determine which view to show
+    const urlParams = new URLSearchParams(window.location.search);
+    const monthParam = urlParams.get('month');
+    const dateParam = urlParams.get('date');
+    const viewParam = urlParams.get('view');
+    
+    const monthView = document.getElementById('monthView');
+    const dayView = document.getElementById('dayView');
+    const weekView = document.getElementById('weekView');
+    
+    // If date parameter exists, show day view
+    if (dateParam && dayView && monthView && weekView) {
+      dayView.classList.remove('hidden');
+      weekView.classList.add('hidden');
+      monthView.classList.add('hidden');
+      
+      // Update button states
+      const dayViewBtn = document.querySelector('[data-view="day"]');
+      if (dayViewBtn) {
+        document.querySelectorAll('.btn-view-mode').forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white');
+          b.classList.add('bg-white', 'text-gray-700');
+        });
+        dayViewBtn.classList.remove('bg-white', 'text-gray-700');
+        dayViewBtn.classList.add('bg-blue-600', 'text-white');
+      }
+    }
+    // If month parameter exists in URL, show month view
+    else if (monthParam && monthView && dayView && weekView) {
+      dayView.classList.add('hidden');
+      weekView.classList.add('hidden');
+      monthView.classList.remove('hidden');
+      
+      // Update button states
+      const monthViewBtn = document.querySelector('[data-view="month"]');
+      if (monthViewBtn) {
+        document.querySelectorAll('.btn-view-mode').forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white');
+          b.classList.add('bg-white', 'text-gray-700');
+        });
+        monthViewBtn.classList.remove('bg-white', 'text-gray-700');
+        monthViewBtn.classList.add('bg-blue-600', 'text-white');
+      }
+    }
+    // If view parameter is explicitly set
+    else if (viewParam && dayView && monthView && weekView) {
+      dayView.classList.add('hidden');
+      weekView.classList.add('hidden');
+      monthView.classList.add('hidden');
+      
+      const viewBtn = document.querySelector(`[data-view="${viewParam}"]`);
+      if (viewBtn) {
+        document.querySelectorAll('.btn-view-mode').forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white');
+          b.classList.add('bg-white', 'text-gray-700');
+        });
+        viewBtn.classList.remove('bg-white', 'text-gray-700');
+        viewBtn.classList.add('bg-blue-600', 'text-white');
+        
+        if (viewParam === 'day') dayView.classList.remove('hidden');
+        else if (viewParam === 'week') weekView.classList.remove('hidden');
+        else if (viewParam === 'month') monthView.classList.remove('hidden');
+      }
+    }
+    
+    // Hide loading overlay when page is fully loaded
+    window.addEventListener('load', function() {
+      const loadingOverlay = document.getElementById('monthViewLoading');
+      if (loadingOverlay) {
+        loadingOverlay.classList.add('hidden');
+      }
+      
+      // Re-enable buttons
+      const btnMonthPrev = document.getElementById('btnMonthPrev');
+      const btnMonthNext = document.getElementById('btnMonthNext');
+      
+      if (btnMonthPrev) {
+        btnMonthPrev.disabled = false;
+        btnMonthPrev.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+      if (btnMonthNext) {
+        btnMonthNext.disabled = false;
+        btnMonthNext.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    });
+
+    if (btnMonthPrev) {
+      btnMonthPrev.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentMonth = getCurrentMonthFromURL();
+        const prevMonth = getPreviousMonth(currentMonth);
+        navigateToMonth(prevMonth);
+      });
+    }
+
+    if (btnMonthNext) {
+      btnMonthNext.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentMonth = getCurrentMonthFromURL();
+        const nextMonth = getNextMonth(currentMonth);
+        navigateToMonth(nextMonth);
+      });
+    }
+  });
 
 </script>
 

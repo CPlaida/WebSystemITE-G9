@@ -2,6 +2,38 @@
 
 <?= $this->section('title') ?>Staff Schedule & Shift Management<?= $this->endSection() ?>
 
+<?php
+// Helper function to get department color class
+function getDepartmentColorClass($department) {
+    if (empty($department)) return 'dept-general';
+    
+    $dept = strtolower(trim($department));
+    
+    // Map department names to color classes
+    if (strpos($dept, 'emergency') !== false) {
+        return 'dept-emergency';
+    }
+    if (strpos($dept, 'cardiology') !== false) {
+        return 'dept-cardiology';
+    }
+    if (strpos($dept, 'neurology') !== false) {
+        return 'dept-neurology';
+    }
+    if (strpos($dept, 'orthopedic') !== false) {
+        return 'dept-orthopedics';
+    }
+    if (strpos($dept, 'pediatric') !== false) {
+        return 'dept-pediatrics';
+    }
+    if (strpos($dept, 'general') !== false) {
+        return 'dept-general';
+    }
+    
+    // Default fallback
+    return 'dept-general';
+}
+?>
+
 <?= $this->section('content') ?>
  
   <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -58,10 +90,10 @@
                     <?= date('g:i a', strtotime($schedule['end_time'] ?? '00:00:00')) ?>
                   </div>
                   <div class="col-span-8 p-3">
-                    <div class="shift dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1"
+                    <div class="shift <?= getDepartmentColorClass($schedule['department'] ?? '') ?> text-xs p-2 rounded"
                          data-schedule-id="<?= $schedule['id'] ?>">
                       <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
-                      <div class="opacity-75"><?= ucfirst($schedule['shift_type']) ?></div>
+                      <div class="opacity-90 text-xs mt-0.5"><?= ucfirst($schedule['shift_type']) ?> • <?= htmlspecialchars($schedule['department'] ?? 'General') ?></div>
                     </div>
                   </div>
                 </div>
@@ -98,10 +130,19 @@
               </div>
               <div class="space-y-1">
                 <?php foreach ($daySchedules as $schedule): ?>
-                  <div class="shift dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1" 
-                       data-schedule-id="<?= $schedule['id'] ?>">
-                    <div class="font-medium"><?= htmlspecialchars($schedule['doctor_name']) ?></div>
-                    <div class="opacity-75"><?= ucfirst($schedule['shift_type']) ?></div>
+                  <?php 
+                  $startTime = isset($schedule['start_time']) ? date('g:i A', strtotime($schedule['start_time'])) : '';
+                  $endTime = isset($schedule['end_time']) ? date('g:i A', strtotime($schedule['end_time'])) : '';
+                  $timeDisplay = $startTime && $endTime ? $startTime . ' - ' . $endTime : ($startTime ? $startTime : '');
+                  $doctorName = htmlspecialchars($schedule['doctor_name'] ?? '');
+                  ?>
+                  <div class="shift <?= getDepartmentColorClass($schedule['department'] ?? '') ?> text-xs p-1.5 rounded cursor-pointer hover:opacity-90 transition-opacity" 
+                       data-schedule-id="<?= $schedule['id'] ?>"
+                       title="<?= htmlspecialchars($doctorName . ' - ' . ($schedule['department'] ?? 'General') . ' (' . $timeDisplay . ')') ?>">
+                    <div class="font-medium truncate"><?= $doctorName ?></div>
+                    <?php if ($timeDisplay): ?>
+                      <div class="text-[10px] opacity-90 mt-0.5 truncate"><?= $timeDisplay ?></div>
+                    <?php endif; ?>
                   </div>
                 <?php endforeach; ?>
               </div>
@@ -111,9 +152,44 @@
       </div>
 
       <!-- Month View -->
-      <div id="monthView" class="view-container hidden">
-        <div class="mb-4 text-center">
-          <h2 class="text-lg font-semibold">Month View - <?= date('F Y') ?></h2>
+      <div id="monthView" class="view-container hidden relative">
+        <!-- Loading Overlay -->
+        <div id="monthViewLoading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50 hidden">
+          <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+            <p class="text-sm text-gray-600">Loading calendar...</p>
+          </div>
+        </div>
+        
+        <?php 
+        $monthParam = $request->getGet('month');
+        // Validate and sanitize month parameter
+        if ($monthParam && preg_match('/^\d{4}-\d{2}$/', $monthParam)) {
+          $monthNum = (int)substr($monthParam, 5, 2);
+          if ($monthNum >= 1 && $monthNum <= 12) {
+            $viewMonth = date('Y-m-01', strtotime($monthParam . '-01'));
+          } else {
+            $monthParam = date('Y-m');
+            $viewMonth = date('Y-m-01');
+          }
+        } else {
+          $monthParam = date('Y-m');
+          $viewMonth = date('Y-m-01');
+        }
+        $prevMonth = date('Y-m', strtotime($viewMonth . ' -1 month'));
+        $nextMonth = date('Y-m', strtotime($viewMonth . ' +1 month'));
+        $currentMonth = date('Y-m');
+        ?>
+        <div class="mb-4">
+          <div class="flex justify-center items-center gap-3 mb-4">
+            <button type="button" id="btnMonthPrev" class="p-2 border rounded hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" data-month="<?= $prevMonth ?>" title="Previous Month">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <h2 class="text-lg font-semibold">Month View - <?= date('F Y', strtotime($viewMonth)) ?></h2>
+            <button type="button" id="btnMonthNext" class="p-2 border rounded hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" data-month="<?= $nextMonth ?>" title="Next Month">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
         <div class="grid grid-cols-7 gap-1 text-sm">
           <!-- Calendar headers -->
@@ -124,31 +200,43 @@
           
           <!-- Calendar days -->
           <?php 
-          $firstDay = date('Y-m-01');
-          $lastDay = date('Y-m-t');
+          $firstDay = date('Y-m-01', strtotime($viewMonth));
+          $lastDay = date('Y-m-t', strtotime($viewMonth));
           $startDate = date('Y-m-d', strtotime('last sunday', strtotime($firstDay)));
           $endDate = date('Y-m-d', strtotime('next saturday', strtotime($lastDay)));
           
           $currentDate = $startDate;
+          $viewMonthNum = date('m', strtotime($viewMonth));
+          $viewYear = date('Y', strtotime($viewMonth));
+          $today = date('Y-m-d');
+          
           while ($currentDate <= $endDate):
-            $isCurrentMonth = date('m', strtotime($currentDate)) === date('m');
+            $isCurrentMonth = date('m', strtotime($currentDate)) === $viewMonthNum;
+            $isToday = $currentDate === $today;
             $daySchedules = array_filter($schedules, function($schedule) use ($currentDate) {
-              return date('Y-m-d', strtotime($schedule['shift_date'])) === $currentDate;
+              return isset($schedule['shift_date']) && date('Y-m-d', strtotime($schedule['shift_date'])) === $currentDate;
             });
           ?>
-            <div class="border min-h-[80px] p-1 <?= $isCurrentMonth ? 'bg-white' : 'bg-gray-50' ?>">
-              <div class="text-xs <?= $isCurrentMonth ? 'text-gray-900' : 'text-gray-400' ?> mb-1">
+            <div class="border min-h-[100px] p-1 <?= $isCurrentMonth ? 'bg-white' : 'bg-gray-50' ?> <?= $isToday ? 'ring-2 ring-blue-500' : '' ?>">
+              <div class="text-xs <?= $isCurrentMonth ? 'text-gray-900' : 'text-gray-400' ?> mb-1 <?= $isToday ? 'font-bold text-blue-600' : '' ?>">
                 <?= date('j', strtotime($currentDate)) ?>
               </div>
               <div class="space-y-1">
                 <?php foreach (array_slice($daySchedules, 0, 2) as $schedule): ?>
-                  <div class="dept-<?= strtolower(str_replace(' ', '-', $schedule['department'] ?? 'general')) ?> text-xs p-1 rounded" 
-                       data-schedule-id="<?= $schedule['id'] ?>">
-                    <?= htmlspecialchars(substr($schedule['doctor_name'], 0, 8)) ?>
+                  <?php 
+                  $startTime = isset($schedule['start_time']) ? date('g:i A', strtotime($schedule['start_time'])) : '';
+                  $endTime = isset($schedule['end_time']) ? date('g:i A', strtotime($schedule['end_time'])) : '';
+                  $timeDisplay = $startTime && $endTime ? $startTime . ' - ' . $endTime : ($startTime ? $startTime : '');
+                  $doctorName = htmlspecialchars($schedule['doctor_name'] ?? '');
+                  ?>
+                  <div class="shift <?= getDepartmentColorClass($schedule['department'] ?? '') ?> text-xs p-1.5 rounded cursor-pointer hover:opacity-90 transition-opacity" 
+                       data-schedule-id="<?= $schedule['id'] ?>"
+                       title="<?= htmlspecialchars($doctorName . ' - ' . ($schedule['department'] ?? 'General') . ' (' . $timeDisplay . ')') ?>">
+                    <div class="font-medium truncate"><?= $doctorName ?></div>
                   </div>
                 <?php endforeach; ?>
                 <?php if (count($daySchedules) > 2): ?>
-                  <div class="text-xs text-gray-500">+<?= count($daySchedules) - 2 ?> more</div>
+                  <div class="text-xs text-gray-500 px-1">+<?= count($daySchedules) - 2 ?> more</div>
                 <?php endif; ?>
               </div>
             </div>
@@ -404,6 +492,10 @@
   function navigateToDate(targetYmd) {
     const url = new URL(window.location.href);
     url.searchParams.set('date', targetYmd);
+    // Remove month parameter when switching to day view
+    url.searchParams.delete('month');
+    // Ensure we're in day view
+    url.searchParams.set('view', 'day');
     window.location.href = url.toString();
   }
   function formatYMD(d) {
@@ -416,7 +508,12 @@
   if (dayMeta) {
     const currentYmd = dayMeta.getAttribute('data-current-date');
     if (btnDayToday) {
-      btnDayToday.addEventListener('click', () => navigateToDate(formatYMD(new Date())));
+      btnDayToday.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Navigate to today's date and switch to day view
+        navigateToDate(formatYMD(new Date()));
+      });
     }
     if (btnDayPrev) {
       btnDayPrev.addEventListener('click', () => {
@@ -434,75 +531,336 @@
     }
   }
 
+  // Month View navigation (Previous, Next, Today)
+  function formatMonth(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+  }
+
+  function getCurrentMonthFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const monthParam = urlParams.get('month');
+    if (monthParam) {
+      // Validate format YYYY-MM
+      if (/^\d{4}-\d{2}$/.test(monthParam)) {
+        // Validate month is between 01-12
+        const month = parseInt(monthParam.split('-')[1], 10);
+        if (month >= 1 && month <= 12) {
+          return monthParam;
+        }
+      }
+    }
+    // If no valid month in URL, default to current month
+    return formatMonth(new Date());
+  }
+
+  function getPreviousMonth(currentMonth) {
+    const [year, month] = currentMonth.split('-').map(Number);
+    let prevYear = year;
+    let prevMonth = month - 1;
+    
+    if (prevMonth < 1) {
+      prevMonth = 12;
+      prevYear = year - 1;
+    }
+    
+    return `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
+  }
+
+  function getNextMonth(currentMonth) {
+    const [year, month] = currentMonth.split('-').map(Number);
+    let nextYear = year;
+    let nextMonth = month + 1;
+    
+    if (nextMonth > 12) {
+      nextMonth = 1;
+      nextYear = year + 1;
+    }
+    
+    return `${nextYear}-${String(nextMonth).padStart(2, '0')}`;
+  }
+
+  function navigateToMonth(monthYmd) {
+    // Validate month format before navigating
+    if (!/^\d{4}-\d{2}$/.test(monthYmd)) {
+      console.error('Invalid month format:', monthYmd);
+      return;
+    }
+    
+    // Show loading state
+    const loadingOverlay = document.getElementById('monthViewLoading');
+    const btnMonthPrev = document.getElementById('btnMonthPrev');
+    const btnMonthNext = document.getElementById('btnMonthNext');
+    
+    if (loadingOverlay) {
+      loadingOverlay.classList.remove('hidden');
+    }
+    
+    // Disable buttons to prevent multiple clicks
+    if (btnMonthPrev) {
+      btnMonthPrev.disabled = true;
+      btnMonthPrev.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    if (btnMonthNext) {
+      btnMonthNext.disabled = true;
+      btnMonthNext.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    
+    const url = new URL(window.location.href);
+    url.searchParams.set('month', monthYmd);
+    // Remove date parameter when switching to month view
+    url.searchParams.delete('date');
+    
+    // Small delay to show loading state, then navigate
+    setTimeout(() => {
+      window.location.href = url.toString();
+    }, 100);
+  }
+
+  // Set up event listeners when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const btnMonthPrev = document.getElementById('btnMonthPrev');
+    const btnMonthNext = document.getElementById('btnMonthNext');
+    
+    // Check URL parameters to determine which view to show
+    const urlParams = new URLSearchParams(window.location.search);
+    const monthParam = urlParams.get('month');
+    const dateParam = urlParams.get('date');
+    const viewParam = urlParams.get('view');
+    
+    const monthView = document.getElementById('monthView');
+    const dayView = document.getElementById('dayView');
+    const weekView = document.getElementById('weekView');
+    
+    // If date parameter exists, show day view
+    if (dateParam && dayView && monthView && weekView) {
+      dayView.classList.remove('hidden');
+      weekView.classList.add('hidden');
+      monthView.classList.add('hidden');
+      
+      // Update button states
+      const dayViewBtn = document.querySelector('[data-view="day"]');
+      if (dayViewBtn) {
+        document.querySelectorAll('.btn-view-mode').forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white');
+          b.classList.add('bg-white', 'text-gray-700');
+        });
+        dayViewBtn.classList.remove('bg-white', 'text-gray-700');
+        dayViewBtn.classList.add('bg-blue-600', 'text-white');
+      }
+    }
+    // If month parameter exists in URL, show month view
+    else if (monthParam && monthView && dayView && weekView) {
+      dayView.classList.add('hidden');
+      weekView.classList.add('hidden');
+      monthView.classList.remove('hidden');
+      
+      // Update button states
+      const monthViewBtn = document.querySelector('[data-view="month"]');
+      if (monthViewBtn) {
+        document.querySelectorAll('.btn-view-mode').forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white');
+          b.classList.add('bg-white', 'text-gray-700');
+        });
+        monthViewBtn.classList.remove('bg-white', 'text-gray-700');
+        monthViewBtn.classList.add('bg-blue-600', 'text-white');
+      }
+    }
+    // If view parameter is explicitly set
+    else if (viewParam && dayView && monthView && weekView) {
+      dayView.classList.add('hidden');
+      weekView.classList.add('hidden');
+      monthView.classList.add('hidden');
+      
+      const viewBtn = document.querySelector(`[data-view="${viewParam}"]`);
+      if (viewBtn) {
+        document.querySelectorAll('.btn-view-mode').forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white');
+          b.classList.add('bg-white', 'text-gray-700');
+        });
+        viewBtn.classList.remove('bg-white', 'text-gray-700');
+        viewBtn.classList.add('bg-blue-600', 'text-white');
+        
+        if (viewParam === 'day') dayView.classList.remove('hidden');
+        else if (viewParam === 'week') weekView.classList.remove('hidden');
+        else if (viewParam === 'month') monthView.classList.remove('hidden');
+      }
+    }
+    
+    // Hide loading overlay when page is fully loaded
+    window.addEventListener('load', function() {
+      const loadingOverlay = document.getElementById('monthViewLoading');
+      if (loadingOverlay) {
+        loadingOverlay.classList.add('hidden');
+      }
+      
+      // Re-enable buttons
+      const btnMonthPrev = document.getElementById('btnMonthPrev');
+      const btnMonthNext = document.getElementById('btnMonthNext');
+      
+      if (btnMonthPrev) {
+        btnMonthPrev.disabled = false;
+        btnMonthPrev.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+      if (btnMonthNext) {
+        btnMonthNext.disabled = false;
+        btnMonthNext.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    });
+
+    if (btnMonthPrev) {
+      btnMonthPrev.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentMonth = getCurrentMonthFromURL();
+        const prevMonth = getPreviousMonth(currentMonth);
+        navigateToMonth(prevMonth);
+      });
+    }
+
+    if (btnMonthNext) {
+      btnMonthNext.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentMonth = getCurrentMonthFromURL();
+        const nextMonth = getNextMonth(currentMonth);
+        navigateToMonth(nextMonth);
+      });
+    }
+  });
+
 </script>
 
 <!-- Add Shift Modal -->
-<div id="addShiftModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-  <div class="bg-white max-w-md w-full rounded-lg shadow-xl p-6 relative">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold">Add New Shift</h3>
-      <button id="closeAddShiftModal" class="text-gray-500 hover:text-gray-700">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
+<div id="addShiftModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+  <div class="bg-white max-w-lg w-full mx-4 rounded-xl shadow-2xl relative overflow-hidden">
+    <!-- Modal Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 border-b border-blue-800">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-semibold text-white flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Add New Shift
+        </h3>
+        <button id="closeAddShiftModal" class="text-white hover:text-gray-200 transition-colors duration-200 rounded-full p-1 hover:bg-blue-800">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
     </div>
     
-    <form id="addShiftForm">
-      <div id="addShiftError" class="text-red-600 text-sm mb-2 hidden"></div>
-      <div class="mb-4">
-        <label for="staffName" class="block text-sm font-medium text-gray-700 mb-1">Staff Member</label>
-        <select id="doctorSelect" name="doctor_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-          <option value="">Select doctor</option>
+    <form id="addShiftForm" class="p-6">
+      <div id="addShiftError" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 mb-4 rounded-r hidden">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-medium"></span>
+        </div>
+      </div>
+
+      <!-- Doctor Selection -->
+      <div class="mb-5">
+        <label for="doctorSelect" class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Doctor
+          </span>
+        </label>
+        <select id="doctorSelect" name="doctor_id" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" required>
+          <option value="">Select a doctor</option>
           <?php if (isset($doctors)): ?>
             <?php if (!empty($doctors)): ?>
               <?php foreach ($doctors as $doctor): ?>
-                <option value="<?= $doctor['doctor_id'] ?>" data-name="<?= ucfirst(str_replace('dr.', '', $doctor['username'])) ?>">
+                <option value="<?= $doctor['doctor_id'] ?>" 
+                        data-name="<?= ucfirst(str_replace('dr.', '', $doctor['username'])) ?>"
+                        data-specialization="<?= esc($doctor['specialization'] ?? '') ?>"
+                        data-department="<?= esc($doctor['department'] ?? '') ?>"
+                        data-department-slug="<?= esc($doctor['department_slug'] ?? '') ?>">
                   <?= ucfirst(str_replace('dr.', 'Dr. ', $doctor['username'])) ?>
                 </option>
               <?php endforeach; ?>
             <?php else: ?>
-              <option value="">No doctors found in database</option>
+              <option value="">No doctors found</option>
             <?php endif; ?>
           <?php else: ?>
-            <option value="">Doctors variable not set</option>
+            <option value="">Doctors not available</option>
           <?php endif; ?>
         </select>
       </div>
-      
-      <div class="mb-4">
-        <label for="shiftDate" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-        <input type="date" id="shiftDate" name="shiftDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-      </div>
-      
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label for="shiftType" class="block text-sm font-medium text-gray-700 mb-1">Shift Type</label>
-          <select id="shiftType" name="shiftType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            <option value="morning">Morning (6:00 AM - 2:00 PM)</option>
-            <option value="afternoon">Afternoon (2:00 PM - 10:00 PM)</option>
-            <option value="night">Night (10:00 PM - 6:00 AM)</option>
-          </select>
+
+      <!-- Auto-filled Information Section -->
+      <div class="mb-5 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div class="flex items-center gap-2 mb-3">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Doctor Information</span>
         </div>
-        
-        <div>
-          <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
-          <select id="department" name="department" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            <option value="Emergency">🚑 Emergency Department</option>
-            <option value="General">🏥 General Medicine</option>
-            <option value="Cardiology">❤️ Cardiology</option>
-            <option value="Neurology">🧠 Neurology</option>
-            <option value="Orthopedics">🦴 Orthopedics</option>
-            <option value="Pediatrics">👶 Pediatrics</option>
-          </select>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Specialization</label>
+            <input type="text" id="specializationDisplay" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium shadow-sm" readonly placeholder="—">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Department</label>
+            <div id="departmentDisplay" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg min-h-[2.75rem] flex items-center text-sm font-semibold shadow-sm"></div>
+            <input type="hidden" id="department" name="department" value="">
+          </div>
         </div>
       </div>
       
-      <div class="flex justify-end space-x-3 mt-6">
-        <button type="button" id="cancelAddShift" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+      <!-- Schedule Range -->
+      <div class="mb-5">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            Schedule Range
+          </span>
+        </label>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="startDate" class="block text-xs font-medium text-gray-600 mb-1.5">Start Date</label>
+            <input type="date" id="startDate" name="startDate" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" required>
+          </div>
+          <div>
+            <label for="endDate" class="block text-xs font-medium text-gray-600 mb-1.5">End Date</label>
+            <input type="date" id="endDate" name="endDate" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" required>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Shift Type -->
+      <div class="mb-6">
+        <label for="shiftType" class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Shift Type
+          </span>
+        </label>
+        <select id="shiftType" name="shiftType" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" required>
+          <option value="morning">Morning (6AM – 12PM)</option>
+          <option value="afternoon">Afternoon (12PM – 6PM)</option>
+          <option value="night">Night (6PM – 6AM)</option>
+          <option value="mid_shift">Mid Shift (Flexible)</option>
+        </select>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        <button type="button" id="cancelAddShift" class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200">
           Cancel
         </button>
-        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <button type="submit" class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 border border-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-200">
           Add Shift
         </button>
       </div>
@@ -542,6 +900,71 @@
       }
     });
 
+    // Auto-fill specialization and department when doctor is selected
+    const doctorSelect = document.getElementById('doctorSelect');
+    const specializationDisplay = document.getElementById('specializationDisplay');
+    const departmentDisplay = document.getElementById('departmentDisplay');
+    const departmentHidden = document.getElementById('department');
+
+    // Function to get department color class and text color
+    function getDepartmentColorClass(departmentSlug, departmentName) {
+      if (!departmentSlug && !departmentName) return { class: 'dept-general', textColor: 'text-white' };
+      
+      const slug = (departmentSlug || '').toLowerCase();
+      const name = (departmentName || '').toLowerCase();
+      
+      // Map department slugs/names to color classes
+      if (slug.includes('emergency') || name.includes('emergency')) {
+        return { class: 'dept-emergency', textColor: 'text-white' };
+      }
+      if (slug.includes('cardiology') || name.includes('cardiology')) {
+        return { class: 'dept-cardiology', textColor: 'text-red-900' };
+      }
+      if (slug.includes('neurology') || name.includes('neurology')) {
+        return { class: 'dept-neurology', textColor: 'text-white' };
+      }
+      if (slug.includes('orthopedic') || name.includes('orthopedic')) {
+        return { class: 'dept-orthopedics', textColor: 'text-white' };
+      }
+      if (slug.includes('pediatric') || name.includes('pediatric')) {
+        return { class: 'dept-pediatrics', textColor: 'text-white' };
+      }
+      if (slug.includes('general') || name.includes('general')) {
+        return { class: 'dept-general', textColor: 'text-white' };
+      }
+      
+      // Default fallback
+      return { class: 'dept-general', textColor: 'text-white' };
+    }
+
+    doctorSelect.addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      if (selectedOption.value) {
+        const specialization = selectedOption.getAttribute('data-specialization') || '';
+        const department = selectedOption.getAttribute('data-department') || '';
+        const departmentSlug = selectedOption.getAttribute('data-department-slug') || '';
+        
+        // Set specialization (text input)
+        specializationDisplay.value = specialization;
+        
+        // Set department with color coding (div)
+        departmentHidden.value = department;
+        if (department) {
+          const colorInfo = getDepartmentColorClass(departmentSlug, department);
+          departmentDisplay.className = `w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg min-h-[2.75rem] flex items-center text-sm font-semibold shadow-sm ${colorInfo.class} ${colorInfo.textColor}`;
+          departmentDisplay.textContent = department;
+        } else {
+          departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
+          departmentDisplay.textContent = '—';
+        }
+      } else {
+        specializationDisplay.value = '';
+        departmentDisplay.className = 'w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 min-h-[2.5rem] flex items-center text-sm font-medium';
+        departmentDisplay.textContent = '';
+        departmentHidden.value = '';
+      }
+    });
+
     // Form submission
     addShiftForm.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -549,14 +972,16 @@
       // Get form values
       const doctorId = document.getElementById('doctorSelect').value;
       const doctorName = document.getElementById('doctorSelect').options[document.getElementById('doctorSelect').selectedIndex].getAttribute('data-name');
-      const shiftDate = document.getElementById('shiftDate').value;
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
       const shiftType = document.getElementById('shiftType').value;
       const department = document.getElementById('department').value;
 
       // Validate form with specific missing fields
       const missing = [];
       if (!doctorId) missing.push('Doctor');
-      if (!shiftDate) missing.push('Date');
+      if (!startDate) missing.push('Start Date');
+      if (!endDate) missing.push('End Date');
       if (!shiftType) missing.push('Shift Type');
       if (!department) missing.push('Department');
       if (missing.length) {
@@ -564,14 +989,36 @@
         return;
       }
 
-      // Client-side guard: prevent past-time submission for today
+      // Validate that dates are not in the past
       hideAddShiftError();
       const now = new Date();
       const todayStr = new Date().toISOString().split('T')[0];
-      if (shiftDate === todayStr) {
+      const todayDate = new Date(todayStr);
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(endDate);
+      
+      // Prevent past dates
+      if (startDateObj < todayDate) {
+        showAddShiftError('Start date cannot be in the past. Please select today or a future date.');
+        return;
+      }
+      
+      if (endDateObj < todayDate) {
+        showAddShiftError('End date cannot be in the past. Please select today or a future date.');
+        return;
+      }
+
+      // Validate date range - ensure logical order (start <= end)
+      if (startDateObj > endDateObj) {
+        showAddShiftError('Start date must be before or equal to end date.');
+        return;
+      }
+
+      // Client-side guard: prevent past-time submission for today
+      if (startDate === todayStr) {
         const currentHour = now.getHours();
-        const pastMap = { morning: 6, afternoon: 14, night: 22 };
-        if (pastMap[shiftType] !== undefined && currentHour >= pastMap[shiftType]) {
+        const pastMap = { morning: 6, afternoon: 12, night: 18, mid_shift: 0 };
+        if (pastMap[shiftType] !== undefined && shiftType !== 'mid_shift' && currentHour >= pastMap[shiftType]) {
           showAddShiftError('Selected shift time has already passed today. Please choose a future shift.');
           return;
         }
@@ -587,7 +1034,8 @@
         body: new URLSearchParams({
           doctor_id: doctorId,
           doctor_name: doctorName,
-          shift_date: shiftDate,
+          start_date: startDate,
+          end_date: endDate,
           shift_type: shiftType,
           department: department
         })
@@ -595,16 +1043,20 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert('Schedule added successfully!');
+          const message = data.message || 'Doctor schedule successfully added for all valid dates.';
+          alert(message);
           closeModal();
           addShiftForm.reset();
+          specializationDisplay.value = '';
+          departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
+          departmentDisplay.textContent = '—';
+          departmentHidden.value = '';
           // Reload the page to show the new schedule
           window.location.reload();
         } else {
           if (data.conflicts && data.conflicts.length > 0) {
-            showAddShiftError('Scheduling conflict detected. Please choose a different time.');
+            showAddShiftError('This doctor already has a schedule during the selected date and shift.');
           } else if ((data.message || '').toLowerCase().includes('past date')) {
-            // Do not alert; show inline guidance instead
             showAddShiftError('Selected shift time has already passed today. Please choose a future shift.');
           } else {
             showAddShiftError(data.message || 'Failed to add schedule');
@@ -617,19 +1069,42 @@
       });
     });
 
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    const shiftDateEl = document.getElementById('shiftDate');
+    // Set minimum date to today (prevent past dates)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    const startDateEl = document.getElementById('startDate');
+    const endDateEl = document.getElementById('endDate');
     const shiftTypeEl = document.getElementById('shiftType');
-    shiftDateEl.min = today;
-    if (!shiftDateEl.value) {
-      shiftDateEl.value = today;
+    
+    // Set minimum to today for both fields
+    startDateEl.min = todayStr;
+    endDateEl.min = todayStr;
+    
+    // Set default values to today if empty
+    if (!startDateEl.value) {
+      startDateEl.value = todayStr;
     }
+    if (!endDateEl.value) {
+      endDateEl.value = todayStr;
+    }
+
+    // End date can be set to any future date (not constrained by start date)
+    // But we still validate in form submission that start <= end
+    startDateEl.addEventListener('change', function() {
+      updateShiftTypeOptions();
+    });
+
+    endDateEl.addEventListener('change', function() {
+      // Only validate that end date is not in the past (already handled by min attribute)
+      // Don't constrain it based on start date - user can set any future date
+      updateShiftTypeOptions();
+    });
 
     // Disable past shift types for today's date based on current time
     function updateShiftTypeOptions() {
       if (!shiftTypeEl) return;
-      const selectedDate = shiftDateEl.value;
+      const selectedDate = startDateEl.value;
       const now = new Date();
       const currentHour = now.getHours();
       const isToday = selectedDate === today;
@@ -644,10 +1119,13 @@
               shouldDisable = currentHour >= 6; // 06:00
               break;
             case 'afternoon':
-              shouldDisable = currentHour >= 14; // 14:00
+              shouldDisable = currentHour >= 12; // 12:00
               break;
             case 'night':
-              shouldDisable = currentHour >= 22; // 22:00
+              shouldDisable = currentHour >= 18; // 18:00
+              break;
+            case 'mid_shift':
+              shouldDisable = false; // Flexible, always available
               break;
           }
         } else {
@@ -662,27 +1140,26 @@
           opt.textContent = opt.textContent.replace(' (Past Time)', '');
         }
       });
-
-      
     }
 
     // Inline error helpers
     function showAddShiftError(msg) {
       const el = document.getElementById('addShiftError');
       if (!el) return;
-      el.textContent = msg;
+      const span = el.querySelector('span');
+      if (span) span.textContent = msg;
       el.classList.remove('hidden');
     }
     function hideAddShiftError() {
       const el = document.getElementById('addShiftError');
       if (!el) return;
-      el.textContent = '';
+      const span = el.querySelector('span');
+      if (span) span.textContent = '';
       el.classList.add('hidden');
     }
 
     // Initialize and bind
     updateShiftTypeOptions();
-    shiftDateEl.addEventListener('change', updateShiftTypeOptions);
   });
 </script>
 <?= $this->endSection() ?>

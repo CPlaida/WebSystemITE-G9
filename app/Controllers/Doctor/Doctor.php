@@ -29,20 +29,48 @@ class Doctor extends BaseController
             return redirect()->to('/dashboard')->with('error', 'Access denied. Insufficient permissions.');
         }
 
-        // Get current date range (default to current month)
-        $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
-        $endDate = $this->request->getGet('end_date') ?? date('Y-m-t');
+        // Get current date range (default to current month, or selected month for month view)
+        $monthParam = $this->request->getGet('month');
+        if ($monthParam) {
+            // If month parameter is provided (e.g., "2025-11"), use that month
+            $startDate = date('Y-m-01', strtotime($monthParam . '-01'));
+            $endDate = date('Y-m-t', strtotime($monthParam . '-01'));
+        } else {
+            // Default to current month
+            $startDate = date('Y-m-01');
+            $endDate = date('Y-m-t');
+        }
 
-        // Get schedules for the date range
-        $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($startDate, $endDate);
+        // Get schedules for the date range (expand to include full calendar view)
+        // Include days from previous/next month that appear in the calendar grid
+        $calendarStart = date('Y-m-d', strtotime('last sunday', strtotime($startDate)));
+        $calendarEnd = date('Y-m-d', strtotime('next saturday', strtotime($endDate)));
+        $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($calendarStart, $calendarEnd);
 
         // Build dropdown options directly from users who have a doctor role
+        // Only show active doctors who are not on leave
         $userModel = new UserModel();
-        $doctors = $userModel->select('users.id AS doctor_id, users.id AS user_id, users.username')
-                             ->join('roles r', 'users.role_id = r.id', 'left')
-                             ->like('r.name', 'doctor', 'both')
-                             ->orderBy('users.username', 'ASC')
-                             ->findAll();
+        $db = \Config\Database::connect();
+        
+        $doctors = $db->table('users u')
+            ->select('u.id AS doctor_id, u.id AS user_id, u.username, 
+                     sp.specialization_id, ss.name AS specialization,
+                     sp.department_id, sd.name AS department, sd.slug AS department_slug, sp.status')
+            ->join('roles r', 'u.role_id = r.id', 'left')
+            ->join('staff_profiles sp', 'sp.user_id = u.id', 'left')
+            ->join('staff_specializations ss', 'ss.id = sp.specialization_id', 'left')
+            ->join('staff_departments sd', 'sd.id = sp.department_id', 'left')
+            ->like('r.name', 'doctor', 'both')
+            ->orderBy('u.username', 'ASC')
+            ->get()
+            ->getResultArray();
+        
+        // Filter to only show active doctors (exclude on_leave and inactive)
+        $doctors = array_filter($doctors, function($doctor) {
+            // Include doctors without staff profile (status is null) or with active status
+            return empty($doctor['status']) || $doctor['status'] === 'active';
+        });
+        
         // Note: doctor_id here is users.id; addSchedule will normalize to doctors.id before insert
 
         $data = [
@@ -50,6 +78,7 @@ class Doctor extends BaseController
             'doctors' => $doctors,
             'startDate' => $startDate,
             'endDate' => $endDate,
+            'currentMonth' => $monthParam ?? date('Y-m'),
         ];
 
         return view('Roles/admin/appointments/StaffSchedule', $data);
@@ -65,12 +94,36 @@ class Doctor extends BaseController
         }
 
         try {
+            $startDate = $this->request->getPost('start_date');
+            $endDate = $this->request->getPost('end_date');
+            
+            // If only start_date is provided, use it as single date (backward compatibility)
+            if ($startDate && !$endDate) {
+                $endDate = $startDate;
+            }
+            
+            // Validate date range
+            if (!$startDate || !$endDate) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'message' => 'Start date and end date are required'
+                ]);
+            }
+            
+            if (strtotime($startDate) > strtotime($endDate)) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'message' => 'Start date must be before or equal to end date'
+                ]);
+            }
+
             $data = [
                 'doctor_id' => $this->request->getPost('doctor_id'),
                 'doctor_name' => $this->request->getPost('doctor_name'),
                 'department' => $this->request->getPost('department'),
                 'shift_type' => $this->request->getPost('shift_type'),
-                'shift_date' => $this->request->getPost('shift_date'),
+                'start_date' => $startDate,
+                'end_date' => $endDate,
                 'notes' => $this->request->getPost('notes') ?? ''
             ];
 
@@ -145,25 +198,35 @@ class Doctor extends BaseController
             $tz = new \DateTimeZone('Asia/Manila');
             $now = new \DateTime('now', $tz);
             $today = $now->format('Y-m-d');
+            $todayTimestamp = strtotime($today);
 
-            // If selected date is in the past, block outright
-            if (strtotime($data['shift_date']) < strtotime($today)) {
+            // If start date is in the past, block outright
+            if (strtotime($startDate) < $todayTimestamp) {
                 return $this->response->setStatusCode(400)->setJSON([
                     'success' => false,
-                    'message' => 'Cannot add a shift in the past date.'
+                    'message' => 'Start date cannot be in the past. Please select today or a future date.'
                 ]);
             }
 
-            // If selected date is today, block if shift start time already passed (exact DateTime check)
-            if ($data['shift_date'] === $today) {
+            // If end date is in the past, block outright
+            if (strtotime($endDate) < $todayTimestamp) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'message' => 'End date cannot be in the past. Please select today or a future date.'
+                ]);
+            }
+
+            // If start date is today, block if shift start time already passed (exact DateTime check)
+            if ($startDate === $today) {
                 $shiftStartMap = [
                     'morning' => '06:00:00',
-                    'afternoon' => '14:00:00',
-                    'night' => '22:00:00'
+                    'afternoon' => '12:00:00',
+                    'night' => '18:00:00',
+                    'mid_shift' => '00:00:00' // Flexible, no restriction
                 ];
                 $type = strtolower(trim($data['shift_type'] ?? ''));
-                if (isset($shiftStartMap[$type])) {
-                    $shiftStart = new \DateTime($data['shift_date'] . ' ' . $shiftStartMap[$type], $tz);
+                if (isset($shiftStartMap[$type]) && $type !== 'mid_shift') {
+                    $shiftStart = new \DateTime($startDate . ' ' . $shiftStartMap[$type], $tz);
                     if ($now >= $shiftStart) {
                         return $this->response->setStatusCode(400)->setJSON([
                             'success' => false,
@@ -173,25 +236,31 @@ class Doctor extends BaseController
                 }
             }
 
-            // Additional validation for consecutive night shifts
-            if ($data['shift_type'] === 'night') {
-                if (!$this->doctorScheduleModel->canWorkConsecutiveNights($data['doctor_id'], $data['shift_date'])) {
-                    return $this->response->setStatusCode(400)->setJSON([
-                        'success' => false,
-                        'message' => 'Doctor cannot work consecutive night shifts. Please choose a different doctor or date.'
-                    ]);
-                }
-            }
-
             // Validate required fields
-            if (empty($data['doctor_id']) || empty($data['shift_date']) || empty($data['shift_type'])) {
+            if (empty($data['doctor_id']) || empty($data['shift_type']) || empty($data['department'])) {
                 return $this->response->setStatusCode(400)->setJSON([
                     'success' => false, 
-                    'message' => 'Missing required fields: doctor_id, shift_date, or shift_type'
+                    'message' => 'Missing required fields: doctor_id, shift_type, or department'
                 ]);
             }
 
-            $result = $this->doctorScheduleModel->addSchedule($data);
+            // Check if doctor is on leave for any date in the range
+            $db = \Config\Database::connect();
+            $staffProfile = $db->table('staff_profiles')
+                ->where('user_id', $data['doctor_id'])
+                ->where('status', 'on_leave')
+                ->get()
+                ->getRowArray();
+            
+            if ($staffProfile) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'message' => 'This doctor is currently on leave and cannot be scheduled.'
+                ]);
+            }
+
+            // Process date range - create schedules for each day
+            $result = $this->doctorScheduleModel->addScheduleRange($data);
             
             return $this->response->setJSON($result);
         } catch (\Exception $e) {
