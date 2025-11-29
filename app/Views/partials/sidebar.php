@@ -119,6 +119,14 @@
                     <li><a href="<?= base_url('admin/Administration/StaffManagement') ?>"><span class="text">Staff Management</span></a></li>
                 </ul>
             </li>
+
+            <!-- Reports -->
+            <li class="nav-item expandable">
+                <a href="<?= base_url('reports') ?>">
+                    <span class="text">Reports</span>
+                    <span class="arrow">›</span>
+                </a>
+            </li>
         <?php endif; ?>
 
         <?php if ($role === 'doctor'): ?>
@@ -271,6 +279,13 @@
                     <li><a href="<?= site_url('accountant/billing/process') ?>"><span class="text">Bill Process</span></a></li>
                     <li><a href="<?= base_url('accountant/billing/create') ?>"><span class="text">Bill Management</span></a></li>
                 </ul>
+            </li>
+
+            <!-- Reports -->
+            <li class="nav-item">
+                <a href="<?= base_url('reports') ?>">
+                    <span class="text">Reports</span>
+                </a>
             </li>
 
         <?php endif; ?>

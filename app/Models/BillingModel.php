@@ -175,4 +175,117 @@ class BillingModel extends Model
             'outstanding' => (float) ($outstanding ?: 0),
         ];
     }
+
+    /**
+     * Get revenue report data
+     */
+    public function getRevenueReport(string $startDate, string $endDate, array $filters = []): array
+    {
+        $builder = $this->withRelations();
+        $builder->where('b.bill_date >=', $startDate)
+                ->where('b.bill_date <=', $endDate);
+
+        if (!empty($filters['payment_method'])) {
+            $builder->where('b.payment_method', $filters['payment_method']);
+        }
+
+        if (!empty($filters['payment_status'])) {
+            $builder->where('b.payment_status', $filters['payment_status']);
+        }
+
+        $bills = $builder->get()->getResultArray();
+
+        $totalRevenue = 0;
+        $byPaymentMethod = [];
+        $byServiceType = [
+            'consultation' => 0,
+            'medication' => 0,
+            'lab_tests' => 0,
+            'other' => 0,
+        ];
+
+        foreach ($bills as $bill) {
+            $amount = (float)($bill['final_amount'] ?? 0);
+            $totalRevenue += $amount;
+
+            $method = $bill['payment_method'] ?? 'cash';
+            $byPaymentMethod[$method] = ($byPaymentMethod[$method] ?? 0) + $amount;
+
+            $byServiceType['consultation'] += (float)($bill['consultation_fee'] ?? 0);
+            $byServiceType['medication'] += (float)($bill['medication_cost'] ?? 0);
+            $byServiceType['lab_tests'] += (float)($bill['lab_tests_cost'] ?? 0);
+            $byServiceType['other'] += (float)($bill['other_charges'] ?? 0);
+        }
+
+        return [
+            'total_revenue' => $totalRevenue,
+            'total_bills' => count($bills),
+            'by_payment_method' => $byPaymentMethod,
+            'by_service_type' => $byServiceType,
+            'bills' => $bills,
+        ];
+    }
+
+    /**
+     * Get outstanding payments
+     */
+    public function getOutstandingPayments(array $filters = []): array
+    {
+        $builder = $this->withRelations();
+        $builder->whereIn('b.payment_status', ['pending', 'partial', 'overdue']);
+
+        if (!empty($filters['payment_status'])) {
+            $builder->where('b.payment_status', $filters['payment_status']);
+        }
+
+        if (!empty($filters['patient_id'])) {
+            $builder->where('b.patient_id', $filters['patient_id']);
+        }
+
+        if (!empty($filters['start_date'])) {
+            $builder->where('b.bill_date >=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date'])) {
+            $builder->where('b.bill_date <=', $filters['end_date']);
+        }
+
+        $bills = $builder->orderBy('b.bill_date', 'ASC')->get()->getResultArray();
+
+        $totalOutstanding = 0;
+        $aging = [
+            '0-30' => 0,
+            '31-60' => 0,
+            '61-90' => 0,
+            '90+' => 0,
+        ];
+
+        $today = new \DateTime();
+        foreach ($bills as &$bill) {
+            $amount = (float)($bill['final_amount'] ?? 0);
+            $totalOutstanding += $amount;
+
+            $billDate = new \DateTime($bill['bill_date'] ?? date('Y-m-d'));
+            $days = $today->diff($billDate)->days;
+
+            if ($days <= 30) {
+                $aging['0-30'] += $amount;
+            } elseif ($days <= 60) {
+                $aging['31-60'] += $amount;
+            } elseif ($days <= 90) {
+                $aging['61-90'] += $amount;
+            } else {
+                $aging['90+'] += $amount;
+            }
+
+            $bill['days_overdue'] = $days;
+        }
+
+        return [
+            'total_outstanding' => $totalOutstanding,
+            'total_bills' => count($bills),
+            'aging_analysis' => $aging,
+            'bills' => $bills,
+        ];
+    }
 }

@@ -1137,6 +1137,10 @@ body { background:#f4f6f9; color:#333; }
 .card h3 { margin:0 0 10px; font-size:16px; color:#7f8c8d; }
 .card .value { font-size:28px; font-weight:bold; color:#2c3e50; }
 
+/* Large Summary Cards for Reports */
+.card-container .card[style*="padding: 35px"] h3 { font-size: 18px; margin-bottom: 15px; }
+.card-container .card[style*="padding: 35px"] .value { font-size: 42px; font-weight: 700; }
+
 /* Responsive breakpoints for card-container */
 @media (max-width: 992px) {
     .card-container { grid-template-columns: repeat(2, 1fr); }
@@ -5120,5 +5124,32 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     .medicine-form-row #currentImageContainer img {
         width: 80px;
         height: 80px;
+    }
+}
+
+/* ==================== REPORTS STYLES ==================== */
+/* Reports use existing system classes (.card, .card-container, .data-table, etc.) */
+/* Only minimal additions for report-specific enhancements */
+
+/* Print Styles for Reports */
+@media print {
+    .sidebar,
+    .toggle-btn,
+    .btn {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .data-table {
+        font-size: 12px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 8px;
     }
 }

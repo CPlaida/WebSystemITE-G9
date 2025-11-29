@@ -155,5 +155,181 @@ class PatientModel extends Model
     {
         return $data;
     }
+
+    /**
+     * Get patient statistics
+     */
+    public function getPatientStatistics(array $filters = []): array
+    {
+        $builder = $this->builder();
+
+        if (!empty($filters['start_date'])) {
+            $builder->where('created_at >=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date'])) {
+            $builder->where('created_at <=', $filters['end_date'] . ' 23:59:59');
+        }
+
+        if (!empty($filters['patient_type'])) {
+            $builder->where('type', $filters['patient_type']);
+        }
+
+        if (!empty($filters['gender'])) {
+            $builder->where('gender', $filters['gender']);
+        }
+
+        $patients = $builder->get()->getResultArray();
+
+        $stats = [
+            'total_patients' => count($patients),
+            'inpatient' => 0,
+            'outpatient' => 0,
+            'by_gender' => ['male' => 0, 'female' => 0, 'other' => 0],
+            'by_age_group' => [
+                '0-18' => 0,
+                '19-35' => 0,
+                '36-50' => 0,
+                '51-65' => 0,
+                '65+' => 0,
+            ],
+            'new_patients' => 0,
+            'active_patients' => 0,
+        ];
+
+        $today = new \DateTime();
+        foreach ($patients as $patient) {
+            if ($patient['type'] === 'inpatient') {
+                $stats['inpatient']++;
+            } else {
+                $stats['outpatient']++;
+            }
+
+            $gender = $patient['gender'] ?? 'other';
+            if (isset($stats['by_gender'][$gender])) {
+                $stats['by_gender'][$gender]++;
+            }
+
+            if (!empty($patient['date_of_birth'])) {
+                $dob = new \DateTime($patient['date_of_birth']);
+                $age = $today->diff($dob)->y;
+
+                if ($age <= 18) {
+                    $stats['by_age_group']['0-18']++;
+                } elseif ($age <= 35) {
+                    $stats['by_age_group']['19-35']++;
+                } elseif ($age <= 50) {
+                    $stats['by_age_group']['36-50']++;
+                } elseif ($age <= 65) {
+                    $stats['by_age_group']['51-65']++;
+                } else {
+                    $stats['by_age_group']['65+']++;
+                }
+            }
+
+            if ($patient['status'] === 'active') {
+                $stats['active_patients']++;
+            }
+
+            $created = new \DateTime($patient['created_at'] ?? date('Y-m-d'));
+            if ($created->format('Y-m-d') >= ($filters['start_date'] ?? '2000-01-01')) {
+                $stats['new_patients']++;
+            }
+        }
+
+        return [
+            'statistics' => $stats,
+            'patients' => $patients,
+        ];
+    }
+
+    /**
+     * Get patient medical history
+     */
+    public function getPatientHistory(string $patientId, string $startDate = '', string $endDate = ''): array
+    {
+        $patient = $this->find($patientId);
+        if (!$patient) {
+            return [];
+        }
+
+        $db = \Config\Database::connect();
+
+        // Get appointments
+        $appointmentBuilder = $db->table('appointments')
+            ->where('patient_id', $patientId);
+        if ($startDate) {
+            $appointmentBuilder->where('appointment_date >=', $startDate);
+        }
+        if ($endDate) {
+            $appointmentBuilder->where('appointment_date <=', $endDate);
+        }
+        $appointments = $appointmentBuilder->orderBy('appointment_date', 'DESC')->get()->getResultArray();
+
+        // Get prescriptions
+        $prescriptionBuilder = $db->table('prescriptions')
+            ->where('patient_id', $patientId);
+        if ($startDate) {
+            $prescriptionBuilder->where('created_at >=', $startDate);
+        }
+        if ($endDate) {
+            $prescriptionBuilder->where('created_at <=', $endDate . ' 23:59:59');
+        }
+        $prescriptions = $prescriptionBuilder->orderBy('created_at', 'DESC')->get()->getResultArray();
+
+        // Get laboratory tests
+        $labBuilder = $db->table('laboratory')
+            ->where('patient_id', $patientId);
+        if ($startDate) {
+            $labBuilder->where('test_date >=', $startDate);
+        }
+        if ($endDate) {
+            $labBuilder->where('test_date <=', $endDate);
+        }
+        $laboratory = $labBuilder->orderBy('test_date', 'DESC')->get()->getResultArray();
+
+        // Get admissions
+        $admissionBuilder = $db->table('admissions')
+            ->where('patient_id', $patientId);
+        if ($startDate) {
+            $admissionBuilder->where('admission_date >=', $startDate);
+        }
+        if ($endDate) {
+            $admissionBuilder->where('admission_date <=', $endDate);
+        }
+        $admissions = $admissionBuilder->orderBy('admission_date', 'DESC')->get()->getResultArray();
+
+        // Get bills
+        $billingBuilder = $db->table('billing')
+            ->where('patient_id', $patientId);
+        if ($startDate) {
+            $billingBuilder->where('bill_date >=', $startDate);
+        }
+        if ($endDate) {
+            $billingBuilder->where('bill_date <=', $endDate);
+        }
+        $bills = $billingBuilder->orderBy('bill_date', 'DESC')->get()->getResultArray();
+
+        // Get vital signs
+        $vitalBuilder = $db->table('patient_vitals')
+            ->where('patient_id', $patientId);
+        if ($startDate) {
+            $vitalBuilder->where('recorded_at >=', $startDate);
+        }
+        if ($endDate) {
+            $vitalBuilder->where('recorded_at <=', $endDate . ' 23:59:59');
+        }
+        $vitals = $vitalBuilder->orderBy('recorded_at', 'DESC')->get()->getResultArray();
+
+        return [
+            'patient' => $patient,
+            'appointments' => $appointments,
+            'prescriptions' => $prescriptions,
+            'laboratory' => $laboratory,
+            'admissions' => $admissions,
+            'bills' => $bills,
+            'vitals' => $vitals,
+        ];
+    }
 }
 

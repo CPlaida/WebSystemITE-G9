@@ -285,53 +285,58 @@ class Pharmacy extends Controller
     // Get all medications (for autocomplete)
     public function getMedications()
     {
-        $term = (string) $this->request->getGet('term');
-        
-        // Check if image column exists
-        $fields = $this->db->getFieldNames('medicines');
-        $hasImageColumn = in_array('image', $fields);
-        
-        // If column doesn't exist, try to add it automatically (fallback)
-        if (!$hasImageColumn) {
-            try {
-                $this->db->query("ALTER TABLE medicines ADD COLUMN image VARCHAR(255) NULL AFTER expiry_date");
-                $hasImageColumn = true;
-                // Refresh field list
-                $fields = $this->db->getFieldNames('medicines');
-            } catch (\Exception $e) {
-                log_message('error', 'Failed to add image column: ' . $e->getMessage());
+        try {
+            $term = (string) $this->request->getGet('term');
+            
+            // Check if image column exists
+            $fields = $this->db->getFieldNames('medicines');
+            $hasImageColumn = in_array('image', $fields);
+            
+            // If column doesn't exist, try to add it automatically (fallback)
+            if (!$hasImageColumn) {
+                try {
+                    $this->db->query("ALTER TABLE medicines ADD COLUMN image VARCHAR(255) NULL AFTER expiry_date");
+                    $hasImageColumn = true;
+                    // Refresh field list
+                    $fields = $this->db->getFieldNames('medicines');
+                } catch (\Exception $e) {
+                    log_message('error', 'Failed to add image column: ' . $e->getMessage());
+                }
             }
-        }
-        
-        $builder = $this->db->table('medicines');
-        // Always try to select image column - if it doesn't exist, it will be null
-        $builder->select('id, name, brand, retail_price, unit_price, price, stock, expiry_date');
-        if ($hasImageColumn) {
-            $builder->select('image', true); // Add image to select
-        }
-        
-        if ($term !== '') {
-            $builder->groupStart()
-                    ->like('name', $term)
-                    ->orLike('brand', $term)
-                    ->groupEnd();
-        }
+            
+            $builder = $this->db->table('medicines');
+            // Select only columns that exist - check if price column exists for backward compatibility
+            $hasPriceColumn = in_array('price', $fields);
+            $selectFields = 'id, name, brand, retail_price, unit_price, stock, expiry_date';
+            if ($hasPriceColumn) {
+                $selectFields .= ', price';
+            }
+            $builder->select($selectFields);
+            if ($hasImageColumn) {
+                $builder->select('image', true); // Add image to select
+            }
+            
+            if ($term !== '') {
+                $builder->groupStart()
+                        ->like('name', $term)
+                        ->orLike('brand', $term)
+                        ->groupEnd();
+            }
 
-        // Exclude expired or expiring within 30 days from prescription selection
-        $today = date('Y-m-d');
-        $limit = date('Y-m-d', strtotime('+30 days'));
-        $builder->groupStart()
-                ->where('expiry_date >', $limit)
-                ->orWhere('expiry_date IS NULL', null, false)
-                ->groupEnd();
-        
-        // Only show medicines with stock > 0
-        $builder->where('stock >', 0);
-        
-        $builder->orderBy('id','DESC');
-        $builder->limit(50);
-        
-        $medications = $builder->get()->getResultArray();
+            // Exclude only expired medicines (not those expiring soon)
+            $today = date('Y-m-d');
+            $builder->groupStart()
+                    ->where('expiry_date >', $today)
+                    ->orWhere('expiry_date IS NULL', null, false)
+                    ->groupEnd();
+            
+            // Only show medicines with stock > 0
+            $builder->where('stock >', 0);
+            
+            $builder->orderBy('id','DESC');
+            $builder->limit(50);
+            
+            $medications = $builder->get()->getResultArray();
         
         // Normalize types and compute days_left until expiry, add image URL
         $today = date('Y-m-d');
@@ -390,6 +395,13 @@ class Pharmacy extends Controller
         }
         
         return $this->response->setJSON($medications);
+        } catch (\Exception $e) {
+            log_message('error', 'Error in getMedications: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'error' => 'Failed to load medications',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     // Get medication by ID

@@ -140,6 +140,36 @@ $routes->get('billing/show/(:num)', 'Billing::show/$1', ['filter' => 'auth']);
 // PhilHealth case rates endpoint
 $routes->get('billing/caseRates', 'Billing::caseRates', ['filter' => 'auth']);
 
+// Reports Routes
+$routes->group('reports', ['filter' => 'auth'], function($routes) {
+    $routes->get('/', 'Reports::index');
+    $routes->get('financial', 'Reports::financial');
+    $routes->get('revenue', 'Reports::revenue');
+    $routes->get('expenses', 'Reports::expenses');
+    $routes->get('profit-loss', 'Reports::profitLoss');
+    $routes->get('outstanding-payments', 'Reports::outstandingPayments');
+    $routes->get('patient-statistics', 'Reports::patientStats');
+    $routes->get('patient-visits', 'Reports::patientVisits');
+    $routes->get('patient-history', 'Reports::patientHistory');
+    $routes->get('appointment-statistics', 'Reports::appointmentStats');
+    $routes->get('doctor-schedule-utilization', 'Reports::doctorScheduleUtilization');
+    $routes->get('laboratory-tests', 'Reports::laboratoryTests');
+    $routes->get('test-results', 'Reports::testResults');
+    $routes->get('prescriptions', 'Reports::prescriptions');
+    $routes->get('medicine-inventory', 'Reports::medicineInventory');
+    $routes->get('medicine-sales', 'Reports::medicineSales');
+    $routes->get('admissions', 'Reports::admissions');
+    $routes->get('discharges', 'Reports::discharges');
+    $routes->get('doctor-performance', 'Reports::doctorPerformance');
+    $routes->get('staff-activity', 'Reports::staffActivity');
+    $routes->get('philhealth-claims', 'Reports::philhealthClaims');
+    $routes->get('hmo-claims', 'Reports::hmoClaims');
+    
+    // Export routes
+    $routes->get('export/pdf/(:segment)', 'Reports::exportPdf/$1');
+    $routes->get('export/excel/(:segment)', 'Reports::exportExcel/$1');
+});
+
 // Laboratory Routes
 $routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,doctor,admin']);
 $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter' => 'auth:labstaff,admin']);

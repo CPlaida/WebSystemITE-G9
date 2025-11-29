@@ -61,4 +61,86 @@ class LaboratoryModel extends Model
         $data['data']['id'] = 'LAB-' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
         return $data;
     }
+
+    /**
+     * Get test statistics for reports
+     */
+    public function getTestStatistics(array $filters = []): array
+    {
+        $builder = $this->builder();
+
+        if (!empty($filters['start_date'])) {
+            $builder->where('test_date >=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date'])) {
+            $builder->where('test_date <=', $filters['end_date']);
+        }
+
+        if (!empty($filters['test_type'])) {
+            $builder->where('test_type', $filters['test_type']);
+        }
+
+        if (!empty($filters['status'])) {
+            $builder->where('status', $filters['status']);
+        }
+
+        $tests = $builder->get()->getResultArray();
+
+        $stats = [
+            'total_tests' => count($tests),
+            'by_status' => ['pending' => 0, 'in_progress' => 0, 'completed' => 0],
+            'by_type' => [],
+            'completion_rate' => 0,
+        ];
+
+        $completed = 0;
+        foreach ($tests as $test) {
+            $status = $test['status'] ?? 'pending';
+            if (isset($stats['by_status'][$status])) {
+                $stats['by_status'][$status]++;
+            }
+            if ($status === 'completed') {
+                $completed++;
+            }
+
+            $type = $test['test_type'] ?? 'Unknown';
+            $stats['by_type'][$type] = ($stats['by_type'][$type] ?? 0) + 1;
+        }
+
+        $stats['completion_rate'] = count($tests) > 0 ? ($completed / count($tests)) * 100 : 0;
+
+        return [
+            'statistics' => $stats,
+            'tests' => $tests,
+        ];
+    }
+
+    /**
+     * Get test results summary
+     */
+    public function getTestResultsSummary(array $filters = []): array
+    {
+        $builder = $this->builder();
+        $builder->where('status', 'completed');
+
+        if (!empty($filters['start_date'])) {
+            $builder->where('test_date >=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date'])) {
+            $builder->where('test_date <=', $filters['end_date']);
+        }
+
+        if (!empty($filters['test_type'])) {
+            $builder->where('test_type', $filters['test_type']);
+        }
+
+        $tests = $builder->get()->getResultArray();
+
+        return [
+            'total_completed' => count($tests),
+            'tests' => $tests,
+        ];
+    }
 }
