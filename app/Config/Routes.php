@@ -33,7 +33,6 @@ $routes->setAutoRoute(false);
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 // Convenience role-specific dashboards (reuse unified dashboard)
 $routes->get('doctor/dashboard', 'Dashboard::index', ['filter' => 'auth:doctor,admin']);
-$routes->get('doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/my-schedule', 'Doctor\DoctorScheduleController::view', ['filter' => 'auth:doctor']);
 $routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
 $routes->get('receptionist/dashboard', 'Dashboard::index', ['filter' => 'auth:receptionist,admin']);
@@ -140,31 +139,9 @@ $routes->get('billing/show/(:num)', 'Billing::show/$1', ['filter' => 'auth']);
 // PhilHealth case rates endpoint
 $routes->get('billing/caseRates', 'Billing::caseRates', ['filter' => 'auth']);
 
-// Reports Routes
+// Reports Routes - Unified interface
 $routes->group('reports', ['filter' => 'auth'], function($routes) {
     $routes->get('/', 'Reports::index');
-    $routes->get('financial', 'Reports::financial');
-    $routes->get('revenue', 'Reports::revenue');
-    $routes->get('expenses', 'Reports::expenses');
-    $routes->get('profit-loss', 'Reports::profitLoss');
-    $routes->get('outstanding-payments', 'Reports::outstandingPayments');
-    $routes->get('patient-statistics', 'Reports::patientStats');
-    $routes->get('patient-visits', 'Reports::patientVisits');
-    $routes->get('patient-history', 'Reports::patientHistory');
-    $routes->get('appointment-statistics', 'Reports::appointmentStats');
-    $routes->get('doctor-schedule-utilization', 'Reports::doctorScheduleUtilization');
-    $routes->get('laboratory-tests', 'Reports::laboratoryTests');
-    $routes->get('test-results', 'Reports::testResults');
-    $routes->get('prescriptions', 'Reports::prescriptions');
-    $routes->get('medicine-inventory', 'Reports::medicineInventory');
-    $routes->get('medicine-sales', 'Reports::medicineSales');
-    $routes->get('admissions', 'Reports::admissions');
-    $routes->get('discharges', 'Reports::discharges');
-    $routes->get('doctor-performance', 'Reports::doctorPerformance');
-    $routes->get('staff-activity', 'Reports::staffActivity');
-    $routes->get('philhealth-claims', 'Reports::philhealthClaims');
-    $routes->get('hmo-claims', 'Reports::hmoClaims');
-    
     // Export routes
     $routes->get('export/pdf/(:segment)', 'Reports::exportPdf/$1');
     $routes->get('export/excel/(:segment)', 'Reports::exportExcel/$1');
@@ -189,13 +166,11 @@ $routes->get('doctor/laboratory/request', 'Laboratory::request', ['filter' => 'a
 $routes->get('doctor/laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:doctor,admin']);
 $routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:doctor,admin']);
 
- //Medicine Routes
+// Medicine Routes
 $routes->get('/medicines', 'Medicine::index');
 $routes->post('/medicines/store', 'Medicine::store');
 $routes->get('/medicines/edit/(:segment)', 'Medicine::edit/$1');
 $routes->post('/medicines/update/(:segment)', 'Medicine::update/$1');
- // Sidebar alias
-$routes->get('admin/inventory/medicine', 'Medicine::index');
 
 // Pharmacy Routes under admin
 $routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth:pharmacist,admin'], function($routes) {
@@ -247,26 +222,14 @@ $routes->group('api/locations', ['namespace' => 'App\\Controllers'], function($r
 
 $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransaction/$1', ['filter' => 'auth:pharmacist,admin']);
 
-    // View routes
-    $routes->get('admin/InventoryMan/PrescriptionDispensing', 'PrescriptionController::index', ['filter' => 'auth:pharmacist,admin']);
-
-    // Transaction pages (normalized to Pharmacy controller)
-    // Duplicate routes removed to avoid conflicts and 404s from non-existent TransactionController
-    // Use existing routes:
-    // - /admin/pharmacy/transactions -> Pharmacy::transactions (defined above in admin/pharmacy group)
-    // - /admin/pharmacy/transaction/(:any) -> Pharmacy::viewTransaction/$1 (defined above)
-    // - /admin/pharmacy/transaction/print/(:num) -> Pharmacy::printTransaction/$1 (defined above)
-
-    // Route for admin inventory medicine
-    $routes->get('admin/inventory/medicine', 'Medicine::index', ['filter' => 'auth:pharmacist,admin']);
-
 // Administration Routes
     $routes->group('admin', ['namespace' => 'App\\Controllers', 'filter' => 'auth:admin'], function($routes) {
         // Unified dashboard is handled via Admin::index (already routed at /admin/dashboard)
         $routes->get('billing', 'Billing::index');
         $routes->get('billing/receipt/(:num)', 'Billing::receipt/$1');
         
-        // Inventory Management Routes
+        // Inventory routes
+        $routes->get('inventory/medicine', 'Medicine::index');
         $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');
         
         $routes->group('patients', function($routes) {
