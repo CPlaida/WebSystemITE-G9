@@ -145,7 +145,7 @@ class Pharmacy extends Controller
         $builder = $this->db->table('pharmacy_transactions pt');
         $builder->select("pt.id, pt.transaction_number, pt.date, pt.patient_id, pt.total_amount, p.first_name, p.last_name, pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount as prescription_total");
         $builder->join('patients p','p.id = pt.patient_id','left');
-        $builder->join('prescriptions pr','pr.patient_id = pt.patient_id AND pr.date = pt.date','left');
+        $builder->join('prescriptions pr','pr.date = pt.date','left'); // Removed patient_id join
         $builder->where('pt.id', $transactionId);
         $row = $builder->get()->getRowArray();
         if (!$row) return redirect()->back()->with('error','Transaction not found');
@@ -597,11 +597,6 @@ class Pharmacy extends Controller
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
-            
-            // Only add patient_id if it's not null/empty
-            if (!empty($data['patient_id'])) {
-                $prescriptionData['patient_id'] = (string)$data['patient_id'];
-            }
             
             $this->db->table('prescriptions')->insert($prescriptionData);
             $prescriptionId = $this->db->insertID();

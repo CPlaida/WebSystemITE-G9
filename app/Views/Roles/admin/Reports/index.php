@@ -479,7 +479,6 @@
                             <thead>
                                 <tr>
                                     <th>Prescription ID</th>
-                                    <th>Patient ID</th>
                                     <th>Date</th>
                                     <th>Medicines</th>
                                     <th>Total Amount</th>
@@ -490,7 +489,6 @@
                                     <?php foreach ($reportData['prescriptions'] as $pres): ?>
                                         <tr>
                                             <td>#<?= $pres['id'] ?? 'N/A' ?></td>
-                                            <td><?= $pres['patient_id'] ?? 'N/A' ?></td>
                                             <td><?= date('M d, Y', strtotime($pres['date'] ?? $pres['created_at'] ?? date('Y-m-d'))) ?></td>
                                             <td>
                                                 <?php 

@@ -13,7 +13,6 @@ class PrescriptionModel extends Model
     protected $useSoftDeletes = false;
 
     protected $allowedFields = [
-        'patient_id',
         'date',
         'payment_method',
         'subtotal',
@@ -22,6 +21,7 @@ class PrescriptionModel extends Model
         'note',
         'created_at',
         'updated_at'
+        // Note: patient_id removed - not needed for prescriptions
     ];
 
     protected $useTimestamps = true;
@@ -29,7 +29,6 @@ class PrescriptionModel extends Model
     protected $updatedField = 'updated_at';
 
     protected $validationRules = [
-        'patient_id' => 'required|numeric',
         'date' => 'required|valid_date',
         'payment_method' => 'required|in_list[cash,insurance]',
         'subtotal' => 'required|decimal',

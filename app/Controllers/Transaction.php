@@ -23,12 +23,14 @@ class Transaction extends Controller
         }
         $trx = $this->db->table('pharmacy_transactions')->where('id',$id)->get()->getRowArray();
         if (!$trx) return redirect()->back();
+        // Get prescription items by matching transaction date 
         $items = $this->db->table('prescription_items pi')
             ->select('pi.*, m.name as medication_name')
             ->join('medicines m','m.id=pi.medication_id','left')
-            ->where('pi.prescription_id', function ($qb) use ($trx) {
-                $qb->select('id')->from('prescriptions')->where('patient_id',$trx['patient_id'])->orderBy('id','DESC')->limit(1);
-            })->get()->getResultArray();
+            ->join('prescriptions pr','pr.id = pi.prescription_id','left')
+            ->where('pr.date', $trx['date'])
+            ->orderBy('pr.id','DESC')
+            ->get()->getResultArray();
         return view('Roles/admin/pharmacy/TransactionDetail', ['transaction'=>$trx,'items'=>$items,'title'=>'Transaction Details']);
     }
 
@@ -39,12 +41,14 @@ class Transaction extends Controller
         }
         $trx = $this->db->table('pharmacy_transactions')->where('id',$id)->get()->getRowArray();
         if (!$trx) return redirect()->back();
+        // Get prescription items by matching transaction date
         $items = $this->db->table('prescription_items pi')
             ->select('pi.*, m.name as medication_name')
             ->join('medicines m','m.id=pi.medication_id','left')
-            ->where('pi.prescription_id', function ($qb) use ($trx) {
-                $qb->select('id')->from('prescriptions')->where('patient_id',$trx['patient_id'])->orderBy('id','DESC')->limit(1);
-            })->get()->getResultArray();
+            ->join('prescriptions pr','pr.id = pi.prescription_id','left')
+            ->where('pr.date', $trx['date'])
+            ->orderBy('pr.id','DESC')
+            ->get()->getResultArray();
         return view('Roles/admin/pharmacy/TransactionPrint', ['transaction'=>$trx,'items'=>$items,'title'=>'Print']);
     }
 }
