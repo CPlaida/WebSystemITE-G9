@@ -1686,6 +1686,20 @@ textarea.form-control { min-height:100px; resize:vertical; }
 .dept-pediatrics { background-color:#f59e0b; color:#fff; }
 .dept-general { background-color:#6b7280; color:#fff; }
 
+/* Clickable calendar day cells */
+.calendar-day-cell {
+    transition: all 0.2s ease;
+}
+
+.calendar-day-cell:hover {
+    background-color: #f3f4f6 !important;
+    transform: scale(1.02);
+}
+
+.calendar-day-cell:active {
+    transform: scale(0.98);
+}
+
 /* ===== Inventory/Medicine.php ===== */
 body { background:#f4f6f9; color:#333; }
 .content-wrapper { padding:20px; }

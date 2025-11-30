@@ -104,6 +104,20 @@ class DoctorScheduleModel extends Model
                    ->findAll();
     }
 
+    /**
+     * Get all schedules for a specific date
+     * @param string $date Date in YYYY-MM-DD format
+     * @return array Array of schedule records
+     */
+    public function getByDate($date)
+    {
+        return $this->where('shift_date', $date)
+                   ->where('status !=', 'cancelled')
+                   ->orderBy('start_time', 'ASC')
+                   ->orderBy('doctor_name', 'ASC')
+                   ->findAll();
+    }
+
     
 
     /**

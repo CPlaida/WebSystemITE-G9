@@ -78,6 +78,7 @@ $routes->post('admin/staff/delete/(:num)', 'Admin::deleteStaff/$1', ['filter' =>
 
 // Doctor scheduling routes
 $routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/schedules-by-date', 'Doctor\Doctor::getSchedulesByDate', ['filter' => 'auth']);
 $routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
 $routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
 $routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);

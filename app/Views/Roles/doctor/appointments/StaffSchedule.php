@@ -204,7 +204,9 @@ function getDepartmentColorClass($department) {
               return isset($schedule['shift_date']) && date('Y-m-d', strtotime($schedule['shift_date'])) === $currentDate;
             });
           ?>
-            <div class="border min-h-[100px] p-1 <?= $isCurrentMonth ? 'bg-white' : 'bg-gray-50' ?> <?= $isToday ? 'ring-2 ring-blue-500' : '' ?>">
+            <div class="border min-h-[100px] p-1 <?= $isCurrentMonth ? 'bg-white' : 'bg-gray-50' ?> <?= $isToday ? 'ring-2 ring-blue-500' : '' ?> calendar-day-cell <?= count($daySchedules) > 0 ? 'cursor-pointer hover:bg-gray-50' : '' ?>" 
+                 data-date="<?= $currentDate ?>" 
+                 <?= count($daySchedules) > 0 ? 'onclick="showDateSchedules(\'' . $currentDate . '\')"' : '' ?>>
               <div class="text-xs <?= $isCurrentMonth ? 'text-gray-900' : 'text-gray-400' ?> mb-1 <?= $isToday ? 'font-bold text-blue-600' : '' ?>">
                 <?= date('j', strtotime($currentDate)) ?>
               </div>
@@ -218,12 +220,13 @@ function getDepartmentColorClass($department) {
                   ?>
                   <div class="shift <?= getDepartmentColorClass($schedule['department'] ?? '') ?> text-xs p-1.5 rounded cursor-pointer hover:opacity-90 transition-opacity" 
                        data-schedule-id="<?= $schedule['id'] ?>"
-                       title="<?= htmlspecialchars($doctorName . ' - ' . ($schedule['department'] ?? 'General') . ' (' . $timeDisplay . ')') ?>">
+                       title="<?= htmlspecialchars($doctorName . ' - ' . ($schedule['department'] ?? 'General') . ' (' . $timeDisplay . ')') ?>"
+                       onclick="event.stopPropagation();">
                     <div class="font-medium truncate"><?= $doctorName ?></div>
                   </div>
                 <?php endforeach; ?>
                 <?php if (count($daySchedules) > 2): ?>
-                  <div class="text-xs text-gray-500 px-1">+<?= count($daySchedules) - 2 ?> more</div>
+                  <div class="text-xs text-gray-500 px-1 font-semibold">+<?= count($daySchedules) - 2 ?> more</div>
                 <?php endif; ?>
               </div>
             </div>
@@ -320,6 +323,37 @@ function getDepartmentColorClass($department) {
 </div>
 
 <script>
+  // Function to get department color class and text color 
+  window.getDepartmentColorClass = function(departmentSlug, departmentName) {
+    if (!departmentSlug && !departmentName) return { class: 'dept-general', textColor: 'text-white' };
+    
+    const slug = (departmentSlug || '').toLowerCase();
+    const name = (departmentName || '').toLowerCase();
+    
+    // Map department slugs/names to color classes
+    if (slug.includes('emergency') || name.includes('emergency')) {
+      return { class: 'dept-emergency', textColor: 'text-white' };
+    }
+    if (slug.includes('cardiology') || name.includes('cardiology')) {
+      return { class: 'dept-cardiology', textColor: 'text-red-900' };
+    }
+    if (slug.includes('neurology') || name.includes('neurology')) {
+      return { class: 'dept-neurology', textColor: 'text-white' };
+    }
+    if (slug.includes('orthopedic') || name.includes('orthopedic')) {
+      return { class: 'dept-orthopedics', textColor: 'text-white' };
+    }
+    if (slug.includes('pediatric') || name.includes('pediatric')) {
+      return { class: 'dept-pediatrics', textColor: 'text-white' };
+    }
+    if (slug.includes('general') || name.includes('general')) {
+      return { class: 'dept-general', textColor: 'text-white' };
+    }
+    
+    // Default fallback
+    return { class: 'dept-general', textColor: 'text-white' };
+  };
+
   // Modal elements
   const conflictModal = document.getElementById('conflictModal');
   const btnConflictSchedules = document.getElementById('btnConflictSchedules');
@@ -717,7 +751,168 @@ function getDepartmentColorClass($department) {
     }
   });
 
+  // Show schedules modal for a specific date
+  window.showDateSchedules = async function(dateStr) {
+    const modal = document.getElementById('dateSchedulesModal');
+    const modalDate = document.getElementById('modalDate');
+    const modalContent = document.getElementById('modalSchedulesContent');
+    const modalLoading = document.getElementById('modalSchedulesLoading');
+    
+    if (!modal || !modalDate || !modalContent || !modalLoading) {
+      alert('Modal elements not found. Please refresh the page.');
+      return;
+    }
+
+    // Validate and format date (ensure YYYY-MM-DD format)
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      alert('Invalid date format');
+      return;
+    }
+
+    // Format date for display
+    const date = new Date(dateStr + 'T00:00:00');
+    if (isNaN(date.getTime())) {
+      alert('Invalid date');
+      return;
+    }
+    modalDate.textContent = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    
+    // Show modal and loading state
+    modal.classList.remove('hidden');
+    modalContent.innerHTML = '';
+    modalLoading.classList.remove('hidden');
+
+    try {
+      // Build URL with properly encoded date
+      const url = '<?= base_url('doctor/schedules-by-date') ?>?date=' + encodeURIComponent(dateStr);
+      
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+      });
+      
+      // Only throw error for actual server errors (4xx, 5xx)
+      if (res.status >= 400 && res.status < 500) {
+        const errorData = await res.json().catch(() => ({ message: res.statusText }));
+        throw new Error(errorData.message || `HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      if (res.status >= 500) {
+        throw new Error(`Server error: HTTP ${res.status}`);
+      }
+      
+      const data = await res.json();
+      modalLoading.classList.add('hidden');
+
+      // Check if request was successful
+      if (data && data.success === true) {
+        // Check if schedules array exists and has items
+        if (data.schedules && Array.isArray(data.schedules) && data.schedules.length > 0) {
+          let html = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+          data.schedules.forEach((schedule) => {
+            const doctorName = schedule.doctor_name || 'Unknown';
+            const department = schedule.department || 'General';
+            const time = schedule.time || '';
+            const statusDisplay = schedule.status_display || schedule.status || 'Available';
+            const deptSlug = department.toLowerCase().replace(/\s+/g, '-');
+            
+            // Get department color with fallback
+            let colorInfo;
+            try {
+              colorInfo = window.getDepartmentColorClass ? window.getDepartmentColorClass(deptSlug, department) : { class: 'dept-general', textColor: 'text-white' };
+            } catch (e) {
+              console.error('Error getting department color:', e);
+              colorInfo = { class: 'dept-general', textColor: 'text-white' };
+            }
+            const deptClass = colorInfo && colorInfo.class ? colorInfo.class : 'dept-general';
+            
+            // Status badge color
+            let statusColor = '#10b981'; // green for available/scheduled
+            if (statusDisplay.toLowerCase() === 'completed') {
+              statusColor = '#3b82f6'; // blue
+            } else if (statusDisplay.toLowerCase().includes('leave') || statusDisplay.toLowerCase().includes('booked')) {
+              statusColor = '#f59e0b'; // orange
+            }
+            
+            html += `
+              <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; transition: box-shadow 0.2s;">
+                <div style="flex-shrink: 0;">
+                  <span class="inline-block w-4 h-4 rounded-full ${deptClass}" style="width: 16px; height: 16px; border-radius: 50%; display: inline-block;"></span>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-weight: 600; color: #111827; font-size: 0.875rem; margin-bottom: 0.25rem;">${doctorName}</div>
+                  <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">${department}</div>
+                  <div style="font-size: 0.75rem; color: ${statusColor}; font-weight: 500;">${statusDisplay}</div>
+                </div>
+                <div style="font-size: 0.875rem; color: #374151; font-weight: 500; white-space: nowrap; text-align: right;">
+                  ${time}
+                </div>
+              </div>
+            `;
+          });
+          html += '</div>';
+          modalContent.innerHTML = html;
+        } else {
+          // Empty schedules array - show "No schedules found"
+          modalContent.innerHTML = '<div style="text-align: center; padding: 2rem; color: #6b7280; font-size: 0.875rem;">No schedules found for this date.</div>';
+        }
+      } else {
+        // API returned success=false
+        throw new Error(data.message || 'Failed to load schedules');
+      }
+    } catch (error) {
+      modalLoading.classList.add('hidden');
+      // Only show error for actual failures (network, server errors)
+      modalContent.innerHTML = '<div style="text-align: center; padding: 2rem; color: #dc2626; font-size: 0.875rem;">Error loading schedules: ' + error.message + '</div>';
+      console.error('Error loading schedules:', error);
+    }
+  }
+
+  // Close modal
+  function closeDateSchedulesModal() {
+    const modal = document.getElementById('dateSchedulesModal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+  }
+
+  // Close modal on outside click
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('dateSchedulesModal');
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeDateSchedulesModal();
+        }
+      });
+    }
+  });
 </script>
 
+<!-- Date Schedules Modal -->
+<div id="dateSchedulesModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900">
+        <i class="fas fa-calendar-day mr-2 text-blue-600"></i>
+        Schedules for <span id="modalDate"></span>
+      </h3>
+      <button onclick="closeDateSchedulesModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    <div class="p-4 overflow-y-auto flex-1">
+      <div id="modalSchedulesLoading" class="text-center py-8">
+        <i class="fas fa-spinner fa-spin text-2xl text-blue-600 mb-2"></i>
+        <p class="text-gray-600">Loading schedules...</p>
+      </div>
+      <div id="modalSchedulesContent"></div>
+    </div>
+  </div>
+</div>
 
 <?= $this->endSection() ?>

@@ -360,4 +360,76 @@ class Doctor extends BaseController
         }
     }
 
+    /**
+     * JSON: Get all schedules for a specific date
+     * Route: /doctor/schedules-by-date?date=YYYY-MM-DD
+     */
+    public function getSchedulesByDate()
+    {
+        // Set JSON response header
+        $this->response->setContentType('application/json');
+        
+        // Check authentication
+        if (!session()->get('isLoggedIn')) {
+            return $this->response->setStatusCode(401)->setJSON(['success' => false, 'message' => 'Unauthorized']);
+        }
+
+        $date = $this->request->getGet('date');
+        
+        // Validate date format
+        if (!$date || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'success' => false, 
+                'message' => 'Invalid date format. Expected YYYY-MM-DD'
+            ]);
+        }
+
+        try {
+            // Use model method to get schedules
+            $schedules = $this->doctorScheduleModel->getByDate($date);
+
+            // Format the response
+            $formatted = [];
+            foreach ($schedules as $schedule) {
+                $startTime = !empty($schedule['start_time']) ? date('g:i A', strtotime($schedule['start_time'])) : '';
+                $endTime = !empty($schedule['end_time']) ? date('g:i A', strtotime($schedule['end_time'])) : '';
+                $timeDisplay = $startTime && $endTime ? $startTime . ' - ' . $endTime : ($startTime ? $startTime : '');
+                
+                // Map status to display text
+                $statusDisplay = ucfirst($schedule['status'] ?? 'scheduled');
+                if ($statusDisplay === 'Scheduled') {
+                    $statusDisplay = 'Available';
+                }
+                
+                $formatted[] = [
+                    'id' => $schedule['id'] ?? '',
+                    'doctor_id' => $schedule['doctor_id'] ?? '',
+                    'doctor_name' => $schedule['doctor_name'] ?? 'Unknown',
+                    'department' => $schedule['department'] ?? 'General',
+                    'shift_type' => $schedule['shift_type'] ?? '',
+                    'time' => $timeDisplay,
+                    'start_time' => $schedule['start_time'] ?? '',
+                    'end_time' => $schedule['end_time'] ?? '',
+                    'status' => $schedule['status'] ?? 'scheduled',
+                    'status_display' => $statusDisplay,
+                    'notes' => $schedule['notes'] ?? ''
+                ];
+            }
+
+            // Always return 200 with success=true, even if empty
+            return $this->response->setStatusCode(200)->setJSON([
+                'success' => true,
+                'date' => $date,
+                'schedules' => $formatted,
+                'count' => count($formatted)
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'getSchedulesByDate error: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => 'Server error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
 }
