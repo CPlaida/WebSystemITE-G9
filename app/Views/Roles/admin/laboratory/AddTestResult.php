@@ -4,14 +4,12 @@
 
 <?= $this->section('content') ?>
     <div class="main-content" id="mainContent">
-        <div class="page-header">
-            <h1 class="page-title">Add Test Result</h1>
-        </div>
+        <div class="container">
+            <div class="header">
+                <h1 class="page-title">Add Test Result</h1>
+            </div>
 
         <div class="card">
-            <div class="card-header">
-                Test Information
-            </div>
             <div class="card-body">
                 <form method="post" action="<?= site_url('laboratory/testresult/add') ?>" id="addResultForm" enctype="multipart/form-data">
                     <?= csrf_field() ?>
@@ -37,55 +35,28 @@
 
                     <div class="form-group">
                         <label class="form-label" for="resultFiles">Analyzer Output Files</label>
-                        <style>
-                            .file-dropzone {
-                                border: 2px dashed #9ca3af;
-                                border-radius: 10px;
-                                padding: 1.25rem;
-                                text-align: center;
-                                background: #f9fafb;
-                                transition: border-color 0.2s ease, background 0.2s ease;
-                                cursor: pointer;
-                            }
-                            .file-dropzone.dragover {
-                                border-color: #2563eb;
-                                background: #eff6ff;
-                            }
-                            .file-dropzone button {
-                                margin-top: 0.75rem;
-                            }
-                            .selected-files-list {
-                                margin-top: 0.75rem;
-                                padding-left: 1.2rem;
-                                font-size: 0.9rem;
-                                color: #111827;
-                                list-style: decimal;
-                            }
-                            .selected-files-list li {
-                                display: flex;
-                                align-items: center;
-                                justify-content: space-between;
-                                gap: 0.75rem;
-                            }
-                            .selected-files-list button {
-                                border: none;
-                                background: transparent;
-                                color: #dc2626;
-                                cursor: pointer;
-                            }
-                        </style>
-                        <input type="file" class="form-control" id="resultFiles" name="result_files[]" accept=".pdf,.csv,.txt,.xml,.json,.xls,.xlsx,.doc,.docx,.jpg,.jpeg,.png" multiple style="display:none;">
+                        <input type="file" class="form-control file-input-hidden" id="resultFiles" name="result_files[]" accept=".pdf,.csv,.txt,.xml,.json,.xls,.xlsx,.doc,.docx,.jpg,.jpeg,.png" multiple>
                         <div id="fileDropzone" class="file-dropzone">
-                            <strong>Drag & drop analyzer files here</strong>
-                            <div style="color:#6b7280;font-size:0.9rem;margin-top:0.4rem;">
-                                or use the button below to browse and add files one at a time.
+                            <div class="file-dropzone-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
                             </div>
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="addFilesBtn">
+                            <div class="file-dropzone-text">
+                                <strong>Drag & drop analyzer files here</strong>
+                                <span class="file-dropzone-subtext">or use the button below to browse and add files one at a time</span>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm file-add-btn" id="addFilesBtn">
                                 <i class="fas fa-folder-open"></i> Add Files
                             </button>
                         </div>
-                        <small class="form-text text-muted" style="display:block;margin-top:0.4rem;">You can drag/drop or click “Add Files” repeatedly—each file will be queued without using Ctrl-select.</small>
-                        <ul id="selectedFilesList" class="selected-files-list"></ul>
+                        <small class="file-upload-hint">You can drag/drop or click "Add Files" repeatedly—each file will be queued without using Ctrl-select.</small>
+                        <div id="selectedFilesContainer" class="selected-files-container">
+                            <div class="selected-files-header">
+                                <i class="fas fa-folder-open"></i>
+                                <span>Selected Files</span>
+                                <span class="selected-files-count" id="selectedFilesCount">0</span>
+                            </div>
+                            <div id="selectedFilesList" class="selected-files-list"></div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -109,6 +80,7 @@
                 </form>
             </div>
         </div>
+        </div>
     </div>
 
     <script>
@@ -129,33 +101,77 @@
 
         const renderSelectedFiles = () => {
             if (!selectedFilesList) return;
+            const container = document.getElementById('selectedFilesContainer');
+            const countEl = document.getElementById('selectedFilesCount');
+            
             selectedFilesList.innerHTML = '';
 
             if (!selectedFiles.length) {
-                const placeholder = document.createElement('li');
-                placeholder.style.color = '#6b7280';
-                placeholder.textContent = 'No files selected yet.';
-                selectedFilesList.appendChild(placeholder);
+                if (container) container.style.display = 'none';
+                if (countEl) countEl.textContent = '0';
                 return;
             }
 
+            if (container) container.style.display = 'block';
+            if (countEl) countEl.textContent = selectedFiles.length;
+
             selectedFiles.forEach((file, index) => {
-                const li = document.createElement('li');
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = file.name;
+                const fileCard = document.createElement('div');
+                fileCard.className = 'selected-file-card';
+                
+                const fileIcon = document.createElement('div');
+                fileIcon.className = 'selected-file-icon-wrapper';
+                const icon = document.createElement('i');
+                const ext = (file.name.split('.').pop() || '').toLowerCase();
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+                    icon.className = 'fas fa-file-image';
+                } else if (['pdf'].includes(ext)) {
+                    icon.className = 'fas fa-file-pdf';
+                } else if (['doc', 'docx'].includes(ext)) {
+                    icon.className = 'fas fa-file-word';
+                } else if (['xls', 'xlsx', 'csv'].includes(ext)) {
+                    icon.className = 'fas fa-file-excel';
+                } else {
+                    icon.className = 'fas fa-file';
+                }
+                fileIcon.appendChild(icon);
+                
+                const fileInfo = document.createElement('div');
+                fileInfo.className = 'selected-file-info';
+                
+                const fileName = document.createElement('div');
+                fileName.className = 'selected-file-name';
+                fileName.textContent = file.name;
+                
+                const fileMeta = document.createElement('div');
+                fileMeta.className = 'selected-file-meta';
+                const fileSize = (file.size / 1024).toFixed(2);
+                fileMeta.innerHTML = `<span class="file-size">${fileSize} KB</span><span class="file-separator">•</span><span class="file-type">${ext.toUpperCase()}</span>`;
+                
+                fileInfo.appendChild(fileName);
+                fileInfo.appendChild(fileMeta);
+                
+                const fileActions = document.createElement('div');
+                fileActions.className = 'selected-file-actions';
+                
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
+                removeBtn.className = 'selected-file-remove';
                 removeBtn.setAttribute('aria-label', 'Remove file');
-                removeBtn.innerHTML = '&times;';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
                 removeBtn.addEventListener('click', () => {
                     selectedFiles.splice(index, 1);
                     syncNativeInput();
                     renderSelectedFiles();
                 });
-
-                li.appendChild(nameSpan);
-                li.appendChild(removeBtn);
-                selectedFilesList.appendChild(li);
+                
+                fileActions.appendChild(removeBtn);
+                
+                fileCard.appendChild(fileIcon);
+                fileCard.appendChild(fileInfo);
+                fileCard.appendChild(fileActions);
+                
+                selectedFilesList.appendChild(fileCard);
             });
         };
 
