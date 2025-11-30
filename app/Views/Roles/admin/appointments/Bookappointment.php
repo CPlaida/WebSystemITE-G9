@@ -170,7 +170,7 @@
           const res = await fetch('<?= base_url('appointments/doctors-by-date') ?>?date=' + encodeURIComponent(date));
           const data = await res.json();
           if (data.success && data.doctors && data.doctors.length) {
-            const opts = data.doctors.map(d => ({ value: d.doctor_id, label: 'Dr. ' + d.name + (d.email ? ' - ' + d.email : '') }));
+            const opts = data.doctors.map(d => ({ value: d.doctor_id, label: 'Dr. ' + d.name }));
             setOptions(doctorSelect, opts, 'Select Doctor');
             doctorSelect.disabled = false;
           } else {
