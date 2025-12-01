@@ -8,7 +8,7 @@ class MedicineModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = false;
     protected $allowedFields = [
-        'id', 'barcode', 'name', 'brand', 'category', 'stock', 'unit_price', 'retail_price', 'manufactured_date', 'expiry_date'
+        'id', 'barcode', 'name', 'brand', 'category', 'stock', 'unit_price', 'retail_price', 'manufactured_date', 'expiry_date', 'description'
     ];
     
     // Dynamically check if image column exists and add it to allowedFields

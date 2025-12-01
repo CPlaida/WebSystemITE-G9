@@ -159,7 +159,7 @@
                 <td>
                   <div class="action-group">
                     <button type="button" class="btn-action btn-edit"
-                            data-id="<?= (int)($u['id'] ?? 0) ?>"
+                            data-id="<?= esc($u['id'] ?? '', 'attr') ?>"
                             data-username="<?= esc($u['username'] ?? '', 'attr') ?>"
                             data-email="<?= esc($u['email'] ?? '', 'attr') ?>"
                             data-roleid="<?= (int)($u['role_id'] ?? 0) ?>"
@@ -245,7 +245,7 @@
           <div>
             <label for="password">Password</label>
             <div class="input-group">
-              <input type="text" id="password" name="password" required style="flex:1;">
+              <input type="text" id="password" name="password" style="flex:1;">
               <button type="button" class="btn btn-secondary btn-sm" onclick="generatePassword()">Generate</button>
             </div>
             <small id="passwordHelp" style="color:#6c757d;"></small>
@@ -286,9 +286,9 @@
       email.value = '';
       role.value = '';
       status.value = 'active';
-      password.type = 'password';
+      password.type = 'text';
       password.value = '';
-      password.required = true;
+      password.setAttribute('required', 'required');
       password.placeholder = '';
       help.textContent = '';
       document.getElementById('userFormSubmit').textContent = 'Create User';
@@ -307,7 +307,7 @@
 
   const id = el.getAttribute('data-id');
   title.textContent = 'Edit User';
-  form.action = '<?= base_url('admin/users/update') ?>' + '/' + id;
+  form.action = '<?= base_url('admin/users/update') ?>' + '/' + encodeURIComponent(id);
   username.value = el.getAttribute('data-username') || '';
   email.value = el.getAttribute('data-email') || '';
   role.value = el.getAttribute('data-roleid') || '';
@@ -316,7 +316,7 @@
   // password field is visible text now
   password.type = 'text';
   password.value = '';
-  password.required = false;
+  password.removeAttribute('required');
   password.placeholder = 'Leave blank to keep current password';
   help.textContent = 'Leave blank to keep current password';
 
@@ -326,8 +326,7 @@
 }
     function closeModal() { modal.style.display = 'none'; }
 
-    document.getElementById("userForm").addEventListener("submit", function() {
-      setTimeout(() => { closeModal(); }, 0);
+    document.getElementById("userForm").addEventListener("submit", function(e) {
     });
 
     function filterTable() {
@@ -367,8 +366,11 @@
         // Check status filter (Status column is the 4th column -> index 3)
         if (!matchesStatus && cells.length > 3) {
           const statusText = (cells[3].textContent || cells[3].innerText || '').trim().toLowerCase();
+          // Normalize filter value for comparison (handle "On Leave" vs "on leave")
+          const normalizedFilter = statusFilter.replace(/\s+/g, '_');
+          const normalizedStatus = statusText.replace(/\s+/g, '_');
           // exact match only (avoid 'inactive' matching 'active')
-          matchesStatus = statusFilter === '' ? true : (statusText === statusFilter);
+          matchesStatus = statusFilter === '' ? true : (normalizedStatus === normalizedFilter || statusText === statusFilter);
         }
         
         // Show/hide row based on all filters

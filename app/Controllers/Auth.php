@@ -35,7 +35,7 @@ class Auth extends Controller
 
         if ($user) {
             if ($user['status'] !== 'active') {
-                return redirect()->back()->with('error', 'Account is inactive, contact admin.');
+                return redirect()->back()->with('error', 'Your account is inactive. Please contact the administrator.');
             }
 
             if (password_verify($password, $user['password'])) {

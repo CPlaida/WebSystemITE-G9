@@ -75,9 +75,6 @@ $currentSubmenu = 'inventory';
                 </div>
                 <h3 style="color: #6b7280; margin-bottom: 8px;">No Expired Medicines</h3>
                 <p style="color: #9ca3af; font-size: 14px;">All medicines in your inventory are still valid.</p>
-                <a href="<?= base_url('medicines') ?>" class="btn btn-primary" style="margin-top: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-arrow-left"></i> Back to Inventory
-                </a>
             </div>
         <?php endif; ?>
     </div>

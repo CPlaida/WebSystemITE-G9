@@ -69,6 +69,7 @@ class Medicine extends Controller
         $retailPrices = $this->request->getPost('retail_price');
         $manufacturedDates = $this->request->getPost('manufactured_date');
         $expiries = $this->request->getPost('expiry_date');
+        $descriptions = $this->request->getPost('description');
 
         if (!is_array($names)) {
             $barcodes = [$barcodes];
@@ -80,6 +81,7 @@ class Medicine extends Controller
             $retailPrices = [$retailPrices];
             $manufacturedDates = [$manufacturedDates];
             $expiries = [$expiries];
+            $descriptions = [$descriptions];
         }
 
         $today = date('Y-m-d');
@@ -139,6 +141,7 @@ class Medicine extends Controller
                 'retail_price' => !empty($retailPrices[$index]) ? (float)$retailPrices[$index] : null,
                 'manufactured_date' => !empty($manufacturedDates[$index]) ? $manufacturedDates[$index] : null,
                 'expiry_date' => $expiries[$index] ?? null,
+                'description' => !empty($descriptions[$index]) ? trim($descriptions[$index]) : null,
             ];
             
             // Only include image if column exists
@@ -193,6 +196,7 @@ class Medicine extends Controller
             'retail_price' => $this->request->getPost('retail_price') ? floatval($this->request->getPost('retail_price')) : null,
             'manufactured_date' => $this->request->getPost('manufactured_date') ? $this->request->getPost('manufactured_date') : null,
             'expiry_date' => $expiry,
+            'description' => $this->request->getPost('description') ? trim($this->request->getPost('description')) : null,
         ];
 
         // Handle image upload only if column exists

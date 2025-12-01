@@ -97,11 +97,20 @@ class DoctorScheduleModel extends Model
      */
     public function getSchedulesByDateRange($startDate, $endDate)
     {
-        return $this->where('shift_date >=', $startDate)
-                   ->where('shift_date <=', $endDate)
-                   ->orderBy('shift_date', 'ASC')
-                   ->orderBy('start_time', 'ASC')
-                   ->findAll();
+        $db = \Config\Database::connect();
+        
+        // Get schedules excluding those for doctors who are inactive
+        return $db->table('doctor_schedules ds')
+                   ->select('ds.*')
+                   ->join('users u', 'ds.doctor_id = u.id', 'left')
+                   ->where('ds.shift_date >=', $startDate)
+                   ->where('ds.shift_date <=', $endDate)
+                   ->where('ds.status !=', 'cancelled')
+                   ->where('u.status', 'active')
+                   ->orderBy('ds.shift_date', 'ASC')
+                   ->orderBy('ds.start_time', 'ASC')
+                   ->get()
+                   ->getResultArray();
     }
 
     /**
@@ -111,11 +120,19 @@ class DoctorScheduleModel extends Model
      */
     public function getByDate($date)
     {
-        return $this->where('shift_date', $date)
-                   ->where('status !=', 'cancelled')
-                   ->orderBy('start_time', 'ASC')
-                   ->orderBy('doctor_name', 'ASC')
-                   ->findAll();
+        $db = \Config\Database::connect();
+        
+        // Get schedules excluding those for doctors who are inactive
+        return $db->table('doctor_schedules ds')
+                   ->select('ds.*')
+                   ->join('users u', 'ds.doctor_id = u.id', 'left')
+                   ->where('ds.shift_date', $date)
+                   ->where('ds.status !=', 'cancelled')
+                   ->where('u.status', 'active')
+                   ->orderBy('ds.start_time', 'ASC')
+                   ->orderBy('ds.doctor_name', 'ASC')
+                   ->get()
+                   ->getResultArray();
     }
 
     

@@ -173,6 +173,10 @@ class Admin extends BaseController
         if (!$this->request->is('post')) {
             return redirect()->back();
         }
+        
+        // Decode URL-encoded ID if needed
+        $id = urldecode($id);
+        
         $model = new UserModel();
         $staffModel = new StaffProfileModel();
         $username = trim((string) $this->request->getPost('username'));
@@ -192,10 +196,58 @@ class Admin extends BaseController
         if ($password !== '') {
             $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
+        // Validate required fields
+        if (empty($username)) {
+            return redirect()->back()->withInput()->with('error', 'Username is required.');
+        }
+        if (empty($email)) {
+            return redirect()->back()->withInput()->with('error', 'Email is required.');
+        }
+        if (empty($roleId)) {
+            return redirect()->back()->withInput()->with('error', 'User role is required.');
+        }
+
+        // Validate ID format (should be string like "DOC-251201-0001" or similar)
+        if (empty($id) || !is_string($id)) {
+            return redirect()->back()->withInput()->with('error', 'Invalid user ID.');
+        }
+
         $db = \Config\Database::connect();
         $db->transBegin();
         try {
-            $model->update($id, $data);
+            // Check if user exists
+            $existingUser = $model->find($id);
+            if (!$existingUser) {
+                log_message('error', 'User update failed: User ID "' . $id . '" not found.');
+                throw new \RuntimeException('User not found. ID: ' . $id);
+            }
+
+            // Check for duplicate email (excluding current user)
+            $duplicateEmail = $model->where('email', $email)->where('id !=', $id)->first();
+            if ($duplicateEmail) {
+                throw new \RuntimeException('Email already exists.');
+            }
+
+            // Check for duplicate username (excluding current user)
+            $duplicateUsername = $model->where('username', $username)->where('id !=', $id)->first();
+            if ($duplicateUsername) {
+                throw new \RuntimeException('Username already exists.');
+            }
+
+            // Update user - skip validation to allow updates
+            $updateResult = $model->skipValidation(true)->update($id, $data);
+            if (!$updateResult) {
+                $errors = $model->errors();
+                $errorMsg = !empty($errors) ? implode(', ', $errors) : 'Update returned false';
+                log_message('error', 'User update failed for ID ' . $id . ': ' . $errorMsg);
+                throw new \RuntimeException('Failed to update user: ' . $errorMsg);
+            }
+
+            // Sync staff profile status with user status if linked
+            $linkedStaff = $staffModel->where('user_id', $id)->first();
+            if ($linkedStaff) {
+                $staffModel->update($linkedStaff['id'], ['status' => $status]);
+            }
 
             if ($staffId > 0) {
                 $staff = $staffModel->find($staffId);
@@ -205,12 +257,13 @@ class Admin extends BaseController
                 if (!empty($staff['user_id']) && (int)$staff['user_id'] !== (int)$id) {
                     throw new \RuntimeException('This staff profile is already linked to another user.');
                 }
-                $staffModel->update($staffId, ['user_id' => $id]);
+                $staffModel->update($staffId, ['user_id' => $id, 'status' => $status]);
             }
 
             $db->transCommit();
         } catch (\Throwable $e) {
             $db->transRollback();
+            log_message('error', 'User update failed: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', $e->getMessage() ?: 'Failed to update user.');
         }
 

@@ -60,6 +60,10 @@ class CreateMedicinesTable extends Migration
                 'constraint' => 255,
                 'null'       => true,
             ],
+            'description' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
             // Use a raw definition to support DEFAULT CURRENT_TIMESTAMP
             'created_at DATETIME DEFAULT CURRENT_TIMESTAMP',
         ]);

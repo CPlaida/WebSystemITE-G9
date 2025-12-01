@@ -141,12 +141,14 @@ class Appointment extends BaseController
 
         $today = date('Y-m-d');
         $db = \Config\Database::connect();
-        $rows = $db->table('doctor_schedules')
-            ->select('shift_date')
-            ->where('shift_date >=', $today)
-            ->where('status !=', 'cancelled')
+        $rows = $db->table('doctor_schedules ds')
+            ->select('ds.shift_date')
+            ->join('users u', 'ds.doctor_id = u.id', 'left')
+            ->where('ds.shift_date >=', $today)
+            ->where('ds.status !=', 'cancelled')
+            ->where('u.status', 'active')
             ->distinct()
-            ->orderBy('shift_date', 'ASC')
+            ->orderBy('ds.shift_date', 'ASC')
             ->get()->getResultArray();
 
         $dates = array_values(array_unique(array_map(function($r){ return $r['shift_date']; }, $rows)));
@@ -174,6 +176,7 @@ class Appointment extends BaseController
             ->join('users u', 'u.id = ds.doctor_id', 'left')
             ->where('ds.shift_date', $date)
             ->where('ds.status !=', 'cancelled')
+            ->where('u.status', 'active')
             ->groupBy('ds.doctor_id, name, u.email')
             ->orderBy('name', 'ASC')
             ->get()->getResultArray();
@@ -199,13 +202,15 @@ class Appointment extends BaseController
 
         $db = \Config\Database::connect();
 
-        // 1) Load doctor's shift blocks for the selected date
-        $rows = $db->table('doctor_schedules')
-            ->select('start_time, end_time')
-            ->where('doctor_id', $doctorId)
-            ->where('shift_date', $date)
-            ->where('status !=', 'cancelled')
-            ->orderBy('start_time', 'ASC')
+        // 1) Load doctor's shift blocks for the selected date (only if doctor is active)
+        $rows = $db->table('doctor_schedules ds')
+            ->select('ds.start_time, ds.end_time')
+            ->join('users u', 'ds.doctor_id = u.id', 'left')
+            ->where('ds.doctor_id', $doctorId)
+            ->where('ds.shift_date', $date)
+            ->where('ds.status !=', 'cancelled')
+            ->where('u.status', 'active')
+            ->orderBy('ds.start_time', 'ASC')
             ->get()->getResultArray();
 
         // 2) Load already-booked appointment times for that doctor/date (exclude cancelled/no_show)

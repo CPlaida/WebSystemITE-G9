@@ -8,6 +8,14 @@ class UserModel extends Model {
     protected $useAutoIncrement = false;
     protected $allowedFields = ['id','username','email','password','role','role_id','status','created_at','updated_at'];
     protected $beforeInsert = ['assignStringId'];
+    protected $skipValidation = false;
+    protected $validationRules = [
+        'username' => 'permit_empty|min_length[3]|max_length[100]',
+        'email' => 'permit_empty|valid_email',
+        'password' => 'permit_empty|min_length[6]',
+        'status' => 'permit_empty|in_list[active,inactive]',
+        'role_id' => 'permit_empty|is_natural_no_zero'
+    ];
 
     protected function assignStringId(array $data)
     {

@@ -5286,15 +5286,18 @@ select[name="name_extension"].form-select,
     background: #fff !important;
 }
 
-/* File Input Styling - Make it formal and consistent */
+/* File Input Styling  */
 .image-input-wrapper {
     position: relative;
     width: 100%;
+    min-width: 0;
+    overflow: visible;
 }
 
 .medicine-input.image-input,
 input[type="file"].medicine-input {
     width: 100%;
+    min-width: 250px;
     padding: 10px 14px;
     border: 1.5px solid #d1d5db;
     border-radius: 6px;
@@ -5304,6 +5307,11 @@ input[type="file"].medicine-input {
     cursor: pointer;
     transition: all 0.2s ease;
     box-sizing: border-box;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal;
+    display: block;
+    max-width: none;
 }
 
 .medicine-input.image-input:hover,
@@ -6069,4 +6077,109 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     .file-dropzone-icon {
         font-size: 2.5rem;
     }
+}
+
+/* Medicine Details Modal */
+
+.medicine-details-modal {
+    z-index: 2000;
+    display: none;
+}
+
+.medicine-details-modal-content {
+    max-width: 600px;
+    padding: 30px 24px;
+}
+
+.medicine-details-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
+}
+
+.medicine-details-title {
+    margin: 0;
+    font-size: 22px;
+    color: #2c3e50;
+}
+
+.medicine-details-body {
+    color: #2c3e50;
+}
+
+.medicine-details-footer {
+    margin-top: 20px;
+    text-align: right;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+}
+
+.medicine-details-close-btn {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.medicine-details-close-btn:hover {
+    background: #5a6268;
+}
+
+.medicine-details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.medicine-details-image-wrapper {
+    text-align: center;
+}
+
+.medicine-details-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    object-fit: contain;
+}
+
+.medicine-details-name-wrapper {
+    text-align: center;
+}
+
+.medicine-details-name {
+    margin: 0;
+    font-size: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.medicine-details-description {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    min-height: 100px;
+}
+
+.medicine-details-description-text {
+    margin: 0;
+    color: #2c3e50;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    font-size: 15px;
+}
+
+.medicine-details-no-description {
+    padding: 40px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.medicine-details-no-description-text {
+    margin: 0;
+    font-size: 15px;
 }

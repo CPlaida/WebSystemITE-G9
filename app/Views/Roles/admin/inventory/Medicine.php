@@ -93,7 +93,7 @@ $currentSubmenu = 'inventory';
                             <?php
                                 $nameText = $m['name'] ?? '';
                             ?>
-                            <tr>
+                            <tr class="medicine-row-clickable" data-medicine-id="<?= esc($m['id']) ?>" style="cursor: pointer;" onclick="showMedicineDetails(<?= htmlspecialchars(json_encode($m), ENT_QUOTES, 'UTF-8') ?>)">
                                 <td data-col="barcode"><?= esc($m['barcode'] ?? $m['id']) ?></td>
                                 <td data-col="name"><span class="medicine-name-text"><?= esc($nameText) ?></span></td>
                                 <td data-col="brand"><?= esc($m['brand']) ?></td>
@@ -113,7 +113,7 @@ $currentSubmenu = 'inventory';
                                 <td data-exp="<?= esc($expDate) ?>">
                                     <?= esc($expDate) ?><?= $statusBadge ? $statusBadge : '' ?>
                                 </td>
-                                <td class="actions">
+                                <td class="actions" onclick="event.stopPropagation();">
                                     <a class="medicine-btn-edit" href="<?= base_url('medicines/edit/' . $m['id']) ?>">Edit</a>
                                 </td>
                             </tr>
@@ -121,6 +121,21 @@ $currentSubmenu = 'inventory';
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- Medicine Description Modal -->
+<div class="modal medicine-details-modal" id="medicineDetailsModal" role="dialog" aria-modal="true" aria-labelledby="medicineDetailsTitle">
+    <div class="modal-content medicine-details-modal-content">
+        <div class="medicine-details-header">
+            <h3 id="medicineDetailsTitle" class="medicine-details-title">About This Medicine</h3>
+        </div>
+        <div id="medicineDetailsContent" class="medicine-details-body">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+        <div class="medicine-details-footer">
+            <button type="button" onclick="closeMedicineDetails()" class="medicine-details-close-btn">Close</button>
         </div>
     </div>
 </div>
@@ -214,6 +229,10 @@ $currentSubmenu = 'inventory';
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Expiry Date <span class="required-asterisk">*</span></label>
                                 <input type="date" name="<?= $isEdit ? 'expiry_date' : 'expiry_date[]' ?>" value="<?= $isEdit ? esc($edit_medicine['expiry_date']) : '' ?>" class="form-control medicine-input" required>
+                        </div>
+                            <div class="medicine-field-group" style="grid-column: 1 / -1;">
+                                <label class="medicine-field-label">Description</label>
+                                <textarea name="<?= $isEdit ? 'description' : 'description[]' ?>" class="form-control medicine-input" rows="3" placeholder="Enter medicine description..."><?= $isEdit ? esc($edit_medicine['description'] ?? '') : '' ?></textarea>
                         </div>
                             <div class="medicine-field-group">
                                 <label class="medicine-field-label">Image</label>
@@ -474,6 +493,56 @@ $currentSubmenu = 'inventory';
     // Let the form submit normally to the backend. No client-side interception.
     
     // Stats are rendered from PHP variables on page load.
+    
+    // Medicine Description Modal Functions
+    function showMedicineDetails(medicine) {
+        const modal = document.getElementById('medicineDetailsModal');
+        const content = document.getElementById('medicineDetailsContent');
+        
+        if (!medicine) return;
+        
+        const imageUrl = medicine.image ? '<?= base_url('uploads/medicines/') ?>' + medicine.image : '';
+        const hasImage = medicine.image && imageUrl;
+        const medicineName = medicine.name || 'Medicine';
+        const description = medicine.description && medicine.description.trim() ? medicine.description : null;
+        
+        content.innerHTML = `
+            <div class="medicine-details-container">
+                ${hasImage ? `
+                <div class="medicine-details-image-wrapper">
+                    <img src="${imageUrl}" alt="${medicineName}" class="medicine-details-image">
+                </div>
+                ` : ''}
+                <div class="medicine-details-name-wrapper">
+                    <h4 class="medicine-details-name">${medicineName}</h4>
+                </div>
+                ${description ? `
+                <div class="medicine-details-description">
+                    <p class="medicine-details-description-text">${description}</p>
+                </div>
+                ` : `
+                <div class="medicine-details-no-description">
+                    <p class="medicine-details-no-description-text">No description available for this medicine.</p>
+                </div>
+                `}
+            </div>
+        `;
+        
+        modal.style.display = 'flex';
+    }
+    
+    function closeMedicineDetails() {
+        const modal = document.getElementById('medicineDetailsModal');
+        modal.style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('medicineDetailsModal');
+        if (event.target === modal) {
+            closeMedicineDetails();
+        }
+    });
     
     // --- Autocomplete helpers ---
     const defaultMedicineNames = [
