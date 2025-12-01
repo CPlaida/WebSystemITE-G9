@@ -241,6 +241,7 @@ $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransact
             $routes->get('inpatient', 'Admin\Patients::inpatient');
             $routes->get('admission', 'Admin\\Admissions::create');
             $routes->post('admission/store', 'Admin\\Admissions::store');
+            $routes->post('admission/(:num)/discharge', 'Admin\\Admissions::discharge/$1');
             $routes->post('register', 'Admin\Patients::processRegister');  
             $routes->get('view/(:num)', 'Admin\Patients::view/$1');
             $routes->get('edit/(:num)', 'Admin\Patients::edit/$1');

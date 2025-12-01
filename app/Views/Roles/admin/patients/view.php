@@ -123,10 +123,20 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-primary view-patient-btn"
-                                                data-patient='<?= esc(json_encode($payload, JSON_HEX_APOS | JSON_HEX_QUOT), 'attr') ?>'>
-                                                <i class="fas fa-notes-medical me-1"></i>View
-                                            </button>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-primary view-patient-btn"
+                                                    data-patient='<?= esc(json_encode($payload, JSON_HEX_APOS | JSON_HEX_QUOT), 'attr') ?>'>
+                                                    <i class="fas fa-notes-medical me-1"></i>View
+                                                </button>
+                                                <?php if ($isAdmitted && !empty($patient['admission_id'])): ?>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-danger discharge-btn"
+                                                        data-admission-id="<?= esc($patient['admission_id']) ?>"
+                                                        data-patient-name="<?= esc($fullName ?: 'this patient') ?>">
+                                                        <i class="fas fa-bed me-1"></i>Discharge
+                                                    </button>
+                                                <?php endif; ?>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -231,6 +241,10 @@
             });
         });
 
+        document.querySelectorAll('.discharge-btn').forEach(btn => {
+            btn.addEventListener('click', () => handleDischarge(btn));
+        });
+
         if (searchInput) {
             searchInput.addEventListener('input', filterPatients);
         }
@@ -245,6 +259,70 @@
             });
         }
     });
+
+    async function handleDischarge(button) {
+        const admissionId = button?.dataset?.admissionId;
+        const patientName = button?.dataset?.patientName || 'this patient';
+        if (!admissionId) {
+            alert('Missing admission information.');
+            return;
+        }
+
+        if (!confirm(`Discharge ${patientName}?`)) {
+            return;
+        }
+
+        const url = `<?= base_url('admin/patients/admission') ?>/${encodeURIComponent(admissionId)}/discharge`;
+        const row = button.closest('tr');
+        const originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ admission_id: admissionId })
+            });
+
+            const data = await response.json();
+            if (!response.ok || !data?.success) {
+                throw new Error(data?.message || 'Failed to discharge patient.');
+            }
+
+            if (row) {
+                row.remove();
+            }
+            showFlashMessage('success', data.message || 'Patient discharged successfully.');
+        } catch (error) {
+            console.error('Discharge error:', error);
+            showFlashMessage('error', error.message || 'Failed to discharge patient.');
+            button.disabled = false;
+            button.innerHTML = originalText;
+            return;
+        }
+    }
+
+    function showFlashMessage(type, message) {
+        const container = document.createElement('div');
+        container.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+        container.role = 'alert';
+        container.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">×</button>`;
+
+        const mainContainer = document.querySelector('.container');
+        if (mainContainer) {
+            mainContainer.insertBefore(container, mainContainer.firstChild);
+            setTimeout(() => container.classList.remove('show'), 4000);
+        } else {
+            alert(message);
+        }
+    }
 
     function viewPatient(name, mobile, address, dob, gender, medicalHistory, patientId, email, bloodType, emergencyContact) {
         document.getElementById('ehrName').innerText = name;

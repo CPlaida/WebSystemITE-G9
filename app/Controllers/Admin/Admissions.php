@@ -135,4 +135,81 @@ class Admissions extends BaseController
             'message' => 'Failed to save admission. Please try again.'
         ])->setStatusCode(500);
     }
+
+    public function discharge($id = null)
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid request method'
+            ])->setStatusCode(400);
+        }
+
+        $admissionId = (int) ($id ?? $this->request->getPost('admission_id'));
+        if ($admissionId <= 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid admission ID.'
+            ])->setStatusCode(422);
+        }
+
+        $admission = $this->admissionModel->find($admissionId);
+        if (!$admission) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Admission record not found.'
+            ])->setStatusCode(404);
+        }
+
+        if (($admission['status'] ?? '') !== 'admitted') {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Patient is not currently admitted.'
+            ])->setStatusCode(409);
+        }
+
+        $db = db_connect();
+        $db->transException(true)->transStart();
+
+        try {
+            $this->admissionModel->update($admissionId, [
+                'status' => 'discharged',
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $patientId = $admission['patient_id'] ?? null;
+            if (!empty($patientId)) {
+                $this->patientModel->update($patientId, [
+                    'type' => 'outpatient',
+                    'bed_id' => null,
+                ]);
+            }
+
+            $bedId = $admission['bed_id'] ?? null;
+            if (!empty($bedId)) {
+                $this->bedModel->update($bedId, ['status' => 'Available']);
+            }
+
+            $db->transComplete();
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            log_message('error', 'Failed to discharge patient: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to discharge patient. Please try again.'
+            ])->setStatusCode(500);
+        }
+
+        if ($db->transStatus() === false) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to discharge patient. Please try again.'
+            ])->setStatusCode(500);
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Patient discharged successfully.'
+        ]);
+    }
 }
