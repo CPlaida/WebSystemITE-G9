@@ -204,14 +204,14 @@
             </div>
             <div class="form-group">
               <label class="form-label">Admitting Doctor <span class="text-danger">*</span></label>
-              <select name="attending_physician" class="form-select">
+              <select name="attending_doctor_id" class="form-select" required>
                 <option value="">Select Physician</option>
                 <?php if (!empty($doctors)): ?>
                   <?php foreach ($doctors as $doctor): ?>
                     <?php
-                      $value = $doctor['id'] ?? '';
+                      $value = $doctor['doctor_id'] ?? $doctor['id'] ?? '';
                       $label = $doctor['display_name'] ?? $doctor['username'] ?? 'Unknown Doctor';
-                      $selected = old('attending_physician') == $value ? 'selected' : '';
+                      $selected = old('attending_doctor_id') == $value ? 'selected' : '';
                     ?>
                     <option value="<?= esc($value) ?>" <?= $selected ?>><?= esc($label) ?></option>
                   <?php endforeach; ?>

@@ -175,17 +175,13 @@
         </div>
         <div class="ehr-tabs">
           <div class="tabs">
-            <button class="tab-btn active" onclick="openTab(event,'prescription')">Prescription</button>
+            <button class="tab-btn active" onclick="openTab(event,'medical-records')">Medical Records</button>
             <button class="tab-btn" onclick="openTab(event,'vitals')">Vitals</button>
             <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
           </div>
-          <div id="prescription" class="tab-content">
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <textarea id="prescriptionNote" placeholder="Type prescription or result note here..." style="width:100%; min-height:140px; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
-              <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button id="savePrescriptionBtn" class="btn" style="background:#2563eb; color:#fff; border-radius:6px; padding:8px 14px;">Save</button>
-              </div>
-              <small id="prescriptionStatus" style="color:#6b7280;"></small>
+          <div id="medical-records" class="tab-content">
+            <div id="ehrMedicalRecords" style="min-height:140px; padding:8px 0; color:#2c3e50; font-size:14px;">
+              <em>Select a patient to load admissions history.</em>
             </div>
           </div>
           <div id="vitals" class="tab-content" style="display:none;">
@@ -230,17 +226,12 @@
 
       document.getElementById("ehrModal").style.display = "flex";
 
-      // Load existing prescription note for this patient
-      loadPrescription(patientId);
       // Load lab records for this patient
       loadLabRecords(patientId, name);
       // Load vitals for this patient
       loadVitals(patientId);
-      // Bind save handler
-      const saveBtn = document.getElementById('savePrescriptionBtn');
-      if (saveBtn) {
-        saveBtn.onclick = () => savePrescription(patientId);
-      }
+      // Load admissions/medical records
+      loadMedicalRecords(patientId);
     }
 
     function closeModal() {
@@ -269,6 +260,9 @@
       // If opening Vitals tab, ensure vitals are refreshed
       if (tabName === 'vitals') {
         loadVitals(pid);
+      }
+      if (tabName === 'medical-records') {
+        loadMedicalRecords(pid);
       }
     }
 
@@ -321,25 +315,6 @@
       .catch(() => { cont.innerHTML = '<span style="color:#dc3545">Error loading lab records.</span>'; });
     }
 
-    async function loadPrescription(patientId){
-      const status = document.getElementById('prescriptionStatus');
-      try {
-        status.textContent = 'Loading prescription...';
-        const res = await fetch(`<?= base_url('doctor/prescription') ?>?patient_id=${encodeURIComponent(patientId)}`, {
-          headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        const data = await res.json();
-        if (data && data.success){
-          document.getElementById('prescriptionNote').value = data.note || '';
-          status.textContent = data.note ? 'Loaded latest note.' : 'No note yet.';
-        } else {
-          status.textContent = (data && data.message) ? data.message : 'Failed to load note';
-        }
-      } catch(e){
-        status.textContent = 'Error loading note';
-      }
-    }
-
     async function loadVitals(patientId){
       const status = document.getElementById('vitalsStatus');
       if (status) {
@@ -377,24 +352,83 @@
     }
 
 
-    async function savePrescription(patientId){
-      const note = document.getElementById('prescriptionNote').value.trim();
-      const status = document.getElementById('prescriptionStatus');
-      status.textContent = 'Saving...';
-      const form = new URLSearchParams();
-      form.append('patient_id', patientId);
-      form.append('note', note);
-      form.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
+    async function loadMedicalRecords(patientId){
+      const container = document.getElementById('ehrMedicalRecords');
+      if (!container) return;
+      container.innerHTML = '<em>Loading admissions history...</em>';
+
       try {
-        const res = await fetch(`<?= base_url('doctor/prescription/save') ?>`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest' },
-          body: form.toString()
+        const res = await fetch(`<?= base_url('doctor/medical-records') ?>?patient_id=${encodeURIComponent(patientId)}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
         const data = await res.json();
-        status.textContent = (data && data.success) ? 'Saved.' : ((data && data.message) || 'Failed to save');
-      } catch(e){
-        status.textContent = 'Error saving note';
+        if (!data || !data.success) {
+          container.innerHTML = `<span style="color:#dc3545;">${(data && data.message) || 'Failed to load medical records.'}</span>`;
+          return;
+        }
+
+        const records = Array.isArray(data.records) ? data.records : [];
+        if (records.length === 0) {
+          container.innerHTML = '<span style="color:#6c757d">No admissions recorded for this patient.</span>';
+          return;
+        }
+
+        const formatDate = (dateStr, timeStr) => {
+          if (!dateStr) return '—';
+          const iso = `${dateStr}T${timeStr || '00:00:00'}`;
+          const date = new Date(iso);
+          if (Number.isNaN(date.getTime())) {
+            return dateStr + (timeStr ? ` ${timeStr}` : '');
+          }
+          return date.toLocaleString();
+        };
+
+        const rows = records.map((rec, idx) => {
+          const status = (rec.status || 'admitted').toLowerCase();
+          let badgeClass = 'badge-secondary';
+          if (status === 'admitted') badgeClass = 'badge-success';
+          else if (status === 'discharged') badgeClass = 'badge-primary';
+          else if (status === 'cancelled') badgeClass = 'badge-danger';
+
+          const admissionDate = formatDate(rec.admission_date, rec.admission_time);
+          const dischargeDate = rec.discharge_date ? new Date(rec.discharge_date).toLocaleString() : (status === 'admitted' ? 'Currently admitted' : '—');
+          const location = [rec.ward, rec.room, rec.bed].filter(Boolean).join(' / ') || '—';
+
+          return `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${admissionDate}</td>
+              <td>${dischargeDate}</td>
+              <td>${rec.admission_type ? rec.admission_type.charAt(0).toUpperCase() + rec.admission_type.slice(1) : '—'}</td>
+              <td>${rec.physician || '—'}</td>
+              <td>${location}</td>
+              <td>${rec.diagnosis || '—'}</td>
+              <td>${rec.reason || '—'}</td>
+              <td><span class="badge ${badgeClass}" style="text-transform:capitalize;">${status}</span></td>
+            </tr>`;
+        }).join('');
+
+        container.innerHTML = `
+          <div style="overflow:auto;">
+            <table style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="text-align:left; border-bottom:1px solid #e9ecef;">
+                  <th>#</th>
+                  <th>Admission</th>
+                  <th>Discharge</th>
+                  <th>Type</th>
+                  <th>Physician</th>
+                  <th>Ward / Room / Bed</th>
+                  <th>Diagnosis</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
+      } catch (e) {
+        container.innerHTML = '<span style="color:#dc3545">Error loading medical records.</span>';
       }
     }
 
