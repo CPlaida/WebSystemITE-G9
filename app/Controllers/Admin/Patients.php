@@ -153,10 +153,13 @@ class Patients extends BaseController
     public function index()
     {
         $filter = $this->request->getGet('filter') ?? 'inpatient';
-        $filter = in_array($filter, ['inpatient', 'outpatient', 'admitted'], true) ? $filter : 'inpatient';
+        $allowedFilters = ['inpatient', 'outpatient', 'admitted', 'discharged'];
+        $filter = in_array($filter, $allowedFilters, true) ? $filter : 'inpatient';
 
         if ($filter === 'admitted') {
             $patients = $this->getAdmittedPatients();
+        } elseif ($filter === 'discharged') {
+            $patients = $this->getDischargedPatients();
         } else {
             $patients = $this->patientModel
                 ->where('type', $filter === 'outpatient' ? 'outpatient' : 'inpatient')
@@ -169,6 +172,16 @@ class Patients extends BaseController
             'title' => 'Patient Records',
             'patients' => $patients,
             'currentFilter' => $filter,
+        ]);
+    }
+
+    public function dischargedTable()
+    {
+        $patients = $this->getDischargedPatients();
+
+        return view('Roles/admin/patients/partials/discharged_table', [
+            'patients' => $patients,
+            'currentFilter' => 'discharged',
         ]);
     }
 
@@ -257,6 +270,52 @@ class Patients extends BaseController
             ->orderBy('admission_details.id', 'DESC')
             ->orderBy('admission_details.admission_date', 'DESC')
             ->orderBy('admission_details.admission_time', 'DESC')
+            ->findAll();
+
+        if (empty($rows)) {
+            return [];
+        }
+
+        $unique = [];
+        $seen = [];
+        foreach ($rows as $row) {
+            $patientId = $row['admission_patient_id'] ?? ($row['patient_id'] ?? ($row['id'] ?? null));
+            if (!$patientId || isset($seen[$patientId])) {
+                continue;
+            }
+            $seen[$patientId] = true;
+            $unique[] = $row;
+        }
+
+        return $unique;
+    }
+
+    protected function getDischargedPatients(): array
+    {
+        $rows = $this->admissionModel
+            ->select([
+                'admission_details.id AS admission_id',
+                'admission_details.patient_id AS admission_patient_id',
+                'admission_details.admission_date',
+                'admission_details.updated_at AS discharge_date',
+                'admission_details.admission_type',
+                'admission_details.status AS admission_status',
+                'admission_details.admitting_diagnosis',
+                'admission_details.reason_admission',
+                'admission_details.ward AS admission_ward',
+                'admission_details.room AS admission_room',
+                'patients.*',
+                'users.username AS physician_username',
+                "COALESCE(CONCAT(doctors.first_name, ' ', doctors.last_name), users.username) AS physician_name",
+                'role.name AS physician_role',
+            ])
+            ->join('patients', 'patients.id = admission_details.patient_id', 'left')
+            ->join('users', 'users.id = admission_details.attending_physician', 'left')
+            ->join('doctors', 'doctors.user_id = users.id', 'left')
+            ->join('roles role', 'role.id = users.role_id', 'left')
+            ->where('admission_details.status', 'discharged')
+            ->orderBy('admission_details.updated_at', 'DESC')
+            ->orderBy('admission_details.id', 'DESC')
             ->findAll();
 
         if (empty($rows)) {

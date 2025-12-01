@@ -8,9 +8,11 @@
         'inpatient' => ['label' => 'Inpatients', 'icon' => 'fa-procedures'],
         'outpatient' => ['label' => 'Outpatients', 'icon' => 'fa-user-check'],
         'admitted' => ['label' => 'Admitted Patients', 'icon' => 'fa-hospital-user'],
+        'discharged' => ['label' => 'Discharged Patients', 'icon' => 'fa-user-check'],
     ];
     $currentFilter = $currentFilter ?? 'inpatient';
     $isAdmitted = $currentFilter === 'admitted';
+    $isDischargedView = $currentFilter === 'discharged';
     $stats = $stats ?? ['total' => 0, 'inpatients' => 0, 'outpatients' => 0, 'admitted' => 0];
 ?>
 
@@ -71,7 +73,7 @@
                                     <th>Contact</th>
                                     <th><?= $isAdmitted ? 'Ward / Room / Bed' : 'Address' ?></th>
                                     <th><?= $isAdmitted ? 'Physician' : 'Gender' ?></th>
-                                    <th><?= $isAdmitted ? 'Admission Date' : 'DOB' ?></th>
+                                    <th><?= $isAdmitted || $isDischargedView ? 'Admission Date' : 'DOB' ?></th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -116,7 +118,7 @@
                                         <td><?= esc($contact) ?></td>
                                         <td><?= $isAdmitted ? esc($wardRoom ?: '—') : esc($address) ?></td>
                                         <td><?= $isAdmitted ? esc($physician) : esc($gender) ?></td>
-                                        <td><?= $isAdmitted ? esc($admissionDate) : esc($dob) ?></td>
+                                        <td><?= $isAdmitted || $isDischargedView ? esc($admissionDate) : esc($dob) ?></td>
                                         <td>
                                             <span class="badge <?= esc($statusClass) ?> px-3 py-2">
                                                 <?= esc(ucfirst($status)) ?>
@@ -213,37 +215,52 @@
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearch');
 
-        document.querySelectorAll('.view-patient-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const payload = this.getAttribute('data-patient');
-                if (!payload) {
-                    alert('No patient data available');
+        const bindViewButtons = (scope = document) => {
+            scope.querySelectorAll('.view-patient-btn').forEach(btn => {
+                if (btn.dataset.viewBound === 'true') {
                     return;
                 }
-                try {
-                    const patient = JSON.parse(payload);
-                    viewPatient(
-                        patient.full_name || '-',
-                        patient.phone || '-',
-                        patient.address || '-',
-                        patient.dob || '-',
-                        patient.gender || '-',
-                        patient.medical_history || '-',
-                        patient.id || '-',
-                        patient.email || '-',
-                        patient.blood_type || '-',
-                        patient.emergency_contact || '-'
-                    );
-                } catch (e) {
-                    console.error('Failed to parse patient payload', e);
-                    alert('Unable to load patient details');
-                }
+                btn.dataset.viewBound = 'true';
+                btn.addEventListener('click', function () {
+                    const payload = this.getAttribute('data-patient');
+                    if (!payload) {
+                        alert('No patient data available');
+                        return;
+                    }
+                    try {
+                        const patient = JSON.parse(payload);
+                        viewPatient(
+                            patient.full_name || '-',
+                            patient.phone || '-',
+                            patient.address || '-',
+                            patient.dob || '-',
+                            patient.gender || '-',
+                            patient.medical_history || '-',
+                            patient.id || '-',
+                            patient.email || '-',
+                            patient.blood_type || '-',
+                            patient.emergency_contact || '-'
+                        );
+                    } catch (e) {
+                        console.error('Failed to parse patient payload', e);
+                        alert('Unable to load patient details');
+                    }
+                });
             });
-        });
+        };
 
-        document.querySelectorAll('.discharge-btn').forEach(btn => {
-            btn.addEventListener('click', () => handleDischarge(btn));
-        });
+        const bindDischargeButtons = (scope = document) => {
+            scope.querySelectorAll('.discharge-btn').forEach(btn => {
+                if (btn.dataset.dischargeBound === 'true') {
+                    return;
+                }
+                btn.dataset.dischargeBound = 'true';
+                btn.addEventListener('click', () => handleDischarge(btn));
+            });
+        };
+
+        bindViewButtons();
+        bindDischargeButtons();
 
         if (searchInput) {
             searchInput.addEventListener('input', filterPatients);
