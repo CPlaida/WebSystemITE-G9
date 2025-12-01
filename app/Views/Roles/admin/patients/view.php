@@ -101,6 +101,7 @@
                                             'medical_history' => $patient['medical_history'] ?? 'No medical history recorded.',
                                             'insurance_provider' => $patient['insurance_provider'] ?? 'N/A',
                                             'insurance_number' => $patient['insurance_number'] ?? 'N/A',
+                                            'emergency_contact' => $patient['emergency_contact'] ?? 'N/A',
                                             'ward' => $patient['admission_ward'] ?? $patient['bed_ward'] ?? '—',
                                             'room' => $patient['admission_room'] ?? $patient['bed_room'] ?? '—',
                                             'bed' => $patient['bed_label'] ?? '—',
@@ -124,7 +125,7 @@
                                         <td>
                                             <button type="button" class="btn btn-sm btn-primary view-patient-btn"
                                                 data-patient='<?= esc(json_encode($payload, JSON_HEX_APOS | JSON_HEX_QUOT), 'attr') ?>'>
-                                                <i class="fas fa-eye me-1"></i>View
+                                                <i class="fas fa-notes-medical me-1"></i>View
                                             </button>
                                         </td>
                                     </tr>
@@ -138,77 +139,70 @@
     </div>
 </div>
 
-<div class="modal" id="patientModal" style="display: none;">
-    <div class="modal-content patient-modal-content">
-        <div class="modal-header patient-modal-header">
-            <div class="modal-title-wrapper">
-                <i class="fas fa-user-circle modal-title-icon"></i>
-                <div>
-                    <h5 class="modal-title-main">Patient Snapshot</h5>
-                    <p class="modal-subtitle">Demographics • Admission • Insurance</p>
-                </div>
-            </div>
-            <button type="button" class="close-btn" onclick="closePatientModal()" aria-label="Close">×</button>
+<div class="modal" id="ehrModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5>Electronic Health Records</h5>
+            <button class="close-btn" onclick="closeModal()">×</button>
         </div>
-        <div class="modal-body patient-modal-body">
-            <div class="info-section-card">
-                <h6><i class="fas fa-id-card"></i> Personal Information</h6>
-                <div class="info-grid">
-                    <div class="info-field"><label>Patient ID</label><p id="patient-id">-</p></div>
-                    <div class="info-field"><label>Full Name</label><p id="patient-name">-</p></div>
-                    <div class="info-field"><label>Gender</label><p id="patient-gender">-</p></div>
-                    <div class="info-field"><label>Date of Birth</label><p id="patient-dob">-</p></div>
-                    <div class="info-field"><label>Blood Type</label><p id="patient-blood-type">-</p></div>
+        <div class="ehr-container">
+            <div class="ehr-info">
+                <p><b>Patient ID:</b> <span id="ehrPatientId">-</span></p>
+                <p><b>Full Name:</b> <span id="ehrName">-</span></p>
+                <p><b>Mobile:</b> <span id="ehrMobile">-</span></p>
+                <p><b>Email:</b> <span id="ehrEmail">-</span></p>
+                <p><b>Address:</b> <span id="ehrAddress">-</span></p>
+                <p><b>Date of Birth:</b> <span id="ehrDOB">-</span></p>
+                <p><b>Gender:</b> <span id="ehrGender">-</span></p>
+                <p><b>Blood Type:</b> <span id="ehrBloodType">-</span></p>
+                <p><b>Medical History:</b> <span id="ehrAilment">-</span></p>
+                <p><b>Date Recorded:</b> <span id="ehrDate">-</span></p>
+            </div>
+            <div class="ehr-tabs">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="openTab(event,'prescription')">Prescription</button>
+                    <button class="tab-btn" onclick="openTab(event,'vitals')">Vitals</button>
+                    <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
+                </div>
+                <div id="prescription" class="tab-content">
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <textarea id="prescriptionNote" placeholder="Type prescription or result note here..." style="width:100%; min-height:140px; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
+                        <div style="display:flex; justify-content:flex-end; gap:10px;">
+                            <button id="savePrescriptionBtn" class="btn" style="background:#2563eb; color:#fff; border-radius:6px; padding:8px 14px;">Save</button>
+                        </div>
+                        <small id="prescriptionStatus" style="color:#6b7280;"></small>
+                    </div>
+                </div>
+                <div id="vitals" class="tab-content" style="display:none;">
+                    <div class="vitals-section" style="font-size:14px; color:#2c3e50; display:flex; flex-direction:column; gap:10px;">
+                        <div>
+                            <h6 style="font-weight:600; margin-bottom:8px;">
+                                <i class="fas fa-heartbeat" style="margin-right:4px;"></i> Latest Vitals
+                            </h6>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px 16px;">
+                                <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
+                                <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
+                                <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
+                                <div><strong>Last Updated:</strong> <span id="ehrVitalsUpdated">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="lab" class="tab-content" style="display:none;">
+                    <div id="ehrLabContainer" style="min-height:120px; padding:6px 0; color:#2c3e50; font-size:14px;">
+                        <em>Loading lab records...</em>
+                    </div>
                 </div>
             </div>
-
-            <div class="info-section-card">
-                <h6><i class="fas fa-address-book"></i> Contact Details</h6>
-                <div class="info-grid">
-                    <div class="info-field"><label>Phone</label><p id="patient-contact">-</p></div>
-                    <div class="info-field"><label>Address</label><p id="patient-address">-</p></div>
-                </div>
-            </div>
-
-            <?php if ($isAdmitted): ?>
-            <div class="info-section-card">
-                <h6><i class="fas fa-hospital"></i> Admission Overview</h6>
-                <div class="info-grid">
-                    <div class="info-field"><label>Ward</label><p id="patient-ward">-</p></div>
-                    <div class="info-field"><label>Room</label><p id="patient-room">-</p></div>
-                    <div class="info-field"><label>Bed</label><p id="patient-bed">-</p></div>
-                    <div class="info-field"><label>Physician</label><p id="patient-physician">-</p></div>
-                    <div class="info-field"><label>Admission Type</label><p id="patient-admission-type">-</p></div>
-                    <div class="info-field"><label>Admission Date</label><p id="patient-admission-date">-</p></div>
-                </div>
-            </div>
-            <?php endif; ?>
-
-            <div class="info-section-card">
-                <h6><i class="fas fa-file-invoice"></i> Insurance</h6>
-                <div class="info-grid">
-                    <div class="info-field"><label>Provider</label><p id="patient-insurance-provider">-</p></div>
-                    <div class="info-field"><label>Policy No.</label><p id="patient-insurance-number">-</p></div>
-                </div>
-            </div>
-
-            <div class="info-section-card">
-                <h6><i class="fas fa-notes-medical"></i> Medical History</h6>
-                <div class="info-field-full">
-                    <p id="patient-medical-history">-</p>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer patient-modal-footer">
-            <button type="button" class="btn-close-modal" onclick="closePatientModal()">
-                <i class="fas fa-times me-2"></i>Close
-            </button>
         </div>
     </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+
         document.querySelectorAll('.view-patient-btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 const payload = this.getAttribute('data-patient');
@@ -218,52 +212,238 @@
                 }
                 try {
                     const patient = JSON.parse(payload);
-                    fillPatientModal(patient);
-                    openPatientModal();
+                    viewPatient(
+                        patient.full_name || '-',
+                        patient.phone || '-',
+                        patient.address || '-',
+                        patient.dob || '-',
+                        patient.gender || '-',
+                        patient.medical_history || '-',
+                        patient.id || '-',
+                        patient.email || '-',
+                        patient.blood_type || '-',
+                        patient.emergency_contact || '-'
+                    );
                 } catch (e) {
                     console.error('Failed to parse patient payload', e);
                     alert('Unable to load patient details');
                 }
             });
         });
-    });
 
-    function fillPatientModal(data) {
-        document.getElementById('patient-id').innerText = data.id || '-';
-        document.getElementById('patient-name').innerText = data.full_name || '-';
-        document.getElementById('patient-contact').innerText = data.phone || '-';
-        document.getElementById('patient-address').innerText = data.address || '-';
-        document.getElementById('patient-dob').innerText = data.dob || '-';
-        document.getElementById('patient-gender').innerText = data.gender || '-';
-        document.getElementById('patient-blood-type').innerText = data.blood_type || '-';
-        document.getElementById('patient-medical-history').innerText = data.medical_history || '-';
-        document.getElementById('patient-insurance-provider').innerText = data.insurance_provider || '-';
-        document.getElementById('patient-insurance-number').innerText = data.insurance_number || '-';
-        <?php if ($isAdmitted): ?>
-            document.getElementById('patient-ward').innerText = data.ward || '-';
-            document.getElementById('patient-room').innerText = data.room || '-';
-            document.getElementById('patient-bed').innerText = data.bed || '-';
-            document.getElementById('patient-physician').innerText = data.physician || '-';
-            document.getElementById('patient-admission-type').innerText = data.admission_type || '-';
-            document.getElementById('patient-admission-date').innerText = data.admission_date || '-';
-        <?php endif; ?>
-    }
-
-    function openPatientModal() {
-        const modal = document.getElementById('patientModal');
-        if (modal) modal.style.display = 'flex';
-    }
-
-    function closePatientModal() {
-        const modal = document.getElementById('patientModal');
-        if (modal) modal.style.display = 'none';
-    }
-
-    window.addEventListener('click', function (event) {
-        const modal = document.getElementById('patientModal');
-        if (event.target === modal) {
-            closePatientModal();
+        if (searchInput) {
+            searchInput.addEventListener('input', filterPatients);
+        }
+        if (clearSearchBtn && searchInput) {
+            clearSearchBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                clearSearchBtn.style.display = 'none';
+                filterPatients();
+            });
+            searchInput.addEventListener('input', function () {
+                clearSearchBtn.style.display = searchInput.value ? 'inline-flex' : 'none';
+            });
         }
     });
+
+    function viewPatient(name, mobile, address, dob, gender, medicalHistory, patientId, email, bloodType, emergencyContact) {
+        document.getElementById('ehrName').innerText = name;
+        document.getElementById('ehrMobile').innerText = mobile;
+        document.getElementById('ehrAddress').innerText = address;
+        document.getElementById('ehrDOB').innerText = dob;
+        document.getElementById('ehrGender').innerText = gender;
+        document.getElementById('ehrAilment').innerText = medicalHistory;
+        document.getElementById('ehrDate').innerText = new Date().toLocaleDateString();
+
+        document.getElementById('ehrPatientId').innerText = patientId;
+        document.getElementById('ehrEmail').innerText = email;
+        document.getElementById('ehrBloodType').innerText = bloodType;
+
+        document.getElementById('ehrModal').style.display = 'flex';
+
+        loadPrescription(patientId);
+        loadLabRecords(patientId, name);
+        loadVitals(patientId);
+
+        const saveBtn = document.getElementById('savePrescriptionBtn');
+        if (saveBtn) {
+            saveBtn.onclick = () => savePrescription(patientId);
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('ehrModal').style.display = 'none';
+    }
+
+    function openTab(evt, tabName) {
+        const content = document.getElementsByClassName('tab-content');
+        for (let i = 0; i < content.length; i++) {
+            content[i].style.display = 'none';
+        }
+        const btns = document.getElementsByClassName('tab-btn');
+        for (let i = 0; i < btns.length; i++) {
+            btns[i].classList.remove('active');
+        }
+        document.getElementById(tabName).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+
+        const pid = document.getElementById('ehrPatientId').innerText.trim();
+        const pname = document.getElementById('ehrName').innerText.trim();
+
+        if (tabName === 'lab') {
+            loadLabRecords(pid || '', pname);
+        }
+        if (tabName === 'vitals') {
+            loadVitals(pid);
+        }
+    }
+
+    function loadLabRecords(patientId, name) {
+        const cont = document.getElementById('ehrLabContainer');
+        if (!cont) return;
+        cont.innerHTML = '<em>Loading lab records...</em>';
+
+        const params = new URLSearchParams();
+        if (name) params.append('name', name);
+        if (patientId) params.append('patient_id', String(patientId));
+
+        fetch('<?= base_url('laboratory/patient/lab-records') ?>?' + params.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!data || !data.success) {
+                    cont.innerHTML = '<span style="color:#dc3545">Failed to load lab records.</span>';
+                    return;
+                }
+                const rows = Array.isArray(data.records) ? data.records : [];
+                if (rows.length === 0) {
+                    cont.innerHTML = '<span style="color:#6c757d">No lab records found.</span>';
+                    return;
+                }
+                let html = '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse">' +
+                    '<thead><tr style="text-align:left; border-bottom:1px solid #e9ecef">' +
+                    '<th style="padding:6px 8px">Date</th><th style="padding:6px 8px">Test</th><th style="padding:6px 8px">Status</th><th style="padding:6px 8px">Notes</th><th style="padding:6px 8px">Action</th></tr></thead><tbody>';
+                rows.forEach(r => {
+                    const d = r.test_date ? new Date(r.test_date).toLocaleDateString() : '-';
+                    const t = r.test_type || '-';
+                    const n = r.notes ? String(r.notes).substring(0, 120) : '—';
+                    const status = (r.status || 'pending').toLowerCase();
+                    let statusBadge = '';
+                    if (status === 'completed') {
+                        statusBadge = '<span style="background:#28a745; color:#fff; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">Completed</span>';
+                    } else if (status === 'in_progress') {
+                        statusBadge = '<span style="background:#007bff; color:#fff; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">In Progress</span>';
+                    } else {
+                        statusBadge = '<span style="background:#ffc107; color:#212529; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:500;">Pending</span>';
+                    }
+                    const viewUrl = '<?= base_url('laboratory/testresult/view/') ?>' + (r.id || '');
+                    const actionBtn = status === 'completed'
+                        ? `<a href="${viewUrl}" class="btn btn-sm btn-primary">View</a>`
+                        : `<span style="color:#6c757d; font-size:12px;">${status === 'in_progress' ? 'Processing...' : 'Pending'}</span>`;
+                    html += `<tr style="border-bottom:1px solid #f1f3f5"><td style="padding:6px 8px">${d}</td><td style="padding:6px 8px">${t}</td><td style="padding:6px 8px">${statusBadge}</td><td style="padding:6px 8px">${n}</td><td style="padding:6px 8px">${actionBtn}</td></tr>`;
+                });
+                html += '</tbody></table></div>';
+                cont.innerHTML = html;
+            })
+            .catch(() => { cont.innerHTML = '<span style="color:#dc3545">Error loading lab records.</span>'; });
+    }
+
+    async function loadPrescription(patientId) {
+        const status = document.getElementById('prescriptionStatus');
+        try {
+            if (status) status.textContent = 'Loading prescription...';
+            const res = await fetch(`<?= base_url('doctor/prescription') ?>?patient_id=${encodeURIComponent(patientId)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await res.json();
+            if (data && data.success) {
+                document.getElementById('prescriptionNote').value = data.note || '';
+                if (status) status.textContent = data.note ? 'Loaded latest note.' : 'No note yet.';
+            } else {
+                if (status) status.textContent = (data && data.message) ? data.message : 'Failed to load note';
+            }
+        } catch (e) {
+            if (status) status.textContent = 'Error loading note';
+        }
+    }
+
+    async function loadVitals(patientId) {
+        const status = document.getElementById('vitalsStatus');
+        if (status) {
+            status.textContent = 'Loading vitals...';
+        }
+        try {
+            const res = await fetch(`<?= base_url('doctor/vitals') ?>?patient_id=${encodeURIComponent(patientId)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await res.json();
+            if (!data || !data.success) {
+                if (status) status.textContent = data && data.message ? data.message : 'Failed to load vitals';
+                return;
+            }
+            const v = data.vitals || null;
+            document.getElementById('ehrVitalsBp').innerText = v && v.blood_pressure ? v.blood_pressure : '-';
+            document.getElementById('ehrVitalsHr').innerText = v && v.heart_rate ? v.heart_rate : '-';
+            document.getElementById('ehrVitalsTemp').innerText = v && v.temperature ? v.temperature : '-';
+            document.getElementById('ehrVitalsUpdated').innerText = v && v.created_at ? (new Date(v.created_at)).toLocaleString() : '-';
+
+            const bpInput = document.getElementById('vitalBpInput');
+            const hrInput = document.getElementById('vitalHrInput');
+            const tempInput = document.getElementById('vitalTempInput');
+            if (bpInput) bpInput.value = v && v.blood_pressure ? v.blood_pressure : '';
+            if (hrInput) hrInput.value = v && v.heart_rate ? v.heart_rate : '';
+            if (tempInput) tempInput.value = v && v.temperature ? v.temperature : '';
+
+            if (status) {
+                status.textContent = v ? 'Latest vitals loaded.' : 'No vitals recorded yet.';
+            }
+        } catch (e) {
+            if (status) status.textContent = 'Error loading vitals';
+        }
+    }
+
+    async function savePrescription(patientId) {
+        const note = document.getElementById('prescriptionNote').value.trim();
+        const status = document.getElementById('prescriptionStatus');
+        if (status) status.textContent = 'Saving...';
+        const form = new URLSearchParams();
+        form.append('patient_id', patientId);
+        form.append('note', note);
+        form.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
+        try {
+            const res = await fetch(`<?= base_url('doctor/prescription/save') ?>`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: form.toString()
+            });
+            const data = await res.json();
+            if (status) status.textContent = (data && data.success) ? 'Saved.' : ((data && data.message) || 'Failed to save');
+        } catch (e) {
+            if (status) status.textContent = 'Error saving note';
+        }
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById('ehrModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+
+    function filterPatients() {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
+        const searchTerm = searchInput.value.toLowerCase();
+        const tableRows = document.querySelectorAll('#patientsTable tbody tr');
+
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    }
 </script>
 <?= $this->endSection() ?>

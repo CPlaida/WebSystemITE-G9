@@ -74,7 +74,10 @@ class Patients extends BaseController
             'hmo_member_no' => 'permit_empty|string|max_length[100]',
             'hmo_valid_from' => 'permit_empty|valid_date',
             'hmo_valid_to' => 'permit_empty|valid_date',
-            'medical_history' => 'permit_empty|string'
+            'medical_history' => 'permit_empty|string',
+            'vitals_bp' => 'permit_empty|string|max_length[20]',
+            'vitals_hr' => 'permit_empty|integer|greater_than_equal_to[0]|less_than_equal_to[300]',
+            'vitals_temp' => 'permit_empty|decimal'
         ];
 
         $type = $this->request->getPost('type') ?? 'outpatient';
@@ -116,6 +119,9 @@ class Patients extends BaseController
             'hmo_valid_from' => $this->request->getPost('hmo_valid_from') ?: null,
             'hmo_valid_to' => $this->request->getPost('hmo_valid_to') ?: null,
             'medical_history' => $this->request->getPost('medical_history'),
+            'vitals_bp' => $this->request->getPost('vitals_bp') ?: null,
+            'vitals_hr' => $this->request->getPost('vitals_hr') ?: null,
+            'vitals_temp' => $this->request->getPost('vitals_temp') ?: null,
             'status' => 'active',
             'created_at' => date('Y-m-d H:i:s')
         ];
