@@ -1,0 +1,150 @@
+ERROR - 2025-10-30 11:21:30 --> mysqli_sql_exception: Table 'hms_g9.services' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SHOW COLUMNS FR...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SHOW COLUMNS FR...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SHOW COLUMNS FR...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(1606): CodeIgniter\Database\BaseConnection->query('SHOW COLUMNS FR...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(20): CodeIgniter\Database\BaseConnection->getFieldNames('services')
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(64): App\Models\BillingModel->tableHas('services')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(76): App\Models\BillingModel->withRelations()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(93): App\Models\BillingModel->search(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(49): App\Models\BillingModel->getList(NULL)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->index()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+ERROR - 2025-10-30 12:43:51 --> mysqli_sql_exception: Table 'hms_g9.services' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SHOW COLUMNS FR...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SHOW COLUMNS FR...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SHOW COLUMNS FR...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(1606): CodeIgniter\Database\BaseConnection->query('SHOW COLUMNS FR...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(20): CodeIgniter\Database\BaseConnection->getFieldNames('services')
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(64): App\Models\BillingModel->tableHas('services')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(76): App\Models\BillingModel->withRelations()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(93): App\Models\BillingModel->search(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(49): App\Models\BillingModel->getList(NULL)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->index()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+ERROR - 2025-10-30 12:55:10 --> mysqli_sql_exception: Table 'hms_g9.services' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SHOW COLUMNS FR...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SHOW COLUMNS FR...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SHOW COLUMNS FR...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(1606): CodeIgniter\Database\BaseConnection->query('SHOW COLUMNS FR...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(20): CodeIgniter\Database\BaseConnection->getFieldNames('services')
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(64): App\Models\BillingModel->tableHas('services')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(76): App\Models\BillingModel->withRelations()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(93): App\Models\BillingModel->search(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(49): App\Models\BillingModel->getList(NULL)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->index()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+CRITICAL - 2025-10-30 14:31:57 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/appointments.php"
+[Method: GET, Route: doctor/appointments]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/appointments.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments', [], true)
+ 3 APPPATH\Controllers\Doctor\Doctor.php(81): view('Roles/doctor/appointments', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->appointments()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-30 14:31:59 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/appointments.php"
+[Method: GET, Route: doctor/appointments]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/appointments.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments', [], true)
+ 3 APPPATH\Controllers\Doctor\Doctor.php(81): view('Roles/doctor/appointments', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->appointments()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-10-30 14:39:54 --> mysqli_sql_exception: Table 'hms_g9.services' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SHOW COLUMNS FR...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SHOW COLUMNS FR...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SHOW COLUMNS FR...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(1606): CodeIgniter\Database\BaseConnection->query('SHOW COLUMNS FR...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(20): CodeIgniter\Database\BaseConnection->getFieldNames('services')
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(64): App\Models\BillingModel->tableHas('services')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(76): App\Models\BillingModel->withRelations()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(93): App\Models\BillingModel->search(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(49): App\Models\BillingModel->getList(NULL)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->index()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+CRITICAL - 2025-10-30 14:40:22 --> ErrorException: Undefined array key "doctor_name"
+[Method: GET, Route: doctor/appointments]
+in APPPATH\Views\Roles\doctor\appointments\Appointmentlist.php on line 42.
+ 1 APPPATH\Views\Roles\doctor\appointments\Appointmentlist.php(42): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "doctor_name"', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\doctor\\appointments\\Appointmentlist.php', 42)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\doctor\\appointments\\Appointmentlist.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments/Appointmentlist', [], true)
+ 5 APPPATH\Controllers\Doctor\Doctor.php(82): view('Roles/doctor/appointments/Appointmentlist', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->appointments()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-30 14:40:27 --> ErrorException: Undefined array key "doctor_name"
+[Method: GET, Route: doctor/appointments]
+in APPPATH\Views\Roles\doctor\appointments\Appointmentlist.php on line 42.
+ 1 APPPATH\Views\Roles\doctor\appointments\Appointmentlist.php(42): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "doctor_name"', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\doctor\\appointments\\Appointmentlist.php', 42)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\doctor\\appointments\\Appointmentlist.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments/Appointmentlist', [], true)
+ 5 APPPATH\Controllers\Doctor\Doctor.php(82): view('Roles/doctor/appointments/Appointmentlist', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor\Doctor->appointments()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor\Doctor))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-30 14:43:19 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/1]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(341): CodeIgniter\Model->update('1', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('1')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-30 14:43:25 --> CodeIgniter\Database\Exceptions\DataException: There is no data to update.
+[Method: POST, Route: appointments/update/1]
+in SYSTEMPATH\BaseModel.php on line 1823.
+ 1 SYSTEMPATH\BaseModel.php(1823): CodeIgniter\Database\Exceptions\DataException::forEmptyDataset('update')
+ 2 SYSTEMPATH\BaseModel.php(994): CodeIgniter\BaseModel->transformDataToArray([], 'update')
+ 3 SYSTEMPATH\Model.php(860): CodeIgniter\BaseModel->update([...], [])
+ 4 APPPATH\Controllers\Appointment.php(341): CodeIgniter\Model->update('1', [])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->update('1')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

@@ -26,13 +26,14 @@ class Admissions extends BaseController
 
     public function create()
     {
-        // Doctors list for dropdown
+        // Doctors list for dropdown (doctor_id used as FK)
         $doctors = $this->userModel
-            ->select("users.id, COALESCE(NULLIF(CONCAT(d.first_name, ' ', d.last_name), ' '), users.username) AS display_name, d.first_name, d.last_name, users.username")
+            ->select("d.id AS doctor_id, users.id AS user_id, COALESCE(NULLIF(CONCAT(d.first_name, ' ', d.last_name), ' '), users.username) AS display_name, d.first_name, d.last_name, users.username")
             ->join('roles r', 'users.role_id = r.id', 'left')
             ->join('doctors d', 'd.user_id = users.id', 'left')
             ->where('r.name', 'doctor')
             ->where('users.status', 'active')
+            ->where('d.id IS NOT NULL', null, false)
             ->orderBy('d.first_name', 'ASC')
             ->orderBy('users.username', 'ASC')
             ->findAll();
@@ -58,7 +59,7 @@ class Admissions extends BaseController
             'admission_date' => 'required|valid_date',
             'admission_time' => 'permit_empty',
             'admission_type' => 'required|in_list[emergency,elective,transfer]',
-            'attending_physician' => 'required|is_not_unique[users.id]',
+            'attending_doctor_id' => 'required|is_not_unique[doctors.id]',
             'ward' => 'permit_empty|max_length[100]',
             'room' => 'permit_empty|max_length[100]',
             'bed_id' => 'required|integer|is_not_unique[beds.id]',
@@ -105,7 +106,7 @@ class Admissions extends BaseController
             'admission_date' => $this->request->getPost('admission_date'),
             'admission_time' => $this->request->getPost('admission_time') ?: null,
             'admission_type' => $this->request->getPost('admission_type'),
-            'attending_physician' => $this->request->getPost('attending_physician'),
+            'attending_doctor_id' => (int) $this->request->getPost('attending_doctor_id'),
             'ward' => $this->request->getPost('ward') ?: null,
             'room' => $this->request->getPost('room') ?: null,
             'bed_id' => $bedId,

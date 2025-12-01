@@ -32,7 +32,7 @@ class CreateAdmissionDetailsTable extends Migration
                 'constraint' => 20,
                 'null' => false,
             ],
-            'attending_physician' => [
+            'attending_doctor_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
@@ -80,6 +80,7 @@ class CreateAdmissionDetailsTable extends Migration
         $this->forge->addKey('patient_id');
         $this->forge->addKey('bed_id');
         $this->forge->addForeignKey('patient_id', 'patients', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('attending_doctor_id', 'doctors', 'id', 'RESTRICT', 'CASCADE');
         $this->forge->addForeignKey('bed_id', 'beds', 'id', 'RESTRICT', 'CASCADE');
         $this->forge->createTable('admission_details');
     }

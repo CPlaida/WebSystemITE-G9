@@ -1,0 +1,104 @@
+ERROR - 2025-10-22 06:17:41 --> mysqli_sql_exception: Unknown column 'role' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *\nFROM `...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\DoctorScheduleSeeder.php(12): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\DoctorScheduleSeeder->run()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#11 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#12 {main}
+ERROR - 2025-10-22 06:24:32 --> mysqli_sql_exception: Table 'hms_g9.laboratory' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `la...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `la...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `la...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `la...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(139): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-10-22 06:24:32 --> Lab request creation failed: Table 'hms_g9.laboratory' doesn't exist
+ERROR - 2025-10-22 06:41:03 --> mysqli_sql_exception: Table 'hms_g9.laboratory' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `t...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `t...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `t...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `t...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(274): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->getTestResultsData()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-10-22 06:41:03 --> Failed to get test results data: Table 'hms_g9.laboratory' doesn't exist
+ERROR - 2025-10-22 06:48:28 --> mysqli_sql_exception: Table 'hms_g9.laboratory' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `t...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `t...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `t...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `t...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(274): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->getTestResultsData()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-10-22 06:48:28 --> Failed to get test results data: Table 'hms_g9.laboratory' doesn't exist
+ERROR - 2025-10-22 07:08:53 --> mysqli_sql_exception: Table 'hms_g9.laboratory' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `t...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `t...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `t...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `t...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(274): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->getTestResultsData()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-10-22 07:08:53 --> Failed to get test results data: Table 'hms_g9.laboratory' doesn't exist
+ERROR - 2025-10-22 07:09:09 --> mysqli_sql_exception: Table 'hms_g9.laboratory' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `la...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `la...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `la...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `la...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Laboratory.php(139): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Laboratory->submitRequest()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-10-22 07:09:09 --> Lab request creation failed: Table 'hms_g9.laboratory' doesn't exist
+ERROR - 2025-10-22 07:30:34 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 07:30:36 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 07:30:37 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 07:30:38 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 07:30:39 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 07:30:39 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 07:30:39 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 07:30:41 --> Failed to load test for result entry: Invalid file: "admin/laboratory/AddTestResult.php"
+ERROR - 2025-10-22 07:30:42 --> Failed to load test for result entry: Invalid file: "admin/laboratory/AddTestResult.php"
+ERROR - 2025-10-22 09:33:19 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 09:33:20 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 09:33:21 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"
+ERROR - 2025-10-22 09:33:24 --> Failed to load test for result entry: Invalid file: "admin/laboratory/AddTestResult.php"
+ERROR - 2025-10-22 09:33:26 --> Failed to get test result: Invalid file: "admin/laboratory/ViewTestResult.php"

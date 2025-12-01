@@ -1,0 +1,57 @@
+CRITICAL - 2025-10-20 05:14:59 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "template/header.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('template/header.php')
+ 2 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('template/header', [], true)
+ 3 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('auth/dashboard', [], true)
+ 4 APPPATH\Controllers\Dashboard.php(19): view('auth/dashboard', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Dashboard->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Dashboard))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-20 05:19:07 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "template/header.php"
+[Method: GET, Route: admin/patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('template/header.php')
+ 2 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('template/header', [], true)
+ 3 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/patients/register', [], true)
+ 4 APPPATH\Controllers\Admin\Patients.php(25): view('Roles/admin/patients/register', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin\Patients->register()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin\Patients))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-10-20 05:29:15 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "template/header.php"
+[Method: GET, Route: admin/patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('template/header.php')
+ 2 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('template/header', [], true)
+ 3 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/patients/register', [], true)
+ 4 APPPATH\Controllers\Admin\Patients.php(25): view('Roles/admin/patients/register', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin\Patients->register()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin\Patients))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-10-20 05:34:09 --> mysqli_sql_exception: Table 'hms_g9.services' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SHOW COLUMNS FR...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SHOW COLUMNS FR...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SHOW COLUMNS FR...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(1606): CodeIgniter\Database\BaseConnection->query('SHOW COLUMNS FR...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(20): CodeIgniter\Database\BaseConnection->getFieldNames('services')
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(65): App\Models\BillingModel->tableHas('services')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(77): App\Models\BillingModel->withRelations()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(94): App\Models\BillingModel->search(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(53): App\Models\BillingModel->getList(NULL)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->index()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}

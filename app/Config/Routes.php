@@ -296,6 +296,8 @@ $routes->get('doctor/appointments/list', 'Appointment::doctorToday', ['filter' =
 // Doctor prescription notes (EHR)
 $routes->get('doctor/prescription', 'Doctor\\PrescriptionController::show', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
 $routes->post('doctor/prescription/save', 'Doctor\\PrescriptionController::save', ['filter' => 'auth:doctor,admin']);
+// Medical records (admissions history)
+$routes->get('doctor/medical-records', 'Doctor\\MedicalRecordsController::admissions', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
 // Vitals API for EHR modal (viewable by all clinical roles; writable by doctor/nurse/admin)
 $routes->get('doctor/vitals', 'Doctor\\VitalsController::show', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
 $routes->post('doctor/vitals/save', 'Doctor\\VitalsController::save', ['filter' => 'auth:doctor,admin,nurse']);

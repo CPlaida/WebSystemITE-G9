@@ -255,14 +255,15 @@ class Patients extends BaseController
                 'beds.ward AS bed_ward',
                 'beds.room AS bed_room',
                 'beds.bed AS bed_label',
+                'doctors.id AS attending_doctor_id',
                 'users.username AS physician_username',
-                "COALESCE(CONCAT(doctors.first_name, ' ', doctors.last_name), users.username) AS physician_name",
+                "COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), ' ', TRIM(doctors.last_name)), ' '), users.username, CONCAT('Doctor #', doctors.id)) AS physician_name",
                 'role.name AS physician_role',
             ])
             ->join('patients', 'patients.id = admission_details.patient_id', 'left')
             ->join('beds', 'beds.id = admission_details.bed_id', 'left')
-            ->join('users', 'users.id = admission_details.attending_physician', 'left')
-            ->join('doctors', 'doctors.user_id = users.id', 'left')
+            ->join('doctors', 'doctors.id = admission_details.attending_doctor_id', 'left')
+            ->join('users', 'users.id = doctors.user_id', 'left')
             ->join('roles role', 'role.id = users.role_id', 'left')
             ->where('admission_details.status', 'admitted')
             ->orderBy('CASE WHEN role.name = "doctor" THEN 0 ELSE 1 END', 'ASC', false)
@@ -305,13 +306,14 @@ class Patients extends BaseController
                 'admission_details.ward AS admission_ward',
                 'admission_details.room AS admission_room',
                 'patients.*',
+                'doctors.id AS attending_doctor_id',
                 'users.username AS physician_username',
-                "COALESCE(CONCAT(doctors.first_name, ' ', doctors.last_name), users.username) AS physician_name",
+                "COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), ' ', TRIM(doctors.last_name)), ' '), users.username, CONCAT('Doctor #', doctors.id)) AS physician_name",
                 'role.name AS physician_role',
             ])
             ->join('patients', 'patients.id = admission_details.patient_id', 'left')
-            ->join('users', 'users.id = admission_details.attending_physician', 'left')
-            ->join('doctors', 'doctors.user_id = users.id', 'left')
+            ->join('doctors', 'doctors.id = admission_details.attending_doctor_id', 'left')
+            ->join('users', 'users.id = doctors.user_id', 'left')
             ->join('roles role', 'role.id = users.role_id', 'left')
             ->where('admission_details.status', 'discharged')
             ->orderBy('admission_details.updated_at', 'DESC')

@@ -1,0 +1,32 @@
+ERROR - 2025-10-02 17:27:15 --> mysqli_sql_exception: Duplicate key name 'request_id' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `l...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `l...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `l...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `l...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-09-16-024500_CreateLabRequestsTable.php(81): CodeIgniter\Database\Forge->createTable('lab_requests')
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateLabRequestsTable->up()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-10-02 17:28:00 --> mysqli_sql_exception: Duplicate key name 'request_id' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `l...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `l...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `l...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `l...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-09-16-024500_CreateLabRequestsTable.php(81): CodeIgniter\Database\Forge->createTable('lab_requests')
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateLabRequestsTable->up()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
