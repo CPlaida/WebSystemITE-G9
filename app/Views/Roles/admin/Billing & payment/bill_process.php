@@ -137,9 +137,6 @@
                 <div class="form-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <h3 class="section-header" style="margin: 0;">Bill Items</h3>
-                        <button type="button" id="addItem" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> Add Item
-                        </button>
                     </div>
                     
                     <div style="max-height: 300px; overflow-y: auto;">
@@ -384,14 +381,6 @@ if (patientInput) {
 }
 
 // Dynamic items
-document.getElementById('addItem')?.addEventListener('click', function() {
-    const table = document.querySelector('#billItems');
-    const tpl = document.getElementById('billItemTemplate');
-    if (table && tpl) {
-        table.appendChild(tpl.content.cloneNode(true));
-        updateTotals();
-    }
-});
 
 document.addEventListener('input', function(e) {
     if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
