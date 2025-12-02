@@ -55,9 +55,10 @@
                         <div class="form-group">
                             <label for="payment_method">Payment Method</label>
                             <select id="payment_method" name="payment_method" class="form-control">
-                                <?php $pm = strtolower($bill['payment_method'] ?? 'cash'); $pm = $pm === 'hmo' ? 'insurance' : $pm; ?>
+                                <?php $pm = strtolower($bill['payment_method'] ?? 'cash'); ?>
                                 <option value="cash" <?= $pm==='cash'?'selected':'' ?>>Cash</option>
-                                <option value="insurance" <?= $pm==='insurance'?'selected':'' ?>>Insurance</option>
+                                <option value="credit" <?= $pm==='credit'?'selected':'' ?>>Credit Card</option>
+                                <option value="debit" <?= $pm==='debit'?'selected':'' ?>>Debit Card</option>
                             </select>
                         </div>
                     </div>
@@ -336,7 +337,7 @@ if (patientInput) {
                     patientList.style.display = 'none';
                     // Auto-load patient's services
                     loadPatientServices(p.id);
-                    if (paymentMethod?.value === 'insurance') { loadPatientInsurance(p.id); }
+                    loadPatientInsurance(p.id);
                 };
                 patientList.appendChild(item);
             });
@@ -371,7 +372,7 @@ if (patientInput) {
                             patientList.innerHTML = '';
                             patientList.style.display = 'none';
                             loadPatientServices(results[0].id);
-                            if (paymentMethod?.value === 'insurance') { loadPatientInsurance(results[0].id); }
+                            loadPatientInsurance(results[0].id);
                         }
                     } catch {}
                 }
@@ -457,8 +458,8 @@ function updateHmoButtonState(){
     if (!btn) return;
     const visible = isHmoVisible();
     btn.innerHTML = visible
-        ? '<i class="fas fa-minus"></i> Remove Insurance'
-        : '<i class="fas fa-plus"></i> Add Insurance';
+        ? '<i class="fas fa-minus"></i> Hide HMO Details'
+        : '<i class="fas fa-plus"></i> Manage HMO Coverage';
     btn.classList.toggle('btn-outline-primary', !visible);
     btn.classList.toggle('btn-outline-danger', visible);
 }
@@ -482,47 +483,35 @@ function attachHmoButton(){
 
 if (paymentMethod && paymentDetails) {
     function renderPaymentDetails(method){
-        paymentDetails.innerHTML = '';
-        if (method === 'insurance') {
-            paymentDetails.innerHTML = `
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div class="form-group">
-                        <label for="insurance_provider">Insurance Provider</label>
-                        <input type="text" id="insurance_provider" name="insurance_provider" class="form-control" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="insurance_number">Insurance Number</label>
-                        <input type="text" id="insurance_number" name="insurance_number" class="form-control" readonly>
-                    </div>
+        paymentDetails.innerHTML = `
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                    <label for="insurance_provider">Insurance Provider (for HMO)</label>
+                    <input type="text" id="insurance_provider" name="insurance_provider" class="form-control" readonly>
                 </div>
-                <div style="margin-top:12px;">
-                    <button type="button" id="hmoAddBtn" class="btn btn-sm btn-outline-primary" style="display:inline-flex; align-items:center; gap:6px;">
-                        <i class="fas fa-plus"></i>
-                        Add Insurance
-                    </button>
-                    <small style="display:block; margin-top:6px; color:#6b7280;"></small>
+                <div class="form-group">
+                    <label for="insurance_number">Insurance Number</label>
+                    <input type="text" id="insurance_number" name="insurance_number" class="form-control" readonly>
                 </div>
-            `;
-            const pid = document.getElementById('patientID')?.value?.trim();
-            if (pid) loadPatientInsurance(pid);
-            attachHmoButton();
-            setHmoVisibility(hmoSectionVisible);
-        } else {
-            setHmoVisibility(false);
-        }
+            </div>
+            <div style="margin-top:12px;">
+                <button type="button" id="hmoAddBtn" class="btn btn-sm btn-outline-primary" style="display:inline-flex; align-items:center; gap:6px;">
+                    <i class="fas fa-plus"></i>
+                    Manage HMO Coverage
+                </button>
+                <small style="display:block; margin-top:6px; color:#6b7280;">Optional: toggle to apply approved HMO coverage to this bill.</small>
+            </div>
+        `;
+        const pid = document.getElementById('patientID')?.value?.trim();
+        if (pid) loadPatientInsurance(pid);
+        attachHmoButton();
+        setHmoVisibility(hmoSectionVisible);
     }
     paymentMethod.addEventListener('change', function(){
         renderPaymentDetails(this.value);
-        if (this.value !== 'insurance') {
-            hmoSectionVisible = false;
-        }
     });
     // Initial render
     renderPaymentDetails(paymentMethod.value);
-}
-
-if (paymentMethod?.value !== 'insurance' && hmoSection) {
-    setHmoVisibility(false);
 }
 
 // On submit, ensure a selected patient and at least one valid item

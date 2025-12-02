@@ -154,7 +154,7 @@
                     <div>
                         <label style="margin:0; color:#374151; font-weight:600;">Payment Method</label>
                         <select id="em_payment_method" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;">
-                            ${['cash','insurance','hmo'].map(m => `<option value="${m}" ${String(bill.payment_method||'cash').toLowerCase()===m?'selected':''}>${m.toUpperCase()}</option>`).join('')}
+                            ${['cash','credit','debit'].map(m => `<option value="${m}" ${String(bill.payment_method||'cash').toLowerCase()===m?'selected':''}>${m === 'cash' ? 'CASH' : (m === 'credit' ? 'CREDIT CARD' : 'DEBIT CARD')}</option>`).join('')}
                         </select>
                     </div>
                     <div>
@@ -187,13 +187,12 @@
                             <input id="em_ph_approved" type="number" step="0.01" placeholder="Select a case rate first" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.philhealth_approved_amount || ''}" disabled>
                         </div>
                         <div>
-                            <label style="margin:0; color:#374151; font-weight:600;">Select Case Rate</label>
-                            <select id="em_ph_rate_select" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;">
-                                <option value="">— Select Case Rate —</option>
+                            <label style="margin:0; color:#374151; font-weight:600;">Select Case Rate(s)</label>
+                            <select id="em_ph_rate_select" multiple size="4" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; min-height:140px;">
                             </select>
                             <input type="hidden" id="em_ph_rate_id">
                             <input type="hidden" id="em_ph_rate_amount">
-                            <div id="em_ph_rate_hint" style="font-size:12px; color:#6b7280; margin-top:6px;">Options are filtered by RVS/ICD and Admission Date</div>
+                            <div id="em_ph_rate_hint" style="font-size:12px; color:#6b7280; margin-top:6px;">Hold Ctrl/Cmd to pick multiple case rates (filtered by RVS/ICD + admission date)</div>
                         </div>
                         <div>
                             <label style="margin:0; color:#374151; font-weight:600;">Primary RVS Code</label>
@@ -225,6 +224,11 @@
                     <button type="button" class="step-toggle" data-target="step3_body" style="border:none; background:#dbeafe; color:#1d4ed8; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
                 </div>
                 <div id="step3_body" class="step-body" style="margin-top:12px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <label for="em_hmo_enabled" style="margin:0; font-weight:600; min-width:180px; color:#1d4ed8;">Use HMO Coverage</label>
+                    <input id="em_hmo_enabled" type="checkbox">
+                    <span style="font-size:12px; color:#6b7280;">Check if patient has an approved HMO LOA</span>
+                </div>
                 <div id="hmo_section" style="background:#eff6ff; border:1px solid #dbeafe; border-radius:6px; padding:12px;">
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
                         <div>
@@ -332,6 +336,8 @@
                     fd.append('bill_date', document.getElementById('em_bill_date').value);
                     const paymentMethod = document.getElementById('em_payment_method').value;
                     fd.append('payment_method', paymentMethod);
+                    const hmoEnabled = document.getElementById('em_hmo_enabled')?.checked ? '1' : '0';
+                    fd.append('use_hmo', hmoEnabled);
                     fd.append('hmo_provider_id', document.getElementById('em_hmo_provider').value);
                     fd.append('hmo_member_no', document.getElementById('em_hmo_member_no').value);
                     fd.append('hmo_loa_number', document.getElementById('em_hmo_loa_number').value);
@@ -363,6 +369,22 @@
                         fd.append('philhealth_note', document.getElementById('em_ph_note').value);
                         if (selId) fd.append('philhealth_selected_rate_id', selId);
                         if (!isNaN(selAmt)) fd.append('philhealth_selected_amount', String(selAmt));
+                    }
+
+                    if (hmoEnabled === '1') {
+                        const requiredHmoFields = [
+                            { id: 'em_hmo_provider', label: 'HMO Provider' },
+                            { id: 'em_hmo_member_no', label: 'HMO Member Number' },
+                            { id: 'em_hmo_loa_number', label: 'HMO LOA Number' },
+                            { id: 'em_hmo_approved_amount', label: 'HMO Approved Amount' }
+                        ];
+                        for (const field of requiredHmoFields) {
+                            const el = document.getElementById(field.id);
+                            if (!el || !String(el.value || '').trim()) {
+                                Swal.showValidationMessage(field.label + ' is required when HMO coverage is enabled.');
+                                return false;
+                            }
+                        }
                     }
 
                     console.log('[EditBill] Submitting update for bill', bill.id, 'with data:', Object.fromEntries(fd.entries()));
@@ -412,6 +434,7 @@
         const approvedEl = document.getElementById('em_ph_approved');
         const paymentMethodEl = document.getElementById('em_payment_method');
         const hmoSection = document.getElementById('hmo_section');
+        const hmoEnabledEl = document.getElementById('em_hmo_enabled');
         const finalAmountEl = document.getElementById('em_final_amount');
         const remainingEl = document.getElementById('em_remaining');
         const hmoProviderEl = document.getElementById('em_hmo_provider');
@@ -439,25 +462,27 @@
             if (stored.length) return stored;
             return parseRateIds(bill.philhealth_rate_ids_calc);
         })();
-        const savedRateId = savedRateIds.length ? String(savedRateIds[0]) : '';
-        if (rateId && savedRateId) rateId.value = savedRateId;
+        if (rateId) rateId.value = JSON.stringify(savedRateIds);
         if (phNoteEl && bill.philhealth_note) phNoteEl.value = bill.philhealth_note;
+
+        const getHmoEnabled = () => !!hmoEnabledEl?.checked;
 
         const updateRemaining = () => {
             if (!remainingEl) return;
             const gross = parseFloat(finalAmountEl?.value || bill.final_amount || 0) || 0;
             const phAppr = parseFloat(approvedEl?.value || 0) || 0;
-            const hmoAppr = parseFloat(hmoApprovedEl?.value || 0) || 0;
+            const hmoEnabled = getHmoEnabled();
+            const hmoAppr = hmoEnabled ? (parseFloat(hmoApprovedEl?.value || 0) || 0) : 0;
             const remainingAfterPh = Math.max(gross - phAppr, 0);
             remainingEl.value = remainingAfterPh.toFixed(2);
             if (hmoPatientShareEl) {
                 const base = parseFloat(remainingEl.value || '0') || 0;
-                const patientShare = Math.max(base - hmoAppr, 0);
+                const patientShare = hmoEnabled ? Math.max(base - hmoAppr, 0) : base;
                 hmoPatientShareEl.value = patientShare.toFixed(2);
             }
             if (totalBillingDisplayEl) {
                 const base = parseFloat(remainingEl.value || '0') || 0;
-                const patientShare = Math.max(base - hmoAppr, 0);
+                const patientShare = hmoEnabled ? Math.max(base - hmoAppr, 0) : base;
                 totalBillingDisplayEl.textContent = patientShare.toFixed(2);
             }
             if (totalBillingEl) {
@@ -465,38 +490,45 @@
             }
         };
 
-        const applySelected = () => {
+        const applyRateSelectionSummary = () => {
             if (!rateSel) return;
-            const opt = rateSel.value ? rateSel.selectedOptions?.[0] : null;
-            if (!opt) {
-                if (rateId) rateId.value = '';
-                if (rateAmt) rateAmt.value = '';
-                if (approvedEl) approvedEl.disabled = false;
-                updateRemaining();
-                return;
+            const selectedOptions = Array.from(rateSel.selectedOptions || []);
+            const ids = selectedOptions.map(opt => opt.value).filter(Boolean);
+            if (rateId) rateId.value = JSON.stringify(ids);
+            const totalAmount = selectedOptions.reduce((sum, opt) => {
+                const amt = parseFloat(opt.dataset.amount || '0');
+                return sum + (Number.isFinite(amt) ? amt : 0);
+            }, 0);
+            if (rateAmt) {
+                rateAmt.value = ids.length ? totalAmount.toFixed(2) : '';
             }
-            const amt = parseFloat(opt.dataset.amount || '0');
-            if (rateId) rateId.value = rateSel.value;
-            if (rateAmt) rateAmt.value = Number.isFinite(amt) ? amt.toFixed(2) : '';
-            const ctype = (opt.dataset.codeType || '').toUpperCase();
-            const cval = opt.dataset.code || '';
-            if (ctype === 'RVS') {
-                if (rvsEl) rvsEl.value = cval;
-                if (icdEl) icdEl.value = '';
-            } else if (ctype === 'ICD') {
-                if (icdEl) icdEl.value = cval;
-                if (rvsEl) rvsEl.value = '';
+            if (approvedEl) {
+                if (ids.length) {
+                    approvedEl.disabled = false;
+                    approvedEl.value = totalAmount.toFixed(2);
+                } else {
+                    approvedEl.disabled = true;
+                    approvedEl.value = '';
+                }
             }
-            if (approvedEl && Number.isFinite(amt)) {
-                approvedEl.disabled = false;
-                approvedEl.value = amt.toFixed(2);
+            if (selectedOptions.length === 1) {
+                const opt = selectedOptions[0];
+                const ctype = (opt.dataset.codeType || '').toUpperCase();
+                const cval = opt.dataset.code || '';
+                if (ctype === 'RVS') {
+                    if (rvsEl) rvsEl.value = cval;
+                    if (icdEl) icdEl.value = '';
+                } else if (ctype === 'ICD') {
+                    if (icdEl) icdEl.value = cval;
+                    if (rvsEl) rvsEl.value = '';
+                }
             }
             updateRemaining();
         };
 
         const toggleHmo = () => {
-            const method = (paymentMethodEl?.value || '').toLowerCase();
-            if (hmoSection) hmoSection.style.display = method === 'hmo' ? '' : 'none';
+            const enabled = getHmoEnabled();
+            if (hmoSection) hmoSection.style.display = enabled ? '' : 'none';
             updateRemaining();
         };
 
@@ -522,7 +554,7 @@
             const icd = (icdEl?.value || '').trim();
             const ad = (adEl?.value || '').trim();
             console.log('Loading rates with:', { rvs, icd, ad });
-            rateSel.innerHTML = '<option value="">Loading…</option>';
+            rateSel.innerHTML = '<option value="" disabled>Loading…</option>';
             try {
                 const qs = new URLSearchParams();
                 if (rvs) qs.append('rvs', rvs);
@@ -536,7 +568,7 @@
                 console.log('Response data:', data);
                 const rates = Array.isArray(data?.rates) ? data.rates : [];
                 console.log('Parsed rates:', rates);
-                rateSel.innerHTML = '<option value="">— Select Case Rate —</option>';
+                rateSel.innerHTML = '';
                 rates.forEach(r => {
                     const opt = document.createElement('option');
                     opt.value = r.id;
@@ -546,13 +578,15 @@
                     opt.dataset.code = r.code || '';
                     rateSel.appendChild(opt);
                 });
-                if (savedRateId) {
-                    const hasSaved = Array.from(rateSel.options).some(opt => opt.value === savedRateId);
-                    if (hasSaved) rateSel.value = savedRateId;
+                if (savedRateIds.length) {
+                    const savedSet = new Set(savedRateIds.map(id => String(id)));
+                    Array.from(rateSel.options).forEach(opt => {
+                        opt.selected = savedSet.has(String(opt.value));
+                    });
                 }
                 if (rates.length === 0) {
                     console.warn('No rates found for the given criteria');
-                    rateSel.innerHTML = '<option value="">No matching rates found</option>';
+                    rateSel.innerHTML = '<option value="" disabled>No matching rates found</option>';
                 }
             } catch(e) {
                 console.error('Error loading rates:', e);
@@ -574,7 +608,7 @@
             icdEl?.addEventListener(event, loadRates);
             adEl?.addEventListener(event, loadRates);
         });
-        rateSel?.addEventListener('change', applySelected);
+        rateSel?.addEventListener('change', applyRateSelectionSummary);
         ['input','change'].forEach(evt => {
             approvedEl?.addEventListener(evt, updateRemaining);
             hmoApprovedEl?.addEventListener(evt, updateRemaining);
@@ -582,12 +616,13 @@
         });
         phMemberEl?.addEventListener('change', togglePh);
         paymentMethodEl?.addEventListener('change', toggleHmo);
+        hmoEnabledEl?.addEventListener('change', toggleHmo);
 
         populateHmoProviders();
         togglePh();
         toggleHmo();
         updateRemaining();
-        loadRates()?.then(applySelected);
+        loadRates()?.then(applyRateSelectionSummary);
 
         // Step toggle buttons
         document.querySelectorAll('.step-toggle').forEach(btn => {

@@ -201,13 +201,9 @@ class Billing extends BaseController
             'patient_id' => 'required',
             'final_amount' => 'required|numeric',
             'payment_status' => 'required|in_list[pending,partial,paid,overdue]',
-            'payment_method' => 'required|in_list[cash,insurance,hmo]',
+            'payment_method' => 'required|in_list[cash,credit,debit]',
             'bill_date' => 'required|valid_date',
         ];
-        if (strtolower($this->request->getPost('payment_method')) === 'hmo') {
-            $rules['hmo_provider_id'] = 'required';
-            $rules['hmo_loa_number'] = 'required|min_length[3]';
-        }
         if (!$this->validate($rules)) {
             if ($this->request->isAJAX()) {
                 return $this->response->setStatusCode(422)->setJSON(['errors' => $this->validator->getErrors()]);
@@ -395,14 +391,16 @@ class Billing extends BaseController
             'final_amount' => 'permit_empty|numeric',
             'payment_status' => 'permit_empty|in_list[pending,partial,paid,overdue]',
             'bill_date' => 'permit_empty|valid_date',
-            'payment_method' => 'permit_empty|in_list[cash,insurance,hmo]',
+            'payment_method' => 'permit_empty|in_list[cash,credit,debit]',
             'philhealth_member' => 'permit_empty|in_list[0,1]',
             'philhealth_approved_amount' => 'permit_empty|numeric',
             'primary_icd10_code' => 'permit_empty|string',
             'primary_rvs_code' => 'permit_empty|string',
             'admission_date' => 'permit_empty|valid_date',
         ];
-        if (strtolower($this->request->getPost('payment_method') ?? '') === 'hmo') {
+        $useHmoToggle = (string)$this->request->getPost('use_hmo') === '1';
+        $requiresHmoFields = $useHmoToggle;
+        if ($requiresHmoFields) {
             $rules['hmo_provider_id'] = 'required';
             $rules['hmo_loa_number'] = 'required|min_length[3]';
         }
@@ -442,6 +440,18 @@ class Billing extends BaseController
             'primary_rvs_code' => $this->request->getPost('primary_rvs_code') !== null ? (string)$this->request->getPost('primary_rvs_code') : null,
             'admission_date' => $this->request->getPost('admission_date') ?? null,
         ];
+        $forceNullKeys = [];
+        if (!$requiresHmoFields) {
+            foreach ([
+                'hmo_provider_id','hmo_member_no','hmo_valid_from','hmo_valid_to',
+                'hmo_loa_number','hmo_coverage_limit','hmo_status','hmo_notes'
+            ] as $field) {
+                $data[$field] = null;
+                $forceNullKeys[] = $field;
+            }
+            $data['hmo_approved_amount'] = 0.0;
+            $data['hmo_patient_share'] = null; // normalizeCoverageSplits recalculates
+        }
 
         if ($hasComponents) {
             $consultation = (float) ($this->request->getPost('consultation_fee') ?? 0);
@@ -474,52 +484,73 @@ class Billing extends BaseController
             else if (isset($existingBill['final_amount'])) { $gross = (float)$existingBill['final_amount']; }
             else { $gross = 0.0; }
 
-            $selectedRateId = (string)($this->request->getPost('philhealth_selected_rate_id') ?? '');
-            $selectedAmount = $this->request->getPost('philhealth_selected_amount');
-            $selectedAmount = $selectedAmount !== null ? (float)$selectedAmount : null;
+            $selectedRateRaw = $this->request->getPost('philhealth_selected_rate_id');
+            $selectedRateIds = [];
+            if (is_array($selectedRateRaw)) {
+                foreach ($selectedRateRaw as $rid) {
+                    $rid = trim((string)$rid);
+                    if ($rid !== '') { $selectedRateIds[] = $rid; }
+                }
+            } elseif ($selectedRateRaw !== null && $selectedRateRaw !== '') {
+                $decoded = json_decode((string)$selectedRateRaw, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    foreach ($decoded as $rid) {
+                        $rid = trim((string)$rid);
+                        if ($rid !== '') { $selectedRateIds[] = $rid; }
+                    }
+                } else {
+                    $rid = trim((string)$selectedRateRaw);
+                    if ($rid !== '') { $selectedRateIds[] = $rid; }
+                }
+            }
+
+            $selectedAmountInput = $this->request->getPost('philhealth_selected_amount');
+            $selectedAmount = $selectedAmountInput !== null && $selectedAmountInput !== ''
+                ? max((float)$selectedAmountInput, 0.0)
+                : null;
 
             if ($approved === null) {
                 return $this->response->setStatusCode(422)->setJSON(['errors' => ['philhealth_approved_amount' => 'PhilHealth Approved Deduction Amount is required.']]);
+            }
+
+            $data['philhealth_approved_amount'] = $approved;
+            $codesUsed = [];
+            $rateIds = [];
+            $suggested = 0.0;
+            if (!empty($selectedRateIds)) {
+                $phModel = new PhilHealthCaseRateModel();
+                foreach ($selectedRateIds as $rid) {
+                    $rateIds[] = $rid;
+                    try {
+                        $rate = $phModel->find($rid);
+                    } catch (\Throwable $e) {
+                        $rate = null;
+                    }
+                    if ($rate) {
+                        $amount = (float)(($rate['professional_share'] ?? 0) + ($rate['facility_share'] ?? 0));
+                        $suggested += $amount;
+                        $codesUsed[] = [$rate['code_type'] ?? null, $rate['code'] ?? null];
+                    }
+                }
+                if ($suggested <= 0 && $selectedAmount !== null) {
+                    $suggested = $selectedAmount;
+                }
+            } elseif ($selectedAmount !== null) {
+                $suggested = $selectedAmount;
             }
 
             if ($approved > $gross) {
                 $approved = $gross;
             }
 
-            if ($selectedRateId && $selectedAmount !== null && $approved > $selectedAmount) {
-                $approved = $selectedAmount;
+            // Cap by combined case rate amount
+            $suggested = min($suggested, max($gross, 0));
+
+            if ($suggested > 0 && $approved > $suggested) {
+                $approved = $suggested;
             }
 
             $data['philhealth_approved_amount'] = $approved;
-            $codesUsed = [];
-            $rateIds = [];
-            if ($selectedRateId !== '') {
-                $rateIds[] = $selectedRateId;
-                // If amount not posted, fetch from DB as fallback
-                if ($selectedAmount === null) {
-                    try {
-                        $phModel = new PhilHealthCaseRateModel();
-                        $rate = $phModel->find($selectedRateId);
-                        if ($rate) {
-                            $selectedAmount = (float)(($rate['professional_share'] ?? 0) + ($rate['facility_share'] ?? 0));
-                            $codesUsed[] = [$rate['code_type'] ?? null, $rate['code'] ?? null];
-                        }
-                    } catch (\Throwable $e) { /* ignore */ }
-                }
-                if ($selectedAmount !== null) {
-                    $suggested = (float)$selectedAmount;
-                }
-            }
-            // Cap by gross
-            $suggested = min($suggested, max($gross, 0));
-
-            if ($approved > $suggested) {
-                return $this->response->setStatusCode(422)->setJSON(['errors' => ['philhealth_approved_amount' => 'Approved amount cannot exceed selected case rate.']]);
-            }
-            if ($approved > $gross) {
-                return $this->response->setStatusCode(422)->setJSON(['errors' => ['philhealth_approved_amount' => 'Approved amount cannot exceed gross bill.']]);
-            }
-
             $data['philhealth_suggested_amount'] = $suggested;
             $data['philhealth_codes_used'] = !empty($codesUsed) ? json_encode($codesUsed) : ($data['philhealth_codes_used'] ?? null);
             $data['philhealth_rate_ids'] = !empty($rateIds) ? json_encode($rateIds) : ($data['philhealth_rate_ids'] ?? null);
@@ -544,7 +575,20 @@ class Billing extends BaseController
         $data = $this->normalizeCoverageSplits($data, $existingBill);
 
         // Remove nulls to avoid overwriting
-        $data = array_filter($data, fn($v) => $v !== null);
+        if (!empty($forceNullKeys)) {
+            $data = array_filter(
+                $data,
+                function ($v, $k) use ($forceNullKeys) {
+                    if (in_array($k, $forceNullKeys, true)) {
+                        return true; // keep explicit nulls so fields get cleared
+                    }
+                    return $v !== null;
+                },
+                ARRAY_FILTER_USE_BOTH
+            );
+        } else {
+            $data = array_filter($data, fn($v) => $v !== null);
+        }
 
         $this->billingModel->save($data);
         $targetPatient = $data['patient_id'] ?? ($existingBill['patient_id'] ?? null);
@@ -565,12 +609,8 @@ class Billing extends BaseController
         $rules = [
             'patient_id' => 'required',
             'bill_date' => 'required|valid_date',
-            'payment_method' => 'permit_empty|in_list[cash,insurance,hmo]'
+            'payment_method' => 'permit_empty|in_list[cash,credit,debit]'
         ];
-        if (strtolower($this->request->getPost('payment_method')) === 'hmo') {
-            $rules['hmo_provider_id'] = 'required';
-            $rules['hmo_loa_number'] = 'required|min_length[3]';
-        }
         if (!$this->validate($rules)) {
             if ($this->request->isAJAX()) {
                 return $this->response->setStatusCode(422)->setJSON(['errors' => $this->validator->getErrors()]);
