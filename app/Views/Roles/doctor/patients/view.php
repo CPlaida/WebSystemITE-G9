@@ -3,12 +3,12 @@
 <?= $this->section('title') ?>Patient Registration<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  <div class="container">
-    <!-- Patient List Section -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Patient Records</h2>
-      </div>
+<div class="container-fluid py-4">
+  <div class="composite-card billing-card" style="margin-top:0;">
+    <div class="composite-header">
+      <h1 class="composite-title">Patient Records</h1>
+    </div>
+    <div class="card-body">
       <div class="unified-search-wrapper">
           <div class="unified-search-row">
               <i class="fas fa-search unified-search-icon"></i>
@@ -458,4 +458,7 @@
     // Add event listener for input changes (real-time search)
     document.getElementById('searchInput').addEventListener('input', filterPatients);
   </script>
+    </div>
+  </div>
+</div>
 <?= $this->endSection() ?>

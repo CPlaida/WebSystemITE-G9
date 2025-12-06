@@ -241,4 +241,7 @@
       loadDates();
     });
   </script>
+    </div>
+  </div>
+</div>
 <?= $this->endSection() ?>

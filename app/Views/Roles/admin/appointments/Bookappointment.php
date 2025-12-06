@@ -3,16 +3,10 @@
 <?= $this->section('title') ?>Book Appointment<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  <div class="container">
-    <div class="header">
-      <h1 class="page-title">
-        <i class=""></i> Book Appointment
-      </h1>
-    </div>
-    
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Appointment Information</h2>
+  <div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+      <div class="composite-header">
+        <h1 class="composite-title">Book Appointment</h1>
       </div>
       <div class="card-body">
         <?php if (session()->getFlashdata('success')): ?>
@@ -239,4 +233,7 @@
       loadDates();
     });
   </script>
+      </div>
+    </div>
+  </div>
 <?= $this->endSection() ?>

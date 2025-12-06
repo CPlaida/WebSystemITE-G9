@@ -3,10 +3,12 @@
 <?= $this->section('title') ?>User Management<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  <div class="container">
-    <div class="header">
-      <h1 class="page-title">User Management</h1>
-    </div>
+  <div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+      <div class="composite-header">
+        <h1 class="composite-title">User Management</h1>
+      </div>
+      <div class="card-body">
     <?php 
       $flashSuccess = session()->getFlashdata('success') ?? ''; 
       $flashError = session()->getFlashdata('error') ?? ''; 
@@ -135,18 +137,28 @@
 
     <!-- Users Table -->
     <div class="table-responsive user-table-scroll">
-      <table class="data-table">
+      <table class="data-table user-management-table">
         <thead>
           <tr>
             <th>Username</th>
             <th>Email</th>
             <th>Role</th>
             <th>Status</th>
-            <th style="width:150px;">Actions</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="userTable">
           <?php if (!empty($users)): ?>
+            <?php 
+              // Sort users to put admin account first
+              usort($users, function($a, $b) {
+                $aIsAdmin = (strtolower($a['username'] ?? '') === 'admin' && strtolower($a['role_name'] ?? '') === 'admin');
+                $bIsAdmin = (strtolower($b['username'] ?? '') === 'admin' && strtolower($b['role_name'] ?? '') === 'admin');
+                if ($aIsAdmin && !$bIsAdmin) return -1;
+                if (!$aIsAdmin && $bIsAdmin) return 1;
+                return 0;
+              });
+            ?>
             <?php foreach ($users as $u): ?>
               <tr>
                 <td><?= esc($u['username'] ?? '') ?></td>
@@ -157,19 +169,26 @@
                   <span class="status-badge <?= $st === 'active' ? 'status-active' : 'status-inactive' ?>"><?= esc(ucfirst($st)) ?></span>
                 </td>
                 <td>
-                  <div class="action-group">
-                    <button type="button" class="btn-action btn-edit"
-                            data-id="<?= esc($u['id'] ?? '', 'attr') ?>"
-                            data-username="<?= esc($u['username'] ?? '', 'attr') ?>"
-                            data-email="<?= esc($u['email'] ?? '', 'attr') ?>"
-                            data-roleid="<?= (int)($u['role_id'] ?? 0) ?>"
-                            data-status="<?= esc(strtolower($u['status'] ?? 'active'), 'attr') ?>"
-                            onclick="openEdit(this)">Edit</button>
-                    <form method="post" action="<?= base_url('admin/users/delete/' . ($u['id'] ?? 0)) ?>" onsubmit="return confirm('Delete this user?');">
-                      <?= csrf_field() ?>
-                      <button type="submit" class="btn-action btn-delete">Delete</button>
-                    </form>
-                  </div>
+                  <?php 
+                    $isAdminAccount = (strtolower($u['username'] ?? '') === 'admin' && strtolower($u['role_name'] ?? '') === 'admin');
+                  ?>
+                  <?php if ($isAdminAccount): ?>
+                    <span class="text-muted" style="font-size: 0.85rem; font-style: italic;">Protected</span>
+                  <?php else: ?>
+                    <div class="action-group">
+                      <button type="button" class="btn-action btn-edit"
+                              data-id="<?= esc($u['id'] ?? '', 'attr') ?>"
+                              data-username="<?= esc($u['username'] ?? '', 'attr') ?>"
+                              data-email="<?= esc($u['email'] ?? '', 'attr') ?>"
+                              data-roleid="<?= (int)($u['role_id'] ?? 0) ?>"
+                              data-status="<?= esc(strtolower($u['status'] ?? 'active'), 'attr') ?>"
+                              onclick="openEdit(this)">Edit</button>
+                      <form method="post" action="<?= base_url('admin/users/delete/' . ($u['id'] ?? 0)) ?>" onsubmit="return confirm('Delete this user?');">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="btn-action btn-delete">Delete</button>
+                      </form>
+                    </div>
+                  <?php endif; ?>
                 </td>
               </tr>
             <?php endforeach; ?>

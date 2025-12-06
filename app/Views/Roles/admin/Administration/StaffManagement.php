@@ -3,10 +3,12 @@
 <?= $this->section('title') ?>Staff Management<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  <div class="container">
-    <div class="header">
-      <h1 class="page-title">Staff Management</h1>
-    </div>
+  <div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+      <div class="composite-header">
+        <h1 class="composite-title">Staff Management</h1>
+      </div>
+      <div class="card-body">
     <?php
       $flashSuccess = session()->getFlashdata('success') ?? '';
       $flashError = session()->getFlashdata('error') ?? '';
@@ -97,7 +99,7 @@
     </div>
 
     <div class="table-responsive user-table-scroll">
-      <table class="data-table">
+      <table class="data-table staff-management-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -107,7 +109,7 @@
             <th>Contact</th>
             <th>Status</th>
             <th>Linked User</th>
-            <th style="width:250px; min-width:250px;">Actions</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="staffTable">
@@ -141,41 +143,45 @@
                     <span class="status-badge status-inactive">Not linked</span>
                   <?php endif; ?>
                 </td>
-                <td style="white-space: nowrap;">
-                  <div class="action-group">
-                    <button type="button" class="btn-action btn-view" onclick="openStaffView(this)"
-                      data-name="<?= esc(trim(($member['first_name'] ?? '') . ' ' . ($member['last_name'] ?? '')), 'attr') ?>"
-                      data-role="<?= esc($member['staff_role_name'] ?? '-', 'attr') ?>"
-                      data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
-                      data-department="<?= esc($member['department_name'] ?? '-', 'attr') ?>"
-                      data-specialization="<?= esc($member['specialization_name'] ?? '-', 'attr') ?>"
-                      data-phone="<?= esc($member['phone'] ?? 'N/A', 'attr') ?>"
-                      data-email="<?= esc($member['email'] ?? 'N/A', 'attr') ?>"
-                      data-status="<?= esc(ucwords(str_replace('_', ' ', $member['status'] ?? 'active')), 'attr') ?>"
-                      data-hire_date="<?= esc($member['hire_date'] ?? 'N/A', 'attr') ?>"
-                      data-address="<?= esc($member['address'] ?? 'Not provided', 'attr') ?>"
-                    >View</button>
-                    <button type="button" class="btn-action btn-edit" onclick="openStaffEdit(this)"
-                      data-id="<?= (int)($member['id'] ?? 0) ?>"
-                      data-first_name="<?= esc($member['first_name'] ?? '', 'attr') ?>"
-                      data-middle_name="<?= esc($member['middle_name'] ?? '', 'attr') ?>"
-                      data-last_name="<?= esc($member['last_name'] ?? '', 'attr') ?>"
-                      data-gender="<?= esc($member['gender'] ?? '', 'attr') ?>"
-                      data-date_of_birth="<?= esc($member['date_of_birth'] ?? '', 'attr') ?>"
-                      data-phone="<?= esc($member['phone'] ?? '', 'attr') ?>"
-                      data-staff_email="<?= esc($member['email'] ?? '', 'attr') ?>"
-                      data-role_id="<?= esc($member['role_id'] ?? '', 'attr') ?>"
-                      data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
-                      data-department_id="<?= esc($member['department_id'] ?? '', 'attr') ?>"
-                      data-specialization_id="<?= esc($member['specialization_id'] ?? '', 'attr') ?>"
-                      data-address="<?= esc($member['address'] ?? '', 'attr') ?>"
-                      data-hire_date="<?= esc($member['hire_date'] ?? '', 'attr') ?>"
-                      data-status="<?= esc($member['status'] ?? '', 'attr') ?>"
-                      data-emergency_contact_name="<?= esc($member['emergency_contact_name'] ?? '', 'attr') ?>"
-                      data-emergency_contact_phone="<?= esc($member['emergency_contact_phone'] ?? '', 'attr') ?>"
-                    >Edit</button>
+                <td>
+                  <div class="staff-action-group">
+                    <div class="staff-action-row">
+                      <button type="button" class="btn-action btn-view" onclick="openStaffView(this)"
+                        data-name="<?= esc(trim(($member['first_name'] ?? '') . ' ' . ($member['last_name'] ?? '')), 'attr') ?>"
+                        data-role="<?= esc($member['staff_role_name'] ?? '-', 'attr') ?>"
+                        data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
+                        data-department="<?= esc($member['department_name'] ?? '-', 'attr') ?>"
+                        data-specialization="<?= esc($member['specialization_name'] ?? '-', 'attr') ?>"
+                        data-phone="<?= esc($member['phone'] ?? 'N/A', 'attr') ?>"
+                        data-email="<?= esc($member['email'] ?? 'N/A', 'attr') ?>"
+                        data-status="<?= esc(ucwords(str_replace('_', ' ', $member['status'] ?? 'active')), 'attr') ?>"
+                        data-hire_date="<?= esc($member['hire_date'] ?? 'N/A', 'attr') ?>"
+                        data-address="<?= esc($member['address'] ?? 'Not provided', 'attr') ?>"
+                      >View</button>
+                      <button type="button" class="btn-action btn-edit" onclick="openStaffEdit(this)"
+                        data-id="<?= (int)($member['id'] ?? 0) ?>"
+                        data-first_name="<?= esc($member['first_name'] ?? '', 'attr') ?>"
+                        data-middle_name="<?= esc($member['middle_name'] ?? '', 'attr') ?>"
+                        data-last_name="<?= esc($member['last_name'] ?? '', 'attr') ?>"
+                        data-gender="<?= esc($member['gender'] ?? '', 'attr') ?>"
+                        data-date_of_birth="<?= esc($member['date_of_birth'] ?? '', 'attr') ?>"
+                        data-phone="<?= esc($member['phone'] ?? '', 'attr') ?>"
+                        data-staff_email="<?= esc($member['email'] ?? '', 'attr') ?>"
+                        data-role_id="<?= esc($member['role_id'] ?? '', 'attr') ?>"
+                        data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
+                        data-department_id="<?= esc($member['department_id'] ?? '', 'attr') ?>"
+                        data-specialization_id="<?= esc($member['specialization_id'] ?? '', 'attr') ?>"
+                        data-address="<?= esc($member['address'] ?? '', 'attr') ?>"
+                        data-hire_date="<?= esc($member['hire_date'] ?? '', 'attr') ?>"
+                        data-status="<?= esc($member['status'] ?? '', 'attr') ?>"
+                        data-emergency_contact_name="<?= esc($member['emergency_contact_name'] ?? '', 'attr') ?>"
+                        data-emergency_contact_phone="<?= esc($member['emergency_contact_phone'] ?? '', 'attr') ?>"
+                      >Edit</button>
+                    </div>
                     <?php if (empty($member['user_id'])): ?>
-                      <a href="<?= base_url('admin/Administration/ManageUser?staff_id=' . ($member['id'] ?? 0)) ?>" class="btn-action btn-secondary">Create Account</a>
+                      <div class="staff-action-row">
+                        <a href="<?= base_url('admin/Administration/ManageUser?staff_id=' . ($member['id'] ?? 0)) ?>" class="btn-action btn-secondary" style="width: 100%;">Create Account</a>
+                      </div>
                     <?php endif; ?>
                   </div>
                 </td>
@@ -503,13 +509,6 @@
     </div>
   </div>
 
-  <style>
-    /* Table-specific layout for action buttons */
-    .data-table td:last-child {
-      white-space: nowrap !important;
-      overflow: visible !important;
-    }
-  </style>
 
   <script>
     const staffModal = document.getElementById('staffModal');

@@ -3,15 +3,15 @@
 <?= $this->section('title') ?>Pedia Ward – Room & Bed Management<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="main-content" id="mainContent">
-  <div class="container">
-    <div class="header">
-      <h1 class="page-title">Pedia Ward – Room & Bed Management</h1>
+<div class="container-fluid py-4">
+  <div class="composite-card billing-card" style="margin-top:0;">
+    <div class="composite-header">
+      <h1 class="composite-title">Pedia Ward – Room & Bed Management</h1>
     </div>
-  <p class="mb-3">This is a placeholder page for managing rooms and beds in the Pedia Ward. The data below is sample only.</p>
-
-  <div class="card">
     <div class="card-body">
+      <p class="mb-3">This is a placeholder page for managing rooms and beds in the Pedia Ward. The data below is sample only.</p>
+      <div class="card" style="box-shadow: none; border: none; margin: 0;">
+        <div class="card-body" style="padding: 0;">
       <table class="data-table">
         <thead>
           <tr>

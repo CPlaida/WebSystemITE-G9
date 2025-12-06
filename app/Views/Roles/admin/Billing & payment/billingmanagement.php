@@ -3,11 +3,12 @@
 <?= $this->section('title') ?>Billing Management<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="container">
-    <div class="header">
-        <h1 class="page-title">Billing Management</h1>
-    </div>
-
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+        <div class="composite-header">
+            <h1 class="composite-title">Billing Management</h1>
+        </div>
+        <div class="card-body">
     <div class="card-container">
         <div class="card">
             <h3>Total Revenue</h3>

@@ -1,0 +1,118 @@
+ERROR - 2025-12-04 04:32:46 --> mysqli_sql_exception: Unknown column 'admission_details.attending_doctor_id' in 'on clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admissi...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admissi...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admissi...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admissi...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admin\Patients.php(321): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admin\Patients.php(162): App\Controllers\Admin\Patients->getDischargedPatients()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admin\Patients->index()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin\Patients))
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2025-12-04 04:32:46 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'admission_details.attending_doctor_id' in 'on clause'
+[Method: GET, Route: admin/patients]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = :admission_details.status:
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC', [...], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Admin\Patients.php(321): CodeIgniter\BaseModel->findAll()
+ 5 APPPATH\Controllers\Admin\Patients.php(162): App\Controllers\Admin\Patients->getDischargedPatients()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin\Patients->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin\Patients))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-04 04:32:46 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'admission_details.attending_doctor_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = \'discharged\'
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = \'discharged\'
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = :admission_details.status:
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC', [...], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Admin\Patients.php(321): CodeIgniter\BaseModel->findAll()
+ 7 APPPATH\Controllers\Admin\Patients.php(162): App\Controllers\Admin\Patients->getDischargedPatients()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin\Patients->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin\Patients))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-04 04:32:46 --> [Caused by] mysqli_sql_exception: Unknown column 'admission_details.attending_doctor_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = \'discharged\'
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = \'discharged\'
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = \'discharged\'
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id` AS `admission_patient_id`, `admission_details`.`admission_date`, `admission_details`.`updated_at` AS `discharge_date`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `patients`.*, `doctors`.`id` AS `attending_doctor_id`, `users`.`username` AS `physician_username`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `role`.`name` AS `physician_role`
+FROM `admission_details`
+LEFT JOIN `patients` ON `patients`.`id` = `admission_details`.`patient_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+LEFT JOIN `roles` `role` ON `role`.`id` = `users`.`role_id`
+WHERE `admission_details`.`status` = :admission_details.status:
+ORDER BY `admission_details`.`updated_at` DESC, `admission_details`.`id` DESC', [...], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Admin\Patients.php(321): CodeIgniter\BaseModel->findAll()
+ 8 APPPATH\Controllers\Admin\Patients.php(162): App\Controllers\Admin\Patients->getDischargedPatients()
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin\Patients->index()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin\Patients))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

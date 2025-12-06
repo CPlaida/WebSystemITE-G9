@@ -218,19 +218,16 @@ class Doctor extends BaseController
 
             // If start date is today, block if shift start time already passed (exact DateTime check)
             if ($startDate === $today) {
-                $shiftStartMap = [
-                    'morning' => '06:00:00',
-                    'afternoon' => '12:00:00',
-                    'night' => '18:00:00',
-                    'mid_shift' => '00:00:00' // Flexible, no restriction
-                ];
                 $type = strtolower(trim($data['shift_type'] ?? ''));
-                if (isset($shiftStartMap[$type]) && $type !== 'mid_shift') {
-                    $shiftStart = new \DateTime($startDate . ' ' . $shiftStartMap[$type], $tz);
+                $timeRanges = $this->doctorScheduleModel->getShiftTimes($type);
+                if (!empty($timeRanges)) {
+                    $firstRange = $timeRanges[0];
+                    $firstStartTime = $firstRange[0];
+                    $shiftStart = new \DateTime($startDate . ' ' . $firstStartTime, $tz);
                     if ($now >= $shiftStart) {
                         return $this->response->setStatusCode(400)->setJSON([
                             'success' => false,
-                            'message' => 'Cannot add ' . $type . ' shift for today as the start time has already passed.'
+                            'message' => 'Cannot add shift for today as the start time has already passed.'
                         ]);
                     }
                 }

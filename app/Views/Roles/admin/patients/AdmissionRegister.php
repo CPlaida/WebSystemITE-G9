@@ -3,14 +3,12 @@
 <?= $this->section('title') ?>Patient Admission<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="main-content" id="mainContent">
-  <div class="container">
-    <div class="header">
-      <h1 class="page-title">Patient Admission</h1>
+<div class="container-fluid py-4">
+  <div class="composite-card billing-card" style="margin-top:0;">
+    <div class="composite-header">
+      <h1 class="composite-title">Patient Admission</h1>
     </div>
-
-    <div class="card">
-      <div class="card-body">
+    <div class="card-body">
         <form id="admissionForm" method="POST" action="<?= base_url('admin/patients/admission/store') ?>">
           <?= csrf_field() ?>
 

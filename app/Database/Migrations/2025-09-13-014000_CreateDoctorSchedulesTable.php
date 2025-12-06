@@ -26,8 +26,8 @@ class CreateDoctorSchedulesTable extends Migration
                 'constraint' => 100,
             ],
             'shift_type' => [
-                'type'       => 'ENUM',
-                'constraint' => ['morning', 'afternoon', 'night'],
+                'type'       => 'VARCHAR',
+                'constraint' => 50,
             ],
             'preferred_days' => [
                 'type' => 'VARCHAR',

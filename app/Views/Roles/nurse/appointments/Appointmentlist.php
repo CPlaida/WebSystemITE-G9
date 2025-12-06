@@ -3,17 +3,15 @@
 <?= $this->section('title') ?>Today's Appointments<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  <div class="container">
-    <div class="header">
-      <h1 class="page-title">
-        Today's Appointments
-      </h1>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Appointment List</h2>
+  <div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+      <div class="composite-header">
+        <h1 class="composite-title">Today's Appointments</h1>
       </div>
+      <div class="card-body">
+        <div class="card" style="box-shadow: none; border: none; margin: 0;">
+          <div class="card-header" style="background: transparent; border: none; padding: 0 0 1rem 0;">
+            <h2 class="card-title">Appointment List</h2>
       <div class="unified-search-wrapper">
           <div class="unified-search-row">
               <i class="fas fa-search unified-search-icon"></i>
@@ -242,4 +240,9 @@
       }
     });
   </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <?= $this->endSection() ?>

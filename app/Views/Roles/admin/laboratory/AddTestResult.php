@@ -3,13 +3,13 @@
 <?= $this->section('title') ?>Add Test Result<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="main-content" id="mainContent">
-        <div class="container">
-            <div class="header">
-                <h1 class="page-title">Add Test Result</h1>
+    <div class="container-fluid py-4">
+        <div class="composite-card billing-card" style="margin-top:0;">
+            <div class="composite-header">
+                <h1 class="composite-title">Add Test Result</h1>
             </div>
-
-        <div class="card">
+            <div class="card-body">
+        <div class="card" style="box-shadow: none; border: none; margin: 0;">
             <div class="card-body">
                 <form method="post" action="<?= site_url('laboratory/testresult/add') ?>" id="addResultForm" enctype="multipart/form-data">
                     <?= csrf_field() ?>

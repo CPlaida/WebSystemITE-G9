@@ -36,20 +36,20 @@ function getDepartmentColorClass($department) {
 
 <?= $this->section('content') ?>
 <script src="https://cdn.tailwindcss.com"></script>
-  <div class="bg-white rounded-lg shadow overflow-hidden">
-    <section aria-label="Staff Schedule Section">
-      <div class="flex justify-between items-center mb-5 p-6">
-        <h1 class="text-xl font-bold">Doctor Schedule</h1>
-        <div class="flex gap-3 items-center">
-          <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
-          <div>
+<div class="container-fluid py-4">
+  <div class="composite-card billing-card" style="margin-top:0; background: #fff;">
+    <div class="composite-header">
+      <h1 class="composite-title">Doctor Schedule</h1>
+      <div class="flex gap-3 items-center">
+        <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
+        <div>
           <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>
-            <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>
-            <button type="button" data-view="month" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-r hover:bg-gray-200 text-sm">Month</button> 
-          </div>
+          <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>
+          <button type="button" data-view="month" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-r hover:bg-gray-200 text-sm">Month</button> 
         </div>
       </div>
-
+    </div>
+    <div class="card-body">
       <!-- Day View -->
       <div id="dayView" class="view-container">
         <?php $request = \Config\Services::request(); $currentDateYmd = $request->getGet('date') ?? date('Y-m-d'); ?>
@@ -766,8 +766,8 @@ function getDepartmentColorClass($department) {
       </div>
 
       <!-- Doctor Selection -->
-      <div class="mb-5">
-        <label for="doctorSelect" class="block text-sm font-semibold text-gray-700 mb-2">
+      <div class="mb-5 relative">
+        <label for="doctorInput" class="block text-sm font-semibold text-gray-700 mb-2">
           <span class="flex items-center gap-1">
             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -775,26 +775,21 @@ function getDepartmentColorClass($department) {
             Doctor
           </span>
         </label>
-        <select id="doctorSelect" name="doctor_id" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" required>
-          <option value="">Select a doctor</option>
-          <?php if (isset($doctors)): ?>
-            <?php if (!empty($doctors)): ?>
-              <?php foreach ($doctors as $doctor): ?>
-                <option value="<?= $doctor['doctor_id'] ?>" 
-                        data-name="<?= ucfirst(str_replace('dr.', '', $doctor['username'])) ?>"
-                        data-specialization="<?= esc($doctor['specialization'] ?? '') ?>"
-                        data-department="<?= esc($doctor['department'] ?? '') ?>"
-                        data-department-slug="<?= esc($doctor['department_slug'] ?? '') ?>">
-                  <?= ucfirst(str_replace('dr.', 'Dr. ', $doctor['username'])) ?>
-                </option>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <option value="">No doctors found</option>
-            <?php endif; ?>
-          <?php else: ?>
-            <option value="">Doctors not available</option>
-          <?php endif; ?>
-        </select>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="doctorInput" 
+            name="doctor_name" 
+            autocomplete="off"
+            class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" 
+            placeholder="Type to search for a doctor..."
+            required
+          >
+          <input type="hidden" id="doctorId" name="doctor_id" value="">
+          <div id="doctorDropdown" class="absolute z-50 w-full mt-1 bg-white border-2 border-gray-300 rounded-lg shadow-xl max-h-60 overflow-y-auto hidden" style="box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+            <!-- Suggestions will be populated here -->
+          </div>
+        </div>
       </div>
 
       <!-- Auto-filled Information Section -->
@@ -851,10 +846,35 @@ function getDepartmentColorClass($department) {
           </span>
         </label>
         <select id="shiftType" name="shiftType" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" required>
-          <option value="morning">Morning (6AM – 12PM)</option>
-          <option value="afternoon">Afternoon (12PM – 6PM)</option>
-          <option value="night">Night (6PM – 6AM)</option>
-          <option value="mid_shift">Mid Shift (Flexible)</option>
+          <optgroup label="Morning Shifts">
+            <option value="morning_06_12">Morning (06:00 AM – 12:00 PM)</option>
+            <option value="morning_07_11">Morning (07:00 AM – 11:00 AM)</option>
+            <option value="morning_08_12">Morning (08:00 AM – 12:00 PM)</option>
+          </optgroup>
+          <optgroup label="Afternoon Shifts">
+            <option value="afternoon_12_18">Afternoon (12:00 PM – 06:00 PM)</option>
+            <option value="afternoon_13_17">Afternoon (01:00 PM – 05:00 PM)</option>
+            <option value="afternoon_14_18">Afternoon (02:00 PM – 06:00 PM)</option>
+          </optgroup>
+          <optgroup label="Evening Shifts">
+            <option value="evening_16_22">Evening (04:00 PM – 10:00 PM)</option>
+            <option value="evening_17_21">Evening (05:00 PM – 09:00 PM)</option>
+          </optgroup>
+          <optgroup label="Night Shifts">
+            <option value="night_22_06">Night (10:00 PM – 06:00 AM)</option>
+            <option value="night_23_07">Night (11:00 PM – 07:00 AM)</option>
+          </optgroup>
+          <optgroup label="Full Day Shifts">
+            <option value="full_day_08_17">Full Day (08:00 AM – 05:00 PM)</option>
+            <option value="full_day_09_18">Full Day (09:00 AM – 06:00 PM)</option>
+          </optgroup>
+          <optgroup label="Half-Day Shifts">
+            <option value="half_day_08_12">Half Day (08:00 AM – 12:00 PM)</option>
+            <option value="half_day_13_17">Half Day (01:00 PM – 05:00 PM)</option>
+          </optgroup>
+          <optgroup label="Split Shifts">
+            <option value="split_08_12_14_18">Split Shift (08:00 AM – 12:00 PM and 02:00 PM – 06:00 PM)</option>
+          </optgroup>
         </select>
       </div>
       
@@ -890,6 +910,12 @@ function getDepartmentColorClass($department) {
     function closeModal() {
       addShiftModal.classList.add('hidden');
       document.body.style.overflow = ''; // Re-enable scrolling
+      // Reset doctor input
+      if (doctorInput) {
+        doctorInput.value = '';
+        doctorIdInput.value = '';
+        doctorDropdown.classList.add('hidden');
+      }
     }
 
     closeAddShiftModal.addEventListener('click', closeModal);
@@ -904,10 +930,29 @@ function getDepartmentColorClass($department) {
     });
 
     // Auto-fill specialization and department when doctor is selected
-    const doctorSelect = document.getElementById('doctorSelect');
+    const doctorInput = document.getElementById('doctorInput');
+    const doctorIdInput = document.getElementById('doctorId');
+    const doctorDropdown = document.getElementById('doctorDropdown');
     const specializationDisplay = document.getElementById('specializationDisplay');
     const departmentDisplay = document.getElementById('departmentDisplay');
     const departmentHidden = document.getElementById('department');
+
+    // Store doctors data for autocomplete
+    const doctorsData = [
+      <?php if (isset($doctors) && !empty($doctors)): ?>
+        <?php foreach ($doctors as $index => $doctor): ?>
+          {
+            id: <?= $doctor['doctor_id'] ?>,
+            name: <?= json_encode(ucfirst(str_replace('dr.', 'Dr. ', $doctor['username']))) ?>,
+            displayName: <?= json_encode(ucfirst(str_replace('dr.', '', $doctor['username']))) ?>,
+            specialization: <?= json_encode($doctor['specialization'] ?? '') ?>,
+            department: <?= json_encode($doctor['department'] ?? '') ?>,
+            departmentSlug: <?= json_encode($doctor['department_slug'] ?? '') ?>
+          }<?= ($index < count($doctors) - 1) ? ',' : '' ?>
+        <?php endforeach; ?>
+      <?php else: ?>
+      <?php endif; ?>
+    ];
 
     // Function to get department color class and text color (GLOBAL SCOPE)
     window.getDepartmentColorClass = function(departmentSlug, departmentName) {
@@ -940,31 +985,94 @@ function getDepartmentColorClass($department) {
       return { class: 'dept-general', textColor: 'text-white' };
     };
 
-    doctorSelect.addEventListener('change', function() {
-      const selectedOption = this.options[this.selectedIndex];
-      if (selectedOption.value) {
-        const specialization = selectedOption.getAttribute('data-specialization') || '';
-        const department = selectedOption.getAttribute('data-department') || '';
-        const departmentSlug = selectedOption.getAttribute('data-department-slug') || '';
-        
-        // Set specialization (text input)
-        specializationDisplay.value = specialization;
-        
-        // Set department with color coding (div)
-        departmentHidden.value = department;
-        if (department) {
-          const colorInfo = getDepartmentColorClass(departmentSlug, department);
-          departmentDisplay.className = `w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg min-h-[2.75rem] flex items-center text-sm font-semibold shadow-sm ${colorInfo.class} ${colorInfo.textColor}`;
-          departmentDisplay.textContent = department;
-        } else {
-          departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
-          departmentDisplay.textContent = '—';
-        }
+    // Function to filter doctors based on input
+    function filterDoctors(query) {
+      if (!query.trim()) {
+        return doctorsData;
+      }
+      const lowerQuery = query.toLowerCase();
+      return doctorsData.filter(doctor => 
+        doctor.name.toLowerCase().includes(lowerQuery) ||
+        doctor.displayName.toLowerCase().includes(lowerQuery) ||
+        (doctor.specialization && doctor.specialization.toLowerCase().includes(lowerQuery)) ||
+        (doctor.department && doctor.department.toLowerCase().includes(lowerQuery))
+      );
+    }
+
+    // Function to display dropdown suggestions
+    function showDoctorSuggestions(query) {
+      const filtered = filterDoctors(query);
+      doctorDropdown.innerHTML = '';
+      
+      if (filtered.length === 0) {
+        doctorDropdown.innerHTML = '<div class="px-4 py-3 text-gray-500 text-sm">No doctors found</div>';
+        doctorDropdown.classList.remove('hidden');
+        return;
+      }
+
+      filtered.forEach(doctor => {
+        const item = document.createElement('div');
+        item.className = 'px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0';
+        item.innerHTML = `
+          <div class="font-medium text-gray-900">${doctor.name}</div>
+          ${doctor.specialization ? `<div class="text-xs text-gray-500 mt-0.5">${doctor.specialization}</div>` : ''}
+          ${doctor.department ? `<div class="text-xs text-gray-400 mt-0.5">${doctor.department}</div>` : ''}
+        `;
+        item.addEventListener('click', () => {
+          selectDoctor(doctor);
+        });
+        doctorDropdown.appendChild(item);
+      });
+      
+      doctorDropdown.classList.remove('hidden');
+    }
+
+    // Function to select a doctor
+    function selectDoctor(doctor) {
+      doctorInput.value = doctor.name;
+      doctorIdInput.value = doctor.id;
+      doctorDropdown.classList.add('hidden');
+      
+      // Update specialization and department
+      specializationDisplay.value = doctor.specialization || '';
+      departmentHidden.value = doctor.department || '';
+      
+      if (doctor.department) {
+        const colorInfo = getDepartmentColorClass(doctor.departmentSlug, doctor.department);
+        departmentDisplay.className = `w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg min-h-[2.75rem] flex items-center text-sm font-semibold shadow-sm ${colorInfo.class} ${colorInfo.textColor}`;
+        departmentDisplay.textContent = doctor.department;
       } else {
+        departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
+        departmentDisplay.textContent = '—';
+      }
+    }
+
+    // Handle input events
+    doctorInput.addEventListener('input', function() {
+      const query = this.value;
+      if (query.trim()) {
+        showDoctorSuggestions(query);
+      } else {
+        doctorDropdown.classList.add('hidden');
+        doctorIdInput.value = '';
         specializationDisplay.value = '';
         departmentDisplay.className = 'w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 min-h-[2.5rem] flex items-center text-sm font-medium';
         departmentDisplay.textContent = '';
         departmentHidden.value = '';
+      }
+    });
+
+    // Handle focus events
+    doctorInput.addEventListener('focus', function() {
+      if (this.value.trim()) {
+        showDoctorSuggestions(this.value);
+      }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!doctorInput.contains(e.target) && !doctorDropdown.contains(e.target)) {
+        doctorDropdown.classList.add('hidden');
       }
     });
 
@@ -973,8 +1081,8 @@ function getDepartmentColorClass($department) {
       e.preventDefault();
       
       // Get form values
-      const doctorId = document.getElementById('doctorSelect').value;
-      const doctorName = document.getElementById('doctorSelect').options[document.getElementById('doctorSelect').selectedIndex].getAttribute('data-name');
+      const doctorId = document.getElementById('doctorId').value;
+      const doctorName = document.getElementById('doctorInput').value;
       const startDate = document.getElementById('startDate').value;
       const endDate = document.getElementById('endDate').value;
       const shiftType = document.getElementById('shiftType').value;
@@ -1020,8 +1128,28 @@ function getDepartmentColorClass($department) {
       // Client-side guard: prevent past-time submission for today
       if (startDate === todayStr) {
         const currentHour = now.getHours();
-        const pastMap = { morning: 6, afternoon: 12, night: 18, mid_shift: 0 };
-        if (pastMap[shiftType] !== undefined && shiftType !== 'mid_shift' && currentHour >= pastMap[shiftType]) {
+        const currentMinute = now.getMinutes();
+        const currentTime = currentHour * 60 + currentMinute; // Convert to minutes for easier comparison
+        
+        // Extract start hour from shift type value (format: type_HH_MM or type_HH_MM_HH_MM)
+        let shiftStartHour = 0;
+        const parts = shiftType.split('_');
+        if (parts.length >= 2 && !isNaN(parseInt(parts[parts.length - 2]))) {
+          shiftStartHour = parseInt(parts[parts.length - 2]);
+        } else if (parts.length >= 3 && !isNaN(parseInt(parts[1]))) {
+          shiftStartHour = parseInt(parts[1]);
+        }
+        
+        // For split shifts, check the first block start time
+        if (shiftType.startsWith('split_')) {
+          const splitParts = shiftType.split('_');
+          if (splitParts.length >= 3) {
+            shiftStartHour = parseInt(splitParts[1]);
+          }
+        }
+        
+        // Check if shift start time has passed
+        if (shiftStartHour > 0 && currentTime >= (shiftStartHour * 60)) {
           showAddShiftError('Selected shift time has already passed today. Please choose a future shift.');
           return;
         }
@@ -1110,26 +1238,38 @@ function getDepartmentColorClass($department) {
       const selectedDate = startDateEl.value;
       const now = new Date();
       const currentHour = now.getHours();
-      const isToday = selectedDate === today;
+      const currentMinute = now.getMinutes();
+      const currentTime = currentHour * 60 + currentMinute; // Convert to minutes
+      const isToday = selectedDate === todayStr;
       const options = shiftTypeEl.querySelectorAll('option');
 
       options.forEach(opt => {
         if (!opt.value) return; // skip placeholder
         let shouldDisable = false;
         if (isToday) {
-          switch (opt.value) {
-            case 'morning':
-              shouldDisable = currentHour >= 6; // 06:00
-              break;
-            case 'afternoon':
-              shouldDisable = currentHour >= 12; // 12:00
-              break;
-            case 'night':
-              shouldDisable = currentHour >= 18; // 18:00
-              break;
-            case 'mid_shift':
-              shouldDisable = false; // Flexible, always available
-              break;
+          // Extract start hour from shift type value
+          const shiftType = opt.value;
+          let shiftStartHour = 0;
+          const parts = shiftType.split('_');
+          
+          // Handle split shifts (format: split_HH_MM_HH_MM)
+          if (shiftType.startsWith('split_')) {
+            if (parts.length >= 3) {
+              shiftStartHour = parseInt(parts[1]);
+            }
+          } else if (parts.length >= 2) {
+            // Try to get hour from second-to-last part (for formats like morning_06_12)
+            const hourPart = parts[parts.length - 2];
+            if (!isNaN(parseInt(hourPart)) && parseInt(hourPart) < 24) {
+              shiftStartHour = parseInt(hourPart);
+            } else if (parts.length >= 3 && !isNaN(parseInt(parts[1]))) {
+              shiftStartHour = parseInt(parts[1]);
+            }
+          }
+          
+          // Disable if shift start time has passed
+          if (shiftStartHour > 0 && currentTime >= (shiftStartHour * 60)) {
+            shouldDisable = true;
           }
         } else {
           shouldDisable = false;

@@ -65,7 +65,7 @@ class DoctorScheduleModel extends Model
         'doctor_id' => 'required',
         'doctor_name' => 'required|max_length[255]',
         'department' => 'required|max_length[100]',
-        'shift_type' => 'required|in_list[morning,afternoon,night,mid_shift]',
+        'shift_type' => 'required',
         'shift_date' => 'required|valid_date',
         'start_time' => 'required',
         'end_time' => 'required',
@@ -83,8 +83,7 @@ class DoctorScheduleModel extends Model
             'required' => 'Department is required'
         ],
         'shift_type' => [
-            'required' => 'Shift type is required',
-            'in_list' => 'Shift type must be morning, afternoon, or night'
+            'required' => 'Shift type is required'
         ],
         'shift_date' => [
             'required' => 'Shift date is required',
@@ -223,17 +222,52 @@ class DoctorScheduleModel extends Model
 
     /**
      * Get shift time ranges based on shift type - Standard templates
+     * Returns array of time ranges. For split shifts, returns array with two ranges.
+     * For regular shifts, returns array with single range.
      */
     public function getShiftTimes($shiftType)
     {
         $times = [
-            'morning' => ['06:00:00', '12:00:00'],   // 6 AM - 12 PM
-            'afternoon' => ['12:00:00', '18:00:00'], // 12 PM - 6 PM
-            'night' => ['18:00:00', '06:00:00'],     // 6 PM - 6 AM
-            'mid_shift' => ['09:00:00', '17:00:00']  // Flexible: 9 AM - 5 PM (default)
+            // Morning Shifts
+            'morning_06_12' => [['06:00:00', '12:00:00']],
+            'morning_07_11' => [['07:00:00', '11:00:00']],
+            'morning_08_12' => [['08:00:00', '12:00:00']],
+            
+            // Afternoon Shifts
+            'afternoon_12_18' => [['12:00:00', '18:00:00']],
+            'afternoon_13_17' => [['13:00:00', '17:00:00']],
+            'afternoon_14_18' => [['14:00:00', '18:00:00']],
+            
+            // Evening Shifts
+            'evening_16_22' => [['16:00:00', '22:00:00']],
+            'evening_17_21' => [['17:00:00', '21:00:00']],
+            
+            // Night Shifts
+            'night_22_06' => [['22:00:00', '06:00:00']],  // Crosses midnight
+            'night_23_07' => [['23:00:00', '07:00:00']],  // Crosses midnight
+            
+            // Full Day Shifts
+            'full_day_08_17' => [['08:00:00', '17:00:00']],
+            'full_day_09_18' => [['09:00:00', '18:00:00']],
+            
+            // Half-Day Shifts
+            'half_day_08_12' => [['08:00:00', '12:00:00']],
+            'half_day_13_17' => [['13:00:00', '17:00:00']],
+            
+            // Split Shifts (two time ranges)
+            'split_08_12_14_18' => [
+                ['08:00:00', '12:00:00'],
+                ['14:00:00', '18:00:00']
+            ],
+            
+            // Legacy support (backward compatibility)
+            'morning' => [['06:00:00', '12:00:00']],
+            'afternoon' => [['12:00:00', '18:00:00']],
+            'night' => [['18:00:00', '06:00:00']],
+            'mid_shift' => [['09:00:00', '17:00:00']]
         ];
         
-        return $times[$shiftType] ?? ['08:00:00', '16:00:00'];
+        return $times[$shiftType] ?? [['08:00:00', '16:00:00']];
     }
 
     /**
@@ -255,6 +289,7 @@ class DoctorScheduleModel extends Model
 
     /**
      * Add schedules for a date range
+     * Handles split shifts by creating two schedule records per day
      */
     public function addScheduleRange($data)
     {
@@ -263,10 +298,8 @@ class DoctorScheduleModel extends Model
         $doctorId = $data['doctor_id'];
         $shiftType = $data['shift_type'];
         
-        // Get shift times
-        $times = $this->getShiftTimes($shiftType);
-        $startTime = $times[0];
-        $endTime = $times[1];
+        // Get shift times (returns array of time ranges - one for regular, two for split)
+        $timeRanges = $this->getShiftTimes($shiftType);
         
         // Check for conflicts across the entire date range first
         $conflicts = [];
@@ -275,9 +308,14 @@ class DoctorScheduleModel extends Model
         
         while ($currentDate <= $endDateTime) {
             $dateStr = $currentDate->format('Y-m-d');
-            $dateConflicts = $this->checkConflicts($doctorId, $dateStr, $startTime, $endTime);
-            if (!empty($dateConflicts)) {
-                $conflicts = array_merge($conflicts, $dateConflicts);
+            // Check conflicts for each time range (for split shifts)
+            foreach ($timeRanges as $range) {
+                $startTime = $range[0];
+                $endTime = $range[1];
+                $dateConflicts = $this->checkConflicts($doctorId, $dateStr, $startTime, $endTime);
+                if (!empty($dateConflicts)) {
+                    $conflicts = array_merge($conflicts, $dateConflicts);
+                }
             }
             $currentDate->modify('+1 day');
         }
@@ -313,54 +351,59 @@ class DoctorScheduleModel extends Model
             
             // Skip if today and shift time has passed
             if ($dateStr === $today) {
-                $shiftStartMap = [
-                    'morning' => '06:00:00',
-                    'afternoon' => '12:00:00',
-                    'night' => '18:00:00',
-                    'mid_shift' => '00:00:00'
-                ];
-                if (isset($shiftStartMap[$shiftType]) && $shiftType !== 'mid_shift') {
-                    $shiftStart = new \DateTime($dateStr . ' ' . $shiftStartMap[$shiftType], $tz);
+                $shouldSkip = false;
+                // Check the first time range (for split shifts, check first block)
+                if (!empty($timeRanges)) {
+                    $firstRange = $timeRanges[0];
+                    $firstStartTime = $firstRange[0];
+                    $shiftStart = new \DateTime($dateStr . ' ' . $firstStartTime, $tz);
                     if ($now >= $shiftStart) {
-                        $skipped++;
-                        $currentDate->modify('+1 day');
-                        continue;
+                        $shouldSkip = true;
                     }
+                }
+                if ($shouldSkip) {
+                    $skipped++;
+                    $currentDate->modify('+1 day');
+                    continue;
                 }
             }
             
-            // Check if doctor is on leave for this specific date (if you have leave dates table)
-            // For now, we'll skip if there's a general on_leave status
-            
-            // Prepare schedule data for this date
-            $scheduleData = [
-                'doctor_id' => $doctorId,
-                'doctor_name' => $data['doctor_name'],
-                'department' => $data['department'],
-                'shift_type' => $shiftType,
-                'shift_date' => $dateStr,
-                'start_time' => $startTime,
-                'end_time' => $endTime,
-                'status' => 'scheduled',
-                'notes' => $data['notes'] ?? ''
-            ];
-            
-            // Insert schedule
-            $insertResult = $this->insert($scheduleData);
-            if ($insertResult) {
-                $created++;
-            } else {
-                $errors[] = "Failed to create schedule for {$dateStr}";
-                $skipped++;
+            // Create schedule record(s) for each time range
+            // For split shifts, this creates two records per day
+            foreach ($timeRanges as $range) {
+                $startTime = $range[0];
+                $endTime = $range[1];
+                
+                // Prepare schedule data for this date and time range
+                $scheduleData = [
+                    'doctor_id' => $doctorId,
+                    'doctor_name' => $data['doctor_name'],
+                    'department' => $data['department'],
+                    'shift_type' => $shiftType,
+                    'shift_date' => $dateStr,
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
+                    'status' => 'scheduled',
+                    'notes' => $data['notes'] ?? ''
+                ];
+                
+                // Insert schedule
+                $insertResult = $this->insert($scheduleData);
+                if ($insertResult) {
+                    $created++;
+                } else {
+                    $errors[] = "Failed to create schedule for {$dateStr} ({$startTime} - {$endTime})";
+                    $skipped++;
+                }
             }
             
             $currentDate->modify('+1 day');
         }
         
         if ($created > 0) {
-            $message = "Doctor schedule successfully added for {$created} date(s).";
+            $message = "Doctor schedule successfully added for {$created} shift(s).";
             if ($skipped > 0) {
-                $message .= " {$skipped} date(s) were skipped (past dates or conflicts).";
+                $message .= " {$skipped} shift(s) were skipped (past dates or conflicts).";
             }
             return [
                 'success' => true,
@@ -382,14 +425,17 @@ class DoctorScheduleModel extends Model
 
     /**
      * Add a new schedule with automatic time setting
+     * Note: For split shifts, use addScheduleRange() instead as it creates multiple records
      */
     public function addSchedule($data)
     {
         // Set automatic times based on shift type
         if (isset($data['shift_type']) && !isset($data['start_time'])) {
-            $times = $this->getShiftTimes($data['shift_type']);
-            $data['start_time'] = $times[0];
-            $data['end_time'] = $times[1];
+            $timeRanges = $this->getShiftTimes($data['shift_type']);
+            // For single schedule, use first time range (split shifts should use addScheduleRange)
+            $firstRange = $timeRanges[0];
+            $data['start_time'] = $firstRange[0];
+            $data['end_time'] = $firstRange[1];
         }
 
         // Enforce past-time rules at the model layer as well
@@ -408,18 +454,15 @@ class DoctorScheduleModel extends Model
 
             // If today, block if start already passed
             if ($data['shift_date'] === $today && !empty($data['shift_type'])) {
-                $startMap = [
-                    'morning' => '06:00:00',
-                    'afternoon' => '14:00:00',
-                    'night' => '22:00:00'
-                ];
-                $type = strtolower(trim($data['shift_type']));
-                if (isset($startMap[$type])) {
-                    $shiftStart = new \DateTime($data['shift_date'] . ' ' . $startMap[$type], $tz);
+                $timeRanges = $this->getShiftTimes($data['shift_type']);
+                if (!empty($timeRanges)) {
+                    $firstRange = $timeRanges[0];
+                    $firstStartTime = $firstRange[0];
+                    $shiftStart = new \DateTime($data['shift_date'] . ' ' . $firstStartTime, $tz);
                     if ($now >= $shiftStart) {
                         return [
                             'success' => false,
-                            'message' => 'Cannot add ' . $type . ' shift for today as the start time has already passed.'
+                            'message' => 'Cannot add shift for today as the start time has already passed.'
                         ];
                     }
                 }

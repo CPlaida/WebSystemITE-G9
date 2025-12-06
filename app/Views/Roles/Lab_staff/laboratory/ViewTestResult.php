@@ -3,9 +3,15 @@
 <?= $this->section('title') ?>Test Result Details<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="container"><div class="lab-receipt"><div class="lab-receipt">
-        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-            <h1 class="page-title" style="margin:0;">Test Result Details</h1>
+    <div class="container-fluid py-4">
+        <div class="composite-card billing-card" style="margin-top:0;">
+            <div class="composite-header">
+                <h1 class="composite-title">Test Result Details</h1>
+            </div>
+            <div class="card-body">
+        <div class="lab-receipt" style="box-shadow: none; border: none; margin: 0;">
+            <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;gap:10px; background: transparent; border: none; padding: 0 0 1rem 0;">
+                <h2 class="page-title" style="margin:0;">Test Result Details</h2>
             <div style="display:flex;align-items:center;gap:10px;" class="no-print">
                 <span class="status-pill <?= esc(strtolower($testResult['status'])) ?>">
                     <?= ucfirst($testResult['status']) ?>

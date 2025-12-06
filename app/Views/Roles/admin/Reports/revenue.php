@@ -3,9 +3,10 @@
 <?= $this->section('title') ?>Revenue Report<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="container">
-    <div class="header">
-        <h1 class="page-title">Revenue Report</h1>
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+        <div class="composite-header">
+            <h1 class="composite-title">Revenue Report</h1>
         <div style="display: flex; gap: 10px; margin-top: 10px;">
             <a href="<?= base_url('reports') ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
             <button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print"></i> Print</button>

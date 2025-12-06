@@ -3,22 +3,19 @@
 <?= $this->section('title') ?>General Inpatient Rooms<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="main-content" id="mainContent">
-    <div class="container">
-        <div class="header">
-            <h1 class="page-title">General Inpatient Rooms</h1>
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+        <div class="composite-header">
+            <h1 class="composite-title">General Inpatient Rooms</h1>
         </div>
-
-    <div class="card">
+        <div class="card-body">
+    <div class="card" style="box-shadow: none; border: none; margin: 0;">
         <div class="card-header organized-header">
             <!-- Search Bar Section -->
             <div class="search-section-inline">
                 <div class="search-wrapper-inline">
                     <i class="fas fa-search search-icon-inline"></i>
                     <input type="text" id="searchInput" class="search-input-inline" placeholder="Search by room number, bed number, patient ID, patient name, or status..." autocomplete="off">
-                    <button type="button" class="search-clear-btn-inline" id="clearSearch" style="display: none;">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
             </div>
             
@@ -59,7 +56,7 @@
 
                 <?php if (!empty($rows)): ?>
                     <div class="table-responsive">
-                        <table class="data-table" id="wardTable">
+                        <table class="data-table ward-table">
                             <thead>
                                 <tr>
                                     <th>Room No.</th>
@@ -128,7 +125,7 @@
                     
                     <?php if (!empty($allRows)): ?>
                         <div class="table-responsive">
-                            <table class="data-table">
+                            <table class="data-table ward-table">
                                 <thead>
                                     <tr>
                                         <th>Ward</th>
@@ -498,21 +495,13 @@ window.addEventListener('click', function(event) {
 // Search functionality
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
-    const clearSearchBtn = document.getElementById('clearSearch');
     
-    if (searchInput && clearSearchBtn) {
+    if (searchInput) {
         // Get all tables on the page
         const tables = document.querySelectorAll('table.table');
         
         function performSearch() {
             const searchTerm = searchInput.value.toLowerCase().trim();
-            
-            // Show/hide clear button
-            if (searchTerm.length > 0) {
-                clearSearchBtn.style.display = 'flex';
-            } else {
-                clearSearchBtn.style.display = 'none';
-            }
             
             // Filter rows in all tables
             tables.forEach(table => {
@@ -537,12 +526,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 searchInput.value = '';
                 performSearch();
             }
-        });
-        
-        clearSearchBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            performSearch();
-            searchInput.focus();
         });
     }
 });

@@ -3,11 +3,13 @@
 <?= $this->section('title') ?>Financial Reports<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="container">
-    <div class="header">
-        <h1 class="page-title">Financial Reports</h1>
-        <a href="<?= base_url('reports') ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
-    </div>
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+        <div class="composite-header">
+            <h1 class="composite-title">Financial Reports</h1>
+            <a href="<?= base_url('reports') ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+        </div>
+        <div class="card-body">
 
     <div class="composite-card">
         <div class="composite-header">

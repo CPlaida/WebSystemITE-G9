@@ -3,22 +3,19 @@
 <?= $this->section('title') ?>Specialized Patient Rooms<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="main-content" id="mainContent">
-    <div class="container">
-        <div class="header">
-            <h1 class="page-title">Specialized Patient Rooms</h1>
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+        <div class="composite-header">
+            <h1 class="composite-title">Specialized Patient Rooms</h1>
         </div>
-
-    <div class="card">
+        <div class="card-body">
+    <div class="card" style="box-shadow: none; border: none; margin: 0;">
         <div class="card-header organized-header">
             <!-- Search Bar Section -->
             <div class="search-section-inline">
                 <div class="search-wrapper-inline">
                     <i class="fas fa-search search-icon-inline"></i>
                     <input type="text" id="specializedSearch" class="search-input-inline" placeholder="Search by room number, bed number, patient ID, patient name" autocomplete="off">
-                    <button type="button" class="search-clear-btn-inline" id="clearSearch" style="display: none;">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
             </div>
             
@@ -48,7 +45,7 @@
                     </div>
                 <?php endif; ?>
                 <div class="table-responsive">
-                    <table class="data-table specialized-table">
+                    <table class="data-table ward-table">
                         <thead>
                             <tr>
                                 <th>ROOM TYPE</th>
@@ -74,8 +71,8 @@
                                 $badgeColor = ($status === 'Occupied') ? '#dc3545' : '#198754';
                             ?>
                             <tr>
-                                <td><?= esc($r['room_type'] ?? '') ?></td>
-                                <td><?= esc($r['room'] ?? '-') ?></td>
+                                <td><strong><?= esc($r['room_type'] ?? '') ?></strong></td>
+                                <td><strong><?= esc($r['room'] ?? '-') ?></strong></td>
                                 <td><?= esc($r['bed'] ?? '-') ?></td>
                                 <td><?= esc($pid) ?></td>
                                 <td><?= esc($pname) ?></td>
@@ -179,20 +176,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Search functionality
     const searchInput = document.getElementById('specializedSearch');
-    const clearSearchBtn = document.getElementById('clearSearch');
     
-    if (searchInput && clearSearchBtn) {
-        const tables = document.querySelectorAll('.specialized-table');
+    if (searchInput) {
+        const tables = document.querySelectorAll('.ward-table');
         
         function performSearch() {
             const searchTerm = searchInput.value.toLowerCase().trim();
-            
-            // Show/hide clear button
-            if (searchTerm.length > 0) {
-                clearSearchBtn.style.display = 'flex';
-            } else {
-                clearSearchBtn.style.display = 'none';
-            }
             
             // Filter rows in all tables
             tables.forEach(table => {
@@ -217,12 +206,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 searchInput.value = '';
                 performSearch();
             }
-        });
-        
-        clearSearchBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            performSearch();
-            searchInput.focus();
         });
     }
 });

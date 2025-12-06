@@ -4,21 +4,18 @@
 
 <?= $this->section('content') ?>
 
-
-<div class="container">
-    <div class="header">
-        <h1 class="page-title">Pharmacy Transactions</h1>
-    </div>
-    
-    <div class="unified-search-wrapper">
-        <form id="trxSearchForm" class="unified-search-row" style="margin:0;">
-            <i class="fas fa-search unified-search-icon"></i>
-            <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="unified-search-field" placeholder="Search by Transaction #...">
-        </form>
-    </div>
-
-    <div class="card">
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+        <div class="composite-header">
+            <h1 class="composite-title">Pharmacy Transactions</h1>
+        </div>
         <div class="card-body">
+            <div class="unified-search-wrapper" style="margin-bottom: 1.5rem;">
+                <form id="trxSearchForm" class="unified-search-row" style="margin:0;">
+                    <i class="fas fa-search unified-search-icon"></i>
+                    <input type="text" id="searchInput" name="q" value="<?= esc($query ?? '') ?>" class="unified-search-field" placeholder="Search by Transaction #...">
+                </form>
+            </div>
         <div class="overflow-x-auto">
             <table class="data-table">
                 <thead>
@@ -138,4 +135,7 @@ input.addEventListener('input', function(){
     loadTransactions(initial);
 })();
 </script>
+        </div>
+    </div>
+</div>
 <?= $this->endSection() ?>

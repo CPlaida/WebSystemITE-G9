@@ -3,13 +3,14 @@
 <?= $this->section('title') ?>Reports<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="container">
-    <div class="header">
-        <h1 class="page-title">Reports</h1>
-    </div>
-
+<div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+        <div class="composite-header">
+            <h1 class="composite-title">Reports</h1>
+        </div>
+        <div class="card-body">
     <!-- Report Filters Section -->
-    <div class="card" style="margin-bottom: 20px;">
+    <div class="card" style="margin-bottom: 20px; box-shadow: none; border: none;">
         <div class="card-body">
             <h2 style="margin-bottom: 24px; font-size: 18px; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e5e7eb; padding-bottom: 12px;">Report Parameters</h2>
             <form method="GET" action="<?= base_url('reports') ?>" id="reportForm">
@@ -475,36 +476,36 @@
                 <div class="card-body">
                     <h3 style="margin-bottom: 16px; font-size: 16px; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e5e7eb; padding-bottom: 12px;">Prescription Details</h3>
                     <div class="overflow-x-auto">
-                        <table class="data-table">
+                        <table class="data-table prescription-report-table">
                             <thead>
                                 <tr>
-                                    <th>Prescription ID</th>
-                                    <th>Date</th>
-                                    <th>Medicines</th>
-                                    <th>Total Amount</th>
+                                    <th style="text-align: center;">Prescription ID</th>
+                                    <th style="text-align: center;">Date</th>
+                                    <th style="text-align: center;">Medicines</th>
+                                    <th style="text-align: center;">Total Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($reportData['prescriptions'])): ?>
                                     <?php foreach ($reportData['prescriptions'] as $pres): ?>
                                         <tr>
-                                            <td>#<?= $pres['id'] ?? 'N/A' ?></td>
-                                            <td><?= date('M d, Y', strtotime($pres['date'] ?? $pres['created_at'] ?? date('Y-m-d'))) ?></td>
-                                            <td>
+                                            <td style="text-align: center;">#<?= $pres['id'] ?? 'N/A' ?></td>
+                                            <td style="text-align: center;"><?= date('M d, Y', strtotime($pres['date'] ?? $pres['created_at'] ?? date('Y-m-d'))) ?></td>
+                                            <td style="text-align: center;">
                                                 <?php 
                                                 // Debug: Check what we have
                                                 $hasItems = !empty($pres['items']) && is_array($pres['items']);
                                                 $itemsCount = $hasItems ? count($pres['items']) : 0;
                                                 ?>
                                                 <?php if ($hasItems && $itemsCount > 0): ?>
-                                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center;">
                                                         <?php foreach ($pres['items'] as $item): ?>
                                                             <?php 
                                                             $medicineName = $item['medicine_name'] ?? null;
                                                             $medicationId = $item['medication_id'] ?? '';
                                                             $displayName = !empty($medicineName) ? $medicineName : (!empty($medicationId) ? 'Medicine ID: ' . esc($medicationId) : 'Unknown Medicine');
                                                             ?>
-                                                            <div style="font-size: 13px;">
+                                                            <div style="font-size: 13px; text-align: center;">
                                                                 <strong><?= esc($displayName) ?></strong>
                                                                 <?php if (!empty($item['quantity'])): ?>
                                                                     <span style="color: #7f8c8d;">(Qty: <?= $item['quantity'] ?>)</span>
@@ -518,12 +519,12 @@
                                                     <span style="color: #7f8c8d;">No medicines found</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td style="font-weight: 600;">₱<?= number_format($pres['total_amount'] ?? 0, 2) ?></td>
+                                            <td style="text-align: center; font-weight: 600;">₱<?= number_format($pres['total_amount'] ?? 0, 2) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="5" style="text-align: center; padding: 40px; color: #7f8c8d;">No prescription data available for the selected period</td>
+                                        <td colspan="4" style="text-align: center; padding: 40px; color: #7f8c8d;">No prescription data available for the selected period</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

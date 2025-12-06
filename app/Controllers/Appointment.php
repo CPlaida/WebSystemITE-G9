@@ -131,6 +131,7 @@ class Appointment extends BaseController
 
     /**
      * JSON: Get available schedule dates (distinct shift_date >= today)
+     * Filters out past dates
      */
     public function getAvailableDates()
     {
@@ -186,6 +187,7 @@ class Appointment extends BaseController
 
     /**
      * JSON: Get hourly time slots by doctor and date (expands shift into 1-hour slots)
+     * Filters out past time slots and ensures all slots are within shift times
      */
     public function getTimesByDoctorAndDate()
     {
@@ -201,6 +203,10 @@ class Appointment extends BaseController
         }
 
         $db = \Config\Database::connect();
+        $tz = new \DateTimeZone('Asia/Manila');
+        $now = new \DateTime('now', $tz);
+        $today = $now->format('Y-m-d');
+        $isToday = ($date === $today);
 
         // 1) Load doctor's shift blocks for the selected date (only if doctor is active)
         $rows = $db->table('doctor_schedules ds')
@@ -212,6 +218,11 @@ class Appointment extends BaseController
             ->where('u.status', 'active')
             ->orderBy('ds.start_time', 'ASC')
             ->get()->getResultArray();
+
+        // If no shifts found, return empty
+        if (empty($rows)) {
+            return $this->response->setJSON(['success' => true, 'times' => []]);
+        }
 
         // 2) Load already-booked appointment times for that doctor/date (exclude cancelled/no_show)
         $booked = $db->table('appointments')
@@ -227,17 +238,22 @@ class Appointment extends BaseController
             $bookedSet[$t] = true;
         }
 
-        // 3) Expand schedule into 1-hour slots and remove booked ones
+        // 3) Expand schedule into 1-hour slots, remove booked ones, and filter past times
         $slots = [];
-        $tz = new \DateTimeZone('Asia/Manila');
         foreach ($rows as $r) {
             $start = new \DateTime($date . ' ' . $r['start_time'], $tz);
             $end = new \DateTime($date . ' ' . $r['end_time'], $tz);
-            if ($end <= $start) { // cross-midnight handling
+            if ($end <= $start) { // cross-midnight handling (night shifts)
                 $end->modify('+1 day');
             }
             $cursor = clone $start;
             while ($cursor < $end) {
+                // For today, skip past time slots
+                if ($isToday && $cursor <= $now) {
+                    $cursor->modify('+1 hour');
+                    continue;
+                }
+                
                 $value = $cursor->format('H:i:00'); // submit value
                 if (!isset($bookedSet[$value])) {   // exclude already booked times
                     $slots[$value] = $cursor->format('g:i A'); // display label
@@ -374,6 +390,69 @@ class Appointment extends BaseController
             'reason' => $this->request->getPost('reason'),
             'status' => 'scheduled'
         ];
+
+        // Validate that appointment time is within doctor's shift
+        $db = \Config\Database::connect();
+        $tz = new \DateTimeZone('Asia/Manila');
+        $appointmentDateTime = new \DateTime($data['appointment_date'] . ' ' . $data['appointment_time'], $tz);
+        $now = new \DateTime('now', $tz);
+        
+        // Block past appointments
+        if ($appointmentDateTime <= $now) {
+            if (!$this->request->isAJAX()) {
+                return redirect()->back()->withInput()->with('error', 'Cannot book appointments in the past. Please select a future date and time.');
+            }
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Cannot book appointments in the past'
+            ]);
+        }
+
+        // Check if appointment time is within any of the doctor's shift blocks
+        $shifts = $db->table('doctor_schedules ds')
+            ->select('ds.start_time, ds.end_time')
+            ->join('users u', 'ds.doctor_id = u.id', 'left')
+            ->where('ds.doctor_id', $data['doctor_id'])
+            ->where('ds.shift_date', $data['appointment_date'])
+            ->where('ds.status !=', 'cancelled')
+            ->where('u.status', 'active')
+            ->get()->getResultArray();
+
+        if (empty($shifts)) {
+            if (!$this->request->isAJAX()) {
+                return redirect()->back()->withInput()->with('error', 'Doctor is not available on the selected date.');
+            }
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Doctor is not available on the selected date'
+            ]);
+        }
+
+        // Check if appointment time falls within any shift block
+        $appointmentTime = $data['appointment_time'];
+        $isWithinShift = false;
+        foreach ($shifts as $shift) {
+            $shiftStart = new \DateTime($data['appointment_date'] . ' ' . $shift['start_time'], $tz);
+            $shiftEnd = new \DateTime($data['appointment_date'] . ' ' . $shift['end_time'], $tz);
+            if ($shiftEnd <= $shiftStart) {
+                // Cross-midnight shift
+                $shiftEnd->modify('+1 day');
+            }
+            if ($appointmentDateTime >= $shiftStart && $appointmentDateTime < $shiftEnd) {
+                $isWithinShift = true;
+                break;
+            }
+        }
+
+        if (!$isWithinShift) {
+            if (!$this->request->isAJAX()) {
+                return redirect()->back()->withInput()->with('error', 'Selected appointment time is outside the doctor\'s shift hours. Please select a time within the available shift.');
+            }
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Selected appointment time is outside the doctor\'s shift hours'
+            ]);
+        }
 
         // Check for appointment conflicts
         if ($this->appointmentModel->checkAppointmentConflict($data['doctor_id'], $data['appointment_date'], $data['appointment_time'])) {

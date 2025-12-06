@@ -23,7 +23,7 @@ $title = $wardName . ' – Room & Bed Management';
       <p class="mb-3">This page shows rooms and beds in the <?= esc($wardName) ?>, including whether each bed is Available or Occupied.</p>
 
       <?php if (!empty($rows)): ?>
-        <table class="data-table" id="wardTable">
+        <table class="data-table ward-table">
           <thead>
             <tr>
               <th>Room No.</th>

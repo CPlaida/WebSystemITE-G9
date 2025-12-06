@@ -851,10 +851,35 @@ function getDepartmentColorClass($department) {
           </span>
         </label>
         <select id="shiftType" name="shiftType" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" required>
-          <option value="morning">Morning (6AM – 12PM)</option>
-          <option value="afternoon">Afternoon (12PM – 6PM)</option>
-          <option value="night">Night (6PM – 6AM)</option>
-          <option value="mid_shift">Mid Shift (Flexible)</option>
+          <optgroup label="Morning Shifts">
+            <option value="morning_06_12">Morning (06:00 AM – 12:00 PM)</option>
+            <option value="morning_07_11">Morning (07:00 AM – 11:00 AM)</option>
+            <option value="morning_08_12">Morning (08:00 AM – 12:00 PM)</option>
+          </optgroup>
+          <optgroup label="Afternoon Shifts">
+            <option value="afternoon_12_18">Afternoon (12:00 PM – 06:00 PM)</option>
+            <option value="afternoon_13_17">Afternoon (01:00 PM – 05:00 PM)</option>
+            <option value="afternoon_14_18">Afternoon (02:00 PM – 06:00 PM)</option>
+          </optgroup>
+          <optgroup label="Evening Shifts">
+            <option value="evening_16_22">Evening (04:00 PM – 10:00 PM)</option>
+            <option value="evening_17_21">Evening (05:00 PM – 09:00 PM)</option>
+          </optgroup>
+          <optgroup label="Night Shifts">
+            <option value="night_22_06">Night (10:00 PM – 06:00 AM)</option>
+            <option value="night_23_07">Night (11:00 PM – 07:00 AM)</option>
+          </optgroup>
+          <optgroup label="Full Day Shifts">
+            <option value="full_day_08_17">Full Day (08:00 AM – 05:00 PM)</option>
+            <option value="full_day_09_18">Full Day (09:00 AM – 06:00 PM)</option>
+          </optgroup>
+          <optgroup label="Half-Day Shifts">
+            <option value="half_day_08_12">Half Day (08:00 AM – 12:00 PM)</option>
+            <option value="half_day_13_17">Half Day (01:00 PM – 05:00 PM)</option>
+          </optgroup>
+          <optgroup label="Split Shifts">
+            <option value="split_08_12_14_18">Split Shift (08:00 AM – 12:00 PM and 02:00 PM – 06:00 PM)</option>
+          </optgroup>
         </select>
       </div>
       
@@ -1020,8 +1045,28 @@ function getDepartmentColorClass($department) {
       // Client-side guard: prevent past-time submission for today
       if (startDate === todayStr) {
         const currentHour = now.getHours();
-        const pastMap = { morning: 6, afternoon: 12, night: 18, mid_shift: 0 };
-        if (pastMap[shiftType] !== undefined && shiftType !== 'mid_shift' && currentHour >= pastMap[shiftType]) {
+        const currentMinute = now.getMinutes();
+        const currentTime = currentHour * 60 + currentMinute; // Convert to minutes for easier comparison
+        
+        // Extract start hour from shift type value (format: type_HH_MM or type_HH_MM_HH_MM)
+        let shiftStartHour = 0;
+        const parts = shiftType.split('_');
+        if (parts.length >= 2 && !isNaN(parseInt(parts[parts.length - 2]))) {
+          shiftStartHour = parseInt(parts[parts.length - 2]);
+        } else if (parts.length >= 3 && !isNaN(parseInt(parts[1]))) {
+          shiftStartHour = parseInt(parts[1]);
+        }
+        
+        // For split shifts, check the first block start time
+        if (shiftType.startsWith('split_')) {
+          const splitParts = shiftType.split('_');
+          if (splitParts.length >= 3) {
+            shiftStartHour = parseInt(splitParts[1]);
+          }
+        }
+        
+        // Check if shift start time has passed
+        if (shiftStartHour > 0 && currentTime >= (shiftStartHour * 60)) {
           showAddShiftError('Selected shift time has already passed today. Please choose a future shift.');
           return;
         }
@@ -1110,26 +1155,38 @@ function getDepartmentColorClass($department) {
       const selectedDate = startDateEl.value;
       const now = new Date();
       const currentHour = now.getHours();
-      const isToday = selectedDate === today;
+      const currentMinute = now.getMinutes();
+      const currentTime = currentHour * 60 + currentMinute; // Convert to minutes
+      const isToday = selectedDate === todayStr;
       const options = shiftTypeEl.querySelectorAll('option');
 
       options.forEach(opt => {
         if (!opt.value) return; // skip placeholder
         let shouldDisable = false;
         if (isToday) {
-          switch (opt.value) {
-            case 'morning':
-              shouldDisable = currentHour >= 6; // 06:00
-              break;
-            case 'afternoon':
-              shouldDisable = currentHour >= 12; // 12:00
-              break;
-            case 'night':
-              shouldDisable = currentHour >= 18; // 18:00
-              break;
-            case 'mid_shift':
-              shouldDisable = false; // Flexible, always available
-              break;
+          // Extract start hour from shift type value
+          const shiftType = opt.value;
+          let shiftStartHour = 0;
+          const parts = shiftType.split('_');
+          
+          // Handle split shifts (format: split_HH_MM_HH_MM)
+          if (shiftType.startsWith('split_')) {
+            if (parts.length >= 3) {
+              shiftStartHour = parseInt(parts[1]);
+            }
+          } else if (parts.length >= 2) {
+            // Try to get hour from second-to-last part (for formats like morning_06_12)
+            const hourPart = parts[parts.length - 2];
+            if (!isNaN(parseInt(hourPart)) && parseInt(hourPart) < 24) {
+              shiftStartHour = parseInt(hourPart);
+            } else if (parts.length >= 3 && !isNaN(parseInt(parts[1]))) {
+              shiftStartHour = parseInt(parts[1]);
+            }
+          }
+          
+          // Disable if shift start time has passed
+          if (shiftStartHour > 0 && currentTime >= (shiftStartHour * 60)) {
+            shouldDisable = true;
           }
         } else {
           shouldDisable = false;

@@ -6183,3 +6183,332 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     margin: 0;
     font-size: 15px;
 }
+
+/* ===== User Management Table ===== */
+.data-table.user-management-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.data-table.user-management-table th:nth-child(1),
+.data-table.user-management-table td:nth-child(1) {
+    width: 30%;
+    min-width: 200px;
+}
+
+.data-table.user-management-table th:nth-child(2),
+.data-table.user-management-table td:nth-child(2) {
+    width: 30%;
+}
+
+.data-table.user-management-table th:nth-child(3),
+.data-table.user-management-table td:nth-child(3) {
+    width: 15%;
+}
+
+.data-table.user-management-table th:nth-child(4),
+.data-table.user-management-table td:nth-child(4) {
+    width: 12%;
+}
+
+.data-table.user-management-table th:nth-child(5),
+.data-table.user-management-table td:nth-child(5) {
+    width: 13%;
+    min-width: 120px;
+    max-width: 150px;
+    padding: 0.75rem 0.5rem;
+}
+
+.data-table.user-management-table td:nth-child(5) .action-group {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.data-table.user-management-table td:nth-child(5) .action-group form {
+    display: inline-flex;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.data-table.user-management-table td:nth-child(5) .btn-action {
+    min-width: 55px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.data-table.user-management-table td:nth-child(5) .text-muted {
+    text-align: center;
+    display: block;
+    width: 100%;
+}
+
+/* ===== User Management Modal - Enhanced Design ===== */
+#userModal.modal {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+#userModal .modal-content {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 0;
+    position: relative;
+}
+
+#userModal .modal-content h3 {
+    margin: 0;
+    padding: 24px 28px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    background: var(--primary-color);
+    border-radius: 12px 12px 0 0;
+}
+
+#userModal .modal-content form {
+    padding: 28px;
+}
+
+#userModal .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+    margin-bottom: 0;
+}
+
+#userModal .form-grid > div[style*="grid-column: 1 / -1"] {
+    grid-column: 1 / -1;
+}
+
+#userModal label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #374151;
+    letter-spacing: 0.3px;
+}
+
+#userModal input[type="text"],
+#userModal input[type="email"],
+#userModal select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+#userModal input[type="text"]:focus,
+#userModal input[type="email"]:focus,
+#userModal select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+    background-color: #ffffff;
+}
+
+#userModal input[type="text"]:hover,
+#userModal input[type="email"]:hover,
+#userModal select:hover {
+    border-color: #d1d5db;
+}
+
+#userModal input[readonly] {
+    background-color: var(--light-color);
+    color: var(--gray-color);
+    cursor: not-allowed;
+}
+
+/* Staff Search Section */
+#userModal #staffSearch {
+    border-radius: 8px 0 0 8px;
+    border-right: none;
+}
+
+#userModal .btn-secondary.btn-sm {
+    padding: 12px 20px;
+    min-width: 100px;
+    height: 44px;
+    background-color: var(--btn-secondary);
+    color: #ffffff;
+    border: 2px solid var(--btn-secondary);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#userModal .btn-secondary.btn-sm:hover {
+    background-color: var(--btn-secondary-hover);
+    border-color: var(--btn-secondary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+#userModal small.text-muted {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--gray-color);
+    line-height: 1.5;
+}
+
+/* Linked Staff Info Box */
+#userModal #staffLinkedInfo {
+    border: 2px solid rgba(67, 97, 238, 0.3);
+    background: rgba(67, 97, 238, 0.05);
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin-top: 12px;
+}
+
+#userModal #staffLinkedInfo strong {
+    color: var(--primary-color);
+    font-size: 0.95rem;
+}
+
+#userModal #staffLinkedInfo #staffInfoName {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+#userModal #staffLinkedInfo small {
+    color: var(--primary-color);
+    opacity: 0.8;
+    font-size: 0.85rem;
+}
+
+/* Input Group (Password Field) */
+#userModal .input-group {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+}
+
+#userModal .input-group input {
+    border-radius: 8px 0 0 8px;
+    border-right: none;
+    flex: 1;
+}
+
+#userModal .input-group .btn-secondary.btn-sm {
+    border-radius: 0 8px 8px 0;
+    border-left: none;
+    padding: 12px 20px;
+    min-width: 100px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#userModal #passwordHelp {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--gray-color);
+    font-style: italic;
+}
+
+/* Form Actions */
+#userModal .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 2px solid #f0f2f5;
+}
+
+#userModal .btn-close {
+    padding: 12px 24px;
+    background-color: #ffffff;
+    color: var(--gray-color);
+    border: 2px solid var(--btn-outline-border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#userModal .btn-close:hover {
+    background-color: var(--btn-outline-hover);
+    border-color: var(--btn-outline-border);
+    color: var(--dark-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#userModal .btn-primary {
+    padding: 12px 28px;
+    background-color: var(--btn-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+#userModal .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    background-color: var(--btn-primary-hover);
+}
+
+#userModal .btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #userModal .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    #userModal .form-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    
+    #userModal .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    #userModal .form-actions .btn {
+        width: 100%;
+    }
+    
+    #userModal .btn-secondary.btn-sm {
+        border-radius: 0 8px 8px 0;
+    }
+}

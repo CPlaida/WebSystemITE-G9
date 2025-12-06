@@ -72,7 +72,7 @@ $currentSubmenu = 'inventory';
         </div>
 
         <div class="table-responsive">
-            <table class="data-table">
+            <table class="data-table medicine-inventory-table">
                 <thead>
                     <tr>
                         <th>Medicine Barcode</th>
@@ -111,7 +111,8 @@ $currentSubmenu = 'inventory';
                                     }
                                 ?>
                                 <td data-exp="<?= esc($expDate) ?>">
-                                    <?= esc($expDate) ?><?= $statusBadge ? $statusBadge : '' ?>
+                                    <span><?= esc($expDate) ?></span>
+                                    <?= $statusBadge ? $statusBadge : '' ?>
                                 </td>
                                 <td class="actions" onclick="event.stopPropagation();">
                                     <a class="medicine-btn-edit" href="<?= base_url('medicines/edit/' . $m['id']) ?>">Edit</a>

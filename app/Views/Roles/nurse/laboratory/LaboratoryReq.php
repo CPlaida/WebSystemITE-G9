@@ -9,12 +9,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <div class="main-content" id="mainContent">
-        <div class="container">
-            <div class="header">
-                <h1 class="page-title">Laboratory Request Form</h1>
+    <div class="container-fluid py-4">
+        <div class="composite-card billing-card" style="margin-top:0;">
+            <div class="composite-header">
+                <h1 class="composite-title">Laboratory Request Form</h1>
             </div>
-
+            <div class="card-body">
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fas fa-check-circle"></i> <?= session()->getFlashdata('success') ?>

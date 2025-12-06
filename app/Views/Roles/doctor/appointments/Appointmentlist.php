@@ -3,21 +3,20 @@
 <?= $this->section('title') ?>Today's Appointments<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-  <div class="container">
-    <style>
-      .table-container { position: relative; overflow: visible; }
-      .action-buttons { position: relative; z-index: 1000; pointer-events: auto; }
-      .action-buttons .btn-action { pointer-events: auto; position: relative; z-index: 1001; }
-    </style>
-    <div class="header">
-      <h1 class="page-title">
-        Today's Appointments
-      </h1>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Appointment List</h2>
+  <div class="container-fluid py-4">
+    <div class="composite-card billing-card" style="margin-top:0;">
+      <div class="composite-header">
+        <h1 class="composite-title">Today's Appointments</h1>
+      </div>
+      <div class="card-body">
+        <style>
+          .table-container { position: relative; overflow: visible; }
+          .action-buttons { position: relative; z-index: 1000; pointer-events: auto; }
+          .action-buttons .btn-action { pointer-events: auto; position: relative; z-index: 1001; }
+        </style>
+        <div class="card" style="box-shadow: none; border: none; margin: 0;">
+          <div class="card-header" style="background: transparent; border: none; padding: 0 0 1rem 0;">
+            <h2 class="card-title">Appointment List</h2>
         <div class="filter-container" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-start;">
           <div class="btn-group" role="group" aria-label="Date filters" style="display:flex; gap:8px;">
             <button type="button" id="btnToday" class="btn <?= (isset($currentFilter) && $currentFilter==='today') ? 'btn-primary' : 'btn-outline' ?>">Today</button>
@@ -301,4 +300,9 @@
       }
     });
   </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <?= $this->endSection() ?>
