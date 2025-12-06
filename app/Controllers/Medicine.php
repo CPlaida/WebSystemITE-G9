@@ -8,20 +8,20 @@ class Medicine extends Controller
     public function index()
     {
         $model = new MedicineModel();
-        $today = date('Y-m-d');
+        $cutoff = date('Y-m-d', strtotime('+3 months')); // strict 3-month rule
         
-        // Filter out expired medicines from main list (only show non-expired or null expiry)
+        // Show medicines whose expiry is beyond the 3-month cutoff (or no expiry)
         $data['medicines'] = $model->groupStart()
-                                   ->where('expiry_date >=', $today)
+                                   ->where('expiry_date >', $cutoff)
                                    ->orWhere('expiry_date IS NULL', null, false)
                                    ->groupEnd()
                                    ->orderBy('id', 'DESC')
                                    ->findAll();
 
-        // counts using fresh builders to avoid state leakage (excluding expired)
+        // counts using fresh builders to avoid state leakage (excluding anything at or within 3 months)
         $totalModel = new MedicineModel();
         $data['total'] = $totalModel->groupStart()
-                                    ->where('expiry_date >=', $today)
+                                    ->where('expiry_date >', $cutoff)
                                     ->orWhere('expiry_date IS NULL', null, false)
                                     ->groupEnd()
                                     ->countAllResults();
@@ -29,7 +29,7 @@ class Medicine extends Controller
         $lowStockModel = new MedicineModel();
         $data['low_stock'] = $lowStockModel->where('stock <=', 5)
                                            ->groupStart()
-                                           ->where('expiry_date >=', $today)
+                                           ->where('expiry_date >', $cutoff)
                                            ->orWhere('expiry_date IS NULL', null, false)
                                            ->groupEnd()
                                            ->countAllResults();
@@ -37,7 +37,7 @@ class Medicine extends Controller
         $outStockModel = new MedicineModel();
         $data['out_stock'] = $outStockModel->where('stock', 0)
                                            ->groupStart()
-                                           ->where('expiry_date >=', $today)
+                                           ->where('expiry_date >', $cutoff)
                                            ->orWhere('expiry_date IS NULL', null, false)
                                            ->groupEnd()
                                            ->countAllResults();
@@ -84,16 +84,7 @@ class Medicine extends Controller
             $descriptions = [$descriptions];
         }
 
-        $today = date('Y-m-d');
-        $limit = date('Y-m-d', strtotime('+30 days'));
-        foreach ($expiries as $i => $exp) {
-            if (!empty($exp) && $exp < $today) {
-                return redirect()->to('/medicines')->with('error', 'One or more medicines have an expiry date in the past. Please correct and try again.');
-            }
-            if (!empty($exp) && $exp <= $limit) {
-                return redirect()->to('/medicines')->with('error', 'One or more medicines are expiring within 30 days and cannot be added.');
-            }
-        }
+        // No blocking — near-expiry items will be auto-routed to Stock Out by the 3-month rule
 
         // Ensure uploads directory exists
         $uploadPath = FCPATH . 'uploads/medicines/';
@@ -165,15 +156,7 @@ class Medicine extends Controller
     {
         $model = new MedicineModel();
 
-        $expiry = $this->request->getPost('expiry_date');
-        $today = date('Y-m-d');
-        $limit = date('Y-m-d', strtotime('+30 days'));
-        if (!empty($expiry) && $expiry < $today) {
-            return redirect()->to('/medicines?edit=' . $id)->with('error', 'Expiry date cannot be in the past.');
-        }
-        if (!empty($expiry) && $expiry <= $limit) {
-            return redirect()->to('/medicines?edit=' . $id)->with('error', 'Expiry date is within 30 days and cannot be saved.');
-        }
+        // Skip blocking; near-expiry items will automatically be treated as Stock Out by the 3-month rule
 
         // Check if image column exists in database
         $db = \Config\Database::connect();
@@ -240,15 +223,25 @@ class Medicine extends Controller
     public function stockOut()
     {
         $model = new MedicineModel();
-        $today = date('Y-m-d');
-        
-        // Get only expired medicines
-        $data['expired_medicines'] = $model->where('expiry_date <', $today)
+        $cutoff = date('Y-m-d', strtotime('+3 months'));
+
+        // Get medicines whose expiry is at or within 3 months (or already past)
+        $data['expired_medicines'] = $model->where('expiry_date <=', $cutoff)
                                           ->where('expiry_date IS NOT NULL', null, false)
                                           ->orderBy('expiry_date', 'ASC')
                                           ->findAll();
-        
+
+        // Summary statistics
         $data['total_expired'] = count($data['expired_medicines']);
+        $data['total_expired_stock'] = 0;
+        $data['total_expired_value'] = 0;
+
+        foreach ($data['expired_medicines'] as $med) {
+            $stock = (int)($med['stock'] ?? 0);
+            $price = (float)($med['unit_price'] ?? $med['retail_price'] ?? $med['price'] ?? 0);
+            $data['total_expired_stock'] += $stock;
+            $data['total_expired_value'] += $stock * $price;
+        }
         
         echo view('Roles/admin/inventory/StockOut', $data);
     }

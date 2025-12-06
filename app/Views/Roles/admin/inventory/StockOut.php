@@ -23,10 +23,18 @@ $currentSubmenu = 'inventory';
 
     <div class="content">
         <?php if (!empty($expired_medicines)): ?>
-            <div class="card-container" style="margin-bottom: 20px;">
+            <div class="card-container" style="margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
                 <div class="card">
                     <h3>Total Expired Items</h3>
                     <div class="value" style="color: #dc3545;"><?= $total_expired ?></div>
+                </div>
+                <div class="card">
+                    <h3>Total Expired Stock (Units)</h3>
+                    <div class="value" style="color: #6b7280;"><?= number_format($total_expired_stock ?? 0) ?></div>
+                </div>
+                <div class="card">
+                    <h3>Total Cost of Expired Stock</h3>
+                    <div class="value" style="color: #b91c1c;">₱<?= number_format($total_expired_value ?? 0, 2) ?></div>
                 </div>
             </div>
 

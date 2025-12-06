@@ -32,18 +32,7 @@ $currentSubmenu = 'inventory';
         <!-- Error modal is shown later after DOMContentLoaded using ERROR_MSG -->
         <?php
         $expired_count = 0;
-        $expiring_soon_count = 0;
-        $today = date('Y-m-d');
-        $threshold = date('Y-m-d', strtotime('+30 days'));
-        if (isset($medicines) && is_array($medicines)) {
-            foreach ($medicines as $m) {
-                $exp = isset($m['expiry_date']) ? $m['expiry_date'] : null;
-                if ($exp) {
-                    if ($exp < $today) $expired_count++;
-                    if ($exp >= $today && $exp <= $threshold) $expiring_soon_count++;
-                }
-            }
-        }
+        $expiring_soon_count = 0; // no expiring state; 3-month rule moves them to Stock Out
         ?>
         <div class="card-container">
             <div class="card">
@@ -103,11 +92,8 @@ $currentSubmenu = 'inventory';
                                 <td><?= esc($m['manufactured_date'] ?? '-') ?></td>
                                 <?php
                                     $expDate = $m['expiry_date'] ?? null;
+                                    // No expiring badge; anything within 3 months is in Stock Out already
                                     $statusBadge = '';
-                                    if ($expDate) {
-                                        if ($expDate < $today) $statusBadge = '<span style="margin-left:8px; padding:2px 8px; border-radius:9999px; background:#fdecea; color:#b91c1c; font-size:12px; font-weight:600;">Expired</span>';
-                                        if ($expDate >= $today && $expDate <= $threshold) $statusBadge = '<span style="margin-left:8px; padding:2px 8px; border-radius:9999px; background:#fff7ed; color:#c2410c; font-size:12px; font-weight:600;">Expiring</span>';
-                                    }
                                 ?>
                                 <td data-exp="<?= esc($expDate) ?>">
                                     <?= esc($expDate) ?><?= $statusBadge ? $statusBadge : '' ?>

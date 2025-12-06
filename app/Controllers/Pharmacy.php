@@ -53,27 +53,20 @@ class Pharmacy extends Controller
         $medicines = $medicineModel->findAll();
         
         // Calculate totals
-        $total = count($medicines);
-        $low_stock = 0;
+        $cutoff = date('Y-m-d', strtotime('+3 months'));
         $today = date('Y-m-d');
-        $threshold = date('Y-m-d', strtotime('+30 days'));
-        $expired_count = 0;
-        $expiring_soon_count = 0;
+        $validMedicines = array_filter($medicines, function($m) use ($cutoff) {
+            return empty($m['expiry_date']) || $m['expiry_date'] > $cutoff;
+        });
+        $total = count($validMedicines);
+        $low_stock = 0;
+        $expired_count = 0; // items within 3-month window are treated as stock-out, not counted here
+        $expiring_soon_count = 0; // no "expiring" state; they are removed to stock-out
         
-        foreach ($medicines as $medicine) {
+        foreach ($validMedicines as $medicine) {
             // Check for low stock
             if (isset($medicine['stock']) && isset($medicine['reorder_level']) && $medicine['stock'] <= $medicine['reorder_level']) {
                 $low_stock++;
-            }
-            
-            // Check for expired/expiring medicines
-            if (isset($medicine['expiry_date'])) {
-                $exp = $medicine['expiry_date'];
-                if ($exp < $today) {
-                    $expired_count++;
-                } elseif ($exp >= $today && $exp <= $threshold) {
-                    $expiring_soon_count++;
-                }
             }
         }
 
@@ -81,7 +74,7 @@ class Pharmacy extends Controller
             'title' => 'Medicine Inventory',
             'user' => session()->get('username'),
             'role' => session()->get('role'),
-            'medicines' => $medicines,
+            'medicines' => array_values($validMedicines),
             'total' => $total,
             'low_stock' => $low_stock,
             'expired_count' => $expired_count,
@@ -323,10 +316,10 @@ class Pharmacy extends Controller
                         ->groupEnd();
             }
 
-            // Exclude only expired medicines (not those expiring soon)
-            $today = date('Y-m-d');
+            // Exclude anything at or within 3 months of expiry (3-month strict cutoff)
+            $cutoff = date('Y-m-d', strtotime('+3 months'));
             $builder->groupStart()
-                    ->where('expiry_date >', $today)
+                    ->where('expiry_date >', $cutoff)
                     ->orWhere('expiry_date IS NULL', null, false)
                     ->groupEnd();
             
@@ -429,12 +422,11 @@ class Pharmacy extends Controller
         if ($days <= 0) { $days = 30; }
 
         $today = date('Y-m-d');
-        $limit = date('Y-m-d', strtotime("+{$days} days"));
+        $limit = date('Y-m-d', strtotime('+3 months')); // treat within 3 months as stock-out; this list will be empty for available meds
 
         $rows = $this->db->table('medicines')
             ->select('id, name, brand, category, stock, price, expiry_date')
-            ->where('expiry_date >=', $today)
-            ->where('expiry_date <=', $limit)
+            ->where('expiry_date >', $limit) // none should qualify as "expiring soon"; they are stock-out
             ->orderBy('expiry_date', 'ASC')
             ->get()->getResultArray();
 
@@ -458,9 +450,10 @@ class Pharmacy extends Controller
     public function getExpiredMedicines()
     {
         $today = date('Y-m-d');
+        $cutoff = date('Y-m-d', strtotime('+3 months'));
         $rows = $this->db->table('medicines')
             ->select('id, name, brand, category, stock, price, expiry_date')
-            ->where('expiry_date <', $today)
+            ->where('expiry_date <=', $cutoff)
             ->orderBy('expiry_date', 'ASC')
             ->get()->getResultArray();
 
@@ -544,9 +537,9 @@ class Pharmacy extends Controller
                     'available' => $available
                 ];
             }
-            // Expiry rule: cannot dispense if expired or expiring within 30 days
+            // Expiry rule: cannot dispense if expired or within 3 months of expiry
             $today = date('Y-m-d');
-            $limit = date('Y-m-d', strtotime('+30 days'));
+            $limit = date('Y-m-d', strtotime('+3 months'));
             $exp = $info[$mid]['expiry_date'] ?? null;
             if ($exp && $exp <= $limit) {
                 $expiryViolations[] = [
@@ -566,7 +559,7 @@ class Pharmacy extends Controller
         if (!empty($expiryViolations)) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Cannot dispense medicines that are expired or expiring within 30 days',
+                'message' => 'Cannot dispense medicines that are expired or within 3 months of expiry',
                 'details' => $expiryViolations
             ])->setStatusCode(400);
         }

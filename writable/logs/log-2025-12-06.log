@@ -1,0 +1,28 @@
+CRITICAL - 2025-12-06 14:57:09 --> ErrorException: Undefined variable $today
+[Method: GET, Route: medicines]
+in APPPATH\Views\Roles\admin\inventory\Medicine.php on line 98.
+ 1 APPPATH\Views\Roles\admin\inventory\Medicine.php(98): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $today', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\admin\\inventory\\Medicine.php', 98)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\admin\\inventory\\Medicine.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/inventory/Medicine', [], true)
+ 5 APPPATH\Controllers\Medicine.php(55): view('Roles/admin/inventory/Medicine', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Medicine->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 14:57:15 --> ErrorException: Undefined variable $today
+[Method: GET, Route: medicines]
+in APPPATH\Views\Roles\admin\inventory\Medicine.php on line 98.
+ 1 APPPATH\Views\Roles\admin\inventory\Medicine.php(98): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $today', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\admin\\inventory\\Medicine.php', 98)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\admin\\inventory\\Medicine.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/inventory/Medicine', [], true)
+ 5 APPPATH\Controllers\Medicine.php(55): view('Roles/admin/inventory/Medicine', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Medicine->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
