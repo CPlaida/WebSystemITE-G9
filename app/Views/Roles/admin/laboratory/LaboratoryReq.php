@@ -46,7 +46,8 @@
                             <div class="form-group">
                                 <label class="form-label" for="testDate">Test Date</label>
                                 <input type="date" class="form-control" id="testDate" name="test_date" 
-                                       value="<?= old('test_date') ?: date('Y-m-d') ?>" required>
+                                       value="<?= old('test_date') ?: date('Y-m-d') ?>" 
+                                       min="<?= date('Y-m-d') ?>" required>
                             </div>
                         </div>
                     </div>
@@ -180,14 +181,35 @@
             else if (e.key === 'Escape') { suggestionsDiv.hide(); }
         });
 
+        // Validate test date to prevent past dates
+        $('#testDate').on('change', function() {
+            const selectedDate = $(this).val();
+            const today = new Date().toISOString().split('T')[0];
+            if (selectedDate && selectedDate < today) {
+                alert('Test date cannot be in the past. Please select today or a future date.');
+                $(this).val(today);
+            }
+        });
+
         // Allow native form submission so server-side redirect to test results works
         $('#labRequestForm').on('submit', function() {
             const patientName = $('#patientName').val();
             const testType = $('#testType').val();
+            const testDate = $('#testDate').val();
+            const today = new Date().toISOString().split('T')[0];
+            
             if (!patientName || !testType) {
                 alert('Please fill in all required fields');
                 return false;
             }
+            
+            // Validate that test date is not in the past
+            if (testDate && testDate < today) {
+                alert('Test date cannot be in the past. Please select today or a future date.');
+                $('#testDate').focus();
+                return false;
+            }
+            
             return true;
         });
     });

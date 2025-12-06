@@ -52,9 +52,6 @@
                     <i class="fas fa-search search-icon-inline"></i>
                     <input type="text" id="searchInput" class="search-input-inline"
                            placeholder="Search by name, patient ID, ward, or status...">
-                    <button type="button" class="search-clear-btn-inline" id="clearSearch" style="display:none;">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
             </div>
             <div class="card-body">
@@ -179,16 +176,16 @@
                     <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
                 </div>
                 <div id="medical-records" class="tab-content">
-                    <div id="ehrMedicalRecords" style="min-height:140px; padding:8px 0; color:#2c3e50; font-size:14px;">
+                    <div id="ehrMedicalRecords" style="padding:8px 0; color:#2c3e50; font-size:14px;">
                         <em>Select a patient to load admissions history.</em>
                     </div>
                 </div>
                 <div id="vitals" class="tab-content" style="display:none;">
-                    <div class="vitals-section" style="font-size:14px; color:#2c3e50;">
-                        <h6 style="font-weight:600; margin-bottom:8px;">
-                            <i class="fas fa-heartbeat me-1"></i> Vitals
+                    <div class="vitals-section">
+                        <h6>
+                            <i class="fas fa-heartbeat"></i> Vitals
                         </h6>
-                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px 16px;">
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px 20px;">
                             <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
                             <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
                             <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
@@ -209,7 +206,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearch');
 
         const bindViewButtons = (scope = document) => {
             scope.querySelectorAll('.view-patient-btn').forEach(btn => {
@@ -260,16 +256,6 @@
 
         if (searchInput) {
             searchInput.addEventListener('input', filterPatients);
-        }
-        if (clearSearchBtn && searchInput) {
-            clearSearchBtn.addEventListener('click', function () {
-                searchInput.value = '';
-                clearSearchBtn.style.display = 'none';
-                filterPatients();
-            });
-            searchInput.addEventListener('input', function () {
-                clearSearchBtn.style.display = searchInput.value ? 'inline-flex' : 'none';
-            });
         }
     });
 
@@ -659,9 +645,9 @@
             }).join('');
 
             container.innerHTML = `
-                <div class="table-responsive" style="overflow-x:auto; width:100%;">
+                <div class="table-responsive" style="overflow-x:auto; overflow-y:auto; width:100%; height:100%;">
                     <table class="table table-bordered table-striped" style="width:100%; border-collapse:collapse; font-size:13px; table-layout:auto;">
-                        <thead style="background:#0d6efd; color:#fff;">
+                        <thead style="background:#0d6efd; color:#fff; position:sticky; top:0; z-index:10;">
                             <tr>
                                 <th style="padding:12px; text-align:center; white-space:nowrap; width:50px;">#</th>
                                 <th style="padding:12px; text-align:left; white-space:nowrap; width:200px;">Admission Date</th>

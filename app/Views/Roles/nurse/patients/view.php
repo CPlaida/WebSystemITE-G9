@@ -181,16 +181,16 @@
             <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
           </div>
           <div id="medical-records" class="tab-content">
-            <div id="ehrMedicalRecords" style="min-height:140px; padding:8px 0; color:#2c3e50; font-size:14px;">
+            <div id="ehrMedicalRecords" style="padding:8px 0; color:#2c3e50; font-size:14px;">
               <em>Select a patient to load admissions history.</em>
             </div>
           </div>
           <div id="vitals" class="tab-content" style="display:none;">
-            <div class="vitals-section" style="font-size:14px; color:#2c3e50;">
-              <h6 style="font-weight:600; margin-bottom:8px;">
-                <i class="fas fa-heartbeat me-1"></i> Vitals
+            <div class="vitals-section">
+              <h6>
+                <i class="fas fa-heartbeat"></i> Vitals
               </h6>
-              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px 16px;">
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px 20px;">
                 <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
                 <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
                 <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
@@ -199,7 +199,9 @@
             </div>
           </div>
           <div id="lab" class="tab-content" style="display:none;">
-            <p>Lab records will appear here...</p>
+            <div id="ehrLabContainer" style="min-height:120px; padding:6px 0; color:#2c3e50; font-size:14px;">
+              <em>Select a patient to load lab records.</em>
+            </div>
           </div>
         </div>
       </div>
@@ -329,33 +331,33 @@
           const location = [rec.ward, rec.room, rec.bed].filter(Boolean).join(' / ') || '—';
 
           return `
-            <tr>
-              <td>${idx + 1}</td>
-              <td>${admissionDate}</td>
-              <td>${dischargeDate}</td>
-              <td>${rec.admission_type ? rec.admission_type.charAt(0).toUpperCase() + rec.admission_type.slice(1) : '—'}</td>
-              <td>${rec.physician || '—'}</td>
-              <td>${location}</td>
-              <td>${rec.diagnosis || '—'}</td>
-              <td>${rec.reason || '—'}</td>
-              <td><span class="badge ${badgeClass}" style="text-transform:capitalize;">${status}</span></td>
+            <tr style="border-bottom:1px solid #dee2e6;">
+              <td style="padding:12px; vertical-align:middle; text-align:center; width:50px;">${idx + 1}</td>
+              <td style="padding:12px; vertical-align:middle; white-space:nowrap; font-size:13px; width:200px;">${admissionDate}</td>
+              <td style="padding:12px; vertical-align:middle; white-space:nowrap; font-size:13px; width:200px;">${dischargeDate}</td>
+              <td style="padding:12px; vertical-align:middle; width:120px;">${rec.admission_type ? rec.admission_type.charAt(0).toUpperCase() + rec.admission_type.slice(1) : '—'}</td>
+              <td style="padding:12px; vertical-align:middle; width:180px;">${rec.physician || '—'}</td>
+              <td style="padding:12px; vertical-align:middle; width:180px;">${location}</td>
+              <td style="padding:12px; vertical-align:middle; width:150px; word-wrap:break-word;">${rec.diagnosis || '—'}</td>
+              <td style="padding:12px; vertical-align:middle; width:150px; word-wrap:break-word;">${rec.reason || '—'}</td>
+              <td style="padding:12px; vertical-align:middle; width:120px;"><span class="badge ${badgeClass}" style="text-transform:capitalize; padding:6px 12px;">${status}</span></td>
             </tr>`;
         }).join('');
 
         container.innerHTML = `
-          <div style="overflow:auto;">
-            <table style="width:100%; border-collapse:collapse;">
-              <thead>
-                <tr style="text-align:left; border-bottom:1px solid #e9ecef;">
-                  <th>#</th>
-                  <th>Admission</th>
-                  <th>Discharge</th>
-                  <th>Type</th>
-                  <th>Physician</th>
-                  <th>Ward / Room / Bed</th>
-                  <th>Diagnosis</th>
-                  <th>Reason</th>
-                  <th>Status</th>
+          <div class="table-responsive" style="overflow-x:auto; overflow-y:auto; width:100%; height:100%;">
+            <table class="table table-bordered table-striped" style="width:100%; border-collapse:collapse; font-size:13px; table-layout:auto;">
+              <thead style="background:#0d6efd; color:#fff; position:sticky; top:0; z-index:10;">
+                <tr>
+                  <th style="padding:12px; text-align:center; white-space:nowrap; width:50px;">#</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:200px;">Admission Date</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:200px;">Discharge Date</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:120px;">Type</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:180px;">Physician</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:180px;">Ward / Room / Bed</th>
+                  <th style="padding:12px; text-align:left; width:150px;">Diagnosis</th>
+                  <th style="padding:12px; text-align:left; width:150px;">Reason</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:120px;">Status</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>

@@ -47,7 +47,8 @@
                             <div class="form-group">
                                 <label class="form-label" for="testDate">Test Date</label>
                                 <input type="date" class="form-control" id="testDate" name="test_date" 
-                                       value="<?= old('test_date') ?: date('Y-m-d') ?>" required>
+                                       value="<?= old('test_date') ?: date('Y-m-d') ?>" 
+                                       min="<?= date('Y-m-d') ?>" required>
                             </div>
                         </div>
                     </div>
@@ -210,6 +211,16 @@
             }
         });
 
+        // Validate test date to prevent past dates
+        $('#testDate').on('change', function() {
+            const selectedDate = $(this).val();
+            const today = new Date().toISOString().split('T')[0];
+            if (selectedDate && selectedDate < today) {
+                alert('Test date cannot be in the past. Please select today or a future date.');
+                $(this).val(today);
+            }
+        });
+
         // Form submission
         $('#labRequestForm').on('submit', function(e) {
             e.preventDefault();
@@ -225,6 +236,14 @@
             // Basic validation
             if (!formData.patient_name || !formData.test_type) {
                 alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Validate that test date is not in the past
+            const today = new Date().toISOString().split('T')[0];
+            if (formData.test_date && formData.test_date < today) {
+                alert('Test date cannot be in the past. Please select today or a future date.');
+                $('#testDate').focus();
                 return;
             }
 

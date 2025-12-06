@@ -170,6 +170,7 @@
           <p><b>Date of Birth:</b> <span id="ehrDOB">-</span></p>
           <p><b>Gender:</b> <span id="ehrGender">-</span></p>
           <p><b>Blood Type:</b> <span id="ehrBloodType">-</span></p>
+          <p><b>Emergency Contact:</b> <span id="ehrEmergencyContact">-</span></p>
           <p><b>Medical History:</b> <span id="ehrAilment">-</span></p>
           <p><b>Date Recorded:</b> <span id="ehrDate">-</span></p>
         </div>
@@ -180,22 +181,20 @@
             <button class="tab-btn" onclick="openTab(event,'lab')">Lab Records</button>
           </div>
           <div id="medical-records" class="tab-content">
-            <div id="ehrMedicalRecords" style="min-height:140px; padding:8px 0; color:#2c3e50; font-size:14px;">
+            <div id="ehrMedicalRecords" style="padding:8px 0; color:#2c3e50; font-size:14px;">
               <em>Select a patient to load admissions history.</em>
             </div>
           </div>
           <div id="vitals" class="tab-content" style="display:none;">
-            <div class="vitals-section" style="font-size:14px; color:#2c3e50; display:flex; flex-direction:column; gap:10px;">
-              <div>
-                <h6 style="font-weight:600; margin-bottom:8px;">
-                  <i class="fas fa-heartbeat" style="margin-right:4px;"></i> Latest Vitals
-                </h6>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px 16px;">
-                  <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
-                  <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
-                  <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
-                  <div><strong>Last Updated:</strong> <span id="ehrVitalsUpdated">-</span></div>
-                </div>
+            <div class="vitals-section">
+              <h6>
+                <i class="fas fa-heartbeat"></i> Vitals
+              </h6>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px 20px;">
+                <div><strong>Blood Pressure:</strong> <span id="ehrVitalsBp">-</span></div>
+                <div><strong>Heart Rate (bpm):</strong> <span id="ehrVitalsHr">-</span></div>
+                <div><strong>Temperature (°C):</strong> <span id="ehrVitalsTemp">-</span></div>
+                <div><strong>Last Updated:</strong> <span id="ehrVitalsUpdated">-</span></div>
               </div>
             </div>
           </div>
@@ -223,6 +222,7 @@
       document.getElementById("ehrPatientId").innerText = patientId;
       document.getElementById("ehrEmail").innerText = email;
       document.getElementById("ehrBloodType").innerText = bloodType;
+      document.getElementById("ehrEmergencyContact").innerText = emergencyContact || 'N/A';
 
       document.getElementById("ehrModal").style.display = "flex";
 
@@ -391,7 +391,30 @@
           else if (status === 'cancelled') badgeClass = 'badge-danger';
 
           const admissionDate = formatDate(rec.admission_date, rec.admission_time);
-          const dischargeDate = rec.discharge_date ? new Date(rec.discharge_date).toLocaleString() : (status === 'admitted' ? 'Currently admitted' : '—');
+          let dischargeDate = '—';
+          if (rec.discharge_date) {
+            // Handle if discharge_date is just a number
+            if (/^\d{1,2}$/.test(String(rec.discharge_date).trim())) {
+              dischargeDate = rec.discharge_date;
+            } else {
+              const discharge = new Date(rec.discharge_date);
+              if (!Number.isNaN(discharge.getTime())) {
+                const options = { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true
+                };
+                dischargeDate = discharge.toLocaleString('en-US', options);
+              } else {
+                dischargeDate = rec.discharge_date;
+              }
+            }
+          } else if (status === 'admitted') {
+            dischargeDate = 'Currently admitted';
+          }
           const location = [rec.ward, rec.room, rec.bed].filter(Boolean).join(' / ') || '—';
 
           return `
@@ -409,19 +432,19 @@
         }).join('');
 
         container.innerHTML = `
-          <div style="overflow:auto;">
-            <table style="width:100%; border-collapse:collapse;">
-              <thead>
-                <tr style="text-align:left; border-bottom:1px solid #e9ecef;">
-                  <th>#</th>
-                  <th>Admission</th>
-                  <th>Discharge</th>
-                  <th>Type</th>
-                  <th>Physician</th>
-                  <th>Ward / Room / Bed</th>
-                  <th>Diagnosis</th>
-                  <th>Reason</th>
-                  <th>Status</th>
+          <div class="table-responsive" style="overflow-x:auto; overflow-y:auto; width:100%; height:100%;">
+            <table class="table table-bordered table-striped" style="width:100%; border-collapse:collapse; font-size:13px; table-layout:auto;">
+              <thead style="background:#0d6efd; color:#fff; position:sticky; top:0; z-index:10;">
+                <tr>
+                  <th style="padding:12px; text-align:center; white-space:nowrap; width:50px;">#</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:200px;">Admission Date</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:200px;">Discharge Date</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:120px;">Type</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:180px;">Physician</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:180px;">Ward / Room / Bed</th>
+                  <th style="padding:12px; text-align:left; width:150px;">Diagnosis</th>
+                  <th style="padding:12px; text-align:left; width:150px;">Reason</th>
+                  <th style="padding:12px; text-align:left; white-space:nowrap; width:120px;">Status</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>

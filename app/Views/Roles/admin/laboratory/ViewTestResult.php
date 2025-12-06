@@ -10,8 +10,7 @@
             </div>
             <div class="card-body">
         <div class="lab-receipt card card--detail" style="box-shadow: none; border: none; margin: 0;">
-            <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;gap:10px; background: transparent; border: none; padding: 0 0 1rem 0;">
-                <h2 class="card-title" style="margin:0;">Test Result Details</h2>
+            <div class="card-header" style="display:flex;align-items:center;justify-content:flex-end;gap:10px; background: transparent; border: none; padding: 0 0 1rem 0;">
                 <div style="display:flex;align-items:center;gap:10px;" class="no-print">
                     <span class="status-pill <?= esc(strtolower($testResult['status'])) ?>">
                         <?= ucfirst($testResult['status']) ?>

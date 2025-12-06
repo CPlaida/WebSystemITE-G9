@@ -296,6 +296,19 @@ class Laboratory extends Controller
         $testType = $this->request->getPost('test_type');
         $priority = $this->request->getPost('priority');
         $clinicalNotes = $this->request->getPost('clinical_notes');
+        $testDate = $this->request->getPost('test_date');
+
+        // Validate test date - cannot be in the past
+        $today = date('Y-m-d');
+        if ($testDate && $testDate < $today) {
+            if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
+                return $this->response->setJSON(['success' => false, 'message' => 'Test date cannot be in the past. Please select today or a future date.']);
+            }
+            return redirect()->back()->withInput()->with('error', 'Test date cannot be in the past. Please select today or a future date.');
+        }
+        
+        // Use submitted date if valid, otherwise use today
+        $validTestDate = ($testDate && $testDate >= $today) ? $testDate : $today;
 
         // patient_name is expected to be the actual name from the form
 
@@ -304,7 +317,7 @@ class Laboratory extends Controller
             'test_name' => $patientName,
             'test_type' => $testType,
             'priority' => $priority,
-            'test_date' => date('Y-m-d'),
+            'test_date' => $validTestDate,
             'test_time' => date('H:i:s'),
             'status' => 'pending',
             'notes' => $clinicalNotes
