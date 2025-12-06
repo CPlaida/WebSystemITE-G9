@@ -26,3 +26,369 @@ in APPPATH\Views\Roles\admin\inventory\Medicine.php on line 98.
  9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
 10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 16:33:05 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/admin/inventory/OutOfStock.php"
+[Method: GET, Route: medicines/out-of-stock]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/admin/inventory/OutOfStock.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/inventory/OutOfStock', [], true)
+ 3 APPPATH\Controllers\Medicine.php(282): view('Roles/admin/inventory/OutOfStock', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Medicine->outOfStock()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 16:33:25 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/admin/inventory/OutOfStock.php"
+[Method: GET, Route: medicines/out-of-stock]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/admin/inventory/OutOfStock.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/inventory/OutOfStock', [], true)
+ 3 APPPATH\Controllers\Medicine.php(282): view('Roles/admin/inventory/OutOfStock', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Medicine->outOfStock()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-06 17:06:20 --> mysqli_sql_exception: Unknown column 'prescription_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `ph...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ph...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `ph...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `ph...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(654): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-06 17:07:25 --> mysqli_sql_exception: Unknown column 'prescription_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `ph...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ph...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `ph...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `ph...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(650): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-06 17:10:45 --> mysqli_sql_exception: Unknown column 'pt.prescription_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pt`.`id...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(710): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getAllTransactions()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+CRITICAL - 2025-12-06 17:10:46 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'pt.prescription_id' in 'field list'
+[Method: GET, Route: api/pharmacy/transactions]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC', [], false)
+ 2 APPPATH\Controllers\Pharmacy.php(710): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->getAllTransactions()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 17:10:46 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'pt.prescription_id' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC', [], false)
+ 4 APPPATH\Controllers\Pharmacy.php(710): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->getAllTransactions()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 17:10:46 --> [Caused by] mysqli_sql_exception: Unknown column 'pt.prescription_id' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`total_amount`, `pt`.`total_items` as `items_count`, `pt`.`date` as `transaction_date`, `pt`.`created_at`, `pt`.`prescription_id`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `pharmacy_transactions` `pt`
+LEFT JOIN `prescriptions` `pr` ON `pt`.`prescription_id` = `pr`.`id`
+ORDER BY `pt`.`created_at` DESC', [], false)
+ 5 APPPATH\Controllers\Pharmacy.php(710): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->getAllTransactions()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 17:44:31 --> ParseError: syntax error, unexpected token "->"
+[Method: GET, Route: admin/pharmacy/transactions]
+in APPPATH\Controllers\Pharmacy.php on line 783.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Controllers\\Pharmacy.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Pharmacy')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Pharmacy')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Pharmacy', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 17:44:33 --> ParseError: syntax error, unexpected token "->"
+[Method: GET, Route: api/pharmacy/medications]
+in APPPATH\Controllers\Pharmacy.php on line 783.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Controllers\\Pharmacy.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Pharmacy')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Pharmacy')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Pharmacy', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 17:45:47 --> ErrorException: Undefined variable $hasPrescriptionId
+[Method: GET, Route: api/pharmacy/transactions]
+in APPPATH\Controllers\Pharmacy.php on line 713.
+ 1 APPPATH\Controllers\Pharmacy.php(713): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $hasPrescriptionId', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Controllers\\Pharmacy.php', 713)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->getAllTransactions()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-06 17:46:02 --> mysqli_sql_exception: Unknown column 'transaction_number' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('UPDATE `prescri...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('UPDATE `prescri...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('UPDATE `prescri...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2521): CodeIgniter\Database\BaseConnection->query('UPDATE `prescri...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(670): CodeIgniter\Database\BaseBuilder->update(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-06 17:51:49 --> mysqli_sql_exception: Unknown column 'total_items' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(622): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-06 17:51:49 --> mysqli_sql_exception: Duplicate entry 'TRX-001' for key 'transaction_number' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `ph...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ph...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `ph...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `ph...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(688): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-06 17:55:28 --> mysqli_sql_exception: Unknown column 'pt.transaction_number' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pt`.`id...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('3')
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+CRITICAL - 2025-12-06 17:55:28 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'pt.transaction_number' in 'field list'
+[Method: GET, Route: admin/pharmacy/transaction/3]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = :pt.id:', [...], false)
+ 2 APPPATH\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('3')
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 17:55:28 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'pt.transaction_number' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'3\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = :pt.id:', [...], false)
+ 4 APPPATH\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('3')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 17:55:28 --> [Caused by] mysqli_sql_exception: Unknown column 'pt.transaction_number' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'3\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'3\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'3\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = :pt.id:', [...], false)
+ 5 APPPATH\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('3')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-06 18:08:25 --> mysqli_sql_exception: Unknown column 'pt.transaction_number' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pt`.`id...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('1')
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+CRITICAL - 2025-12-06 18:08:25 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'pt.transaction_number' in 'field list'
+[Method: GET, Route: admin/pharmacy/transaction/1]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = :pt.id:', [...], false)
+ 2 APPPATH\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('1')
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 18:08:25 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'pt.transaction_number' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'1\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'1\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = :pt.id:', [...], false)
+ 4 APPPATH\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('1')
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-06 18:08:25 --> [Caused by] mysqli_sql_exception: Unknown column 'pt.transaction_number' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'1\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'1\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = \'1\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pt`.`id`, `pt`.`transaction_number`, `pt`.`date`, `pt`.`patient_id`, `pt`.`total_amount`, `p`.`first_name`, `p`.`last_name`, `pr`.`id` as `prescription_id`, `pr`.`subtotal`, `pr`.`tax`, `pr`.`total_amount` as `prescription_total`
+FROM `prescriptions` `pt`
+LEFT JOIN `patients` `p` ON `p`.`id` = `pt`.`patient_id`
+LEFT JOIN `prescriptions` `pr` ON `pr`.`date` = `pt`.`date`
+WHERE `pt`.`id` = :pt.id:', [...], false)
+ 5 APPPATH\Controllers\Pharmacy.php(143): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->viewTransaction('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

@@ -594,26 +594,55 @@ class Pharmacy extends Controller
             $this->db->table('prescriptions')->insert($prescriptionData);
             $prescriptionId = $this->db->insertID();
 
-            // Insert items (stock was already decreased when items were added to cart)
+            // Insert items and decrease stock during checkout
             $totalItems = 0;
             foreach ($data['items'] as $item) {
-                $lineTotal = $item['price'] * $item['quantity'];
+                $medicineId = (string)$item['medicine_id'];
+                $quantity = (int)$item['quantity'];
+                
+                // Validate stock availability before decreasing
+                $medicine = $this->db->table('medicines')
+                    ->select('id, stock, name')
+                    ->where('id', $medicineId)
+                    ->get()
+                    ->getRowArray();
+                
+                if (!$medicine) {
+                    throw new \Exception('Medicine not found: ' . $medicineId);
+                }
+                
+                $currentStock = (int)($medicine['stock'] ?? 0);
+                if ($quantity > $currentStock) {
+                    throw new \Exception('Insufficient stock for ' . ($medicine['name'] ?? $medicineId) . '. Available: ' . $currentStock . ', Requested: ' . $quantity);
+                }
+                
+                // Decrease stock only during checkout
+                $this->db->table('medicines')
+                    ->set('stock', 'stock - ' . $quantity, false)
+                    ->where('id', $medicineId)
+                    ->where('stock >=', $quantity)
+                    ->update();
+                
+                if ($this->db->affectedRows() === 0) {
+                    throw new \Exception('Failed to update stock for ' . ($medicine['name'] ?? $medicineId) . '. Stock may have changed.');
+                }
+                
+                $lineTotal = $item['price'] * $quantity;
                 $this->db->table('prescription_items')->insert([
                     'prescription_id' => $prescriptionId,
-                    'medication_id' => (string)$item['medicine_id'],
-                    'quantity' => (int)$item['quantity'],
+                    'medication_id' => $medicineId,
+                    'quantity' => $quantity,
                     'price' => $item['price'],
                     'total' => $lineTotal,
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
-                $totalItems += (int)$item['quantity'];
-                // Note: Stock was already decreased when items were added to cart via reserveStock API
-                // No need to decrease again here
+                $totalItems += $quantity;
             }
 
             // Transaction number and record
             $transactionNumber = $this->generateTransactionNumber();
             $transactionData = [
+                'prescription_id' => $prescriptionId,
                 'transaction_number' => $transactionNumber,
                 'date' => $data['date'],
                 'total_items' => $totalItems,

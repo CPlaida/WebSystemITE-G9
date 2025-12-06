@@ -170,6 +170,8 @@ $routes->get('doctor/laboratory/testresult/view/(:any)', 'Laboratory::viewTestRe
 // Medicine Routes
 $routes->get('/medicines', 'Medicine::index');
 $routes->get('/medicines/stock-out', 'Medicine::stockOut');
+$routes->get('/medicines/out-of-stock', 'Medicine::outOfStock');
+$routes->post('/medicines/restock', 'Medicine::restock');
 $routes->post('/medicines/store', 'Medicine::store');
 $routes->get('/medicines/edit/(:segment)', 'Medicine::edit/$1');
 $routes->post('/medicines/update/(:segment)', 'Medicine::update/$1');

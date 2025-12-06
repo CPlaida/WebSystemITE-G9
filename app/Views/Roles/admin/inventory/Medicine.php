@@ -18,13 +18,16 @@ $currentSubmenu = 'inventory';
             <a href="<?= base_url('medicines/stock-out') ?>" class="btn" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;">
                 <i class="fas fa-box-open"></i> Stock Out
             </a>
+            <a href="<?= base_url('medicines/out-of-stock') ?>" class="btn" style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;">
+                <i class="fas fa-exclamation-triangle"></i> Out of Stock
+            </a>
             <button class="btn btn-primary" onclick="toggleForm()">
                 <i class="fas fa-plus"></i> Add New Medicine
             </button>
         </div>
     </div>
 
-    <div class="content">
+        <div class="content">
         <?php $errorFlash = session()->getFlashdata('error'); ?>
         <?php $errorMsg = session()->getFlashdata('error') ?? ''; ?>
         <!-- Error modal is shown later after DOMContentLoaded using ERROR_MSG -->
@@ -33,33 +36,35 @@ $currentSubmenu = 'inventory';
         $expiring_soon_count = 0; // no expiring state; 3-month rule moves them to Stock Out
         ?>
         <div class="card-container">
-            <div class="card">
-                <h3>Total Items</h3>
-                <div class="value" id="totalItems"><?php if (isset($total)) { echo (int)$total; } ?></div>
+                <div class="card">
+                    <h3>Total Items</h3>
+                    <div class="value" id="totalItems"><?php if (isset($total)) { echo (int)$total; } ?></div>
+                </div>
+                <div class="card">
+                    <h3>Low Stock</h3>
+                    <div class="value" id="lowStock"><?php if (isset($low_stock)) { echo (int)$low_stock; } ?></div>
+                </div>
+                <div class="card">
+                    <h3>Out of Stock</h3>
+                    <div class="value" id="outOfStock"><?php if (isset($out_stock)) { echo (int)$out_stock; } ?></div>
+                </div>
+                <div class="card">
+                    <h3>Expiring Soon</h3>
+                    <div class="value" id="expiringSoon"><?= (int)($expiring_soon_count ?? 0) ?></div>
+                </div>
             </div>
-            <div class="card">
-                <h3>Low Stock</h3>
-                <div class="value" id="lowStock"><?php if (isset($low_stock)) { echo (int)$low_stock; } ?></div>
-            </div>
-            <div class="card">
-                <h3>Out of Stock</h3>
-                <div class="value" id="outOfStock"><?php if (isset($out_stock)) { echo (int)$out_stock; } ?></div>
-            </div>
-            <div class="card">
-                <h3>Expiring Soon</h3>
-                <div class="value" id="expiringSoon"><?= (int)($expiring_soon_count ?? 0) ?></div>
+
+            <!-- Search Medicine -->
+            <div class="medicine-search-wrapper">
+                <div class="medicine-search-row">
+                    <i class="fas fa-search medicine-search-icon"></i>
+                    <input type="text" id="medicineSearch" class="medicine-search-field" placeholder="Search medicine by ID, barcode, name, brand, category...">
+                    <button type="button" id="clearSearch" class="medicine-search-clear">Clear</button>
+                </div>
             </div>
         </div>
 
-        <!-- Search Medicine -->
-        <div class="medicine-search-wrapper">
-            <div class="medicine-search-row">
-                <i class="fas fa-search medicine-search-icon"></i>
-                <input type="text" id="medicineSearch" class="medicine-search-field" placeholder="Search medicine by ID, barcode, name, brand, category...">
-                <button type="button" id="clearSearch" class="medicine-search-clear">Clear</button>
-            </div>
-        </div>
-
+        <!-- Main Inventory Table -->
         <div class="table-responsive">
             <table class="data-table medicine-inventory-table">
                 <thead>
@@ -572,8 +577,6 @@ $currentSubmenu = 'inventory';
         renderDatalist('brandList', brands);
     }
 
-    // (Out of Stock handling removed)
-    
     // Search functionality
     function filterMedicineTable() {
         const searchInput = document.getElementById('medicineSearch');
@@ -633,6 +636,7 @@ $currentSubmenu = 'inventory';
     // Initialize autocomplete options after table is populated
     document.addEventListener('DOMContentLoaded', function() {
         refreshAutocompleteLists();
+        
         
         // Initialize search
         const searchInput = document.getElementById('medicineSearch');

@@ -11,23 +11,27 @@ class Medicine extends Controller
         $cutoff = date('Y-m-d', strtotime('+3 months')); // strict 3-month rule
         
         // Show medicines whose expiry is beyond the 3-month cutoff (or no expiry)
+        // AND stock is greater than 0 (exclude out of stock items)
         $data['medicines'] = $model->groupStart()
                                    ->where('expiry_date >', $cutoff)
                                    ->orWhere('expiry_date IS NULL', null, false)
                                    ->groupEnd()
+                                   ->where('stock >', 0)
                                    ->orderBy('id', 'DESC')
                                    ->findAll();
 
-        // counts using fresh builders to avoid state leakage (excluding anything at or within 3 months)
+        // counts using fresh builders to avoid state leakage (excluding anything at or within 3 months AND out of stock)
         $totalModel = new MedicineModel();
         $data['total'] = $totalModel->groupStart()
                                     ->where('expiry_date >', $cutoff)
                                     ->orWhere('expiry_date IS NULL', null, false)
                                     ->groupEnd()
+                                    ->where('stock >', 0)
                                     ->countAllResults();
         
         $lowStockModel = new MedicineModel();
-        $data['low_stock'] = $lowStockModel->where('stock <=', 5)
+        $data['low_stock'] = $lowStockModel->where('stock >', 0)
+                                           ->where('stock <=', 5)
                                            ->groupStart()
                                            ->where('expiry_date >', $cutoff)
                                            ->orWhere('expiry_date IS NULL', null, false)
@@ -178,7 +182,7 @@ class Medicine extends Controller
             'unit_price' => $this->request->getPost('unit_price') ? floatval($this->request->getPost('unit_price')) : null,
             'retail_price' => $this->request->getPost('retail_price') ? floatval($this->request->getPost('retail_price')) : null,
             'manufactured_date' => $this->request->getPost('manufactured_date') ? $this->request->getPost('manufactured_date') : null,
-            'expiry_date' => $expiry,
+            'expiry_date' => $this->request->getPost('expiry_date') ? $this->request->getPost('expiry_date') : null,
             'description' => $this->request->getPost('description') ? trim($this->request->getPost('description')) : null,
         ];
 
@@ -244,6 +248,72 @@ class Medicine extends Controller
         }
         
         echo view('Roles/admin/inventory/StockOut', $data);
+    }
+
+    /**
+     * Out of Stock - Display medicines with stock = 0
+     */
+    public function outOfStock()
+    {
+        $model = new MedicineModel();
+        $cutoff = date('Y-m-d', strtotime('+3 months'));
+
+        // Get medicines with stock = 0 that are not expired (expiry > 3 months)
+        $data['out_of_stock_medicines'] = $model->where('stock', 0)
+                                                ->groupStart()
+                                                ->where('expiry_date >', $cutoff)
+                                                ->orWhere('expiry_date IS NULL', null, false)
+                                                ->groupEnd()
+                                                ->orderBy('name', 'ASC')
+                                                ->findAll();
+
+        // Summary statistics
+        $data['total_out_of_stock'] = count($data['out_of_stock_medicines']);
+        $data['total_out_of_stock_units'] = 0;
+        $data['total_out_of_stock_value'] = 0;
+
+        foreach ($data['out_of_stock_medicines'] as $med) {
+            $stock = (int)($med['stock'] ?? 0);
+            $price = (float)($med['unit_price'] ?? $med['retail_price'] ?? $med['price'] ?? 0);
+            $data['total_out_of_stock_units'] += $stock;
+            $data['total_out_of_stock_value'] += $stock * $price;
+        }
+        
+        echo view('Roles/admin/inventory/OutOfStock', $data);
+    }
+
+    /**
+     * Restock - Update medicine stock and move back to main inventory
+     */
+    public function restock()
+    {
+        $model = new MedicineModel();
+        $id = $this->request->getPost('id');
+        $newStock = intval($this->request->getPost('stock'));
+
+        if (!$id || $newStock < 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid request'
+            ])->setStatusCode(400);
+        }
+
+        $medicine = $model->find($id);
+        if (!$medicine) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Medicine not found'
+            ])->setStatusCode(404);
+        }
+
+        // Update stock
+        $model->update($id, ['stock' => $newStock]);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Medicine restocked successfully',
+            'medicine' => $model->find($id)
+        ]);
     }
 
 }

@@ -155,6 +155,12 @@ $(document).ready(function() {
                 imageUrl = baseUrl + '/uploads/medicines/' + med.image;
             }
             
+            // Show low stock warning (1-5 units) but don't block
+            let stockDisplay = 'Stock: ' + stock;
+            if (stock > 0 && stock <= 5) {
+                stockDisplay = 'Stock: ' + stock + '<br><span class="low-stock-warning">(Low Stock)</span>';
+            }
+            
             const $card = $(`
                 <div class="medicine-card" data-medicine-id="${med.id}">
                     <div class="medicine-card-image">
@@ -163,7 +169,7 @@ $(document).ready(function() {
                     <div class="medicine-card-info">
                         <div class="medicine-name">${med.name}</div>
                         <div class="medicine-price">₱${Number(med.retail_price || med.price || 0).toFixed(2)}</div>
-                        <div class="medicine-stock">Stock: ${stock}</div>
+                        <div class="medicine-stock">${stockDisplay}</div>
                     </div>
                 </div>
             `);
@@ -182,9 +188,18 @@ $(document).ready(function() {
         if (!medicine) return;
 
         const stock = Number(medicine.stock || 0);
+        // Only block if stock is 0 (out of stock)
+        // Low stock (1-5) is allowed but will show a warning
         if (stock <= 0) {
             alert('This medicine is out of stock.');
             return;
+        }
+        
+        // Show low stock warning (non-blocking) if stock is 5 or less
+        if (stock <= 5) {
+            console.log('Low stock warning: ' + medicine.name + ' has only ' + stock + ' units remaining.');
+            // Optional: Show a non-blocking notification
+            // You can add a toast notification here if desired
         }
         
         // Check if already in cart
@@ -235,13 +250,25 @@ $(document).ready(function() {
         if ($card.length) {
             // Card exists, update stock display
             const $stockEl = $card.find('.medicine-stock');
-            $stockEl.text('Stock: ' + newStock);
             
-            // Hide card if stock is 0
+            // Show low stock warning (1-5 units) but don't block
+            if (newStock > 0 && newStock <= 5) {
+                $stockEl.html('Stock: ' + newStock + '<br><span class="low-stock-warning">(Low Stock)</span>');
+            } else if (newStock > 5) {
+                $stockEl.text('Stock: ' + newStock);
+            } else {
+                $stockEl.text('Stock: ' + newStock);
+            }
+            
+            // After checkout, if stock = 0, remove card (medicine moved to Out of Stock)
+            // This function is only called after checkout when reloading medicines
             if (newStock <= 0) {
                 $card.fadeOut(300, function() {
                     $(this).remove();
                 });
+            } else {
+                // Ensure card is enabled if stock is available
+                $card.removeClass('out-of-stock');
             }
         } else if (newStock > 0 && med) {
             // Card doesn't exist but stock is > 0, recreate it
@@ -285,6 +312,12 @@ $(document).ready(function() {
             imageUrl = baseUrl + '/uploads/medicines/' + med.image;
         }
         
+        // Show low stock warning (1-5 units) but don't block
+        let stockDisplay = 'Stock: ' + stock;
+        if (stock > 0 && stock <= 5) {
+            stockDisplay = 'Stock: ' + stock + '<br><span class="low-stock-warning">(Low Stock)</span>';
+        }
+        
         const $card = $(`
             <div class="medicine-card" data-medicine-id="${med.id}">
                 <div class="medicine-card-image">
@@ -293,7 +326,7 @@ $(document).ready(function() {
                     <div class="medicine-card-info">
                         <div class="medicine-name">${med.name}</div>
                         <div class="medicine-price">₱${Number(med.retail_price || med.price || 0).toFixed(2)}</div>
-                        <div class="medicine-stock">Stock: ${stock}</div>
+                        <div class="medicine-stock">${stockDisplay}</div>
                     </div>
             </div>
         `);
@@ -395,41 +428,25 @@ $(document).ready(function() {
         const medicine = allMedicines.find(m => m.id === medicineId);
         const availableStock = Number(medicine?.stock || 0);
         const currentQuantity = item.quantity || 0;
-        const quantityDifference = newQuantity - currentQuantity;
         
         // If field is empty or 0, set quantity to 0 but don't remove item
         if (newQuantity <= 0) {
-            if (currentQuantity > 0) {
-                // Restore all stock if there was a previous quantity
-                restoreStockFromCart(medicineId, currentQuantity, index, false);
-            }
             item.quantity = 0;
             updateCart();
             return;
         }
         
-        // Validate stock availability
-        if (quantityDifference > 0 && quantityDifference > availableStock) {
-            alert('Not enough stock.');
+        // Validate stock availability (check against current available stock)
+        // Don't reserve stock - just validate that requested quantity doesn't exceed available
+        if (newQuantity > availableStock) {
+            alert('Not enough stock. Available: ' + availableStock);
             $(this).val(currentQuantity > 0 ? currentQuantity : '');
             return;
         }
         
-        // Update quantity
-        const oldQuantity = item.quantity || 0;
+        // Update quantity (stock will be decreased only on checkout)
         item.quantity = newQuantity;
-        
-        // Update stock
-        if (quantityDifference > 0) {
-            // Increasing quantity - reserve more stock
-            reserveStockForCart(medicineId, quantityDifference, index, oldQuantity);
-        } else if (quantityDifference < 0) {
-            // Decreasing quantity - restore stock
-            restoreStockFromCart(medicineId, Math.abs(quantityDifference), index, false);
-        } else {
-            // No change, just update display
-            updateCart();
-        }
+        updateCart();
     });
     
     // Remove item from cart
@@ -438,101 +455,10 @@ $(document).ready(function() {
         const item = cart[index];
         if (!item) return;
         
-        // If item has quantity > 0, restore stock first
-        if (item.quantity > 0) {
-            restoreStockFromCart(item.medicationId, item.quantity, index, true);
-        } else {
-            // If quantity is 0, just remove from cart directly
-            cart.splice(index, 1);
-            updateCart();
-        }
+        // Just remove from cart - no stock restoration needed since stock wasn't reserved
+        cart.splice(index, 1);
+        updateCart();
     });
-    
-    // Reserve stock when increasing quantity
-    function reserveStockForCart(medicineId, quantity, cartIndex, oldQuantity) {
-        fetch(API_BASE + '/stock/reserve', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                medicine_id: medicineId,
-                quantity: quantity
-            })
-        })
-        .then(res => res.json())
-        .then(resp => {
-            if (!resp.success) {
-                // Revert quantity change
-                const item = cart[cartIndex];
-                if (item) {
-                    item.quantity = oldQuantity;
-                }
-                alert(resp.message || 'Not enough stock.');
-                updateCart();
-                return;
-            }
-            
-            // Update local stock in medicine data
-            const medicine = allMedicines.find(m => m.id === medicineId);
-            if (medicine) {
-                medicine.stock = resp.remaining_stock;
-            }
-            
-            // Update stock display in the grid
-            updateStockDisplay(medicineId, resp.remaining_stock);
-            
-            updateCart();
-        })
-        .catch(err => {
-            // Revert quantity change
-            const item = cart[cartIndex];
-            if (item) {
-                item.quantity = oldQuantity;
-            }
-            alert('Error reserving stock: ' + err.message);
-            updateCart();
-        });
-    }
-    
-    // Restore stock when removing from cart
-    function restoreStockFromCart(medicineId, quantity, cartIndex, removeFromCart = false) {
-        fetch(API_BASE + '/stock/restore', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                medicine_id: medicineId,
-                quantity: quantity
-            })
-        })
-        .then(res => res.json())
-        .then(resp => {
-            if (!resp.success) {
-                alert(resp.message || 'Failed to restore stock');
-                return;
-            }
-            
-            // Update local stock in medicine data
-            const medicine = allMedicines.find(m => m.id === medicineId);
-            if (medicine) {
-                medicine.stock = resp.remaining_stock;
-            }
-            
-            // Update stock display in the grid (will recreate card if stock > 0)
-            updateStockDisplay(medicineId, resp.remaining_stock);
-            
-            // Remove from cart if needed
-            if (removeFromCart) {
-                // Remove item at the specified index
-                if (cartIndex >= 0 && cartIndex < cart.length) {
-                    cart.splice(cartIndex, 1);
-                }
-            }
-            
-            updateCart();
-        })
-        .catch(err => {
-            alert('Error restoring stock: ' + err.message);
-        });
-    }
     
     // Search medicines
     $('#medicineSearch').on('input', debounce(function() {
@@ -597,6 +523,10 @@ $(document).ready(function() {
             date: '<?= date('Y-m-d') ?>'
         };
 
+        // Disable checkout button to prevent double submission
+        const $checkoutBtn = $('#checkoutBtn');
+        $checkoutBtn.prop('disabled', true).text('Processing...');
+        
         fetch(API_BASE + '/transaction/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -619,11 +549,18 @@ $(document).ready(function() {
             updateCart();
             $('#amount_received').val('');
             
-            // Reload medicines to update stock and remove out-of-stock items
+            // Reload medicines to update stock after checkout
+            // Medicines with stock = 0 will be removed from shelf and appear in Out of Stock
             loadMedicines();
         })
         .catch(err => {
             alert('Error: ' + err.message);
+            // Re-enable checkout button on error
+            $checkoutBtn.prop('disabled', false).html('<i class="fas fa-check-circle checkout-btn-icon"></i> Process Checkout');
+        })
+        .finally(() => {
+            // Re-enable checkout button
+            $checkoutBtn.prop('disabled', false).html('<i class="fas fa-check-circle checkout-btn-icon"></i> Process Checkout');
         });
     });
 
