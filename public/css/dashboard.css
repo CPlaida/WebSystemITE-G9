@@ -6736,6 +6736,13 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     }
 }
 
+/* Staff Modal - Add scrollbar */
+#staffModal .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 /* Ward Table - Center Status and Action columns */
 /* Status column: 5th in 6-column tables, 6th in 7-column tables */
 .data-table.ward-table th:nth-child(5),

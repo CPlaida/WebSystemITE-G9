@@ -767,7 +767,7 @@ function getDepartmentColorClass($department) {
 
       <!-- Doctor Selection -->
       <div class="mb-5 relative">
-        <label for="doctorInput" class="block text-sm font-semibold text-gray-700 mb-2">
+        <label for="doctorSelect" class="block text-sm font-semibold text-gray-700 mb-2">
           <span class="flex items-center gap-1">
             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -776,19 +776,31 @@ function getDepartmentColorClass($department) {
           </span>
         </label>
         <div class="relative">
-          <input 
-            type="text" 
-            id="doctorInput" 
-            name="doctor_name" 
-            autocomplete="off"
+          <select 
+            id="doctorSelect" 
+            name="doctor_id" 
             class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-gray-700 font-medium" 
-            placeholder="Type to search for a doctor..."
             required
           >
-          <input type="hidden" id="doctorId" name="doctor_id" value="">
-          <div id="doctorDropdown" class="absolute z-50 w-full mt-1 bg-white border-2 border-gray-300 rounded-lg shadow-xl max-h-60 overflow-y-auto hidden" style="box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
-            <!-- Suggestions will be populated here -->
-          </div>
+            <option value="">Select a doctor...</option>
+            <?php if (isset($doctors) && !empty($doctors)): ?>
+              <?php foreach ($doctors as $doctor): ?>
+                <option 
+                  value="<?= esc($doctor['doctor_id']) ?>" 
+                  data-name="<?= esc(ucfirst(str_replace('dr.', 'Dr. ', $doctor['username']))) ?>"
+                  data-specialization="<?= esc($doctor['specialization'] ?? '') ?>"
+                  data-department="<?= esc($doctor['department'] ?? '') ?>"
+                  data-department-slug="<?= esc($doctor['department_slug'] ?? '') ?>"
+                >
+                  <?= esc(ucfirst(str_replace('dr.', 'Dr. ', $doctor['username']))) ?>
+                  <?php if (!empty($doctor['specialization'])): ?>
+                    - <?= esc($doctor['specialization']) ?>
+                  <?php endif; ?>
+                </option>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </select>
+          <input type="hidden" id="doctorName" name="doctor_name" value="">
         </div>
       </div>
 
@@ -899,6 +911,13 @@ function getDepartmentColorClass($department) {
     const closeAddShiftModal = document.getElementById('closeAddShiftModal');
     const cancelAddShift = document.getElementById('cancelAddShift');
     const addShiftForm = document.getElementById('addShiftForm');
+    
+    // Define doctor-related variables early to avoid scope issues
+    const doctorSelect = document.getElementById('doctorSelect');
+    const doctorName = document.getElementById('doctorName');
+    const specializationDisplay = document.getElementById('specializationDisplay');
+    const departmentDisplay = document.getElementById('departmentDisplay');
+    const departmentHidden = document.getElementById('department');
 
     // Open modal
     btnAddShift.addEventListener('click', function() {
@@ -910,11 +929,22 @@ function getDepartmentColorClass($department) {
     function closeModal() {
       addShiftModal.classList.add('hidden');
       document.body.style.overflow = ''; // Re-enable scrolling
-      // Reset doctor input
-      if (doctorInput) {
-        doctorInput.value = '';
-        doctorIdInput.value = '';
-        doctorDropdown.classList.add('hidden');
+      // Reset doctor select
+      if (doctorSelect) {
+        doctorSelect.value = '';
+      }
+      if (doctorName) {
+        doctorName.value = '';
+      }
+      if (specializationDisplay) {
+        specializationDisplay.value = '';
+      }
+      if (departmentDisplay) {
+        departmentDisplay.className = 'w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 min-h-[2.5rem] flex items-center text-sm font-medium';
+        departmentDisplay.textContent = '';
+      }
+      if (departmentHidden) {
+        departmentHidden.value = '';
       }
     }
 
@@ -928,31 +958,6 @@ function getDepartmentColorClass($department) {
         closeModal();
       }
     });
-
-    // Auto-fill specialization and department when doctor is selected
-    const doctorInput = document.getElementById('doctorInput');
-    const doctorIdInput = document.getElementById('doctorId');
-    const doctorDropdown = document.getElementById('doctorDropdown');
-    const specializationDisplay = document.getElementById('specializationDisplay');
-    const departmentDisplay = document.getElementById('departmentDisplay');
-    const departmentHidden = document.getElementById('department');
-
-    // Store doctors data for autocomplete
-    const doctorsData = [
-      <?php if (isset($doctors) && !empty($doctors)): ?>
-        <?php foreach ($doctors as $index => $doctor): ?>
-          {
-            id: <?= $doctor['doctor_id'] ?>,
-            name: <?= json_encode(ucfirst(str_replace('dr.', 'Dr. ', $doctor['username']))) ?>,
-            displayName: <?= json_encode(ucfirst(str_replace('dr.', '', $doctor['username']))) ?>,
-            specialization: <?= json_encode($doctor['specialization'] ?? '') ?>,
-            department: <?= json_encode($doctor['department'] ?? '') ?>,
-            departmentSlug: <?= json_encode($doctor['department_slug'] ?? '') ?>
-          }<?= ($index < count($doctors) - 1) ? ',' : '' ?>
-        <?php endforeach; ?>
-      <?php else: ?>
-      <?php endif; ?>
-    ];
 
     // Function to get department color class and text color (GLOBAL SCOPE)
     window.getDepartmentColorClass = function(departmentSlug, departmentName) {
@@ -985,104 +990,69 @@ function getDepartmentColorClass($department) {
       return { class: 'dept-general', textColor: 'text-white' };
     };
 
-    // Function to filter doctors based on input
-    function filterDoctors(query) {
-      if (!query.trim()) {
-        return doctorsData;
-      }
-      const lowerQuery = query.toLowerCase();
-      return doctorsData.filter(doctor => 
-        doctor.name.toLowerCase().includes(lowerQuery) ||
-        doctor.displayName.toLowerCase().includes(lowerQuery) ||
-        (doctor.specialization && doctor.specialization.toLowerCase().includes(lowerQuery)) ||
-        (doctor.department && doctor.department.toLowerCase().includes(lowerQuery))
-      );
-    }
-
-    // Function to display dropdown suggestions
-    function showDoctorSuggestions(query) {
-      const filtered = filterDoctors(query);
-      doctorDropdown.innerHTML = '';
-      
-      if (filtered.length === 0) {
-        doctorDropdown.innerHTML = '<div class="px-4 py-3 text-gray-500 text-sm">No doctors found</div>';
-        doctorDropdown.classList.remove('hidden');
-        return;
-      }
-
-      filtered.forEach(doctor => {
-        const item = document.createElement('div');
-        item.className = 'px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0';
-        item.innerHTML = `
-          <div class="font-medium text-gray-900">${doctor.name}</div>
-          ${doctor.specialization ? `<div class="text-xs text-gray-500 mt-0.5">${doctor.specialization}</div>` : ''}
-          ${doctor.department ? `<div class="text-xs text-gray-400 mt-0.5">${doctor.department}</div>` : ''}
-        `;
-        item.addEventListener('click', () => {
-          selectDoctor(doctor);
-        });
-        doctorDropdown.appendChild(item);
+    // Handle doctor select change
+    if (doctorSelect) {
+      doctorSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const doctorNameField = document.getElementById('doctorName');
+        
+        if (selectedOption.value) {
+          // Set doctor name in hidden field
+          if (doctorNameField) {
+            doctorNameField.value = selectedOption.getAttribute('data-name') || '';
+          }
+          
+          // Update specialization and department
+          const specialization = selectedOption.getAttribute('data-specialization') || '';
+          const department = selectedOption.getAttribute('data-department') || '';
+          const departmentSlug = selectedOption.getAttribute('data-department-slug') || '';
+          
+          if (specializationDisplay) {
+            specializationDisplay.value = specialization;
+          }
+          
+          if (departmentHidden) {
+            departmentHidden.value = department;
+          }
+          
+          if (departmentDisplay) {
+            if (department) {
+              const colorInfo = getDepartmentColorClass(departmentSlug, department);
+              departmentDisplay.className = `w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg min-h-[2.75rem] flex items-center text-sm font-semibold shadow-sm ${colorInfo.class} ${colorInfo.textColor}`;
+              departmentDisplay.textContent = department;
+            } else {
+              departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
+              departmentDisplay.textContent = '—';
+            }
+          }
+        } else {
+          // Reset if no doctor selected
+          if (doctorName) doctorName.value = '';
+          if (specializationDisplay) specializationDisplay.value = '';
+          if (departmentDisplay) {
+            departmentDisplay.className = 'w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 min-h-[2.5rem] flex items-center text-sm font-medium';
+            departmentDisplay.textContent = '';
+          }
+          if (departmentHidden) departmentHidden.value = '';
+        }
       });
-      
-      doctorDropdown.classList.remove('hidden');
     }
-
-    // Function to select a doctor
-    function selectDoctor(doctor) {
-      doctorInput.value = doctor.name;
-      doctorIdInput.value = doctor.id;
-      doctorDropdown.classList.add('hidden');
-      
-      // Update specialization and department
-      specializationDisplay.value = doctor.specialization || '';
-      departmentHidden.value = doctor.department || '';
-      
-      if (doctor.department) {
-        const colorInfo = getDepartmentColorClass(doctor.departmentSlug, doctor.department);
-        departmentDisplay.className = `w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg min-h-[2.75rem] flex items-center text-sm font-semibold shadow-sm ${colorInfo.class} ${colorInfo.textColor}`;
-        departmentDisplay.textContent = doctor.department;
-      } else {
-        departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
-        departmentDisplay.textContent = '—';
-      }
-    }
-
-    // Handle input events
-    doctorInput.addEventListener('input', function() {
-      const query = this.value;
-      if (query.trim()) {
-        showDoctorSuggestions(query);
-      } else {
-        doctorDropdown.classList.add('hidden');
-        doctorIdInput.value = '';
-        specializationDisplay.value = '';
-        departmentDisplay.className = 'w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 min-h-[2.5rem] flex items-center text-sm font-medium';
-        departmentDisplay.textContent = '';
-        departmentHidden.value = '';
-      }
-    });
-
-    // Handle focus events
-    doctorInput.addEventListener('focus', function() {
-      if (this.value.trim()) {
-        showDoctorSuggestions(this.value);
-      }
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!doctorInput.contains(e.target) && !doctorDropdown.contains(e.target)) {
-        doctorDropdown.classList.add('hidden');
-      }
-    });
 
     // Form submission
     addShiftForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
       // Get form values
-      const doctorId = document.getElementById('doctorId').value;
-      const doctorName = document.getElementById('doctorInput').value;
+      const doctorSelect = document.getElementById('doctorSelect');
+      const doctorId = doctorSelect.value;
+      let doctorName = document.getElementById('doctorName').value;
+      
+      // If doctor name is empty, get it from the selected option
+      if (!doctorName && doctorId) {
+        const selectedOption = doctorSelect.options[doctorSelect.selectedIndex];
+        doctorName = selectedOption.getAttribute('data-name') || selectedOption.textContent.trim();
+      }
+      
       const startDate = document.getElementById('startDate').value;
       const endDate = document.getElementById('endDate').value;
       const shiftType = document.getElementById('shiftType').value;
@@ -1091,6 +1061,7 @@ function getDepartmentColorClass($department) {
       // Validate form with specific missing fields
       const missing = [];
       if (!doctorId) missing.push('Doctor');
+      if (!doctorName) missing.push('Doctor Name');
       if (!startDate) missing.push('Start Date');
       if (!endDate) missing.push('End Date');
       if (!shiftType) missing.push('Shift Type');
@@ -1155,6 +1126,21 @@ function getDepartmentColorClass($department) {
         }
       }
       
+      // Prepare request data
+      const requestData = {
+        doctor_id: doctorId,
+        doctor_name: doctorName,
+        start_date: startDate,
+        end_date: endDate,
+        shift_type: shiftType,
+        department: department
+      };
+      
+      // Add CSRF token
+      requestData['<?= csrf_token() ?>'] = '<?= csrf_hash() ?>';
+      
+      console.log('Sending add schedule request:', requestData);
+      
       // Send AJAX request to add schedule
       fetch('<?= base_url('/doctor/addSchedule') ?>', {
         method: 'POST',
@@ -1162,29 +1148,35 @@ function getDepartmentColorClass($department) {
           'Content-Type': 'application/x-www-form-urlencoded',
           'X-Requested-With': 'XMLHttpRequest'
         },
-        body: new URLSearchParams({
-          doctor_id: doctorId,
-          doctor_name: doctorName,
-          start_date: startDate,
-          end_date: endDate,
-          shift_type: shiftType,
-          department: department
-        })
+        body: new URLSearchParams(requestData)
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(async response => {
+        // Try to parse JSON response even if status is not ok
+        let data;
+        try {
+          data = await response.json();
+        } catch (e) {
+          // If JSON parsing fails, throw with response status
+          throw new Error(`Server error (${response.status}): ${response.statusText}`);
+        }
+        
+        console.log('Add Schedule Response:', data);
+        
         if (data.success) {
           const message = data.message || 'Doctor schedule successfully added for all valid dates.';
           alert(message);
           closeModal();
           addShiftForm.reset();
-          specializationDisplay.value = '';
-          departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
-          departmentDisplay.textContent = '—';
-          departmentHidden.value = '';
+          if (specializationDisplay) specializationDisplay.value = '';
+          if (departmentDisplay) {
+            departmentDisplay.className = 'w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg bg-white min-h-[2.75rem] flex items-center text-sm font-medium shadow-sm';
+            departmentDisplay.textContent = '—';
+          }
+          if (departmentHidden) departmentHidden.value = '';
           // Reload the page to show the new schedule
           window.location.reload();
         } else {
+          // Show server error message
           if (data.conflicts && data.conflicts.length > 0) {
             showAddShiftError('This doctor already has a schedule during the selected date and shift.');
           } else if ((data.message || '').toLowerCase().includes('past date')) {
@@ -1195,8 +1187,8 @@ function getDepartmentColorClass($department) {
         }
       })
       .catch(error => {
-        console.error('Error:', error);
-        showAddShiftError('An error occurred while adding the schedule.');
+        console.error('Error adding schedule:', error);
+        showAddShiftError('An error occurred while adding the schedule: ' + error.message);
       });
     });
 

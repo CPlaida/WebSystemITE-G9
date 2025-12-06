@@ -48,7 +48,7 @@ class Doctor extends BaseController
         $schedules = $this->doctorScheduleModel->getSchedulesByDateRange($calendarStart, $calendarEnd);
 
         // Build dropdown options directly from users who have a doctor role
-        // Only show active doctors who are not on leave
+        // Only show active doctors who have accounts and are active status
         $userModel = new UserModel();
         $db = \Config\Database::connect();
         
@@ -60,14 +60,20 @@ class Doctor extends BaseController
             ->join('staff_profiles sp', 'sp.user_id = u.id', 'left')
             ->join('staff_specializations ss', 'ss.id = sp.specialization_id', 'left')
             ->join('staff_departments sd', 'sd.id = sp.department_id', 'left')
-            ->like('r.name', 'doctor', 'both')
+            ->where('r.name', 'doctor')
+            ->where('u.status', 'active')
+            ->groupStart()
+                ->where('sp.status', 'active')
+                ->orWhere('sp.status IS NULL')
+            ->groupEnd()
             ->orderBy('u.username', 'ASC')
             ->get()
             ->getResultArray();
         
-        // Filter to only show active doctors (exclude on_leave and inactive)
+        // Additional filter to ensure only active doctors (exclude on_leave and inactive)
         $doctors = array_filter($doctors, function($doctor) {
-            // Include doctors without staff profile (status is null) or with active status
+            // Only include doctors with active status or no status (new doctors without profile)
+            // sp.status can be 'active', 'inactive', 'on_leave', or NULL
             return empty($doctor['status']) || $doctor['status'] === 'active';
         });
         
