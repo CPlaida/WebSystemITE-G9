@@ -6779,3 +6779,255 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     text-align: center;
     display: block;
 }
+
+/* ============================================
+   Test Result Details Styles
+   ============================================ */
+
+/* Test Result Header */
+.test-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Test Result Status Badge */
+.test-result-status-badge {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Test Information Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Info Card */
+.info-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.25rem;
+}
+
+/* Info Label */
+.info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+/* Info Value */
+.info-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Info Value Icon Colors */
+.info-value .fa-calendar-alt,
+.info-value .fa-clock,
+.info-value .fa-user-md {
+    color: #0d6efd;
+}
+
+.info-value .fa-calendar-check {
+    color: #28a745;
+}
+
+/* Section Card */
+.section-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Section Title */
+.section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title i {
+    color: #0d6efd;
+}
+
+/* Notes Content */
+.notes-content {
+    color: #495057;
+    line-height: 1.6;
+    white-space: pre-line;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+/* Test Results Table */
+.test-results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.test-results-table thead tr {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.test-results-table thead th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #0a58ca;
+}
+
+.test-results-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.test-results-table tbody td {
+    padding: 12px;
+}
+
+.test-results-table tbody td:first-child {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.test-results-table tbody td:nth-child(2) {
+    color: #495057;
+}
+
+.test-results-table tbody td:nth-child(3) {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Attachment List */
+.attachment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Attachment Item */
+.attachment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.2s;
+}
+
+.attachment-item:hover {
+    border-color: #0d6efd;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
+}
+
+/* Attachment Icon Container */
+.attachment-icon-container {
+    width: 40px;
+    height: 40px;
+    background: #0d6efd;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+/* Attachment Info */
+.attachment-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.attachment-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.attachment-size {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Interpretation Content */
+.interpretation-content {
+    color: #495057;
+    line-height: 1.6;
+    white-space: pre-line;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+/* Empty State */
+.test-result-empty-state {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.test-result-empty-state i {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.test-result-empty-state div {
+    color: #6c757d;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* Test Result Footer */
+.test-result-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    background: #f8f9fa;
+}
+
+.test-result-footer .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .composite-card {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    .section-card {
+        page-break-inside: avoid;
+    }
+}

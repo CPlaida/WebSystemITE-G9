@@ -1,4 +1,4 @@
-<?= $this->extend('template/header') ?>
+<?= $this->extend('partials/header') ?>
 
 <?= $this->section('title') ?>Dashboard<?= $this->endSection() ?>
 
