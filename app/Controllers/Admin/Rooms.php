@@ -38,36 +38,39 @@ class Rooms extends BaseController
     public function generalInpatient()
     {
         $filter = $this->request->getGet('filter') ?? 'all';
-        
-        // Define room types for General Inpatient Rooms
         $roomTypes = [
-            'Private Room',
-            'Semi-Private Room',
+            'Private Suites (single occupancy)',
+            'Semi-Private Ward (double occupancy)',
             'General Ward',
             'Medical-Surgical (Med-Surg) Unit'
         ];
 
-        // Filter by ward if specified
+        // Available ward filters (slug => metadata)
+        $filterButtons = [
+            'all' => ['label' => 'All', 'icon' => 'fas fa-list'],
+            'pedia' => ['label' => 'Pedia Ward', 'icon' => 'fas fa-child', 'ward' => 'Pedia Ward'],
+            'male' => ['label' => 'Male Ward', 'icon' => 'fas fa-mars', 'ward' => 'Male Ward'],
+            'female' => ['label' => 'Female Ward', 'icon' => 'fas fa-venus', 'ward' => 'Female Ward'],
+            'semi' => ['label' => 'Semi-Private Ward', 'icon' => 'fas fa-user-friends', 'ward' => 'Semi-Private Ward'],
+            'private' => ['label' => 'Private Suites', 'icon' => 'fas fa-user-shield', 'ward' => 'Private Suites'],
+        ];
+
         $wardFilter = null;
         $rows = [];
         $allWardsData = [];
-        
-        if ($filter === 'pedia') {
-            $wardFilter = 'Pedia Ward';
+
+        if ($filter !== 'all' && isset($filterButtons[$filter]) && isset($filterButtons[$filter]['ward'])) {
+            $wardFilter = $filterButtons[$filter]['ward'];
             $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'male') {
-            $wardFilter = 'Male Ward';
-            $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'female') {
-            $wardFilter = 'Female Ward';
-            $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'all') {
-            // Load all three wards when "All" is selected
-            $allWardsData = [
-                'Pedia Ward' => $this->getWardRows('Pedia Ward'),
-                'Male Ward' => $this->getWardRows('Male Ward'),
-                'Female Ward' => $this->getWardRows('Female Ward'),
-            ];
+        } else {
+            $filter = 'all';
+            foreach ($filterButtons as $button) {
+                if (!isset($button['ward'])) {
+                    continue;
+                }
+                $wardName = $button['ward'];
+                $allWardsData[$wardName] = $this->getWardRows($wardName);
+            }
         }
 
         return view('Roles/admin/rooms/GeneralInpatient', [
@@ -76,6 +79,7 @@ class Rooms extends BaseController
             'wardFilter' => $wardFilter,
             'rows' => $rows,
             'allWardsData' => $allWardsData,
+            'filterButtons' => $filterButtons,
         ]);
     }
 

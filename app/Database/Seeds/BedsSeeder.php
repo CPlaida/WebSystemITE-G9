@@ -141,6 +141,26 @@ class BedsSeeder extends Seeder
         $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-303', 'bed' => 'Bed 2', 'status' => 'Available'];
         $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-304', 'bed' => 'Bed 1', 'status' => 'Available'];
 
+        // Semi-Private Rooms (2 beds per room)
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-401', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-401', 'bed' => 'Bed 2', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-402', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-402', 'bed' => 'Bed 2', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-403', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-403', 'bed' => 'Bed 2', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-404', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-404', 'bed' => 'Bed 2', 'status' => 'Available'];
+
+        // Private Rooms (single bed per room)
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-501', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-502', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-503', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-504', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-505', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-506', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-507', 'bed' => 'Bed 1', 'status' => 'Available'];
+        $beds[] = ['bed_type' => 'Private', 'ward' => 'Private Suites', 'room' => 'PR-508', 'bed' => 'Bed 1', 'status' => 'Available'];
+
         // Add timestamps
         $now = date('Y-m-d H:i:s');
         foreach ($beds as &$bed) {

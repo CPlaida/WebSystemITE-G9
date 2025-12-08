@@ -25,22 +25,21 @@
                     <i class="fas fa-filter me-1"></i>Filter by Ward:
                 </label>
                 <div class="filter-buttons">
-                    <a href="<?= base_url('admin/rooms/general-inpatient?filter=all') ?>" 
-                       class="btn btn-sm <?= $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        <i class="fas fa-list me-1"></i> All
-                    </a>
-                    <a href="<?= base_url('admin/rooms/general-inpatient?filter=pedia') ?>" 
-                       class="btn btn-sm <?= $currentFilter === 'pedia' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        <i class="fas fa-child me-1"></i> Pedia Ward
-                    </a>
-                    <a href="<?= base_url('admin/rooms/general-inpatient?filter=male') ?>" 
-                       class="btn btn-sm <?= $currentFilter === 'male' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        <i class="fas fa-mars me-1"></i> Male Ward
-                    </a>
-                    <a href="<?= base_url('admin/rooms/general-inpatient?filter=female') ?>" 
-                       class="btn btn-sm <?= $currentFilter === 'female' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                        <i class="fas fa-venus me-1"></i> Female Ward
-                    </a>
+                    <?php foreach (($filterButtons ?? []) as $key => $button): ?>
+                        <?php
+                            $label = $button['label'] ?? ucfirst($key);
+                            $icon  = $button['icon'] ?? null;
+                            $url   = base_url('admin/rooms/general-inpatient?filter=' . urlencode($key));
+                            $isActive = $currentFilter === $key;
+                        ?>
+                        <a href="<?= esc($url) ?>"
+                           class="btn btn-sm <?= $isActive ? 'btn-primary' : 'btn-outline-primary' ?>">
+                            <?php if ($icon): ?>
+                                <i class="<?= esc($icon) ?> me-1"></i>
+                            <?php endif; ?>
+                            <?= esc($label) ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
