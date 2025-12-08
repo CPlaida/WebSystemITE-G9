@@ -206,7 +206,7 @@
 
         <!-- Action Buttons -->
         <div class="card-footer no-print test-result-footer">
-            <?php if (strtolower($testResult['status']) !== 'completed'): ?>
+            <?php if (strtolower($testResult['status']) !== 'completed' && in_array(session('role'), ['admin', 'labstaff'])): ?>
             <a href="<?= base_url('laboratory/testresult/add/' . $testResult['id']) ?>" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add Test Results
             </a>

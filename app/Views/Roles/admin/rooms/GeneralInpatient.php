@@ -29,7 +29,7 @@
                         <?php
                             $label = $button['label'] ?? ucfirst($key);
                             $icon  = $button['icon'] ?? null;
-                            $url   = base_url('admin/rooms/general-inpatient?filter=' . urlencode($key));
+                            $url   = base_url('rooms/general-inpatient?filter=' . urlencode($key));
                             $isActive = $currentFilter === $key;
                         ?>
                         <a href="<?= esc($url) ?>"

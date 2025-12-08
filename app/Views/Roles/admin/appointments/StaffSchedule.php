@@ -39,9 +39,11 @@ function getDepartmentColorClass($department) {
 <div class="container-fluid py-4">
   <div class="composite-card billing-card" style="margin-top:0; background: #fff;">
     <div class="composite-header">
-      <h1 class="composite-title">Doctor Schedule</h1>
+      <h1 class="composite-title"><?= (isset($isReadOnly) && $isReadOnly) || session('role') === 'doctor' ? 'My Schedule' : 'Doctor Schedule' ?></h1>
       <div class="flex gap-3 items-center">
+        <?php if (!isset($isReadOnly) || !$isReadOnly): ?>
         <button id="btnAddShift" class="bg-gray-800 text-white rounded px-3 py-1 hover:bg-gray-900 text-sm">+ Add Shift</button>
+        <?php endif; ?>
         <div>
           <button type="button" data-view="day" class="btn-view-mode px-2 py-1 border border-gray-300 rounded-l hover:bg-gray-200 text-sm bg-gray-200" aria-pressed="true">Day</button>
           <button type="button" data-view="week" class="btn-view-mode px-2 py-1 border-t border-b border-gray-300 hover:bg-gray-200 text-sm">Week</button>

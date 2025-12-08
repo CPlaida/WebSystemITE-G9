@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Sidebar will be included here -->
+    <!-- Unified Sidebar for all roles -->
     <?= $this->include('partials/sidebar') ?>
 
     <!-- Main Content -->

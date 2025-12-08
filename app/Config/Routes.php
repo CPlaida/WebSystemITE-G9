@@ -18,7 +18,8 @@ $routes->get('login', 'Auth::login');
 $routes->post('auth/process_login', 'Auth::process_login');
 $routes->get('register', 'Auth::register');
 $routes->post('auth/process_register', 'Auth::process_register');
-$routes->get('auth/logout', 'Auth::logout');
+$routes->get('logout', 'Auth::logout');
+$routes->get('auth/logout', 'Auth::logout'); // Keep for backward compatibility
 
 // Remove index.php from URL
 $routes->setDefaultNamespace('App\Controllers');
@@ -33,65 +34,66 @@ $routes->setAutoRoute(false);
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 // Convenience role-specific dashboards (reuse unified dashboard)
 $routes->get('doctor/dashboard', 'Dashboard::index', ['filter' => 'auth:doctor,admin']);
-$routes->get('doctor/my-schedule', 'Doctor\DoctorScheduleController::view', ['filter' => 'auth:doctor']);
+$routes->get('doctor/my-schedule', 'Doctor::mySchedule', ['filter' => 'auth:doctor']);
 $routes->get('nurse/dashboard', 'Dashboard::index', ['filter' => 'auth:nurse,admin']);
 $routes->get('receptionist/dashboard', 'Dashboard::index', ['filter' => 'auth:receptionist,admin']);
 $routes->get('pharmacist/dashboard', 'Dashboard::index', ['filter' => 'auth:pharmacist,admin']);
-$routes->get('labstaff/laboratory/request', 'Labstaff::laboratoryRequest', ['filter' => 'auth:labstaff,admin']);
-$routes->get('labstaff/laboratory/testresult', 'Labstaff::testResult', ['filter' => 'auth:labstaff,admin']);
-// Accountant Routes
+$routes->get('labstaff/laboratory/request', 'Laboratory::laboratoryRequest', ['filter' => 'auth:labstaff,admin']);
+$routes->get('labstaff/laboratory/testresult', 'Laboratory::testResult', ['filter' => 'auth:labstaff,admin']);
+// Accountant Routes (unified with main controllers)
 $routes->group('accountant', ['filter' => 'auth:accounting,admin'], function($routes) {
     $routes->get('dashboard', 'Dashboard::accountant');
     
-    // Billing routes
+    // Billing routes (unified)
     $routes->group('billing', function($routes) {
-        $routes->get('process', 'Accountant\Billing::process');
-        $routes->get('create', 'Accountant\Billing::create');
+        $routes->get('process', 'Billing::process');
+        $routes->get('create', 'Billing::create');
     });
     
-    // Reports routes
+    // Reports routes (unified)
     $routes->group('reports', function($routes) {
-        $routes->get('income', 'Accountant::reports/income');
-        $routes->get('expenses', 'Accountant::reports/expenses');
-        $routes->get('export-income-pdf', 'Accountant::exportIncomePdf');
-        $routes->get('export-expenses-pdf', 'Accountant::exportExpensesPdf');
-        $routes->get('export-expenses-excel', 'Accountant::exportExpensesExcel');
+        $routes->get('income', 'Reports::income');
+        $routes->get('expenses', 'Reports::expenses');
+        $routes->get('export-income-pdf', 'Reports::exportIncomePdf');
+        $routes->get('export-expenses-pdf', 'Reports::exportExpensesPdf');
+        $routes->get('export-expenses-excel', 'Reports::exportExpensesExcel');
     });
 });
 
 // Backward-compatibility: legacy admin dashboard URL(admin dashboard page diffrent sa unified okii)
 $routes->get('/admin/dashboard', 'Admin::index', ['filter' => 'auth:admin']);
 
-// Admin management pages (not dashboards)
-$routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin']);
-$routes->get('admin/Administration/StaffManagement', 'Admin::manageStaff', ['filter' => 'auth:admin']);
-// Admin user CRUD endpoints
-$routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin']);
-$routes->post('admin/users/update/(:segment)', 'Admin::updateUser/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/users/delete/(:segment)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/users/reset-password/(:segment)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin']);
+// Admin management pages (not dashboards) - Admin and IT Staff
+$routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' => 'auth:admin,itstaff']);
+$routes->get('admin/Administration/StaffManagement', 'Admin::manageStaff', ['filter' => 'auth:admin,itstaff']);
+// Admin user CRUD endpoints - Admin and IT Staff
+$routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin,itstaff']);
+$routes->post('admin/users/update/(:segment)', 'Admin::updateUser/$1', ['filter' => 'auth:admin,itstaff']);
+$routes->post('admin/users/delete/(:segment)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin,itstaff']);
+$routes->post('admin/users/reset-password/(:segment)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin,itstaff']);
 
-// Admin staff management CRUD endpoints
-$routes->post('admin/staff/create', 'Admin::createStaff', ['filter' => 'auth:admin']);
-$routes->post('admin/staff/update/(:num)', 'Admin::updateStaff/$1', ['filter' => 'auth:admin']);
-$routes->post('admin/staff/delete/(:num)', 'Admin::deleteStaff/$1', ['filter' => 'auth:admin']);
+// Admin staff management CRUD endpoints - Admin and IT Staff
+$routes->post('admin/staff/create', 'Admin::createStaff', ['filter' => 'auth:admin,itstaff']);
+$routes->post('admin/staff/update/(:num)', 'Admin::updateStaff/$1', ['filter' => 'auth:admin,itstaff']);
+$routes->post('admin/staff/delete/(:num)', 'Admin::deleteStaff/$1', ['filter' => 'auth:admin,itstaff']);
 
 // Doctor scheduling routes
-$routes->get('/doctor/schedule', 'Doctor\Doctor::schedule', ['filter' => 'auth:admin,doctor']);
-$routes->get('/doctor/schedules-by-date', 'Doctor\Doctor::getSchedulesByDate', ['filter' => 'auth']);
-$routes->post('/doctor/addSchedule', 'Doctor\Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
-$routes->post('/doctor/updateSchedule/(:num)', 'Doctor\Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
-$routes->post('/doctor/deleteSchedule/(:num)', 'Doctor\Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/schedule', 'Doctor::schedule', ['filter' => 'auth:admin,doctor']);
+$routes->get('/doctor/schedules-by-date', 'Doctor::getSchedulesByDate', ['filter' => 'auth']);
+$routes->post('/doctor/addSchedule', 'Doctor::addSchedule', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/updateSchedule/(:num)', 'Doctor::updateSchedule/$1', ['filter' => 'auth:admin,doctor']);
+$routes->post('/doctor/deleteSchedule/(:num)', 'Doctor::deleteSchedule/$1', ['filter' => 'auth:admin,doctor']);
 
 // Admin OR Nurse allowed
 $routes->get('/nurse/reports', 'Nurse::reports', ['filter' => 'auth:admin,nurse']);
 
 // Frontend Patient Routes
-$routes->group('patients', ['namespace' => 'App\\Controllers'], function($routes) {
+$routes->group('patients', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
     $routes->get('register', 'Patients::register');
     $routes->post('register', 'Patients::processRegister');
-    // Map to Admin\Patients index to display list and avoid 404
-    $routes->get('view', 'Admin\Patients::index');
+    $routes->get('inpatient', 'Patients::inpatient');
+    // Map to Patients index to display list and avoid 404
+    $routes->get('view', 'Patients::index');
     $routes->get('search', 'Patients::search');
     $routes->get('get/(:segment)', 'Patients::getPatient/$1');
 });
@@ -143,24 +145,49 @@ $routes->get('billing/caseRates', 'Billing::caseRates', ['filter' => 'auth']);
 // Reports Routes - Unified interface
 $routes->group('reports', ['filter' => 'auth'], function($routes) {
     $routes->get('/', 'Reports::index');
+    $routes->get('financial', 'Reports::financial');
+    $routes->get('revenue', 'Reports::revenue');
+    $routes->get('income', 'Reports::income');
+    $routes->get('expenses', 'Reports::expenses');
+    $routes->get('profit-loss', 'Reports::profitLoss');
+    $routes->get('outstanding-payments', 'Reports::outstandingPayments');
+    $routes->get('patient-stats', 'Reports::patientStats');
+    $routes->get('patient-visits', 'Reports::patientVisits');
+    $routes->get('patient-history', 'Reports::patientHistory');
+    $routes->get('appointment-stats', 'Reports::appointmentStats');
+    $routes->get('doctor-schedule-utilization', 'Reports::doctorScheduleUtilization');
+    $routes->get('laboratory-tests', 'Reports::laboratoryTests');
+    $routes->get('test-results', 'Reports::testResults');
+    $routes->get('prescriptions', 'Reports::prescriptions');
+    $routes->get('medicine-inventory', 'Reports::medicineInventory');
+    $routes->get('medicine-sales', 'Reports::medicineSales');
+    $routes->get('admissions', 'Reports::admissions');
+    $routes->get('discharges', 'Reports::discharges');
+    $routes->get('doctor-performance', 'Reports::doctorPerformance');
+    $routes->get('staff-activity', 'Reports::staffActivity');
+    $routes->get('philhealth-claims', 'Reports::philhealthClaims');
+    $routes->get('hmo-claims', 'Reports::hmoClaims');
     // Export routes
     $routes->get('export/pdf/(:segment)', 'Reports::exportPdf/$1');
     $routes->get('export/excel/(:segment)', 'Reports::exportExcel/$1');
+    $routes->get('export/income-pdf', 'Reports::exportIncomePdf');
+    $routes->get('export/expenses-pdf', 'Reports::exportExpensesPdf');
+    $routes->get('export/expenses-excel', 'Reports::exportExpensesExcel');
 });
 
 // Laboratory Routes
-$routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,doctor,admin']);
+$routes->get('laboratory/request', 'Laboratory::request', ['filter' => 'auth:labstaff,doctor,admin,nurse']);
 $routes->post('laboratory/request/submit', 'Laboratory::submitRequest', ['filter' => 'auth:labstaff,admin']);
-    // Laboratory: Test Results (Lab staff/admin views)
-    $routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,doctor,admin']);
-    $routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
-    $routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin']);
-    $routes->get('laboratory/testresult/download/(:any)', 'Laboratory::downloadResultFile/$1', ['filter' => 'auth:labstaff,doctor,admin']);
+    // Laboratory: Test Results (Lab staff/admin/doctor/nurse can view)
+    $routes->get('laboratory/testresult', 'Laboratory::testresult', ['filter' => 'auth:labstaff,doctor,admin,nurse']);
+    $routes->get('laboratory/testresult/view/(:any)', 'Laboratory::viewTestResult/$1', ['filter' => 'auth:labstaff,doctor,admin,nurse']);
+    $routes->match(['get', 'post'], 'laboratory/testresult/add/(:any)', 'Laboratory::addTestResult/$1', ['filter' => 'auth:labstaff,admin']);
+    $routes->get('laboratory/testresult/download/(:any)', 'Laboratory::downloadResultFile/$1', ['filter' => 'auth:labstaff,doctor,admin,nurse']);
     $routes->get('laboratory/testresult/data', 'Laboratory::getTestResultsData');
     $routes->get('laboratory/patient/suggest', 'Laboratory::patientSuggest');
     $routes->get('laboratory/patient/lab-records', 'Laboratory::patientLabRecords');
     $routes->get('laboratory/patient/completed-lab-records', 'Laboratory::patientCompletedLabRecords');
-     $routes->post('laboratory/testresult/add', 'Laboratory::addTestResult', ['filter' => 'auth:labstaff,doctor,admin']);
+     $routes->post('laboratory/testresult/add', 'Laboratory::addTestResult', ['filter' => 'auth:labstaff,admin']);
 
  // Doctor-facing lab result routes (read-only access under doctor features)
 $routes->get('doctor/laboratory/request', 'Laboratory::request', ['filter' => 'auth:doctor,admin']);
@@ -176,7 +203,15 @@ $routes->post('/medicines/store', 'Medicine::store');
 $routes->get('/medicines/edit/(:segment)', 'Medicine::edit/$1');
 $routes->post('/medicines/update/(:segment)', 'Medicine::update/$1');
 
-// Pharmacy Routes under admin
+// Unified Pharmacy Routes (for all roles)
+$routes->group('pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('prescription', 'Pharmacy::prescriptionDispensing');
+    $routes->get('transactions', 'Pharmacy::transactions');
+    $routes->get('transaction/(:any)', 'Pharmacy::viewTransaction/$1');
+    $routes->get('medicine', 'Pharmacy::medicine');
+});
+
+// Pharmacy Routes under admin (backward compatibility)
 $routes->group('admin/pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth:pharmacist,admin'], function($routes) {
     $routes->get('inventory', 'Pharmacy::inventory');
     $routes->get('prescription-dispensing', 'Pharmacy::prescriptionDispensing');
@@ -211,11 +246,55 @@ $routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($ro
     $routes->post('stock/restore', 'Pharmacy::restoreStock');
 });
 
+// Unified Admissions Routes (for all roles)
+$routes->group('admissions', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('create', 'Admissions::create');
+    $routes->post('store', 'Admissions::store');
+    $routes->post('(:num)/discharge', 'Admissions::discharge/$1');
+});
+
+// Unified Pharmacy Routes (for all roles)
+$routes->group('pharmacy', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('prescription', 'Pharmacy::prescriptionDispensing');
+    $routes->get('transactions', 'Pharmacy::transactions');
+    $routes->get('transaction/(:any)', 'Pharmacy::viewTransaction/$1');
+    $routes->get('medicine', 'Pharmacy::medicine');
+});
+
+// Unified Rooms Routes (for all roles)
+$routes->group('rooms', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('general-inpatient', 'Rooms::generalInpatient');
+    $routes->get('critical-care', 'Rooms::criticalCare');
+    $routes->get('specialized', 'Rooms::specialized');
+    $routes->get('pedia-ward', 'Rooms::pediaWard');
+    $routes->get('male-ward', 'Rooms::maleWard');
+    $routes->get('female-ward', 'Rooms::femaleWard');
+    $routes->post('beds/update-status', 'Rooms::updateBedStatus');
+});
+
+// Unified Admissions Routes (for all roles)
+$routes->group('admissions', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('create', 'Admissions::create');
+    $routes->post('store', 'Admissions::store');
+    $routes->post('(:num)/discharge', 'Admissions::discharge/$1');
+});
+
+// Unified Rooms Routes (for all roles)
+$routes->group('rooms', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('general-inpatient', 'Rooms::generalInpatient');
+    $routes->get('critical-care', 'Rooms::criticalCare');
+    $routes->get('specialized', 'Rooms::specialized');
+    $routes->get('pedia-ward', 'Rooms::pediaWard');
+    $routes->get('male-ward', 'Rooms::maleWard');
+    $routes->get('female-ward', 'Rooms::femaleWard');
+    $routes->post('beds/update-status', 'Rooms::updateBedStatus');
+});
+
 // Beds/Wards availability API for inpatient assignment
 $routes->group('api/rooms', ['namespace' => 'App\\Controllers'], function($routes) {
-    $routes->get('wards', 'Api\\Rooms::wards');
-    $routes->get('rooms/(:segment)', 'Api\\Rooms::rooms/$1');
-    $routes->get('beds/(:segment)/(:segment)', 'Api\\Rooms::beds/$1/$2');
+    $routes->get('wards', 'Rooms::apiWards');
+    $routes->get('rooms/(:segment)', 'Rooms::apiRooms/$1');
+    $routes->get('beds/(:segment)/(:segment)', 'Rooms::apiBeds/$1/$2');
 });
 
 // Location API Routes (Provinces → Cities/Municipalities → Barangays)
@@ -238,27 +317,27 @@ $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransact
         $routes->get('InventoryMan/PrescriptionDispencing', 'InventoryMan::PrescriptionDispencing');
         
         $routes->group('patients', function($routes) {
-            $routes->get('', 'Admin\Patients::index');
-            $routes->get('register', 'Admin\Patients::register');
-            $routes->get('inpatient', 'Admin\Patients::inpatient');
-            $routes->get('admission', 'Admin\\Admissions::create');
-            $routes->post('admission/store', 'Admin\\Admissions::store');
-            $routes->post('admission/(:num)/discharge', 'Admin\\Admissions::discharge/$1');
-            $routes->post('register', 'Admin\Patients::processRegister');  
-            $routes->get('view/(:num)', 'Admin\Patients::view/$1');
-            $routes->get('edit/(:num)', 'Admin\Patients::edit/$1');
-            $routes->post('update/(:num)', 'Admin\Patients::update/$1');
-            $routes->get('delete/(:num)', 'Admin\\Patients::delete/$1');
+            $routes->get('', 'Patients::index');
+            $routes->get('register', 'Patients::register');
+            $routes->get('inpatient', 'Patients::inpatient');
+            $routes->get('admission', 'Admissions::create');
+            $routes->post('admission/store', 'Admissions::store');
+            $routes->post('admission/(:num)/discharge', 'Admissions::discharge/$1');
+            $routes->post('register', 'Patients::processRegister');  
+            $routes->get('view/(:num)', 'Patients::view/$1');
+            $routes->get('edit/(:num)', 'Patients::edit/$1');
+            $routes->post('update/(:num)', 'Patients::update/$1');
+            $routes->get('delete/(:num)', 'Patients::delete/$1');
         });
-        // Admin ward/room pages (controller-backed)
+        // Admin ward/room pages (unified controller)
         $routes->group('rooms', function($routes) {
-            $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
-            $routes->get('male-ward', 'Admin\\Rooms::maleWard');
-            $routes->get('female-ward', 'Admin\\Rooms::femaleWard');
-            $routes->get('general-inpatient', 'Admin\\Rooms::generalInpatient');
-            $routes->get('critical-care', 'Admin\\Rooms::criticalCare');
-            $routes->get('specialized', 'Admin\\Rooms::specialized');
-            $routes->post('beds/update-status', 'Admin\\Rooms::updateBedStatus');
+            $routes->get('pedia-ward', 'Rooms::pediaWard');
+            $routes->get('male-ward', 'Rooms::maleWard');
+            $routes->get('female-ward', 'Rooms::femaleWard');
+            $routes->get('general-inpatient', 'Rooms::generalInpatient');
+            $routes->get('critical-care', 'Rooms::criticalCare');
+            $routes->get('specialized', 'Rooms::specialized');
+            $routes->post('beds/update-status', 'Rooms::updateBedStatus');
         });
     });
 
@@ -277,46 +356,44 @@ $routes->group('receptionist/patients', ['namespace' => 'App\\Views', 'filter' =
     $routes->view('view', 'Roles/Reception/patients/view');
 });
 
-// Receptionist ward/room pages (reuse Admin\Rooms dynamic wards)
-$routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers\\Admin', 'filter' => 'auth:receptionist,admin'], function($routes) {
+// Receptionist ward/room pages (unified controller)
+$routes->group('receptionist/rooms', ['filter' => 'auth:receptionist,admin'], function($routes) {
     $routes->get('general-inpatient', 'Rooms::generalInpatient');
     $routes->get('critical-care', 'Rooms::criticalCare');
     $routes->get('specialized', 'Rooms::specialized');
-});
-$routes->group('receptionist/rooms', ['namespace' => 'App\\Controllers', 'filter' => 'auth:receptionist,admin'], function($routes) {
-    $routes->get('pedia-ward', 'Admin\\Rooms::pediaWard');
-    $routes->get('male-ward', 'Admin\\Rooms::maleWard');
-    $routes->get('female-ward', 'Admin\\Rooms::femaleWard');
+    $routes->get('pedia-ward', 'Rooms::pediaWard');
+    $routes->get('male-ward', 'Rooms::maleWard');
+    $routes->get('female-ward', 'Rooms::femaleWard');
 });
 
 // Doctor Routes
-// Patient list (doctor read-only view)
-$routes->get('doctor/patients/view', 'Doctor\\PatientController::view', ['filter' => 'auth:doctor,admin']);
+// Patient list (doctor read-only view) - now uses unified Patients controller
+$routes->get('doctor/patients/view', 'Patients::index', ['filter' => 'auth:doctor,admin']);
 // Doctor's own appointments
-$routes->get('doctor/appointments', 'Appointment::doctorToday', ['filter' => 'auth:doctor']);
-$routes->get('doctor/appointments/list', 'Appointment::doctorToday', ['filter' => 'auth:doctor']);
+$routes->get('doctor/appointments', 'Appointment::index', ['filter' => 'auth:doctor']);
+$routes->get('doctor/appointments/list', 'Appointment::index', ['filter' => 'auth:doctor']);
 // Doctor prescription notes (EHR)
-$routes->get('doctor/prescription', 'Doctor\\PrescriptionController::show', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
-$routes->post('doctor/prescription/save', 'Doctor\\PrescriptionController::save', ['filter' => 'auth:doctor,admin']);
+$routes->get('doctor/prescription', 'Doctor::prescription', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
+$routes->post('doctor/prescription/save', 'Doctor::savePrescription', ['filter' => 'auth:doctor,admin']);
 // Medical records (admissions history)
-$routes->get('doctor/medical-records', 'Doctor\\MedicalRecordsController::admissions', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
+$routes->get('doctor/medical-records', 'Doctor::medicalRecords', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
 // Vitals API for EHR modal (viewable by all clinical roles; writable by doctor/nurse/admin)
-$routes->get('doctor/vitals', 'Doctor\\VitalsController::show', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
-$routes->post('doctor/vitals/save', 'Doctor\\VitalsController::save', ['filter' => 'auth:doctor,admin,nurse']);
+$routes->get('doctor/vitals', 'Doctor::vitals', ['filter' => 'auth:doctor,admin,nurse,receptionist']);
+$routes->post('doctor/vitals/save', 'Doctor::saveVitals', ['filter' => 'auth:doctor,admin,nurse']);
 
-// Nurse Routes (directly to views)
-$routes->group('nurse/appointments', ['namespace' => 'App\\Views', 'filter' => 'auth:nurse,admin'], function($routes) {
-    $routes->view('list', 'Roles/nurse/appointments/Appointmentlist');
+// Nurse Routes (unified controllers)
+$routes->group('nurse/appointments', ['filter' => 'auth:nurse,admin'], function($routes) {
+    $routes->get('list', 'Appointment::index');
     $routes->view('staff-schedule', 'Roles/nurse/appointments/StaffSchedule');
 });
 
-$routes->group('nurse/patients', ['namespace' => 'App\\Views', 'filter' => 'auth:nurse,admin'], function($routes) {
-    $routes->view('view', 'Roles/nurse/patients/view');
+$routes->group('nurse/patients', ['filter' => 'auth:nurse,admin'], function($routes) {
+    $routes->get('view', 'Patients::index');
 });
 
-$routes->group('nurse/laboratory', ['namespace' => 'App\\Views', 'filter' => 'auth:nurse,admin'], function($routes) {
-    $routes->view('request', 'Roles/nurse/laboratory/LaboratoryReq');
-    $routes->view('testresult', 'Roles/nurse/laboratory/TestResult');
+$routes->group('nurse/laboratory', ['filter' => 'auth:nurse,admin'], function($routes) {
+    $routes->get('request', 'Laboratory::request');
+    $routes->get('testresult', 'Laboratory::testresult');
 });
 
 // Pharmacy Routes

@@ -15,5 +15,3 @@ class Nurse extends BaseController
     }
 }
 
-
-

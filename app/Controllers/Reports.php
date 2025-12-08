@@ -42,14 +42,26 @@ class Reports extends BaseController
     }
 
     /**
+     * Get role-based view path
+     */
+    protected function getRoleViewPath(string $viewName): string
+    {
+        $role = session('role');
+        $roleMap = [
+            'admin' => 'admin',
+            'accounting' => 'admin', // Accountants use admin views (unified)
+            'accountant' => 'admin', // Accountants use admin views (unified)
+        ];
+        $roleFolder = $roleMap[$role] ?? 'admin';
+        return "Roles/{$roleFolder}/Reports/{$viewName}";
+    }
+
+    /**
      * Unified Reports Interface - Single page for all reports
      */
     public function index()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
 
         $reportType = $this->request->getGet('type') ?? 'revenue';
         
@@ -199,7 +211,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/index', $data);
+        return view($this->getRoleViewPath('index'), $data);
     }
 
     /**
@@ -207,28 +219,25 @@ class Reports extends BaseController
      */
     public function financial()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
 
         $data = [
             'title' => 'Financial Reports',
             'active_menu' => 'reports',
         ];
 
-        return view('Roles/admin/Reports/financial', $data);
+        return view($this->getRoleViewPath('financial'), $data);
     }
 
     /**
      * Revenue Report
      */
+    /**
+     * Revenue Report (Income Report for Accountant)
+     */
     public function revenue()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
 
         $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
         $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
@@ -251,7 +260,17 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/revenue', $data);
+        $role = session('role');
+        $viewName = in_array($role, ['accounting', 'accountant']) ? 'Income' : 'revenue';
+        return view($this->getRoleViewPath($viewName), $data);
+    }
+
+    /**
+     * Income Report (Accountant alias for revenue)
+     */
+    public function income()
+    {
+        return $this->revenue();
     }
 
     /**
@@ -259,10 +278,7 @@ class Reports extends BaseController
      */
     public function expenses()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
 
         $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
         $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
@@ -281,7 +297,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/expenses', $data);
+        return view($this->getRoleViewPath('expenses'), $data);
     }
 
     /**
@@ -289,10 +305,7 @@ class Reports extends BaseController
      */
     public function profitLoss()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
 
         $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
         $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
@@ -316,7 +329,7 @@ class Reports extends BaseController
             'endDate' => $endDate,
         ];
 
-        return view('Roles/admin/Reports/profit_loss', $data);
+        return view($this->getRoleViewPath('profit_loss'), $data);
     }
 
     /**
@@ -324,10 +337,7 @@ class Reports extends BaseController
      */
     public function outstandingPayments()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting', 'receptionist'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'receptionist']);
 
         $filters = [
             'payment_status' => $this->request->getGet('payment_status') ?? '',
@@ -345,7 +355,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/outstanding_payments', $data);
+        return view($this->getRoleViewPath('outstanding_payments'), $data);
     }
 
     /**
@@ -353,10 +363,7 @@ class Reports extends BaseController
      */
     public function patientStats()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor', 'nurse'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor', 'nurse']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? '',
@@ -374,7 +381,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/patient_statistics', $data);
+        return view($this->getRoleViewPath('patient_statistics'), $data);
     }
 
     /**
@@ -382,10 +389,7 @@ class Reports extends BaseController
      */
     public function patientVisits()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor', 'nurse', 'receptionist'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor', 'nurse', 'receptionist']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -403,7 +407,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/patient_visits', $data);
+        return view($this->getRoleViewPath('patient_visits'), $data);
     }
 
     /**
@@ -411,10 +415,7 @@ class Reports extends BaseController
      */
     public function patientHistory()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor']);
 
         $patientId = $this->request->getGet('patient_id');
         if (!$patientId) {
@@ -440,7 +441,7 @@ class Reports extends BaseController
             'endDate' => $endDate,
         ];
 
-        return view('Roles/admin/Reports/patient_history', $data);
+        return view($this->getRoleViewPath('patient_history'), $data);
     }
 
     /**
@@ -448,10 +449,7 @@ class Reports extends BaseController
      */
     public function appointmentStats()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor', 'nurse', 'receptionist'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor', 'nurse', 'receptionist']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -470,7 +468,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/appointment_statistics', $data);
+        return view($this->getRoleViewPath('appointment_statistics'), $data);
     }
 
     /**
@@ -478,10 +476,7 @@ class Reports extends BaseController
      */
     public function doctorScheduleUtilization()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -498,7 +493,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/doctor_schedule_utilization', $data);
+        return view($this->getRoleViewPath('doctor_schedule_utilization'), $data);
     }
 
     /**
@@ -506,10 +501,7 @@ class Reports extends BaseController
      */
     public function laboratoryTests()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor', 'labstaff'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor', 'labstaff']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -527,7 +519,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/laboratory_tests', $data);
+        return view($this->getRoleViewPath('laboratory_tests'), $data);
     }
 
     /**
@@ -535,10 +527,7 @@ class Reports extends BaseController
      */
     public function testResults()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -555,7 +544,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/test_results', $data);
+        return view($this->getRoleViewPath('test_results'), $data);
     }
 
     /**
@@ -563,10 +552,7 @@ class Reports extends BaseController
      */
     public function prescriptions()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor', 'pharmacist'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor', 'pharmacist']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -584,7 +570,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/prescriptions', $data);
+        return view($this->getRoleViewPath('prescriptions'), $data);
     }
 
     /**
@@ -592,10 +578,7 @@ class Reports extends BaseController
      */
     public function medicineInventory()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'pharmacist'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'pharmacist']);
 
         $filters = [
             'category' => $this->request->getGet('category') ?? '',
@@ -611,7 +594,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/medicine_inventory', $data);
+        return view($this->getRoleViewPath('medicine_inventory'), $data);
     }
 
     /**
@@ -619,10 +602,7 @@ class Reports extends BaseController
      */
     public function medicineSales()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'pharmacist'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'pharmacist']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -639,7 +619,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/medicine_sales', $data);
+        return view($this->getRoleViewPath('medicine_sales'), $data);
     }
 
     /**
@@ -647,10 +627,7 @@ class Reports extends BaseController
      */
     public function admissions()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'nurse', 'receptionist'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'nurse', 'receptionist']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -667,7 +644,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/admissions', $data);
+        return view($this->getRoleViewPath('admissions'), $data);
     }
 
     /**
@@ -675,10 +652,7 @@ class Reports extends BaseController
      */
     public function discharges()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'doctor', 'nurse'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'doctor', 'nurse']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -695,7 +669,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/discharges', $data);
+        return view($this->getRoleViewPath('discharges'), $data);
     }
 
     /**
@@ -703,10 +677,7 @@ class Reports extends BaseController
      */
     public function doctorPerformance()
     {
-        $role = session()->get('role');
-        if ($role !== 'admin') {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -723,7 +694,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/doctor_performance', $data);
+        return view($this->getRoleViewPath('doctor_performance'), $data);
     }
 
     /**
@@ -731,10 +702,7 @@ class Reports extends BaseController
      */
     public function staffActivity()
     {
-        $role = session()->get('role');
-        if ($role !== 'admin') {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -752,7 +720,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/staff_activity', $data);
+        return view($this->getRoleViewPath('staff_activity'), $data);
     }
 
     /**
@@ -760,10 +728,7 @@ class Reports extends BaseController
      */
     public function philhealthClaims()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -781,7 +746,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/philhealth_claims', $data);
+        return view($this->getRoleViewPath('philhealth_claims'), $data);
     }
 
     /**
@@ -789,10 +754,7 @@ class Reports extends BaseController
      */
     public function hmoClaims()
     {
-        $role = session()->get('role');
-        if (!in_array($role, ['admin', 'accounting'])) {
-            return redirect()->to('login')->with('error', 'Unauthorized access');
-        }
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
@@ -811,7 +773,7 @@ class Reports extends BaseController
             'filters' => $filters,
         ];
 
-        return view('Roles/admin/Reports/hmo_claims', $data);
+        return view($this->getRoleViewPath('hmo_claims'), $data);
     }
 
     /**
@@ -832,6 +794,129 @@ class Reports extends BaseController
         // Excel export implementation would go here
         // For now, redirect back
         return redirect()->back()->with('info', 'Excel export feature coming soon');
+    }
+
+    /**
+     * Export Income PDF (from Accountant controller)
+     */
+    public function exportIncomePdf()
+    {
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
+        
+        $fromDate = $this->request->getGet('from');
+        $toDate = $this->request->getGet('to');
+        
+        $filters = [
+            'start_date' => $fromDate ?? date('Y-m-01'),
+            'end_date' => $toDate ?? date('Y-m-d'),
+        ];
+        
+        $reportData = $this->billingModel->getRevenueReport($filters['start_date'], $filters['end_date'], $filters);
+        
+        $data = [
+            'title' => 'Income Report',
+            'fromDate' => $filters['start_date'],
+            'toDate' => $filters['end_date'],
+            'reportData' => $reportData,
+        ];
+        
+        try {
+            $dompdf = new \Dompdf\Dompdf();
+            $html = view('exports/income_pdf', $data);
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'landscape');
+            $dompdf->render();
+            $dompdf->stream("income-report-{$filters['start_date']}-to-{$filters['end_date']}.pdf", ["Attachment" => true]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to generate PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export Expenses PDF (from Accountant controller)
+     */
+    public function exportExpensesPdf()
+    {
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
+        
+        $fromDate = $this->request->getGet('from');
+        $toDate = $this->request->getGet('to');
+        $category = $this->request->getGet('category');
+        
+        $reportData = $this->medicineModel->getExpenseReport($fromDate ?? date('Y-m-01'), $toDate ?? date('Y-m-d'));
+        
+        $data = [
+            'title' => 'Expenses Report',
+            'fromDate' => $fromDate ?? date('Y-m-01'),
+            'toDate' => $toDate ?? date('Y-m-d'),
+            'category' => $category,
+            'reportData' => $reportData,
+        ];
+        
+        try {
+            $dompdf = new \Dompdf\Dompdf();
+            $html = view('exports/expenses_pdf', $data);
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'landscape');
+            $dompdf->render();
+            $dompdf->stream("expenses-report-{$data['fromDate']}-to-{$data['toDate']}.pdf", ["Attachment" => true]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to generate PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export Expenses Excel (from Accountant controller)
+     */
+    public function exportExpensesExcel()
+    {
+        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
+        
+        $fromDate = $this->request->getGet('from');
+        $toDate = $this->request->getGet('to');
+        $category = $this->request->getGet('category');
+        
+        $reportData = $this->medicineModel->getExpenseReport($fromDate ?? date('Y-m-01'), $toDate ?? date('Y-m-d'));
+        
+        $data = [
+            'title' => 'Expenses Report',
+            'fromDate' => $fromDate ?? date('Y-m-01'),
+            'toDate' => $toDate ?? date('Y-m-d'),
+            'category' => $category,
+            'reportData' => $reportData,
+        ];
+        
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            // Add headers
+            $sheet->setCellValue('A1', 'Date');
+            $sheet->setCellValue('B1', 'Category');
+            $sheet->setCellValue('C1', 'Amount');
+            
+            // Add data (placeholder - implement based on your data structure)
+            $row = 2;
+            if (isset($reportData['expenses']) && is_array($reportData['expenses'])) {
+                foreach ($reportData['expenses'] as $expense) {
+                    $sheet->setCellValue('A' . $row, $expense['date'] ?? '');
+                    $sheet->setCellValue('B' . $row, $expense['category'] ?? '');
+                    $sheet->setCellValue('C' . $row, $expense['amount'] ?? 0);
+                    $row++;
+                }
+            }
+            
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="expenses-report.xlsx"');
+            header('Cache-Control: max-age=0');
+            
+            $writer->save('php://output');
+            exit;
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to generate Excel: ' . $e->getMessage());
+        }
     }
 }
 

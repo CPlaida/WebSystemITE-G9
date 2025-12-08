@@ -2,17 +2,33 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\Controller;
 use App\Models\LaboratoryModel;
 use App\Models\ServiceModel;
 
-class Laboratory extends Controller
+class Laboratory extends BaseController
 {
     protected $labModel;
 
     public function __construct()
     {
         $this->labModel = new LaboratoryModel();
+    }
+
+    /**
+     * Get role-based view path
+     */
+    protected function getRoleViewPath(string $viewName): string
+    {
+        $role = session('role');
+        $roleMap = [
+            'admin' => 'admin',
+            'labstaff' => 'admin', // Lab staff use admin views (unified)
+            'doctor' => 'admin', // Use admin view for doctors (unified)
+            'nurse' => 'admin', // Use admin view for nurses (unified)
+            'receptionist' => 'admin',
+        ];
+        $roleFolder = $roleMap[$role] ?? 'admin';
+        return "Roles/{$roleFolder}/laboratory/{$viewName}";
     }
 
     /**
@@ -262,7 +278,7 @@ class Laboratory extends Controller
     public function request()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin', 'nurse'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -272,7 +288,15 @@ class Laboratory extends Controller
             'role' => session()->get('role')
         ];
 
-        return view('Roles/admin/laboratory/LaboratoryReq', $data);
+        return view($this->getRoleViewPath('LaboratoryReq'), $data);
+    }
+
+    /**
+     * Laboratory Request (alias for labstaff)
+     */
+    public function laboratoryRequest()
+    {
+        return $this->request();
     }
 
     /*Submit lab request */
@@ -388,7 +412,7 @@ class Laboratory extends Controller
     public function testresult()
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin', 'nurse'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -410,7 +434,7 @@ class Laboratory extends Controller
             'initialResults' => $initialResults,
         ];
 
-        return view('Roles/admin/laboratory/TestResult', $data);
+        return view($this->getRoleViewPath('TestResult'), $data);
     }
 
     /**
@@ -645,7 +669,7 @@ class Laboratory extends Controller
     public function viewTestResult($testId = null)
     {
         // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin', 'nurse'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -701,7 +725,7 @@ class Laboratory extends Controller
                 'testResult' => $testResult
             ];
 
-            return view('Roles/admin/laboratory/ViewTestResult', $data);
+            return view($this->getRoleViewPath('ViewTestResult'), $data);
         } catch (\Exception $e) {
             log_message('error', 'Failed to get test result: ' . $e->getMessage());
             return redirect()->to('laboratory/testresult')->with('error', 'Failed to load test result');
@@ -710,8 +734,8 @@ class Laboratory extends Controller
 
     public function addTestResult($testId = null)
     {
-        // Check if user is logged in and has appropriate role
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin'])) {
+        // Only lab staff and admin can add test results
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
@@ -867,7 +891,7 @@ class Laboratory extends Controller
                 'testResult' => $testResult
             ];
 
-            return view('Roles/admin/laboratory/AddTestResult', $data);
+            return view($this->getRoleViewPath('AddTestResult'), $data);
         } catch (\Exception $e) {
             log_message('error', 'Failed to load test for result entry: ' . $e->getMessage());
             return redirect()->to('laboratory/testresult')->with('error', 'Failed to load test');

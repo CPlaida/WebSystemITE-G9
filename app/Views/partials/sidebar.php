@@ -1,355 +1,202 @@
+<?php
+// Unified sidebar for all roles with permission-based menu items
+$role = session()->get('role');
+$userName = session()->get('username') ?? 'User';
+$roleName = getRoleName();
+?>
+
 <div class="sidebar">
     <div class="logo">
         <h2>St. Peter Hospital</h2>
         <div class="toggle-btn"><i class="fas fa-bars"></i></div>
     </div>
+    
+    <!-- User Info -->
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="user-details">
+            <div class="user-name"><?= esc($userName) ?></div>
+            <div class="user-role"><?= esc($roleName) ?></div>
+        </div>
+    </div>
+    
     <ul class="nav-menu">
-        <?php $role = session()->get('role'); ?>
+        <!-- Dashboard - All roles -->
+        <li class="nav-item">
+            <a href="<?= base_url('dashboard') ?>">
+                <span class="text">Dashboard</span>
+            </a>
+        </li>
 
-        <?php if ($role === 'admin'): ?>
-            <li class="nav-item">
-                <a href="<?= base_url('admin/dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <!-- Patient Management -->
-            <li class="nav-item expandable">
+        <!-- Patients - Admin, Doctor, Nurse, Receptionist -->
+        <?php if (hasPermission('patients')): ?>
+        <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
                     <span class="text">Patients</span>
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
-                    <li><a href="<?= base_url('admin/patients/register') ?>"><span class="text">Register Out Patient</span></a></li>
-                    <li><a href="<?= base_url('admin/patients/inpatient') ?>"><span class="text">Register In Patient</span></a></li>
-                    <li><a href="<?= base_url('admin/patients/admission') ?>"><span class="text">Patient Admission</span></a></li>
-                    <li><a href="<?= base_url('patients/view') ?>"><span class="text">View Patient</span></a></li>
+                <?php if ($role !== 'doctor'): ?>
+                    <?php if (hasPermission(['patients', 'administration'])): ?>
+                    <li><a href="<?= base_url('patients/register') ?>"><span class="text">Register Patient</span></a></li>
+                    <li><a href="<?= base_url('patients/inpatient') ?>"><span class="text">Register Inpatient</span></a></li>
+                    <?php endif; ?>
+                    <?php if (hasPermission(['patients', 'admissions'])): ?>
+                    <li><a href="<?= base_url('admissions/create') ?>"><span class="text">Patient Admission</span></a></li>
+                    <?php endif; ?>
+                    <?php endif; ?>
+                    <li><a href="<?= base_url('patients/view') ?>"><span class="text">View Patients</span></a></li>
                 </ul>
-            </li>
+        </li>
+        <?php endif; ?>
 
-            <!-- Appointments -->
-            <li class="nav-item expandable">
+        <!-- Appointments - Admin, Doctor, Nurse, Receptionist -->
+        <?php if (hasPermission('appointments')): ?>
+        <li class="nav-item expandable">
                 <a href="#" onclick="toggleSubmenu(this)">
                     <span class="text">Appointments</span>
                     <span class="arrow">›</span>
                 </a>
                 <ul class="submenu">
+                <?php if ($role !== 'doctor'): ?>
+                    <?php if (hasPermission(['appointments', 'administration'])): ?>
                     <li><a href="<?= base_url('appointments/book') ?>"><span class="text">Book Appointment</span></a></li>
-                    <li><a href="<?= site_url('appointments/list') ?>"><span class="text">Appointment List</span></a></li>
-                    <li><a href="<?= site_url('doctor/schedule') ?>"><span class="text">Doctor Schedule</span></a></li>
+                    <?php endif; ?>
+                    <?php endif; ?>
+                    <li><a href="<?= base_url('appointments/list') ?>"><span class="text">Appointment List</span></a></li>
+                    <?php if (hasPermission(['schedule', 'administration'])): ?>
+                    <li><a href="<?= base_url('doctor/schedule') ?>"><span class="text">Doctor Schedule</span></a></li>
+                    <?php endif; ?>
                 </ul>
-            </li>
-
-            <!-- Billing -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Billing and Payment</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= base_url('billing') ?>"><span class="text">Bill Management</span></a></li>
-                    <li><a href="<?= base_url('billing/process') ?>"><span class="text">Bill Process</span></a></li>
-                </ul>
-            </li>
-
-            <!-- Laboratory -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Laboratory</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= base_url('laboratory/request') ?>"><span class="text">Lab Request</span></a></li>
-                    <li><a href="<?= base_url('laboratory/testresult') ?>"><span class="text">Test Results</span></a></li>
-                </ul>
-            </li>
-
-            <!-- Pharmacy -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Pharmacy</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= base_url('admin/InventoryMan/PrescriptionDispencing') ?>"><span class="text">New Prescription</span></a></li>
-                    <li><a href="<?= site_url('admin/pharmacy/transactions') ?>"><span class="text">Transactions</span></a></li>
-                </ul>
-            </li>
-
-            <!-- Inventory Management -->
-            <li class="nav-item expandable">
-                <a href="<?= site_url('admin/inventory/medicine') ?>">
-                    <span class="text">Inventory Management</span>
-                    <span class="arrow">›</span>
-                </a>
-            </li>
-
-            <!-- Hospital Patient Rooms -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Hospital Patient Rooms</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li>
-                        <a href="<?= base_url('admin/rooms/general-inpatient') ?>" onclick="event.stopPropagation();">
-                            <span class="text">General Inpatient Rooms</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?= base_url('admin/rooms/critical-care') ?>" onclick="event.stopPropagation();">
-                            <span class="text">Critical Care Units</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?= base_url('admin/rooms/specialized') ?>" onclick="event.stopPropagation();">
-                            <span class="text">Specialized Patient Rooms</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!-- Administration -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Administration</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= base_url('admin/Administration/ManageUser') ?>"><span class="text">User Management</span></a></li>
-                    <li><a href="<?= base_url('admin/Administration/StaffManagement') ?>"><span class="text">Staff Management</span></a></li>
-                </ul>
-            </li>
-
-            <!-- Reports -->
-            <li class="nav-item expandable">
-                <a href="<?= base_url('reports') ?>">
-                    <span class="text">Reports</span>
-                    <span class="arrow">›</span>
-                </a>
-            </li>
+        </li>
         <?php endif; ?>
 
-        <?php if ($role === 'doctor'): ?>
-            <li class="nav-item">
-                <a href="<?= site_url('doctor/dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <!-- Patients -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Patients</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('doctor/patients/view') ?>"><span class="text">View Patient</span></a></li>
-                </ul>
-            </li>
-            <!-- Appointments -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Appointments</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('doctor/appointments/list') ?>"><span class="text">Appointment List</span></a></li>
-                   <li><a href="<?= site_url('doctor/my-schedule') ?>"><span class="text">Schedule</span></a></li>
-                </ul>
-            </li>
-            <!-- Laboratory (Doctor view) -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Laboratory</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('doctor/laboratory/testresult') ?>"><span class="text">Test Results</span></a></li>
-                </ul>
-            </li>
+
+        <!-- Billing - Admin, Accounting only -->
+        <?php if (hasPermission('billing') && !in_array($role, ['nurse', 'doctor'])): ?>
+        <li class="nav-item expandable">
+            <a href="#" onclick="toggleSubmenu(this)">
+                <span class="text">Billing & Payment</span>
+                <span class="arrow">›</span>
+            </a>
+            <ul class="submenu">
+                <li><a href="<?= base_url('billing') ?>"><span class="text">Bill Management</span></a></li>
+                <li><a href="<?= base_url('billing/process') ?>"><span class="text">Process Bill</span></a></li>
+            </ul>
+        </li>
         <?php endif; ?>
 
-        <?php if ($role === 'nurse'): ?>
-            <li class="nav-item">
-                <a href="<?= site_url('nurse/dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <!-- Patients -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Patients</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('nurse/patients/view') ?>"><span class="text">View Patient</span></a></li>
-                </ul>
-            </li>
-            <!-- Appointments -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Appointments</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('nurse/appointments/list') ?>"><span class="text">Appointment List</span></a></li>
-                </ul>
-            </li>
-            <!-- Laboratory -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Laboratory</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('nurse/laboratory/request') ?>"><span class="text">Lab Request</span></a></li>
-                    <li><a href="<?= site_url('nurse/laboratory/testresult') ?>"><span class="text">Test Results</span></a></li>
-                </ul>
-            </li>
+        <!-- Laboratory - Admin, Doctor, Nurse, Lab Staff -->
+        <?php if (hasPermission('laboratory')): ?>
+                <li class="nav-item expandable">
+                    <a href="#" onclick="toggleSubmenu(this)">
+                        <span class="text">Laboratory</span>
+                        <span class="arrow">›</span>
+                    </a>
+                    <ul class="submenu">
+                <?php if ($role !== 'doctor'): ?>
+                        <li><a href="<?= base_url('laboratory/request') ?>"><span class="text">Lab Request</span></a></li>
+                <?php endif; ?>
+                        <li><a href="<?= base_url('laboratory/testresult') ?>"><span class="text">Test Results</span></a></li>
+                    </ul>
+                </li>
         <?php endif; ?>
 
-        <?php if ($role === 'receptionist'): ?>
-            <li class="nav-item">
-                <a href="<?= site_url('receptionist/dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <!-- Patients -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Patients</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('receptionist/patients/register') ?>"><span class="text">Register Out Patient</span></a></li>
-                    <li><a href="<?= site_url('receptionist/patients/inpatient') ?>"><span class="text">Register In Patient</span></a></li>
-                    <li><a href="<?= site_url('receptionist/patients/view') ?>"><span class="text">View Patient</span></a></li>
-                </ul>
-            </li>
-            <!-- Hospital Patient Rooms (Receptionist view) -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Hospital Patient Rooms</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li>
-                        <a href="<?= site_url('receptionist/rooms/general-inpatient') ?>" onclick="event.stopPropagation();">
-                            <span class="text">General Inpatient Rooms</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?= site_url('receptionist/rooms/critical-care') ?>" onclick="event.stopPropagation();">
-                            <span class="text">Critical Care Units</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?= site_url('receptionist/rooms/specialized') ?>" onclick="event.stopPropagation();">
-                            <span class="text">Specialized Patient Rooms</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <!-- Appointments -->
-            <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Appointments</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('receptionist/appointments/book') ?>"><span class="text">Book Appointment</span></a></li>
-                    <li><a href="<?= site_url('receptionist/appointments/list') ?>"><span class="text">Appointment List</span></a></li>
-                </ul>
-            </li>
+        <!-- Pharmacy - Admin, Pharmacist only -->
+        <?php if (hasPermission('pharmacy') && !in_array($role, ['nurse', 'doctor'])): ?>
+        <li class="nav-item expandable">
+            <a href="#" onclick="toggleSubmenu(this)">
+                <span class="text">Pharmacy</span>
+                <span class="arrow">›</span>
+            </a>
+            <ul class="submenu">
+                <li><a href="<?= base_url('pharmacy/prescription') ?>"><span class="text">Prescription Dispensing</span></a></li>
+                <li><a href="<?= base_url('pharmacy/transactions') ?>"><span class="text">Transactions</span></a></li>
+            </ul>
+        </li>
         <?php endif; ?>
 
-        <?php if ($role === 'accounting'): ?>
-            <li class="nav-item">
-                <a href="<?= site_url('accountant/dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-
-            <!-- Billing -->
+        <!-- Inventory - Admin, Pharmacist only -->
+        <?php if (hasPermission('inventory') && !in_array($role, ['nurse', 'doctor'])): ?>
             <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Billing & Payment</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('accountant/billing/process') ?>"><span class="text">Bill Process</span></a></li>
-                    <li><a href="<?= base_url('accountant/billing/create') ?>"><span class="text">Bill Management</span></a></li>
-                </ul>
-            </li>
-
-            <!-- Reports -->
-            <li class="nav-item">
-                <a href="<?= base_url('reports') ?>">
-                    <span class="text">Reports</span>
-                </a>
-            </li>
-
+            <a href="<?= base_url('pharmacy/medicine') ?>">
+                <span class="text">Inventory Management</span>
+                <span class="arrow">›</span>
+            </a>
+        </li>
         <?php endif; ?>
 
-        <?php if ($role === 'pharmacist'): ?>
-            <li class="nav-item">
-                <a href="<?= site_url('pharmacist/dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
+        <!-- Rooms - Admin, Nurse, Receptionist -->
+        <?php if (hasPermission('rooms')): ?>
+        <li class="nav-item expandable">
+            <a href="#" onclick="toggleSubmenu(this)">
+                <span class="text">Hospital Rooms</span>
+                <span class="arrow">›</span>
+            </a>
+            <ul class="submenu">
+                <li><a href="<?= base_url('rooms/general-inpatient') ?>"><span class="text">General Inpatient</span></a></li>
+                <li><a href="<?= base_url('rooms/critical-care') ?>"><span class="text">Critical Care Units</span></a></li>
+                <li><a href="<?= base_url('rooms/specialized') ?>"><span class="text">Specialized Rooms</span></a></li>
+            </ul>
+        </li>
+        <?php endif; ?>
 
-            <!-- Prescriptions -->
+        <!-- Administration - Admin, IT Staff only -->
+        <?php if (hasPermission('administration') && $role !== 'nurse'): ?>
+        <li class="nav-item expandable">
+            <a href="#" onclick="toggleSubmenu(this)">
+                <span class="text">Administration</span>
+                <span class="arrow">›</span>
+            </a>
+            <ul class="submenu">
+                <li><a href="<?= base_url('admin/Administration/ManageUser') ?>"><span class="text">Manage Users</span></a></li>
+                <li><a href="<?= base_url('admin/Administration/StaffManagement') ?>"><span class="text">Staff Management</span></a></li>
+            </ul>
+        </li>
+        <?php endif; ?>
+
+        <!-- Reports - Admin, Accounting, IT Staff only -->
+        <?php if (hasPermission('reports') && !in_array($role, ['nurse', 'doctor'])): ?>
             <li class="nav-item expandable">
-                <a href="#" onclick="toggleSubmenu(this)">
-                    <span class="text">Prescriptions</span>
-                    <span class="arrow">›</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="<?= site_url('admin/pharmacy/prescription-dispensing') ?>"><span class="text">New Prescription</span></a></li>
-                </ul>
-            </li>
-
-            <!-- Inventory -->
-            <li class="nav-item">
-                <a href="<?= site_url('pharmacist/inventory') ?>">
-                    <span class="text">Inventory</span>
-                </a>
-            </li>
-
-            <!-- Transactions -->
-            <li class="nav-item">
-                <a href="<?= site_url('pharmacist/transactions') ?>">
-                    <span class="text">Transactions</span>
-                </a>
-            </li>
-
+            <a href="<?= base_url('reports') ?>">
+                <span class="text">Reports</span>
+                <span class="arrow">›</span>
+            </a>
+        </li>
         <?php endif; ?>
 
-        <?php if ($role === 'labstaff' || $role === 'Lab_staff'): ?>
-            <li class="nav-item">
-                <a href="<?= site_url('dashboard') ?>">
-                    <span class="text">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="<?= site_url('labstaff/laboratory/request') ?>">
-                    <span class="text">Lab Request</span>
-                </a>
-            </li>
-
-            <!-- Patients -->
-            <li class="nav-item">
-                <a href="<?= site_url('labstaff/laboratory/testresult') ?>">
-                    <span class="text">Test Result</span>
-                </a>
-            </li>
-        <?php endif; ?>
-
-        <!-- Common menu items for all users -->
-        <li class="nav-item" style="margin-top: auto;">
-            <a href="<?= site_url('auth/logout') ?>">
+        <!-- Logout -->
+        <li class="nav-item">
+            <a href="<?= base_url('logout') ?>">
                 <span class="text">Logout</span>
             </a>
         </li>
     </ul>
 </div>
-       
+
+<script>
+    // Submenu toggle function
+    function toggleSubmenu(element) {
+        const parentLi = element.parentElement;
+        const submenu = parentLi.querySelector('.submenu');
+        
+        // Close other open submenus
+        document.querySelectorAll('.nav-item.expandable').forEach(item => {
+            if (item !== parentLi) {
+                item.classList.remove('expanded');
+                const otherSubmenu = item.querySelector('.submenu');
+                if (otherSubmenu) {
+                    otherSubmenu.classList.remove('show');
+                }
+            }
+        });
+        
+        // Toggle current submenu
+        parentLi.classList.toggle('expanded');
+        if (submenu) {
+            submenu.classList.toggle('show');
+        }
+    }
+</script>

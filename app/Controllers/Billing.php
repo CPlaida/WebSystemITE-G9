@@ -23,6 +23,21 @@ class Billing extends BaseController
         helper(['form', 'url']);
     }
 
+    /**
+     * Get role-based view path
+     */
+    protected function getRoleViewPath(string $viewName): string
+    {
+        $role = session('role');
+        $roleMap = [
+            'admin' => 'admin',
+            'accounting' => 'admin', // Accountants use admin views (unified)
+            'accountant' => 'admin', // Accountants use admin views (unified)
+        ];
+        $roleFolder = $roleMap[$role] ?? 'admin';
+        return "Roles/{$roleFolder}/Billing & payment/{$viewName}";
+    }
+
 
     private function hasField(string $table, string $field): bool
     {
@@ -130,10 +145,13 @@ class Billing extends BaseController
 
     public function index()
     {
+        // Only admin and accounting can access billing
+        $this->requireRole(['admin', 'accounting']);
+        
         $term = $this->request->getGet('q');
         $bills = $this->billingModel->getList($term);
         $totals = $this->billingModel->getTotals();
-        return view('Roles/admin/Billing & payment/billingmanagement', [
+        return view($this->getRoleViewPath('billingmanagement'), [
             'bills' => $bills,
             'totals' => $totals,
             'query' => (string)($term ?? ''),
@@ -146,6 +164,9 @@ class Billing extends BaseController
 
     public function process($id = null)
     {
+        // Only admin and accounting can process bills
+        $this->requireRole(['admin', 'accounting']);
+        
         $data = [
             'title' => 'Bill Process',
             'active_menu' => 'billing',
@@ -180,23 +201,43 @@ class Billing extends BaseController
             }
         }
 
-        return view('Roles/admin/Billing & payment/bill_process', $data);
+        return view($this->getRoleViewPath('bill_process'), $data);
     }
     
     public function save()
     {
+        // Only admin and accounting can save bills
+        $this->requireRole(['admin', 'accounting']);
         // Backward-compat shim. Delegate to store().
         return $this->store();
     }
 
     public function create()
     {
-        // Optional: return a small create form view if needed; most flows use a modal
+        // Only admin and accounting can create bills
+        $this->requireRole(['admin', 'accounting']);
+        // Return view for accountant/admin, JSON for others
+        $role = session('role');
+        if ($role === 'accountant' || $role === 'accounting' || $role === 'admin') {
+            $data = [
+                'title' => 'Create Bill',
+                'active_menu' => 'billing',
+                'validation' => \Config\Services::validation(),
+                'hmoProviders' => (new HmoProviderModel())
+                    ->where('active', 1)
+                    ->orderBy('name', 'ASC')
+                    ->findAll(),
+            ];
+            return view($this->getRoleViewPath('bill_process'), $data);
+        }
         return $this->response->setJSON(['ok' => true]);
     }
 
     public function store()
     {
+        // Only admin and accounting can store bills
+        $this->requireRole(['admin', 'accounting']);
+        
         $rules = [
             'patient_id' => 'required',
             'final_amount' => 'required|numeric',
@@ -334,7 +375,7 @@ class Billing extends BaseController
         $bill['tax'] = $tax;
         $bill['total'] = $total;
 
-        return view('Roles/admin/Billing & payment/receipt', ['bill' => $bill]);
+        return view($this->getRoleViewPath('receipt'), ['bill' => $bill]);
     }
 
     public function get($id)
@@ -385,6 +426,8 @@ class Billing extends BaseController
 
     public function update($id)
     {
+        // Only admin and accounting can update bills
+        $this->requireRole(['admin', 'accounting']);
         $rules = [
             'patient_id' => 'permit_empty',
             'service_id' => 'permit_empty|integer',
@@ -599,6 +642,9 @@ class Billing extends BaseController
 
     public function delete($id)
     {
+        // Only admin and accounting can delete bills
+        $this->requireRole(['admin', 'accounting']);
+        
         $this->billingModel->delete($id);
         (new HmoAuthorizationModel())->where('billing_id', (int)$id)->delete();
         return $this->response->setJSON(['status' => 'success', 'message' => 'Bill deleted successfully']);

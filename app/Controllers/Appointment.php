@@ -24,25 +24,42 @@ class Appointment extends BaseController
     }
 
     /**
-     * Display appointment list
+     * Get role-based view path
+     */
+    protected function getRoleViewPath(string $viewName): string
+    {
+        $role = session('role');
+        $roleMap = [
+            'admin' => 'admin',
+            'doctor' => 'admin', // Use admin view for doctors (unified)
+            'nurse' => 'admin', // Use admin view for nurses (unified)
+            'receptionist' => 'admin',
+        ];
+        $roleFolder = $roleMap[$role] ?? 'admin';
+        return "Roles/{$roleFolder}/{$viewName}";
+    }
+
+    /**
+     * Display appointment list - unified for all roles
      */
     public function index()
     {
-        // Check if user is logged in and has appropriate role
+        // Role-based access control
         $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
-        if (!in_array(session('role'), $allowedRoles)) {
-            return redirect()->to('login');
-        }
-
+        $this->requireRole($allowedRoles);
+        
+        $role = session('role');
         $filter = $this->request->getGet('filter') ?? 'today';
         $date   = $this->request->getGet('date');
         $today  = date('Y-m-d'); // server/app timezone
+        $appointments = [];
 
+        // Admin, doctor, nurse, receptionist see all appointments
         if ($filter === 'all') {
             $appointments = $this->appointmentModel->getAppointmentsWithDetails();
         } elseif ($filter === 'date' && $date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
             $appointments = $this->appointmentModel->getAppointmentsByDateRange($date, $date);
-        } else { // default: today
+        } else {
             $appointments = $this->appointmentModel->getAppointmentsByDateRange($today, $today);
             $filter = 'today';
             $date = $today;
@@ -56,48 +73,16 @@ class Appointment extends BaseController
             'currentDate' => $date ?? $today,
         ];
 
-        return view('Roles/admin/appointments/Appointmentlist', $data);
+        return view($this->getRoleViewPath('appointments/Appointmentlist'), $data);
     }
 
     /**
-     * Doctor-facing appointment list (defaults to today's appointments for logged-in doctor).
+     * Doctor-facing appointment list (legacy route - redirects to index)
      */
     public function doctorToday()
     {
-        // Only doctors can access this view
-        if (session('role') !== 'doctor') {
-            return redirect()->to('login');
-        }
-
-        $doctorId = (string) session('user_id');
-        if ($doctorId === '') {
-            return redirect()->to('/dashboard')->with('error', 'Unable to resolve doctor account.');
-        }
-
-        $filter = $this->request->getGet('filter') ?? 'today';
-        $date   = $this->request->getGet('date');
-        $today  = date('Y-m-d');
-
-        if ($filter === 'all') {
-            $appointments = $this->appointmentModel->getUnifiedList($doctorId, null);
-        } elseif ($filter === 'date' && $date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            $appointments = $this->appointmentModel->getUnifiedList($doctorId, $date);
-        } else {
-            // Default: today's appointments for this doctor
-            $appointments = $this->appointmentModel->getUnifiedList($doctorId, $today);
-            $filter = 'today';
-            $date = $today;
-        }
-
-        $data = [
-            'title'          => "My Appointments",
-            'active_menu'    => 'appointments',
-            'appointments'   => $appointments,
-            'currentFilter'  => $filter,
-            'currentDate'    => $date ?? $today,
-        ];
-
-        return view('Roles/doctor/appointments/Appointmentlist', $data);
+        // Redirect to unified index method
+        return $this->index();
     }
 
     /**
@@ -105,11 +90,8 @@ class Appointment extends BaseController
      */
     public function book()
     {
-        // Check if user is logged in and has appropriate role
-        $allowedRoles = ['admin', 'nurse', 'receptionist'];
-        if (!in_array(session('role'), $allowedRoles)) {
-            return redirect()->to('login');
-        }
+        // Only admin, nurse, and receptionist can book appointments
+        $this->requireRole(['admin', 'nurse', 'receptionist']);
 
         // Get doctors from users table via roles join (users.role removed)
         $doctors = $this->userModel
@@ -126,7 +108,7 @@ class Appointment extends BaseController
             'doctors' => $doctors
         ];
         
-        return view('Roles/admin/appointments/Bookappointment', $data);
+        return view($this->getRoleViewPath('appointments/Bookappointment'), $data);
     }
 
     /**
@@ -878,14 +860,12 @@ class Appointment extends BaseController
      */
     public function delete($id)
     {
+        // Only admin can delete appointments
+        $this->requireRole(['admin']);
+        
         // Validate ID
         if (!is_numeric($id) || (int) $id <= 0) {
             return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid appointment id']);
-        }
-        // Check if user is logged in and has appropriate role
-        $allowedRoles = ['admin', 'doctor', 'nurse', 'receptionist'];
-        if (!in_array(session('role'), $allowedRoles)) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized access']);
         }
 
         $appointment = $this->appointmentModel->find($id);

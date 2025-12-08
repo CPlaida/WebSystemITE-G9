@@ -2,11 +2,10 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\Controller;
 use App\Models\MedicineModel;
 use App\Models\PatientModel;
 
-class Pharmacy extends Controller
+class Pharmacy extends BaseController
 {
     protected $medicineModel;
     protected $patientModel;
@@ -19,12 +18,31 @@ class Pharmacy extends Controller
         $this->db = \Config\Database::connect();
     }
 
+    /**
+     * Get role-based view path
+     */
+    protected function getRoleViewPath(string $viewName): string
+    {
+        $role = session('role');
+        $roleMap = [
+            'admin' => 'admin',
+            'pharmacist' => 'admin', // Pharmacists use admin views for pharmacy features
+        ];
+        $roleFolder = $roleMap[$role] ?? 'admin';
+        
+        // For pharmacy-specific views, add pharmacy subfolder
+        $pharmacyViews = ['Transaction', 'TransactionDetail', 'TransactionPrint', 'PrescriptionDispencing'];
+        if (in_array($viewName, $pharmacyViews, true)) {
+            return "Roles/{$roleFolder}/pharmacy/{$viewName}";
+        }
+        
+        return "Roles/{$roleFolder}/{$viewName}";
+    }
+
     // View Routes
     public function index()
     {
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'pharmacist') {
-            return redirect()->to('/login')->with('error', 'Access denied.');
-        }
+        $this->requireRole(['pharmacist', 'admin']);
 
         $data = [
             'title' => 'Pharmacy Dashboard',
@@ -42,9 +60,7 @@ class Pharmacy extends Controller
 
     public function medicine()
     {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
-            return redirect()->to('/login')->with('error', 'Access denied.');
-        }
+        $this->requireRole(['pharmacist', 'admin']);
 
         // Load the Medicine model
         $medicineModel = new \App\Models\MedicineModel();
@@ -81,14 +97,12 @@ class Pharmacy extends Controller
             'expiring_soon_count' => $expiring_soon_count
         ];
 
-        return view('Roles/pharmacy/inventory/Medicine', $data);
+        return view($this->getRoleViewPath('inventory/Medicine'), $data);
     }
 
     public function prescriptionDispensing()
     {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
-            return redirect()->to('/login')->with('error', 'Access denied.');
-        }
+        $this->requireRole(['pharmacist', 'admin']);
 
         $data = [
             'title' => 'Prescription Dispensing',
@@ -96,14 +110,12 @@ class Pharmacy extends Controller
             'role' => session()->get('role')
         ];
 
-        return view('Roles/admin/pharmacy/PrescriptionDispencing', $data);
+        return view($this->getRoleViewPath('PrescriptionDispencing'), $data);
     }
 
     public function transactions()
     {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
-            return redirect()->to('/login')->with('error', 'Access denied.');
-        }
+        $this->requireRole(['pharmacist', 'admin']);
 
         $data = [
             'title' => 'Pharmacy Transactions',
@@ -111,14 +123,12 @@ class Pharmacy extends Controller
             'role' => session()->get('role')
         ];
 
-        return view('Roles/admin/pharmacy/Transaction', $data);
+        return view($this->getRoleViewPath('Transaction'), $data);
     }
 
     public function inventory()
     {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
-            return redirect()->to('/login')->with('error', 'Access denied.');
-        }
+        $this->requireRole(['pharmacist', 'admin']);
 
         $data = [
             'title' => 'Pharmacy Inventory',
@@ -131,9 +141,7 @@ class Pharmacy extends Controller
 
     public function viewTransaction($transactionId)
     {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist','admin'])) {
-            return redirect()->to('/login')->with('error','Access denied.');
-        }
+        $this->requireRole(['pharmacist', 'admin']);
 
         $builder = $this->db->table('pharmacy_transactions pt');
         $builder->select("pt.id, pt.transaction_number, pt.date, pt.patient_id, pt.total_amount, p.first_name, p.last_name, pr.id as prescription_id, pr.subtotal, pr.tax, pr.total_amount as prescription_total");
@@ -179,7 +187,7 @@ class Pharmacy extends Controller
             $payload['items'] = $items;
         }
 
-        return view('Roles/admin/pharmacy/TransactionDetail', [
+        return view($this->getRoleViewPath('TransactionDetail'), [
             'title' => 'Transaction Details',
             'transactionId' => $transactionId,
             'transaction' => $payload,
@@ -190,9 +198,7 @@ class Pharmacy extends Controller
 
     public function printTransaction($transactionId)
     {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['pharmacist', 'admin'])) {
-            return redirect()->to('/login')->with('error', 'Access denied.');
-        }
+        $this->requireRole(['pharmacist', 'admin']);
 
         // Load transaction (no patient connection)
         $builder = $this->db->table('pharmacy_transactions pt');
@@ -242,7 +248,7 @@ class Pharmacy extends Controller
             $payload['items'] = $items;
         }
 
-        return view('Roles/admin/pharmacy/TransactionPrint', [ 'transaction' => $payload ]);
+        return view($this->getRoleViewPath('TransactionPrint'), [ 'transaction' => $payload ]);
     }
 
     // ==================== API ENDPOINTS ====================

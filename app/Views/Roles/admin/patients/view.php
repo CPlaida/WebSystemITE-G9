@@ -42,7 +42,7 @@
             <div class="organized-header flex-column flex-md-row" style="margin-bottom: 1.5rem;">
                 <div class="filter-buttons mb-3 mb-md-0">
                     <?php foreach ($filters as $key => $info): ?>
-                        <a href="<?= base_url('admin/patients?filter=' . $key) ?>"
+                        <a href="<?= base_url('patients/view?filter=' . $key) ?>"
                            class="btn btn-sm <?= $currentFilter === $key ? 'btn-primary' : 'btn-outline-primary' ?>">
                             <i class="fas <?= esc($info['icon']) ?> me-1"></i> <?= esc($info['label']) ?>
                         </a>
@@ -127,7 +127,7 @@
                                                     data-patient='<?= esc(json_encode($payload, JSON_HEX_APOS | JSON_HEX_QUOT), 'attr') ?>'>
                                                     <i class="fas fa-notes-medical me-2"></i>View
                                                 </button>
-                                                <?php if ($isAdmitted && !empty($patient['admission_id'])): ?>
+                                                <?php if ($isAdmitted && !empty($patient['admission_id']) && session('role') !== 'doctor'): ?>
                                                     <button type="button"
                                                         class="btn btn-outline-danger discharge-btn"
                                                         data-admission-id="<?= esc($patient['admission_id']) ?>"

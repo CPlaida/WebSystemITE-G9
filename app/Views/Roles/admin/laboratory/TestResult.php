@@ -59,7 +59,7 @@
                                             <td>
                                                 <div class="action-buttons">
                                                     <a href="<?= $viewUrl ?>" class="btn btn-primary btn-sm" role="button">View</a>
-                                                    <?php if (strtolower((string)$status) !== 'completed'): ?>
+                                                    <?php if (strtolower((string)$status) !== 'completed' && in_array(session('role'), ['admin', 'labstaff'])): ?>
                                                         <a href="<?= $addUrl ?>" class="btn btn-primary btn-sm" role="button">Add Result</a>
                                                     <?php endif; ?>
                                                 </div>

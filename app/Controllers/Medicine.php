@@ -3,10 +3,13 @@
 use App\Models\MedicineModel;
 use CodeIgniter\Controller;
 
-class Medicine extends Controller
+class Medicine extends BaseController
 {
     public function index()
     {
+        // Only admin and pharmacist can access inventory
+        $this->requireRole(['admin', 'pharmacist']);
+        
         $model = new MedicineModel();
         $cutoff = date('Y-m-d', strtotime('+3 months')); // strict 3-month rule
         
@@ -62,6 +65,9 @@ class Medicine extends Controller
     // store single or multiple medicines. Accepts arrays from form.
     public function store()
     {
+        // Only admin and pharmacist can store medicines
+        $this->requireRole(['admin', 'pharmacist']);
+        
         $model = new MedicineModel();
 
         $barcodes = $this->request->getPost('barcode');
@@ -158,6 +164,9 @@ class Medicine extends Controller
 
     public function update($id = null)
     {
+        // Only admin and pharmacist can update medicines
+        $this->requireRole(['admin', 'pharmacist']);
+        
         $model = new MedicineModel();
 
         // Skip blocking; near-expiry items will automatically be treated as Stock Out by the 3-month rule
@@ -226,6 +235,9 @@ class Medicine extends Controller
      */
     public function stockOut()
     {
+        // Only admin and pharmacist can view stock out
+        $this->requireRole(['admin', 'pharmacist']);
+        
         $model = new MedicineModel();
         $cutoff = date('Y-m-d', strtotime('+3 months'));
 
@@ -255,6 +267,9 @@ class Medicine extends Controller
      */
     public function outOfStock()
     {
+        // Only admin and pharmacist can view out of stock
+        $this->requireRole(['admin', 'pharmacist']);
+        
         $model = new MedicineModel();
         $cutoff = date('Y-m-d', strtotime('+3 months'));
 
@@ -287,6 +302,9 @@ class Medicine extends Controller
      */
     public function restock()
     {
+        // Only admin and pharmacist can restock
+        $this->requireRole(['admin', 'pharmacist']);
+        
         $model = new MedicineModel();
         $id = $this->request->getPost('id');
         $newStock = intval($this->request->getPost('stock'));

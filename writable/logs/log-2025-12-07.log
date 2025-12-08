@@ -14,3 +14,661 @@ Stack trace:
 #11 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #12 {main}
 ERROR - 2025-12-07 13:26:37 --> Error loading dashboard data: Unknown column 'doctor_id' in 'where clause'
+CRITICAL - 2025-12-07 17:56:45 --> Error: Call to undefined method App\Controllers\Appointment::requireRole()
+[Method: GET, Route: appointments/book]
+in APPPATH\Controllers\Appointment.php on line 93.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->book()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 17:57:31 --> Error: Call to undefined method App\Controllers\Appointment::requireRole()
+[Method: GET, Route: appointments/book]
+in APPPATH\Controllers\Appointment.php on line 93.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->book()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 17:57:36 --> Error: Call to undefined method App\Controllers\Appointment::requireRole()
+[Method: GET, Route: appointments/list]
+in APPPATH\Controllers\Appointment.php on line 49.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:00:50 --> Error: Call to undefined method App\Controllers\Appointment::requireRole()
+[Method: GET, Route: appointments/list]
+in APPPATH\Controllers\Appointment.php on line 49.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:00:52 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:00:54 --> Error: Call to undefined method App\Controllers\Patients::requireRole()
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 84.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:00:56 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:00:59 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:01:02 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:01:03 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:01:05 --> Error: Call to undefined method App\Controllers\Patients::requireRole()
+[Method: GET, Route: patients/view]
+in APPPATH\Controllers\Patients.php on line 247.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:01:09 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:04:01 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:04:03 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: api/rooms/wards]
+in APPPATH\Controllers\Rooms.php on line 607.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->apiWards()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:04:08 --> Error: Call to undefined method App\Controllers\Patients::requireRole()
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 84.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:04:30 --> Error: Call to undefined method App\Controllers\Pharmacy::requireRole()
+[Method: GET, Route: admin/pharmacy/transactions]
+in APPPATH\Controllers\Pharmacy.php on line 111.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->transactions()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:10:07 --> Error: Call to undefined method App\Controllers\Patients::requireRole()
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 84.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:12:42 --> Error: Call to undefined method App\Controllers\Reports::requireRole()
+[Method: GET, Route: reports]
+in APPPATH\Controllers\Reports.php on line 64.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports->index()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:12:46 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: admin/rooms/general-inpatient]
+in APPPATH\Controllers\Rooms.php on line 57.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->generalInpatient()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:12:50 --> Error: Call to undefined method App\Controllers\Rooms::requireRole()
+[Method: GET, Route: admin/rooms/critical-care]
+in APPPATH\Controllers\Rooms.php on line 187.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->criticalCare()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:13:12 --> Error: Call to undefined method App\Controllers\Pharmacy::requireRole()
+[Method: GET, Route: admin/pharmacy/transactions]
+in APPPATH\Controllers\Pharmacy.php on line 111.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->transactions()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:13:31 --> Error: Call to undefined method App\Controllers\Appointment::requireRole()
+[Method: GET, Route: appointments/book]
+in APPPATH\Controllers\Appointment.php on line 93.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->book()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:13:44 --> Error: Call to undefined method App\Controllers\Patients::requireRole()
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 84.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:15:17 --> Error: Call to undefined method App\Controllers\Patients::requireRole()
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 84.
+ 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:16:04 --> ErrorException: Access level to App\Controllers\Patients::getRoleViewPath() must be protected (as in class App\Controllers\BaseController) or weaker
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 29.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2025-12-07 18:16:06 --> ErrorException: Access level to App\Controllers\Patients::getRoleViewPath() must be protected (as in class App\Controllers\BaseController) or weaker
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 29.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2025-12-07 18:16:08 --> ErrorException: Access level to App\Controllers\Patients::getRoleViewPath() must be protected (as in class App\Controllers\BaseController) or weaker
+[Method: GET, Route: admin/patients/register]
+in APPPATH\Controllers\Patients.php on line 29.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2025-12-07 18:18:23 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/admin/Transaction.php"
+[Method: GET, Route: admin/pharmacy/transactions]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/admin/Transaction.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/Transaction', [], true)
+ 3 APPPATH\Controllers\Pharmacy.php(119): view('Roles/admin/Transaction', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->transactions()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:31:50 --> ErrorException: Undefined variable $payload
+[Method: GET, Route: patients/view]
+in APPPATH\Views\shared\patients\action_buttons.php on line 9.
+ 1 APPPATH\Views\shared\patients\action_buttons.php(9): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $payload', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\shared\\patients\\action_buttons.php', 9)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\shared\\patients\\action_buttons.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('shared/patients/action_buttons', [...], true)
+ 5 APPPATH\Views\shared\patients\view.php(137): CodeIgniter\View\View->include('shared/patients/action_buttons', [...])
+ 6 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\shared\\patients\\view.php')
+ 7 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 8 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('shared/patients/view', null, true)
+ 9 APPPATH\Views\Roles\admin\patients\view.php(5): CodeIgniter\View\View->include('shared/patients/view')
+10 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Views\\Roles\\admin\\patients\\view.php')
+11 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+12 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/admin/patients/view', [], true)
+13 APPPATH\Controllers\Patients.php(282): view('Roles/admin/patients/view', [...])
+14 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+15 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+16 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+17 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+18 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+19 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:42:15 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/nurse/appointments/Appointmentlist.php"
+[Method: GET, Route: nurse/appointments/list]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/nurse/appointments/Appointmentlist.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/nurse/appointments/Appointmentlist', [], true)
+ 3 APPPATH\Controllers\Appointment.php(75): view('Roles/nurse/appointments/Appointmentlist', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:42:19 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/nurse/patients/view.php"
+[Method: GET, Route: nurse/patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/nurse/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/nurse/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/nurse/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:44:04 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: doctor/patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:44:08 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/appointments/Appointmentlist.php"
+[Method: GET, Route: doctor/appointments/list]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/appointments/Appointmentlist.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments/Appointmentlist', [], true)
+ 3 APPPATH\Controllers\Appointment.php(75): view('Roles/doctor/appointments/Appointmentlist', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 18:44:10 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/TestResult.php"
+[Method: GET, Route: doctor/laboratory/testresult]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/TestResult.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/TestResult', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(437): view('Roles/doctor/laboratory/TestResult', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->testresult()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:14:47 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(95): view('Roles/doctor/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:25:54 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(95): view('Roles/doctor/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:26:19 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/LaboratoryReq.php"
+[Method: GET, Route: laboratory/request]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/LaboratoryReq.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/LaboratoryReq', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(291): view('Roles/doctor/laboratory/LaboratoryReq', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->request()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:27:29 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/LaboratoryReq.php"
+[Method: GET, Route: laboratory/request]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/LaboratoryReq.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/LaboratoryReq', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(291): view('Roles/doctor/laboratory/LaboratoryReq', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->request()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:37:21 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/nurse/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/nurse/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/nurse/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(95): view('Roles/nurse/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:37:54 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/nurse/patients/register.php"
+[Method: GET, Route: patients/register]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/nurse/patients/register.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/nurse/patients/register', [], true)
+ 3 APPPATH\Controllers\Patients.php(95): view('Roles/nurse/patients/register', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->register()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:46:07 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:46:50 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:47:04 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:47:36 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/appointments/Appointmentlist.php"
+[Method: GET, Route: appointments/list]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/appointments/Appointmentlist.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments/Appointmentlist', [], true)
+ 3 APPPATH\Controllers\Appointment.php(75): view('Roles/doctor/appointments/Appointmentlist', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:49:00 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:49:04 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/LaboratoryReq.php"
+[Method: GET, Route: laboratory/request]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/LaboratoryReq.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/LaboratoryReq', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(291): view('Roles/doctor/laboratory/LaboratoryReq', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->request()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:49:06 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/appointments/StaffSchedule.php"
+[Method: GET, Route: doctor/schedule]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/appointments/StaffSchedule.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments/StaffSchedule', [], true)
+ 3 APPPATH\Controllers\Doctor.php(126): view('Roles/doctor/appointments/StaffSchedule', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->schedule()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:50:28 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/appointments/StaffSchedule.php"
+[Method: GET, Route: doctor/schedule]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/appointments/StaffSchedule.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments/StaffSchedule', [], true)
+ 3 APPPATH\Controllers\Doctor.php(111): view('Roles/doctor/appointments/StaffSchedule', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->schedule()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:54:47 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:56:07 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:56:11 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/LaboratoryReq.php"
+[Method: GET, Route: laboratory/request]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/LaboratoryReq.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/LaboratoryReq', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(291): view('Roles/doctor/laboratory/LaboratoryReq', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->request()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:56:32 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/patients/view.php"
+[Method: GET, Route: patients/view]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/patients/view.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/patients/view', [], true)
+ 3 APPPATH\Controllers\Patients.php(282): view('Roles/doctor/patients/view', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 19:58:06 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/appointments/Appointmentlist.php"
+[Method: GET, Route: appointments/list]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/appointments/Appointmentlist.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/appointments/Appointmentlist', [], true)
+ 3 APPPATH\Controllers\Appointment.php(94): view('Roles/doctor/appointments/Appointmentlist', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:06:39 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/LaboratoryReq.php"
+[Method: GET, Route: laboratory/request]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/LaboratoryReq.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/LaboratoryReq', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(291): view('Roles/doctor/laboratory/LaboratoryReq', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->request()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:09:49 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/LaboratoryReq.php"
+[Method: GET, Route: laboratory/request]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/LaboratoryReq.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/LaboratoryReq', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(291): view('Roles/doctor/laboratory/LaboratoryReq', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->request()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:10:31 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/doctor/laboratory/LaboratoryReq.php"
+[Method: GET, Route: laboratory/request]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/doctor/laboratory/LaboratoryReq.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/doctor/laboratory/LaboratoryReq', [], true)
+ 3 APPPATH\Controllers\Laboratory.php(291): view('Roles/doctor/laboratory/LaboratoryReq', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Laboratory->request()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Laboratory))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:18:30 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/Accountant/Billing & payment/billingmanagement.php"
+[Method: GET, Route: billing]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/Accountant/Billing & payment/billingmanagement.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/Accountant/Billing & payment/billingmanagement', [], true)
+ 3 APPPATH\Controllers\Billing.php(151): view('Roles/Accountant/Billing & payment/billingmanagement', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:18:32 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/Accountant/Reports/index.php"
+[Method: GET, Route: reports]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/Accountant/Reports/index.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/Accountant/Reports/index', [], true)
+ 3 APPPATH\Controllers\Reports.php(214): view('Roles/Accountant/Reports/index', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports->index()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:19:11 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/pharmacy/pharmacy/PrescriptionDispencing.php"
+[Method: GET, Route: pharmacy/prescription]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/pharmacy/pharmacy/PrescriptionDispencing.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/pharmacy/pharmacy/PrescriptionDispencing', [], true)
+ 3 APPPATH\Controllers\Pharmacy.php(113): view('Roles/pharmacy/pharmacy/PrescriptionDispencing', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->prescriptionDispensing()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:19:14 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/pharmacy/inventory/Medicine.php"
+[Method: GET, Route: pharmacy/medicine]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/pharmacy/inventory/Medicine.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/pharmacy/inventory/Medicine', [], true)
+ 3 APPPATH\Controllers\Pharmacy.php(100): view('Roles/pharmacy/inventory/Medicine', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->medicine()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:19:32 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/pharmacy/inventory/Medicine.php"
+[Method: GET, Route: pharmacy/medicine]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/pharmacy/inventory/Medicine.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/pharmacy/inventory/Medicine', [], true)
+ 3 APPPATH\Controllers\Pharmacy.php(100): view('Roles/pharmacy/inventory/Medicine', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Pharmacy->medicine()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-07 20:51:59 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "Roles/nurse/rooms/GeneralInpatient.php"
+[Method: GET, Route: rooms/general-inpatient]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('Roles/nurse/rooms/GeneralInpatient.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('Roles/nurse/rooms/GeneralInpatient', [], true)
+ 3 APPPATH\Controllers\Rooms.php(92): view('Roles/nurse/rooms/GeneralInpatient', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Rooms->generalInpatient()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Rooms))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
