@@ -354,8 +354,8 @@
                 </div>
                 <small class="text-muted">Fill out for doctors, nurses, and other licensed professionals.</small>
               </div>
-              <div class="form-group">
-                <label class="form-label" for="department_id">Department</label>
+              <div class="form-group" id="departmentFieldGroup">
+                <label class="form-label" for="department_id" id="departmentLabel">Department</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas a-building text-muted"></i></span>
                   <select id="department_id" name="department_id" class="form-select" onchange="handleDepartmentChange()">
@@ -368,7 +368,7 @@
                   </select>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group" id="specializationFieldGroup">
                 <label class="form-label" for="specialization_id">Specialization</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-stethoscope text-muted"></i></span>
@@ -620,13 +620,60 @@
       });
     }
 
+    function configureAssignmentFields(scope, roleLabel) {
+      const deptGroup = document.getElementById('departmentFieldGroup');
+      const specGroup = document.getElementById('specializationFieldGroup');
+      const deptLabel = document.getElementById('departmentLabel');
+      const deptSelect = document.getElementById('department_id');
+      const specSelect = document.getElementById('specialization_id');
+      const lowerLabel = (roleLabel || '').toLowerCase();
+      const scopeValue = (scope || '').toLowerCase();
+      const hideKeywords = ['account', 'lab', 'pharma', 'admin', 'reception', 'it'];
+      const hideAllAssignments = hideKeywords.some(keyword => lowerLabel.includes(keyword));
+      const isNurseRole = scopeValue === 'nurse';
+
+      if (deptGroup) {
+        deptGroup.style.display = hideAllAssignments ? 'none' : '';
+      }
+      if (specGroup) {
+        if (hideAllAssignments) {
+          specGroup.style.display = 'none';
+        } else if (isNurseRole) {
+          specGroup.style.display = 'none';
+        } else {
+          specGroup.style.display = '';
+        }
+      }
+
+      if (hideAllAssignments) {
+        if (deptSelect) deptSelect.value = '';
+        if (specSelect) specSelect.value = '';
+      }
+
+      if (deptLabel) {
+        deptLabel.textContent = isNurseRole ? 'Station' : 'Department';
+      }
+      if (deptSelect) {
+        const placeholder = deptSelect.querySelector('option[value=""]');
+        if (placeholder) {
+          placeholder.textContent = isNurseRole ? 'Select Station' : 'Select Department';
+        }
+      }
+
+      if (isNurseRole && specSelect) {
+        specSelect.value = '';
+      }
+    }
+
     function handleRoleChange() {
       const roleSelect = document.getElementById('role_id');
       const selectedRole = roleSelect.options[roleSelect.selectedIndex];
       const scope = selectedRole ? selectedRole.dataset.scope : 'all';
       filterDepartmentOptions(scope || 'all');
       handleDepartmentChange();
-      toggleLicenseField(selectedRole ? selectedRole.textContent : '');
+      const roleLabel = selectedRole ? selectedRole.textContent : '';
+      toggleLicenseField(roleLabel);
+      configureAssignmentFields(scope, roleLabel);
       updateStaffSummary();
     }
 
