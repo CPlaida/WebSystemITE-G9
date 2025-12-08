@@ -12,6 +12,48 @@ class Rooms extends BaseController
     protected BedModel $beds;
     protected AdmissionModel $admissions;
 
+    private const ROLE_VIEW_MAP = [
+        'admin' => 'admin',
+        'receptionist' => 'admin',
+        'nurse' => 'admin',
+    ];
+
+    private const ACCESS_ROLES = ['admin', 'receptionist', 'nurse'];
+
+    private const GENERAL_ROOM_TYPES = [
+        'Private Room',
+        'Semi-Private Room',
+        'General Ward',
+        'Medical-Surgical (Med-Surg) Unit',
+    ];
+
+    private const GENERAL_FILTERS = [
+        'pedia' => ['ward' => 'Pedia Ward', 'label' => 'Pedia Ward', 'icon' => 'fas fa-child'],
+        'male' => ['ward' => 'Male Ward', 'label' => 'Male Ward', 'icon' => 'fas fa-mars'],
+        'female' => ['ward' => 'Female Ward', 'label' => 'Female Ward', 'icon' => 'fas fa-venus'],
+        'semi-private' => ['ward' => 'Semi-Private Ward', 'label' => 'Semi-Private Ward', 'icon' => 'fas fa-users'],
+        'private' => ['ward' => 'Private Suites', 'label' => 'Private Suites', 'icon' => 'fas fa-user'],
+    ];
+
+    private const CRITICAL_UNITS = [
+        'icu' => ['ward' => 'ICU', 'label' => 'Intensive Care Unit'],
+        'nicu' => ['ward' => 'NICU', 'label' => 'Neonatal Intensive Care Unit'],
+        'picu' => ['ward' => 'PICU', 'label' => 'Pediatric Intensive Care Unit'],
+        'ccu' => ['ward' => 'CCU', 'label' => 'Coronary Care Unit'],
+        'sicu' => ['ward' => 'SICU', 'label' => 'Surgical ICU'],
+        'micu' => ['ward' => 'MICU', 'label' => 'Medical ICU'],
+    ];
+
+    private const SPECIALIZED_ROOMS = [
+        'ed' => ['ward' => 'ED', 'label' => 'Emergency Department'],
+        'isolation' => ['ward' => 'ISO', 'label' => 'Isolation Room'],
+        'pacu' => ['ward' => 'PACU', 'label' => 'Post-Anesthesia Care Unit'],
+        'ld' => ['ward' => 'LD', 'label' => 'Labor & Delivery Suite'],
+        'sdu' => ['ward' => 'SDU', 'label' => 'Step-Down Unit'],
+        'oncology' => ['ward' => 'ONC', 'label' => 'Oncology Unit'],
+        'rehab' => ['ward' => 'REHAB', 'label' => 'Rehabilitation Unit'],
+    ];
+
     public function __construct()
     {
         $this->patients   = new PatientModel();
@@ -19,93 +61,61 @@ class Rooms extends BaseController
         $this->admissions = new AdmissionModel();
     }
 
-    /**
-     * Get role-based view path
-     */
     protected function getRoleViewPath(string $viewName): string
     {
         $role = session('role');
-        $roleMap = [
-            'admin' => 'admin',
-            'receptionist' => 'admin',
-            'nurse' => 'admin', // Nurses use admin views (unified)
-        ];
-        $roleFolder = $roleMap[$role] ?? 'admin';
+        $roleFolder = self::ROLE_VIEW_MAP[$role] ?? 'admin';
         return "Roles/{$roleFolder}/rooms/{$viewName}";
     }
 
     public function pediaWard()
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         return $this->renderWard('Pedia Ward');
     }
 
     public function maleWard()
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         return $this->renderWard('Male Ward');
     }
 
     public function femaleWard()
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         return $this->renderWard('Female Ward');
     }
 
     public function generalInpatient()
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         
         $filter = $this->request->getGet('filter') ?? 'all';
         
-        // Define room types for General Inpatient Rooms
-        $roomTypes = [
-            'Private Room',
-            'Semi-Private Room',
-            'General Ward',
-            'Medical-Surgical (Med-Surg) Unit'
-        ];
+        $roomTypes = self::GENERAL_ROOM_TYPES;
 
-        // Filter by ward if specified
         $wardFilter = null;
         $rows = [];
         $allWardsData = [];
-        
-        if ($filter === 'pedia') {
-            $wardFilter = 'Pedia Ward';
+
+        if ($filter === 'all') {
+            foreach (self::GENERAL_FILTERS as $config) {
+                $allWardsData[$config['ward']] = $this->getWardRows($config['ward']);
+            }
+        } elseif (isset(self::GENERAL_FILTERS[$filter])) {
+            $wardFilter = self::GENERAL_FILTERS[$filter]['ward'];
             $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'male') {
-            $wardFilter = 'Male Ward';
-            $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'female') {
-            $wardFilter = 'Female Ward';
-            $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'semi-private') {
-            $wardFilter = 'Semi-Private Ward';
-            $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'private') {
-            $wardFilter = 'Private Suites';
-            $rows = $this->getWardRows($wardFilter);
-        } elseif ($filter === 'all') {
-            // Load all wards when "All" is selected
-            $allWardsData = [
-                'Pedia Ward' => $this->getWardRows('Pedia Ward'),
-                'Male Ward' => $this->getWardRows('Male Ward'),
-                'Female Ward' => $this->getWardRows('Female Ward'),
-                'Semi-Private Ward' => $this->getWardRows('Semi-Private Ward'),
-                'Private Suites' => $this->getWardRows('Private Suites'),
-            ];
         }
 
-        // Define filter buttons for the view
         $filterButtons = [
             'all' => ['label' => 'All', 'icon' => 'fas fa-list'],
-            'pedia' => ['label' => 'Pedia Ward', 'icon' => 'fas fa-child'],
-            'male' => ['label' => 'Male Ward', 'icon' => 'fas fa-mars'],
-            'female' => ['label' => 'Female Ward', 'icon' => 'fas fa-venus'],
-            'semi-private' => ['label' => 'Semi-Private Ward', 'icon' => 'fas fa-users'],
-            'private' => ['label' => 'Private Suites', 'icon' => 'fas fa-user'],
         ];
+        foreach (self::GENERAL_FILTERS as $key => $config) {
+            $filterButtons[$key] = [
+                'label' => $config['label'],
+                'icon' => $config['icon'],
+            ];
+        }
 
         return view($this->getRoleViewPath('GeneralInpatient'), [
             'roomTypes' => $roomTypes,
@@ -117,22 +127,18 @@ class Rooms extends BaseController
         ]);
     }
 
-    protected function getWardRows(string $wardName): array
+    protected function getWardRows(string $wardName, ?callable $rowDecorator = null): array
     {
-        // Load configured beds for this ward from beds table
         $beds = $this->beds
             ->where('ward', $wardName)
             ->orderBy('room', 'ASC')
             ->orderBy('bed', 'ASC')
             ->findAll();
 
-        // Get all bed IDs for this ward
         $bedIds = array_column($beds, 'id');
 
-        // Load current occupants (from admissions) mapped by bed ID
         $patientsByBedId = $this->getBedOccupants($bedIds);
 
-        // Build rows for view: every bed row from DB
         $rows = [];
         foreach ($beds as $bedRow) {
             $room = $bedRow['room'] ?? '';
@@ -144,19 +150,18 @@ class Rooms extends BaseController
             $bedId = $bedRow['id'] ?? null;
             $patient = $bedId ? ($patientsByBedId[$bedId] ?? null) : null;
 
-            // Add bed information to patient data for display (use full ward name)
             if ($patient) {
                 $wardAbbr = $bedRow['ward'] ?? '';
                 $patient['ward'] = $wardAbbr ? $this->getWardDisplayName($wardAbbr) : '';
                 $patient['room'] = $bedRow['room'] ?? '';
                 $patient['bed'] = $bedRow['bed'] ?? '';
+                $this->parseEmergencyContact($patient);
             }
 
-            // Effective status: Occupied if there is an inpatient, otherwise use bed.status
             $storedStatus   = $bedRow['status'] ?? 'Available';
             $effectiveStatus = $patient ? 'Occupied' : $storedStatus;
 
-            $rows[] = [
+            $row = [
                 'bed_id'  => $bedId,
                 'room'    => $room,
                 'bed'     => $bed,
@@ -164,6 +169,15 @@ class Rooms extends BaseController
                 'status'  => $effectiveStatus,
                 'raw_status' => $storedStatus,
             ];
+
+            if ($rowDecorator) {
+                $extra = $rowDecorator($wardName);
+                if (is_array($extra) && !empty($extra)) {
+                    $row = array_merge($row, $extra);
+                }
+            }
+
+            $rows[] = $row;
         }
 
         return $rows;
@@ -192,7 +206,6 @@ class Rooms extends BaseController
             }
 
             $patient = $record;
-            // Keep reference to original patient ID even if other selects override key names
             $patient['patient_id'] = $patient['id'] ?? null;
             $this->parseEmergencyContact($patient);
             $occupants[$bedId] = $patient;
@@ -203,42 +216,28 @@ class Rooms extends BaseController
 
     public function criticalCare()
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         
         $filter = $this->request->getGet('filter') ?? 'all';
         
-        // Define ICU unit types and their ward name mappings
-        $unitTypes = [
-            'all' => 'All',
-            'icu' => 'Intensive Care Unit',
-            'nicu' => 'Neonatal Intensive Care Unit',
-            'picu' => 'Pediatric Intensive Care Unit',
-            'ccu' => 'Coronary Care Unit',
-            'sicu' => 'Surgical ICU',
-            'micu' => 'Medical ICU'
-        ];
-
-        // Map unit type filters to ward names in database
-        $wardMapping = [
-            'icu' => 'ICU',
-            'nicu' => 'NICU',
-            'picu' => 'PICU',
-            'ccu' => 'CCU',
-            'sicu' => 'SICU',
-            'micu' => 'MICU'
-        ];
+        $unitTypes = ['all' => 'All'];
+        foreach (self::CRITICAL_UNITS as $key => $config) {
+            $unitTypes[$key] = $config['label'];
+        }
 
         $rows = [];
         $unitFilter = null;
+        $decorator = fn(string $ward): array => [
+            'unit_type' => $this->getUnitTypeName($ward),
+        ];
         
-        if ($filter !== 'all' && isset($wardMapping[$filter])) {
-            $unitFilter = $wardMapping[$filter];
-            $rows = $this->getICURows($unitFilter);
+        if ($filter !== 'all' && isset(self::CRITICAL_UNITS[$filter])) {
+            $unitFilter = self::CRITICAL_UNITS[$filter]['ward'];
+            $rows = $this->getWardRows($unitFilter, $decorator);
         } elseif ($filter === 'all') {
-            // Load all ICU units
             $allUnitsData = [];
-            foreach ($wardMapping as $key => $wardName) {
-                $allUnitsData[$unitTypes[$key]] = $this->getICURows($wardName);
+            foreach (self::CRITICAL_UNITS as $config) {
+                $allUnitsData[$config['label']] = $this->getWardRows($config['ward'], $decorator);
             }
             return view($this->getRoleViewPath('CriticalCare'), [
                 'unitTypes' => $unitTypes,
@@ -258,62 +257,6 @@ class Rooms extends BaseController
         ]);
     }
 
-    protected function getICURows(string $wardName): array
-    {
-        // Load configured beds for this ICU unit from beds table
-        $beds = $this->beds
-            ->where('ward', $wardName)
-            ->orderBy('room', 'ASC')
-            ->orderBy('bed', 'ASC')
-            ->findAll();
-
-        // Get all bed IDs for this ward
-        $bedIds = array_column($beds, 'id');
-
-        // Load current occupants (from admissions) mapped by bed ID
-        $patientsByBedId = $this->getBedOccupants($bedIds);
-
-        // Build rows for view: every bed row from DB
-        $rows = [];
-        foreach ($beds as $bedRow) {
-            $room = $bedRow['room'] ?? '';
-            $bed  = $bedRow['bed'] ?? '';
-            if ($room === '' || $bed === '') {
-                continue;
-            }
-
-            $bedId = $bedRow['id'] ?? null;
-            $patient = $bedId ? ($patientsByBedId[$bedId] ?? null) : null;
-
-            // Add bed information to patient data for display (use full ward name)
-            if ($patient) {
-                $wardAbbr = $bedRow['ward'] ?? '';
-                $patient['ward'] = $wardAbbr ? $this->getWardDisplayName($wardAbbr) : '';
-                $patient['room'] = $bedRow['room'] ?? '';
-                $patient['bed'] = $bedRow['bed'] ?? '';
-            }
-
-            // Effective status: Occupied if there is an inpatient, otherwise use bed.status
-            $storedStatus   = $bedRow['status'] ?? 'Available';
-            $effectiveStatus = $patient ? 'Occupied' : $storedStatus;
-
-            // Determine unit type name from ward name
-            $unitTypeName = $this->getUnitTypeName($wardName);
-
-            $rows[] = [
-                'bed_id'  => $bedId,
-                'room'    => $room,
-                'bed'     => $bed,
-                'patient' => $patient,
-                'status'  => $effectiveStatus,
-                'raw_status' => $storedStatus,
-                'unit_type' => $unitTypeName,
-            ];
-        }
-
-        return $rows;
-    }
-
     protected function getUnitTypeName(string $wardName): string
     {
         $mapping = [
@@ -327,45 +270,34 @@ class Rooms extends BaseController
         return $mapping[$wardName] ?? $wardName;
     }
 
-    /**
-     * Parse emergency contact data - migrate from JSON to separate columns if needed
-     */
     protected function parseEmergencyContact(array &$patient): void
     {
-        // If fields already exist, no parsing needed
         if (isset($patient['emergency_contact_person']) || isset($patient['emergency_contact_phone'])) {
             return;
         }
 
-        // Fallback: try to parse from emergency_contact if it's JSON (for old data)
-        if (isset($patient['emergency_contact']) && !empty($patient['emergency_contact'])) {
-            $contactStr = trim($patient['emergency_contact']);
-            
-            // Check if it's JSON
-            if (strpos($contactStr, '{') === 0) {
-                $contactData = json_decode($contactStr, true);
-                if (json_last_error() === JSON_ERROR_NONE && is_array($contactData)) {
-                    $patient['emergency_contact_person'] = $contactData['person'] ?? null;
-                    $patient['emergency_contact_relationship'] = $contactData['relationship'] ?? null;
-                    $patient['emergency_contact_phone'] = $contactData['phone'] ?? null;
-                } else {
-                    // Malformed JSON - treat as phone
-                    if (preg_match('/^\+?\d/', $contactStr)) {
-                        $patient['emergency_contact_phone'] = $contactStr;
-                    }
-                }
-            } else {
-                // Not JSON - treat as phone number
-                if (preg_match('/^\+?\d/', $contactStr)) {
-                    $patient['emergency_contact_phone'] = $contactStr;
-                }
+        $contact = trim((string) ($patient['emergency_contact'] ?? ''));
+        if ($contact === '') {
+            return;
+        }
+
+        if (strpos($contact, '{') === 0) {
+            $data = json_decode($contact, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
+                $patient['emergency_contact_person'] = $data['person'] ?? null;
+                $patient['emergency_contact_relationship'] = $data['relationship'] ?? null;
+                $patient['emergency_contact_phone'] = $data['phone'] ?? null;
+                return;
             }
+        }
+
+        if (preg_match('/^\+?\d/', $contact)) {
+            $patient['emergency_contact_phone'] = $contact;
         }
     }
 
     protected function getWardDisplayName(string $wardName): string
     {
-        // Critical Care Units
         $criticalCare = [
             'ICU' => 'Intensive Care Unit',
             'NICU' => 'Neonatal Intensive Care Unit',
@@ -374,8 +306,7 @@ class Rooms extends BaseController
             'SICU' => 'Surgical ICU',
             'MICU' => 'Medical ICU'
         ];
-        
-        // Specialized Patient Rooms
+
         $specialized = [
             'ED' => 'Emergency Department',
             'ISO' => 'Isolation Room',
@@ -385,15 +316,13 @@ class Rooms extends BaseController
             'ONC' => 'Oncology Unit',
             'REHAB' => 'Rehabilitation Unit'
         ];
-        
-        // General Inpatient (already full names, but keep for consistency)
+
         $generalInpatient = [
             'Pedia Ward' => 'Pedia Ward',
             'Male Ward' => 'Male Ward',
             'Female Ward' => 'Female Ward'
         ];
-        
-        // Check all mappings
+
         if (isset($criticalCare[$wardName])) {
             return $criticalCare[$wardName];
         }
@@ -403,51 +332,34 @@ class Rooms extends BaseController
         if (isset($generalInpatient[$wardName])) {
             return $generalInpatient[$wardName];
         }
-        
-        // Return as-is if no mapping found
-        return $wardName;
+
+    return $wardName;
     }
 
     public function specialized()
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         
         $filter = $this->request->getGet('filter') ?? 'all';
         
-        // Define specialized room types and their ward name mappings
-        $roomTypes = [
-            'all' => 'All',
-            'ed' => 'Emergency Department',
-            'isolation' => 'Isolation Room',
-            'pacu' => 'Post-Anesthesia Care Unit',
-            'ld' => 'Labor & Delivery Suite',
-            'sdu' => 'Step-Down Unit',
-            'oncology' => 'Oncology Unit',
-            'rehab' => 'Rehabilitation Unit'
-        ];
-
-        // Map room type filters to ward names in database
-        $wardMapping = [
-            'ed' => 'ED',
-            'isolation' => 'ISO',
-            'pacu' => 'PACU',
-            'ld' => 'LD',
-            'sdu' => 'SDU',
-            'oncology' => 'ONC',
-            'rehab' => 'REHAB'
-        ];
+        $roomTypes = ['all' => 'All'];
+        foreach (self::SPECIALIZED_ROOMS as $key => $config) {
+            $roomTypes[$key] = $config['label'];
+        }
 
         $rows = [];
         $roomFilter = null;
+        $decorator = fn(string $ward): array => [
+            'room_type' => $this->getSpecializedRoomTypeName($ward),
+        ];
         
-        if ($filter !== 'all' && isset($wardMapping[$filter])) {
-            $roomFilter = $wardMapping[$filter];
-            $rows = $this->getSpecializedRows($roomFilter);
+        if ($filter !== 'all' && isset(self::SPECIALIZED_ROOMS[$filter])) {
+            $roomFilter = self::SPECIALIZED_ROOMS[$filter]['ward'];
+            $rows = $this->getWardRows($roomFilter, $decorator);
         } elseif ($filter === 'all') {
-            // Load all specialized rooms
             $allRoomsData = [];
-            foreach ($wardMapping as $key => $wardName) {
-                $allRoomsData[$roomTypes[$key]] = $this->getSpecializedRows($wardName);
+            foreach (self::SPECIALIZED_ROOMS as $config) {
+                $allRoomsData[$config['label']] = $this->getWardRows($config['ward'], $decorator);
             }
             return view($this->getRoleViewPath('Specialized'), [
                 'roomTypes' => $roomTypes,
@@ -467,64 +379,6 @@ class Rooms extends BaseController
         ]);
     }
 
-    protected function getSpecializedRows(string $wardName): array
-    {
-        // Load configured beds for this specialized room from beds table
-        $beds = $this->beds
-            ->where('ward', $wardName)
-            ->orderBy('room', 'ASC')
-            ->orderBy('bed', 'ASC')
-            ->findAll();
-
-        // Get all bed IDs for this ward
-        $bedIds = array_column($beds, 'id');
-
-        // Load current occupants (from admissions) mapped by bed ID
-        $patientsByBedId = $this->getBedOccupants($bedIds);
-
-        // Build rows for view: every bed row from DB
-        $rows = [];
-        foreach ($beds as $bedRow) {
-            $room = $bedRow['room'] ?? '';
-            $bed  = $bedRow['bed'] ?? '';
-            if ($room === '' || $bed === '') {
-                continue;
-            }
-
-            $bedId = $bedRow['id'] ?? null;
-            $patient = $bedId ? ($patientsByBedId[$bedId] ?? null) : null;
-
-            // Add bed information to patient data for display (use full ward name)
-            if ($patient) {
-                $wardAbbr = $bedRow['ward'] ?? '';
-                $patient['ward'] = $wardAbbr ? $this->getWardDisplayName($wardAbbr) : '';
-                $patient['room'] = $bedRow['room'] ?? '';
-                $patient['bed'] = $bedRow['bed'] ?? '';
-                // Parse emergency contact JSON if present
-                $this->parseEmergencyContact($patient);
-            }
-
-            // Effective status: Occupied if there is an inpatient, otherwise use bed.status
-            $storedStatus   = $bedRow['status'] ?? 'Available';
-            $effectiveStatus = $patient ? 'Occupied' : $storedStatus;
-
-            // Determine room type name from ward name
-            $roomTypeName = $this->getSpecializedRoomTypeName($wardName);
-
-            $rows[] = [
-                'bed_id'  => $bedId,
-                'room'    => $room,
-                'bed'     => $bed,
-                'patient' => $patient,
-                'status'  => $effectiveStatus,
-                'raw_status' => $storedStatus,
-                'room_type' => $roomTypeName,
-            ];
-        }
-
-        return $rows;
-    }
-
     protected function getSpecializedRoomTypeName(string $wardName): string
     {
         $mapping = [
@@ -541,54 +395,7 @@ class Rooms extends BaseController
 
     protected function renderWard(string $wardName)
     {
-        // Load configured beds for this ward from beds table
-        $beds = $this->beds
-            ->where('ward', $wardName)
-            ->orderBy('room', 'ASC')
-            ->orderBy('bed', 'ASC')
-            ->findAll();
-
-        // Get all bed IDs for this ward
-        $bedIds = array_column($beds, 'id');
-
-        // Load current occupants (from admissions) mapped by bed ID
-        $patientsByBedId = $this->getBedOccupants($bedIds);
-
-        // Build rows for view: every bed row from DB
-        $rows = [];
-        foreach ($beds as $bedRow) {
-            $room = $bedRow['room'] ?? '';
-            $bed  = $bedRow['bed'] ?? '';
-            if ($room === '' || $bed === '') {
-                continue;
-            }
-
-            $bedId = $bedRow['id'] ?? null;
-            $patient = $bedId ? ($patientsByBedId[$bedId] ?? null) : null;
-
-            // Add bed information to patient data for display (use full ward name)
-            if ($patient) {
-                $wardAbbr = $bedRow['ward'] ?? '';
-                $patient['ward'] = $wardAbbr ? $this->getWardDisplayName($wardAbbr) : '';
-                $patient['room'] = $bedRow['room'] ?? '';
-                $patient['bed'] = $bedRow['bed'] ?? '';
-                // Parse emergency contact JSON if present
-                $this->parseEmergencyContact($patient);
-            }
-
-            // Effective status: Occupied if there is an inpatient, otherwise use bed.status
-            $storedStatus   = $bedRow['status'] ?? 'Available';
-            $effectiveStatus = $patient ? 'Occupied' : $storedStatus;
-
-            $rows[] = [
-                'bed_id'  => $bedId,
-                'room'    => $room,
-                'bed'     => $bed,
-                'patient' => $patient,
-                'status'  => $effectiveStatus,
-                'raw_status' => $storedStatus,
-            ];
-        }
+        $rows = $this->getWardRows($wardName);
 
         return view($this->getRoleViewPath('WardTemplate'), [
             'wardName' => $wardName,
@@ -598,7 +405,6 @@ class Rooms extends BaseController
 
     public function updateBedStatus()
     {
-        // Only admin and nurse can update bed status
         $this->requireRole(['admin', 'nurse']);
         
         if ($this->request->getMethod() !== 'post') {
@@ -609,7 +415,6 @@ class Rooms extends BaseController
         $status = (string) $this->request->getPost('status');
         $ward   = (string) $this->request->getPost('ward');
 
-        // Simple validation and whitelist of statuses
         $allowedStatuses = ['Available', 'Occupied'];
         if (!$bedId || !in_array($status, $allowedStatuses, true)) {
             return redirect()->back()->with('error', 'Invalid bed status update.');
@@ -620,16 +425,10 @@ class Rooms extends BaseController
         return redirect()->back()->with('success', 'Bed status updated successfully.');
     }
 
-    // API methods for AJAX requests - returns only available beds
-    /**
-     * Return only wards that have at least one available bed, organized by category.
-     * Organized by category: General Inpatient, Critical Care, Specialized
-     */
     public function apiWards()
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         
-        // Get available beds to determine which wards have availability
         $available = $this->getAvailableBedsBySlot();
         $availableWards = [];
         foreach ($available as $slot) {
@@ -639,13 +438,11 @@ class Rooms extends BaseController
             }
         }
 
-        // Only include wards that have available beds
         $allWards = array_keys($availableWards);
 
-        // Define all possible wards by category
-        $generalInpatient = ['Pedia Ward', 'Male Ward', 'Female Ward'];
-        $criticalCare = ['ICU', 'NICU', 'PICU', 'CCU', 'SICU', 'MICU'];
-        $specialized = ['ED', 'ISO', 'PACU', 'LD', 'SDU', 'ONC', 'REHAB'];
+        $generalInpatient = array_column(self::GENERAL_FILTERS, 'ward');
+        $criticalCare = array_column(self::CRITICAL_UNITS, 'ward');
+        $specialized = array_column(self::SPECIALIZED_ROOMS, 'ward');
 
         $categorized = [
             'General Inpatient' => [],
@@ -653,7 +450,6 @@ class Rooms extends BaseController
             'Specialized Patient Rooms' => []
         ];
 
-        // Add General Inpatient wards that have available beds
         foreach ($generalInpatient as $wardName) {
             if (isset($availableWards[$wardName])) {
                 $categorized['General Inpatient'][] = [
@@ -663,7 +459,6 @@ class Rooms extends BaseController
             }
         }
 
-        // Add Critical Care wards that have available beds
         foreach ($criticalCare as $wardName) {
             if (isset($availableWards[$wardName])) {
                 $displayName = $this->getUnitTypeName($wardName);
@@ -675,7 +470,6 @@ class Rooms extends BaseController
             }
         }
 
-        // Add Specialized wards that have available beds
         foreach ($specialized as $wardName) {
             if (isset($availableWards[$wardName])) {
                 $displayName = $this->getSpecializedRoomTypeName($wardName);
@@ -687,7 +481,6 @@ class Rooms extends BaseController
             }
         }
 
-        // Add any unknown wards to General Inpatient as fallback (only if available)
         foreach ($allWards as $wardName) {
             if (!in_array($wardName, $generalInpatient) && 
                 !in_array($wardName, $criticalCare) && 
@@ -699,7 +492,6 @@ class Rooms extends BaseController
             }
         }
 
-        // Build output with categories
         $out = [
             'categories' => $categorized,
             'all' => $allWards // Keep flat list for backward compatibility
@@ -713,7 +505,7 @@ class Rooms extends BaseController
      */
     public function apiRooms($ward)
     {
-        $this->requireRole(['admin', 'receptionist', 'nurse']);
+        $this->requireRole(self::ACCESS_ROLES);
         
         $available = $this->getAvailableBedsBySlot();
 
