@@ -11,13 +11,22 @@ class BedsSeeder extends Seeder
         $beds = [];
 
         // CRITICAL CARE BEDS
-        // ICU
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'ICU', 'room' => 'ICU-101', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'ICU', 'room' => 'ICU-102', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'ICU', 'room' => 'ICU-103', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'ICU', 'room' => 'ICU-104', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'ICU', 'room' => 'ICU-105', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'ICU', 'room' => 'ICU-106', 'bed' => 'Bed 1', 'status' => 'Available'];
+        // ICU (includes merged CCU/SICU/MICU capacity)
+        $icuRooms = [
+            'ICU-101', 'ICU-102', 'ICU-103', 'ICU-104', 'ICU-105', 'ICU-106',
+            'ICU-201', 'ICU-202', 'ICU-203', 'ICU-204', 'ICU-205',
+            'ICU-301', 'ICU-302', 'ICU-303', 'ICU-304', 'ICU-305', 'ICU-306',
+            'ICU-401', 'ICU-402', 'ICU-403', 'ICU-404', 'ICU-405', 'ICU-406',
+        ];
+        foreach ($icuRooms as $roomNumber) {
+            $beds[] = [
+                'bed_type' => 'Critical Care',
+                'ward' => 'ICU',
+                'room' => $roomNumber,
+                'bed' => 'Bed 1',
+                'status' => 'Available'
+            ];
+        }
 
         // NICU
         $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'NICU', 'room' => 'NICU-201', 'bed' => 'Incubator 1', 'status' => 'Available'];
@@ -35,29 +44,6 @@ class BedsSeeder extends Seeder
         $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'PICU', 'room' => 'PICU-303', 'bed' => 'Bed 1', 'status' => 'Available'];
         $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'PICU', 'room' => 'PICU-303', 'bed' => 'Bed 2', 'status' => 'Available'];
 
-        // CCU
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'CCU', 'room' => 'CCU-401', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'CCU', 'room' => 'CCU-402', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'CCU', 'room' => 'CCU-403', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'CCU', 'room' => 'CCU-404', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'CCU', 'room' => 'CCU-405', 'bed' => 'Bed 1', 'status' => 'Available'];
-
-        // SICU
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'SICU', 'room' => 'SICU-501', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'SICU', 'room' => 'SICU-502', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'SICU', 'room' => 'SICU-503', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'SICU', 'room' => 'SICU-504', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'SICU', 'room' => 'SICU-505', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'SICU', 'room' => 'SICU-506', 'bed' => 'Bed 1', 'status' => 'Available'];
-
-        // MICU
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'MICU', 'room' => 'MICU-601', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'MICU', 'room' => 'MICU-602', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'MICU', 'room' => 'MICU-603', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'MICU', 'room' => 'MICU-604', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'MICU', 'room' => 'MICU-605', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Critical Care', 'ward' => 'MICU', 'room' => 'MICU-606', 'bed' => 'Bed 1', 'status' => 'Available'];
-
         // SPECIALIZED PATIENT ROOMS BEDS
         // ED
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ED', 'room' => 'ER-101', 'bed' => 'Bed 1', 'status' => 'Available'];
@@ -74,14 +60,6 @@ class BedsSeeder extends Seeder
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ISO', 'room' => 'ISO-204', 'bed' => 'Bed 1', 'status' => 'Available'];
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ISO', 'room' => 'ISO-205', 'bed' => 'Bed 1', 'status' => 'Available'];
 
-        // PACU
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-301', 'bed' => 'Bed 3', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'PACU', 'room' => 'PACU-302', 'bed' => 'Bed 3', 'status' => 'Available'];
-
         // LD
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'LD', 'room' => 'LD-401', 'bed' => 'Suite 1', 'status' => 'Available'];
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'LD', 'room' => 'LD-402', 'bed' => 'Suite 2', 'status' => 'Available'];
@@ -97,49 +75,27 @@ class BedsSeeder extends Seeder
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'SDU', 'room' => 'SDU-503', 'bed' => 'Bed 1', 'status' => 'Available'];
         $beds[] = ['bed_type' => 'Specialized', 'ward' => 'SDU', 'room' => 'SDU-503', 'bed' => 'Bed 2', 'status' => 'Available'];
 
-        // ONC
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ONC', 'room' => 'ONC-601', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ONC', 'room' => 'ONC-601', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ONC', 'room' => 'ONC-602', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ONC', 'room' => 'ONC-602', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ONC', 'room' => 'ONC-603', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'ONC', 'room' => 'ONC-603', 'bed' => 'Bed 2', 'status' => 'Available'];
-
-        // REHAB
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'REHAB', 'room' => 'REHAB-701', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'REHAB', 'room' => 'REHAB-701', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'REHAB', 'room' => 'REHAB-702', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'REHAB', 'room' => 'REHAB-702', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'REHAB', 'room' => 'REHAB-703', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'Specialized', 'ward' => 'REHAB', 'room' => 'REHAB-703', 'bed' => 'Bed 2', 'status' => 'Available'];
-
         // GENERAL INPATIENT ROOMS BEDS
-        // Pedia Ward
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Pedia Ward', 'room' => 'P-101', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Pedia Ward', 'room' => 'P-101', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Pedia Ward', 'room' => 'P-102', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Pedia Ward', 'room' => 'P-102', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Pedia Ward', 'room' => 'P-103', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Pedia Ward', 'room' => 'P-103', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Pedia Ward', 'room' => 'P-104', 'bed' => 'Bed 1', 'status' => 'Available'];
+        // Pedia, Male, Female wards (6 beds per room)
+        $generalWards = [
+            'Pedia Ward' => ['P-101', 'P-102', 'P-103', 'P-104'],
+            'Male Ward' => ['M-201', 'M-202', 'M-203', 'M-204'],
+            'Female Ward' => ['F-301', 'F-302', 'F-303', 'F-304'],
+        ];
 
-        // Male Ward
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Male Ward', 'room' => 'M-201', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Male Ward', 'room' => 'M-201', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Male Ward', 'room' => 'M-202', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Male Ward', 'room' => 'M-202', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Male Ward', 'room' => 'M-203', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Male Ward', 'room' => 'M-203', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Male Ward', 'room' => 'M-204', 'bed' => 'Bed 1', 'status' => 'Available'];
-
-        // Female Ward
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-301', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-301', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-302', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-302', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-303', 'bed' => 'Bed 1', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-303', 'bed' => 'Bed 2', 'status' => 'Available'];
-        $beds[] = ['bed_type' => 'General Inpatient', 'ward' => 'Female Ward', 'room' => 'F-304', 'bed' => 'Bed 1', 'status' => 'Available'];
+        foreach ($generalWards as $wardName => $rooms) {
+            foreach ($rooms as $roomNumber) {
+                for ($i = 1; $i <= 6; $i++) {
+                    $beds[] = [
+                        'bed_type' => 'General Inpatient',
+                        'ward' => $wardName,
+                        'room' => $roomNumber,
+                        'bed' => 'Bed ' . $i,
+                        'status' => 'Available',
+                    ];
+                }
+            }
+        }
 
         // Semi-Private Rooms (2 beds per room)
         $beds[] = ['bed_type' => 'Semi-Private', 'ward' => 'Semi-Private Ward', 'room' => 'SP-401', 'bed' => 'Bed 1', 'status' => 'Available'];
@@ -167,9 +123,9 @@ class BedsSeeder extends Seeder
             $bed['created_at'] = $now;
             $bed['updated_at'] = $now;
         }
+        unset($bed);
 
         // Insert beds
         $this->db->table('beds')->insertBatch($beds);
     }
 }
-

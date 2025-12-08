@@ -171,15 +171,12 @@ class Rooms extends BaseController
     {
         $filter = $this->request->getGet('filter') ?? 'all';
         
-        // Define ICU unit types and their ward name mappings
+        // Define ICU unit types and their ward name mappings (CCU/SICU/MICU merged into ICU)
         $unitTypes = [
             'all' => 'All',
             'icu' => 'Intensive Care Unit',
             'nicu' => 'Neonatal Intensive Care Unit',
-            'picu' => 'Pediatric Intensive Care Unit',
-            'ccu' => 'Coronary Care Unit',
-            'sicu' => 'Surgical ICU',
-            'micu' => 'Medical ICU'
+            'picu' => 'Pediatric Intensive Care Unit'
         ];
 
         // Map unit type filters to ward names in database
@@ -187,9 +184,6 @@ class Rooms extends BaseController
             'icu' => 'ICU',
             'nicu' => 'NICU',
             'picu' => 'PICU',
-            'ccu' => 'CCU',
-            'sicu' => 'SICU',
-            'micu' => 'MICU'
         ];
 
         $rows = [];
@@ -284,9 +278,6 @@ class Rooms extends BaseController
             'ICU' => 'Intensive Care Unit',
             'NICU' => 'Neonatal Intensive Care Unit',
             'PICU' => 'Pediatric Intensive Care Unit',
-            'CCU' => 'Coronary Care Unit',
-            'SICU' => 'Surgical ICU',
-            'MICU' => 'Medical ICU'
         ];
         return $mapping[$wardName] ?? $wardName;
     }
