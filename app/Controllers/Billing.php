@@ -370,11 +370,40 @@ class Billing extends BaseController
         if ($db->tableExists('billing_items')) {
             $rawItems = $db->table('billing_items')->where('billing_id', (int)$id)->get()->getResultArray();
             foreach ($rawItems as $ri) {
+                // Determine category from source_table or service name
+                $category = 'general';
+                $sourceTable = $ri['source_table'] ?? '';
+                $serviceName = strtolower($ri['service'] ?? '');
+                
+                if ($sourceTable === 'laboratory') {
+                    $category = 'laboratory';
+                } elseif ($sourceTable === 'pharmacy_transactions') {
+                    $category = 'pharmacy';
+                } elseif ($sourceTable === 'appointments') {
+                    $category = 'consultation';
+                } elseif ($sourceTable === 'admission_details' || $sourceTable === 'patients') {
+                    // Check if it's a room charge by service name
+                    if (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                        $category = 'room';
+                    } else {
+                        $category = 'general';
+                    }
+                } elseif (stripos($serviceName, 'laboratory') !== false || stripos($serviceName, 'lab') !== false) {
+                    $category = 'laboratory';
+                } elseif (stripos($serviceName, 'pharmacy') !== false) {
+                    $category = 'pharmacy';
+                } elseif (stripos($serviceName, 'appointment') !== false || stripos($serviceName, 'consultation') !== false) {
+                    $category = 'consultation';
+                } elseif (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                    $category = 'room';
+                }
+                
                 $items[] = [
                     'description' => $ri['service'] ?? '',
                     'quantity' => (int)($ri['qty'] ?? 0),
                     'unit_price' => (float)($ri['price'] ?? 0),
                     'amount' => (float)($ri['amount'] ?? 0),
+                    'category' => $category,
                 ];
             }
         }

@@ -51,11 +51,21 @@ class AppointmentChargeProvider extends AbstractChargeProvider
                 continue;
             }
             $doctorName = $this->formatDoctorName($row);
-            $dateLabel = !empty($row['appointment_date']) ? date('M d, Y', strtotime($row['appointment_date'])) : '';
-            $service = $doctorName ? "Consultation with {$doctorName}" : 'Consultation Fee';
-            if ($dateLabel !== '') {
-                $service .= " ({$dateLabel})";
+            $appointmentType = $this->formatAppointmentType($row['appointment_type'] ?? '');
+            
+            // Build service label: "Appointment Fee with {doctorName} - {appointment_type}"
+            if ($doctorName) {
+                $service = "Appointment Fee with {$doctorName}";
+                if ($appointmentType !== '') {
+                    $service .= " - {$appointmentType}";
+                }
+            } else {
+                $service = 'Appointment Fee';
+                if ($appointmentType !== '') {
+                    $service .= " - {$appointmentType}";
+                }
             }
+            
             $item = $this->defaultItem();
             $item['service'] = $service;
             $item['price'] = $fee;
@@ -95,6 +105,31 @@ class AppointmentChargeProvider extends AbstractChargeProvider
             $parts[] = $row['username'];
         }
         $name = trim(implode(' ', array_filter($parts)));
+        
+        // Remove "User" word from the name if present
+        if ($name !== '') {
+            $name = preg_replace('/\s+User\s*$/i', '', $name);
+            $name = trim($name);
+        }
+        
         return $name !== '' ? $name : 'Doctor';
+    }
+
+    /**
+     * Format appointment type for display
+     * 
+     * @param string $type Raw appointment type from database
+     * @return string Formatted appointment type
+     */
+    protected function formatAppointmentType(string $type): string
+    {
+        $type = strtolower(trim($type));
+        $typeMap = [
+            'consultation' => 'Consultation',
+            'follow_up' => 'Follow-up',
+            'emergency' => 'Emergency',
+            'routine_checkup' => 'Routine Checkup',
+        ];
+        return $typeMap[$type] ?? ucfirst(str_replace('_', ' ', $type));
     }
 }

@@ -152,25 +152,101 @@
                             </thead>
                             <tbody id="billItems">
                                 <?php if (isset($billItems)): ?>
-                                    <?php foreach ($billItems as $item): ?>
-                                        <tr>
-                                            <td>
-                                                <input type="text" name="service[]" class="form-control service" required value="<?= esc($item['service']) ?>">
-                                                <input type="hidden" name="lab_id[]" class="lab-id" value="<?= esc($item['lab_id']) ?>">
-                                                <input type="hidden" name="source_table[]" class="source-table" value="<?= esc($item['source_table']) ?>">
-                                                <input type="hidden" name="source_id[]" class="source-id" value="<?= esc($item['source_id']) ?>">
-                                            </td>
-                                            <td>
-                                                <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty']) ?>" required>
-                                            </td>
-                                            <td>
-                                                <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price']) ?>" required>
-                                            </td>
-                                            <td>
-                                                <input type="number" name="amount[]" class="form-control amount" readonly value="<?= esc($item['amount']) ?>">
+                                    <?php
+                                    // Group items by category
+                                    $groupedItems = [];
+                                    foreach ($billItems as $item) {
+                                        $category = $item['category'] ?? 'general';
+                                        if (!isset($groupedItems[$category])) {
+                                            $groupedItems[$category] = [];
+                                        }
+                                        $groupedItems[$category][] = $item;
+                                    }
+                                    
+                                    // Category display names
+                                    $categoryNames = [
+                                        'laboratory' => 'Laboratory',
+                                        'pharmacy' => 'Pharmacy',
+                                        'consultation' => 'Appointment',
+                                        'room' => 'Room & Bed',
+                                        'general' => 'Other Services'
+                                    ];
+                                    
+                                    // Display order
+                                    $categoryOrder = ['laboratory', 'pharmacy', 'consultation', 'room', 'general'];
+                                    
+                                    $currentCategory = null;
+                                    foreach ($categoryOrder as $cat) {
+                                        if (!isset($groupedItems[$cat]) || empty($groupedItems[$cat])) {
+                                            continue;
+                                        }
+                                        
+                                        // Add category header
+                                        $categoryName = $categoryNames[$cat] ?? ucfirst($cat);
+                                        ?>
+                                        <tr class="category-header" data-category="<?= esc($cat) ?>">
+                                            <td colspan="4" style="background-color: #e3f2fd; font-weight: bold; padding: 10px; border-bottom: 2px solid #2196f3;">
+                                                <?= esc($categoryName) ?>
                                             </td>
                                         </tr>
-                                    <?php endforeach; ?>
+                                        <?php
+                                        
+                                        // Add items for this category
+                                        foreach ($groupedItems[$cat] as $item): ?>
+                                            <tr data-category="<?= esc($cat) ?>">
+                                                <td>
+                                                    <input type="text" name="service[]" class="form-control service" required value="<?= esc($item['service']) ?>">
+                                                    <input type="hidden" name="lab_id[]" class="lab-id" value="<?= esc($item['lab_id'] ?? '') ?>">
+                                                    <input type="hidden" name="source_table[]" class="source-table" value="<?= esc($item['source_table'] ?? '') ?>">
+                                                    <input type="hidden" name="source_id[]" class="source-id" value="<?= esc($item['source_id'] ?? '') ?>">
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty'] ?? 1) ?>" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price'] ?? 0) ?>" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="amount[]" class="form-control amount" readonly value="<?= esc($item['amount'] ?? 0) ?>">
+                                                </td>
+                                            </tr>
+                                        <?php endforeach;
+                                    }
+                                    
+                                    // Handle any remaining categories not in the order list
+                                    foreach ($groupedItems as $cat => $catItems) {
+                                        if (in_array($cat, $categoryOrder)) {
+                                            continue; // Already processed
+                                        }
+                                        $categoryName = $categoryNames[$cat] ?? ucfirst($cat);
+                                        ?>
+                                        <tr class="category-header" data-category="<?= esc($cat) ?>">
+                                            <td colspan="4" style="background-color: #e3f2fd; font-weight: bold; padding: 10px; border-bottom: 2px solid #2196f3;">
+                                                <?= esc($categoryName) ?>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        foreach ($catItems as $item): ?>
+                                            <tr data-category="<?= esc($cat) ?>">
+                                                <td>
+                                                    <input type="text" name="service[]" class="form-control service" required value="<?= esc($item['service']) ?>">
+                                                    <input type="hidden" name="lab_id[]" class="lab-id" value="<?= esc($item['lab_id'] ?? '') ?>">
+                                                    <input type="hidden" name="source_table[]" class="source-table" value="<?= esc($item['source_table'] ?? '') ?>">
+                                                    <input type="hidden" name="source_id[]" class="source-id" value="<?= esc($item['source_id'] ?? '') ?>">
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty'] ?? 1) ?>" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price'] ?? 0) ?>" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="amount[]" class="form-control amount" readonly value="<?= esc($item['amount'] ?? 0) ?>">
+                                                </td>
+                                            </tr>
+                                        <?php endforeach;
+                                    }
+                                    ?>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -266,48 +342,147 @@ function setBillItems(items){
     const tpl = document.getElementById('billItemTemplate');
     // Clear existing
     tbody.innerHTML = '';
+    
+    // Group items by category
+    const groupedItems = {};
     items.forEach(it => {
-        const rowFrag = tpl.content.cloneNode(true);
-        const row = rowFrag.querySelector('tr');
-        row.querySelector('.service').value = it.service || '';
-        row.querySelector('.qty').value = it.qty != null ? it.qty : 1;
-        row.querySelector('.price').value = (it.price != null ? it.price : 0).toFixed ? it.price : Number(it.price || 0);
-        const qty = parseFloat(row.querySelector('.qty').value) || 0;
-        const price = parseFloat(row.querySelector('.price').value) || 0;
-        row.querySelector('.amount').value = (it.amount != null ? it.amount : qty * price).toFixed ? (it.amount != null ? it.amount : qty * price) : Number(it.amount || qty * price);
-        row.querySelector('.lab-id').value = it.lab_id || '';
-        row.querySelector('.source-table').value = it.source_table || '';
-        row.querySelector('.source-id').value = it.source_id || '';
-        row.dataset.category = it.category || '';
-        const shouldLock = it.locked !== undefined ? !!it.locked : !!it.lab_id;
-        const svcInput = row.querySelector('.service');
-        const qtyInput = row.querySelector('.qty');
-        const priceInput = row.querySelector('.price');
-        if (shouldLock) {
-            svcInput.readOnly = true;
-            qtyInput.readOnly = true;
-            priceInput.readOnly = true;
-            row.setAttribute('data-locked', '1');
-            svcInput.style.backgroundColor = '#f5f5f5';
-            qtyInput.style.backgroundColor = '#f5f5f5';
-            priceInput.style.backgroundColor = '#f5f5f5';
-            const removeBtn = row.querySelector('.remove-item');
-            if (removeBtn) {
-                removeBtn.disabled = true;
-                removeBtn.classList.add('disabled');
-                removeBtn.title = 'Linked to patient record';
-            }
-        } else {
-            svcInput.readOnly = false;
-            qtyInput.readOnly = false;
-            priceInput.readOnly = false;
-            svcInput.style.backgroundColor = '';
-            qtyInput.style.backgroundColor = '';
-            priceInput.style.backgroundColor = '';
-            row.removeAttribute('data-locked');
+        const category = it.category || 'general';
+        if (!groupedItems[category]) {
+            groupedItems[category] = [];
         }
-        tbody.appendChild(rowFrag);
+        groupedItems[category].push(it);
     });
+    
+    // Category display names
+    const categoryNames = {
+        'laboratory': 'Laboratory',
+        'pharmacy': 'Pharmacy',
+        'consultation': 'Appointment',
+        'room': 'Room & Bed',
+        'general': 'Other Services'
+    };
+    
+    // Display order
+    const categoryOrder = ['laboratory', 'pharmacy', 'consultation', 'room', 'general'];
+    
+    // Render items grouped by category
+    categoryOrder.forEach(cat => {
+        if (!groupedItems[cat] || groupedItems[cat].length === 0) {
+            return;
+        }
+        
+        // Add category header
+        const headerRow = document.createElement('tr');
+        headerRow.className = 'category-header';
+        headerRow.setAttribute('data-category', cat);
+        headerRow.innerHTML = `<td colspan="4" style="background-color: #e3f2fd; font-weight: bold; padding: 10px; border-bottom: 2px solid #2196f3;">${categoryNames[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)}</td>`;
+        tbody.appendChild(headerRow);
+        
+        // Add items for this category
+        groupedItems[cat].forEach(it => {
+            const rowFrag = tpl.content.cloneNode(true);
+            const row = rowFrag.querySelector('tr');
+            row.setAttribute('data-category', cat);
+            row.querySelector('.service').value = it.service || '';
+            row.querySelector('.qty').value = it.qty != null ? it.qty : 1;
+            row.querySelector('.price').value = (it.price != null ? it.price : 0).toFixed ? it.price : Number(it.price || 0);
+            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+            const price = parseFloat(row.querySelector('.price').value) || 0;
+            row.querySelector('.amount').value = (it.amount != null ? it.amount : qty * price).toFixed ? (it.amount != null ? it.amount : qty * price) : Number(it.amount || qty * price);
+            row.querySelector('.lab-id').value = it.lab_id || '';
+            row.querySelector('.source-table').value = it.source_table || '';
+            row.querySelector('.source-id').value = it.source_id || '';
+            row.dataset.category = it.category || '';
+            const shouldLock = it.locked !== undefined ? !!it.locked : !!it.lab_id;
+            const svcInput = row.querySelector('.service');
+            const qtyInput = row.querySelector('.qty');
+            const priceInput = row.querySelector('.price');
+            if (shouldLock) {
+                svcInput.readOnly = true;
+                qtyInput.readOnly = true;
+                priceInput.readOnly = true;
+                row.setAttribute('data-locked', '1');
+                svcInput.style.backgroundColor = '#f5f5f5';
+                qtyInput.style.backgroundColor = '#f5f5f5';
+                priceInput.style.backgroundColor = '#f5f5f5';
+                const removeBtn = row.querySelector('.remove-item');
+                if (removeBtn) {
+                    removeBtn.disabled = true;
+                    removeBtn.classList.add('disabled');
+                    removeBtn.title = 'Linked to patient record';
+                }
+            } else {
+                svcInput.readOnly = false;
+                qtyInput.readOnly = false;
+                priceInput.readOnly = false;
+                svcInput.style.backgroundColor = '';
+                qtyInput.style.backgroundColor = '';
+                priceInput.style.backgroundColor = '';
+                row.removeAttribute('data-locked');
+            }
+            tbody.appendChild(rowFrag);
+        });
+    });
+    
+    // Handle any remaining categories not in the order list
+    Object.keys(groupedItems).forEach(cat => {
+        if (categoryOrder.includes(cat)) {
+            return; // Already processed
+        }
+        
+        // Add category header
+        const headerRow = document.createElement('tr');
+        headerRow.className = 'category-header';
+        headerRow.setAttribute('data-category', cat);
+        headerRow.innerHTML = `<td colspan="4" style="background-color: #e3f2fd; font-weight: bold; padding: 10px; border-bottom: 2px solid #2196f3;">${categoryNames[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)}</td>`;
+        tbody.appendChild(headerRow);
+        
+        // Add items for this category
+        groupedItems[cat].forEach(it => {
+            const rowFrag = tpl.content.cloneNode(true);
+            const row = rowFrag.querySelector('tr');
+            row.setAttribute('data-category', cat);
+            row.querySelector('.service').value = it.service || '';
+            row.querySelector('.qty').value = it.qty != null ? it.qty : 1;
+            row.querySelector('.price').value = (it.price != null ? it.price : 0).toFixed ? it.price : Number(it.price || 0);
+            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+            const price = parseFloat(row.querySelector('.price').value) || 0;
+            row.querySelector('.amount').value = (it.amount != null ? it.amount : qty * price).toFixed ? (it.amount != null ? it.amount : qty * price) : Number(it.amount || qty * price);
+            row.querySelector('.lab-id').value = it.lab_id || '';
+            row.querySelector('.source-table').value = it.source_table || '';
+            row.querySelector('.source-id').value = it.source_id || '';
+            row.dataset.category = it.category || '';
+            const shouldLock = it.locked !== undefined ? !!it.locked : !!it.lab_id;
+            const svcInput = row.querySelector('.service');
+            const qtyInput = row.querySelector('.qty');
+            const priceInput = row.querySelector('.price');
+            if (shouldLock) {
+                svcInput.readOnly = true;
+                qtyInput.readOnly = true;
+                priceInput.readOnly = true;
+                row.setAttribute('data-locked', '1');
+                svcInput.style.backgroundColor = '#f5f5f5';
+                qtyInput.style.backgroundColor = '#f5f5f5';
+                priceInput.style.backgroundColor = '#f5f5f5';
+                const removeBtn = row.querySelector('.remove-item');
+                if (removeBtn) {
+                    removeBtn.disabled = true;
+                    removeBtn.classList.add('disabled');
+                    removeBtn.title = 'Linked to patient record';
+                }
+            } else {
+                svcInput.readOnly = false;
+                qtyInput.readOnly = false;
+                priceInput.readOnly = false;
+                svcInput.style.backgroundColor = '';
+                qtyInput.style.backgroundColor = '';
+                priceInput.style.backgroundColor = '';
+                row.removeAttribute('data-locked');
+            }
+            tbody.appendChild(rowFrag);
+        });
+    });
+    
     // Normalize numeric display
     document.querySelectorAll('#billItems .price').forEach(i => i.value = (parseFloat(i.value)||0).toFixed(2));
     document.querySelectorAll('#billItems .amount').forEach(i => i.value = (parseFloat(i.value)||0).toFixed(2));

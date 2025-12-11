@@ -185,16 +185,87 @@
             </thead>
             <tbody>
                 <?php if (!empty($bill['items'])): ?>
-                    <?php foreach ($bill['items'] as $idx => $item): ?>
-                        <tr>
-                            <td><?= $idx + 1 ?></td>
-                            <td><?= esc($item['description'] ?? '—') ?></td>
-                            <td><?= esc($bill['bill_date'] ?? $issueDate) ?></td>
-                            <td style="text-align:right;">₱<?= number_format((float)($item['unit_price'] ?? 0), 2) ?></td>
-                            <td style="text-align:center;"><?= esc($item['quantity'] ?? 1) ?></td>
-                            <td style="text-align:right;">₱<?= number_format((float)($item['amount'] ?? 0), 2) ?></td>
+                    <?php
+                    // Group items by category
+                    $groupedItems = [];
+                    foreach ($bill['items'] as $item) {
+                        $category = $item['category'] ?? 'general';
+                        if (!isset($groupedItems[$category])) {
+                            $groupedItems[$category] = [];
+                        }
+                        $groupedItems[$category][] = $item;
+                    }
+                    
+                    // Category display names
+                    $categoryNames = [
+                        'laboratory' => 'Laboratory',
+                        'pharmacy' => 'Pharmacy',
+                        'consultation' => 'Appointment',
+                        'room' => 'Room & Bed',
+                        'general' => 'Other Services'
+                    ];
+                    
+                    // Display order
+                    $categoryOrder = ['laboratory', 'pharmacy', 'consultation', 'room', 'general'];
+                    
+                    $itemNumber = 0;
+                    foreach ($categoryOrder as $cat) {
+                        if (!isset($groupedItems[$cat]) || empty($groupedItems[$cat])) {
+                            continue;
+                        }
+                        
+                        // Add category header
+                        $categoryName = $categoryNames[$cat] ?? ucfirst($cat);
+                        ?>
+                        <tr style="background-color: #e3f2fd; font-weight: bold;">
+                            <td colspan="6" style="padding: 10px; border-bottom: 2px solid #2196f3;">
+                                <?= esc($categoryName) ?>
+                            </td>
                         </tr>
-                    <?php endforeach; ?>
+                        <?php
+                        
+                        // Add items for this category
+                        foreach ($groupedItems[$cat] as $item): 
+                            $itemNumber++;
+                            ?>
+                            <tr>
+                                <td><?= $itemNumber ?></td>
+                                <td><?= esc($item['description'] ?? '—') ?></td>
+                                <td><?= esc($bill['bill_date'] ?? $issueDate) ?></td>
+                                <td style="text-align:right;">₱<?= number_format((float)($item['unit_price'] ?? 0), 2) ?></td>
+                                <td style="text-align:center;"><?= esc($item['quantity'] ?? 1) ?></td>
+                                <td style="text-align:right;">₱<?= number_format((float)($item['amount'] ?? 0), 2) ?></td>
+                            </tr>
+                        <?php endforeach;
+                    }
+                    
+                    // Handle any remaining categories not in the order list
+                    foreach ($groupedItems as $cat => $catItems) {
+                        if (in_array($cat, $categoryOrder)) {
+                            continue; // Already processed
+                        }
+                        $categoryName = $categoryNames[$cat] ?? ucfirst($cat);
+                        ?>
+                        <tr style="background-color: #e3f2fd; font-weight: bold;">
+                            <td colspan="6" style="padding: 10px; border-bottom: 2px solid #2196f3;">
+                                <?= esc($categoryName) ?>
+                            </td>
+                        </tr>
+                        <?php
+                        foreach ($catItems as $item): 
+                            $itemNumber++;
+                            ?>
+                            <tr>
+                                <td><?= $itemNumber ?></td>
+                                <td><?= esc($item['description'] ?? '—') ?></td>
+                                <td><?= esc($bill['bill_date'] ?? $issueDate) ?></td>
+                                <td style="text-align:right;">₱<?= number_format((float)($item['unit_price'] ?? 0), 2) ?></td>
+                                <td style="text-align:center;"><?= esc($item['quantity'] ?? 1) ?></td>
+                                <td style="text-align:right;">₱<?= number_format((float)($item['amount'] ?? 0), 2) ?></td>
+                            </tr>
+                        <?php endforeach;
+                    }
+                    ?>
                 <?php else: ?>
                     <tr>
                         <td colspan="6" style="text-align:center; font-style:italic;">No itemized charges were recorded for this bill.</td>
