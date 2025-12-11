@@ -506,6 +506,9 @@ class Pharmacy extends BaseController
         if ($pid === '') {
             $data['patient_id'] = null;
         }
+        
+        // Check if this is an inpatient transaction
+        $isInpatient = !empty($data['is_inpatient']);
 
         // Validate stock availability and expiry BEFORE starting transaction
         $itemIds = array_map(fn($it) => (string)$it['medicine_id'], $data['items']);
@@ -535,13 +538,26 @@ class Pharmacy extends BaseController
         }
         foreach ($requestedPerMed as $mid => $qty) {
             $available = isset($info[$mid]) ? (int)$info[$mid]['stock'] : 0;
-            if ($qty <= 0 || $available <= 0 || $qty > $available) {
-                $insufficient[] = [
-                    'medicine_id' => $mid,
-                    'medicine_name' => $info[$mid]['name'] ?? (string)$mid,
-                    'requested' => $qty,
-                    'available' => $available
-                ];
+            // For inpatient, only block if completely out of stock (allow if qty > available)
+            if ($isInpatient) {
+                if ($qty <= 0 || $available <= 0) {
+                    $insufficient[] = [
+                        'medicine_id' => $mid,
+                        'medicine_name' => $info[$mid]['name'] ?? (string)$mid,
+                        'requested' => $qty,
+                        'available' => $available
+                    ];
+                }
+            } else {
+                // For OPD, strict validation
+                if ($qty <= 0 || $available <= 0 || $qty > $available) {
+                    $insufficient[] = [
+                        'medicine_id' => $mid,
+                        'medicine_name' => $info[$mid]['name'] ?? (string)$mid,
+                        'requested' => $qty,
+                        'available' => $available
+                    ];
+                }
             }
             // Expiry rule: cannot dispense if expired or within 3 months of expiry
             $today = date('Y-m-d');
@@ -597,6 +613,11 @@ class Pharmacy extends BaseController
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
             
+            // Add patient_id if provided
+            if (!empty($data['patient_id'])) {
+                $prescriptionData['patient_id'] = (string)$data['patient_id'];
+            }
+            
             $this->db->table('prescriptions')->insert($prescriptionData);
             $prescriptionId = $this->db->insertID();
 
@@ -618,19 +639,31 @@ class Pharmacy extends BaseController
                 }
                 
                 $currentStock = (int)($medicine['stock'] ?? 0);
-                if ($quantity > $currentStock) {
+                
+                // For inpatient, allow even if quantity exceeds current stock (medicines are already prescribed)
+                if (!$isInpatient && $quantity > $currentStock) {
                     throw new \Exception('Insufficient stock for ' . ($medicine['name'] ?? $medicineId) . '. Available: ' . $currentStock . ', Requested: ' . $quantity);
                 }
                 
                 // Decrease stock only during checkout
-                $this->db->table('medicines')
-                    ->set('stock', 'stock - ' . $quantity, false)
-                    ->where('id', $medicineId)
-                    ->where('stock >=', $quantity)
-                    ->update();
-                
-                if ($this->db->affectedRows() === 0) {
-                    throw new \Exception('Failed to update stock for ' . ($medicine['name'] ?? $medicineId) . '. Stock may have changed.');
+                // For inpatient, decrease what's available, or set to 0 if stock is less than requested
+                if ($isInpatient && $quantity > $currentStock) {
+                    // For inpatient, decrease available stock (may go negative or to 0)
+                    $this->db->table('medicines')
+                        ->set('stock', 'GREATEST(0, stock - ' . $quantity . ')', false)
+                        ->where('id', $medicineId)
+                        ->update();
+                } else {
+                    // Normal stock decrease
+                    $this->db->table('medicines')
+                        ->set('stock', 'stock - ' . $quantity, false)
+                        ->where('id', $medicineId)
+                        ->where('stock >=', $quantity)
+                        ->update();
+                    
+                    if ($this->db->affectedRows() === 0 && !$isInpatient) {
+                        throw new \Exception('Failed to update stock for ' . ($medicine['name'] ?? $medicineId) . '. Stock may have changed.');
+                    }
                 }
                 
                 $lineTotal = $item['price'] * $quantity;
@@ -648,29 +681,48 @@ class Pharmacy extends BaseController
             // Transaction number and record
             $transactionNumber = $this->generateTransactionNumber();
             $transactionData = [
-                'prescription_id' => $prescriptionId,
                 'transaction_number' => $transactionNumber,
+                'patient_id' => !empty($data['patient_id']) ? (string)$data['patient_id'] : '',
                 'date' => $data['date'],
                 'total_items' => $totalItems,
                 'total_amount' => $total,
+                'billed' => 0, // Default to not billed
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
             
-            // Only add patient_id if it's not null/empty
-            if (!empty($data['patient_id'])) {
-                $transactionData['patient_id'] = (string)$data['patient_id'];
-            }
-            
+            // Insert transaction
             $this->db->table('pharmacy_transactions')->insert($transactionData);
             $transactionId = $this->db->insertID();
+            
+            if (!$transactionId) {
+                $error = $this->db->error();
+                log_message('error', 'Failed to get transaction ID: ' . json_encode($error));
+                throw new \Exception('Failed to create transaction record. Error: ' . ($error['message'] ?? 'Unknown error'));
+            }
             
             $this->db->transComplete();
             
             if ($this->db->transStatus() === false) {
+                $error = $this->db->error();
+                log_message('error', 'Transaction failed: ' . json_encode($error));
+                $errorMsg = 'Transaction failed';
+                if (!empty($error['message'])) {
+                    $errorMsg .= ': ' . $error['message'];
+                }
+                if (!empty($error['code'])) {
+                    $errorMsg .= ' (Code: ' . $error['code'] . ')';
+                }
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Transaction failed'
+                    'message' => $errorMsg,
+                    'error_details' => $error,
+                    'debug_info' => [
+                        'prescription_id' => $prescriptionId ?? null,
+                        'items_count' => count($data['items'] ?? []),
+                        'is_inpatient' => $isInpatient,
+                        'transaction_data_keys' => array_keys($transactionData)
+                    ]
                 ])->setStatusCode(500);
             }
             
@@ -1088,6 +1140,128 @@ class Pharmacy extends BaseController
                 'success' => false,
                 'message' => 'Error restoring stock: ' . $e->getMessage()
             ])->setStatusCode(500);
+        }
+    }
+
+    // Get admitted patients for prescription dispensing
+    public function getAdmittedPatients()
+    {
+        try {
+            $term = trim((string) $this->request->getGet('term'));
+            
+            $builder = $this->db->table('admission_details ad');
+            $builder->select([
+                'ad.patient_id',
+                'p.id',
+                'p.first_name',
+                'p.last_name',
+                'ad.ward AS admission_ward',
+                'ad.room AS admission_room',
+                'ad.admission_date',
+                'ad.status AS admission_status'
+            ]);
+            $builder->join('patients p', 'p.id = ad.patient_id', 'left');
+            $builder->where('ad.status', 'admitted');
+            
+            if ($term !== '') {
+                $builder->groupStart()
+                        ->like('p.first_name', $term)
+                        ->orLike('p.last_name', $term)
+                        ->orLike('p.id', $term)
+                        ->groupEnd();
+            }
+            
+            $builder->orderBy('ad.admission_date', 'DESC');
+            $builder->limit(20);
+            
+            $patients = $builder->get()->getResultArray();
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $patients
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error in getAdmittedPatients: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'error' => 'Failed to load admitted patients'
+            ]);
+        }
+    }
+
+    // Get patient prescriptions with medicines
+    public function getPatientPrescriptions()
+    {
+        try {
+            $patientId = trim((string) $this->request->getGet('patient_id'));
+            
+            if ($patientId === '') {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'error' => 'patient_id is required'
+                ]);
+            }
+            
+            // Get prescriptions for this patient
+            $prescriptions = $this->db->table('prescriptions')
+                ->where('patient_id', $patientId)
+                ->orderBy('date', 'DESC')
+                ->orderBy('created_at', 'DESC')
+                ->get()
+                ->getResultArray();
+            
+            if (empty($prescriptions)) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'prescriptions' => []
+                ]);
+            }
+            
+            $prescriptionIds = array_column($prescriptions, 'id');
+            
+            // Get prescription items with medicine details
+            $items = $this->db->table('prescription_items pi')
+                ->select('pi.*, m.name as medicine_name, m.retail_price, m.price')
+                ->join('medicines m', 'm.id = pi.medication_id', 'left')
+                ->whereIn('pi.prescription_id', $prescriptionIds)
+                ->get()
+                ->getResultArray();
+            
+            // Group items by prescription
+            $itemsByPrescription = [];
+            foreach ($items as $item) {
+                $presId = $item['prescription_id'];
+                if (!isset($itemsByPrescription[$presId])) {
+                    $itemsByPrescription[$presId] = [];
+                }
+                $itemsByPrescription[$presId][] = [
+                    'medication_id' => $item['medication_id'],
+                    'medicine_id' => $item['medication_id'],
+                    'medicine_name' => $item['medicine_name'] ?? 'Unknown',
+                    'name' => $item['medicine_name'] ?? 'Unknown',
+                    'quantity' => (int)($item['quantity'] ?? 0),
+                    'price' => (float)($item['price'] ?? $item['retail_price'] ?? 0),
+                    'unit_price' => (float)($item['price'] ?? $item['retail_price'] ?? 0),
+                    'total' => (float)($item['total'] ?? ($item['quantity'] * ($item['price'] ?? $item['retail_price'] ?? 0)))
+                ];
+            }
+            
+            // Attach items to prescriptions
+            foreach ($prescriptions as &$prescription) {
+                $prescription['items'] = $itemsByPrescription[$prescription['id']] ?? [];
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'prescriptions' => $prescriptions
+            ]);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error in getPatientPrescriptions: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'error' => 'Failed to load prescriptions'
+            ]);
         }
     }
 

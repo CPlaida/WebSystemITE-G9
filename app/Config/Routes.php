@@ -229,6 +229,10 @@ $routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($ro
     $routes->get('medications', 'Pharmacy::getMedications');
     $routes->get('medication/(:num)', 'Pharmacy::getMedication/$1');
     
+    // Admitted patients and prescriptions
+    $routes->get('admitted-patients', 'Pharmacy::getAdmittedPatients');
+    $routes->get('patient-prescriptions', 'Pharmacy::getPatientPrescriptions');
+    
     // Transaction management
     $routes->post('transaction/create', 'Pharmacy::createTransaction');
     $routes->get('transactions', 'Pharmacy::getAllTransactions');
