@@ -24,11 +24,23 @@
                 <label class="filter-label">
                     <i class="fas fa-filter me-1"></i>Filter by Unit:
                 </label>
-                <select id="icuFilter" class="form-select filter-select">
-                    <?php foreach ($unitTypes as $key => $label): ?>
-                        <option value="<?= esc($key) ?>" <?= ($currentFilter === $key) ? 'selected' : '' ?>><?= esc($label) ?></option>
+                <div class="filter-buttons">
+                    <?php foreach (($filterButtons ?? []) as $key => $button): ?>
+                        <?php
+                            $label = $button['label'] ?? ucfirst($key);
+                            $icon  = $button['icon'] ?? null;
+                            $url   = base_url('rooms/critical-care?filter=' . urlencode($key));
+                            $isActive = $currentFilter === $key;
+                        ?>
+                        <a href="<?= esc($url) ?>"
+                           class="btn btn-sm <?= $isActive ? 'btn-primary' : 'btn-outline-primary' ?>">
+                            <?php if ($icon): ?>
+                                <i class="<?= esc($icon) ?> me-1"></i>
+                            <?php endif; ?>
+                            <?= esc($label) ?>
+                        </a>
                     <?php endforeach; ?>
-                </select>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -165,14 +177,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Filter dropdown functionality
-    const sel = document.getElementById('icuFilter');
-    if (sel) {
-        sel.addEventListener('change', function(){
-            const v = this.value || 'all';
-            window.location.href = '<?= base_url('admin/rooms/critical-care') ?>?filter=' + encodeURIComponent(v);
-        });
-    }
     
     // Search functionality
     const searchInput = document.getElementById('icuSearch');

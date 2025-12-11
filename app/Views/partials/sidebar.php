@@ -40,7 +40,7 @@ $roleName = getRoleName();
                 <ul class="submenu">
                 <?php if ($role !== 'doctor'): ?>
                     <?php if (hasPermission(['patients', 'administration'])): ?>
-                    <li><a href="<?= base_url('patients/register') ?>"><span class="text">Register Patient</span></a></li>
+                    <li><a href="<?= base_url('patients/register') ?>"><span class="text">Register Outpatient</span></a></li>
                     <li><a href="<?= base_url('patients/inpatient') ?>"><span class="text">Register Inpatient</span></a></li>
                     <?php endif; ?>
                     <?php if (hasPermission(['patients', 'admissions'])): ?>

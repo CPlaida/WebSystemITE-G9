@@ -39,19 +39,13 @@ class Rooms extends BaseController
         'icu' => ['ward' => 'ICU', 'label' => 'Intensive Care Unit'],
         'nicu' => ['ward' => 'NICU', 'label' => 'Neonatal Intensive Care Unit'],
         'picu' => ['ward' => 'PICU', 'label' => 'Pediatric Intensive Care Unit'],
-        'ccu' => ['ward' => 'CCU', 'label' => 'Coronary Care Unit'],
-        'sicu' => ['ward' => 'SICU', 'label' => 'Surgical ICU'],
-        'micu' => ['ward' => 'MICU', 'label' => 'Medical ICU'],
     ];
 
     private const SPECIALIZED_ROOMS = [
         'ed' => ['ward' => 'ED', 'label' => 'Emergency Department'],
         'isolation' => ['ward' => 'ISO', 'label' => 'Isolation Room'],
-        'pacu' => ['ward' => 'PACU', 'label' => 'Post-Anesthesia Care Unit'],
         'ld' => ['ward' => 'LD', 'label' => 'Labor & Delivery Suite'],
         'sdu' => ['ward' => 'SDU', 'label' => 'Step-Down Unit'],
-        'oncology' => ['ward' => 'ONC', 'label' => 'Oncology Unit'],
-        'rehab' => ['ward' => 'REHAB', 'label' => 'Rehabilitation Unit'],
     ];
 
     public function __construct()
@@ -267,6 +261,16 @@ class Rooms extends BaseController
             $unitTypes[$key] = $config['label'];
         }
 
+        $filterButtons = [
+            'all' => ['label' => 'All', 'icon' => 'fas fa-list'],
+        ];
+        foreach (self::CRITICAL_UNITS as $key => $config) {
+            $filterButtons[$key] = [
+                'label' => $config['label'],
+                'icon' => 'fas fa-heartbeat',
+            ];
+        }
+
         $rows = [];
         $unitFilter = null;
         $decorator = fn(string $ward): array => [
@@ -287,6 +291,7 @@ class Rooms extends BaseController
                 'unitFilter' => null,
                 'rows' => [],
                 'allUnitsData' => $allUnitsData,
+                'filterButtons' => $filterButtons,
             ]);
         }
 
@@ -296,6 +301,7 @@ class Rooms extends BaseController
             'unitFilter' => $unitFilter,
             'rows' => $rows,
             'allUnitsData' => [],
+            'filterButtons' => $filterButtons,
         ]);
     }
 
@@ -305,9 +311,6 @@ class Rooms extends BaseController
             'ICU' => 'Intensive Care Unit',
             'NICU' => 'Neonatal Intensive Care Unit',
             'PICU' => 'Pediatric Intensive Care Unit',
-            'CCU' => 'Coronary Care Unit',
-            'SICU' => 'Surgical ICU',
-            'MICU' => 'Medical ICU'
         ];
         return $mapping[$wardName] ?? $wardName;
     }
@@ -344,19 +347,13 @@ class Rooms extends BaseController
             'ICU' => 'Intensive Care Unit',
             'NICU' => 'Neonatal Intensive Care Unit',
             'PICU' => 'Pediatric Intensive Care Unit',
-            'CCU' => 'Coronary Care Unit',
-            'SICU' => 'Surgical ICU',
-            'MICU' => 'Medical ICU'
         ];
 
         $specialized = [
             'ED' => 'Emergency Department',
             'ISO' => 'Isolation Room',
-            'PACU' => 'Post-Anesthesia Care Unit',
             'LD' => 'Labor & Delivery Suite',
             'SDU' => 'Step-Down Unit',
-            'ONC' => 'Oncology Unit',
-            'REHAB' => 'Rehabilitation Unit'
         ];
 
         $generalInpatient = [
@@ -389,6 +386,22 @@ class Rooms extends BaseController
             $roomTypes[$key] = $config['label'];
         }
 
+        $filterButtons = [
+            'all' => ['label' => 'All', 'icon' => 'fas fa-list'],
+        ];
+        $specializedIcons = [
+            'ed' => 'fas fa-ambulance',
+            'isolation' => 'fas fa-shield-virus',
+            'ld' => 'fas fa-baby',
+            'sdu' => 'fas fa-procedures',
+        ];
+        foreach (self::SPECIALIZED_ROOMS as $key => $config) {
+            $filterButtons[$key] = [
+                'label' => $config['label'],
+                'icon' => $specializedIcons[$key] ?? 'fas fa-door-open',
+            ];
+        }
+
         $rows = [];
         $roomFilter = null;
         $decorator = fn(string $ward): array => [
@@ -409,6 +422,7 @@ class Rooms extends BaseController
                 'roomFilter' => null,
                 'rows' => [],
                 'allRoomsData' => $allRoomsData,
+                'filterButtons' => $filterButtons,
             ]);
         }
 
@@ -418,6 +432,7 @@ class Rooms extends BaseController
             'roomFilter' => $roomFilter,
             'rows' => $rows,
             'allRoomsData' => [],
+            'filterButtons' => $filterButtons,
         ]);
     }
 
@@ -426,11 +441,8 @@ class Rooms extends BaseController
         $mapping = [
             'ED' => 'Emergency Department',
             'ISO' => 'Isolation Room',
-            'PACU' => 'Post-Anesthesia Care Unit',
             'LD' => 'Labor & Delivery Suite',
             'SDU' => 'Step-Down Unit',
-            'ONC' => 'Oncology Unit',
-            'REHAB' => 'Rehabilitation Unit'
         ];
         return $mapping[$wardName] ?? $wardName;
     }
