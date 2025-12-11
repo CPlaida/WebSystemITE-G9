@@ -51,11 +51,59 @@
         }
 
         // Active link highlight
-        document.querySelectorAll('.nav-item a').forEach(item => {
-            if (item.href === window.location.href) {
-                item.parentElement.classList.add('active');
+        function setActiveMenuItem() {
+            const currentPath = window.location.pathname.replace(/\/$/, ''); // Remove trailing slash
+            let activeFound = false;
+            
+            // First, remove all active classes and collapse all submenus
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active', 'expanded');
+            });
+            document.querySelectorAll('.submenu').forEach(submenu => {
+                submenu.classList.remove('show');
+            });
+            
+            // Helper function to normalize path
+            function normalizePath(url) {
+                try {
+                    return new URL(url, window.location.origin).pathname.replace(/\/$/, '');
+                } catch (e) {
+                    return url.replace(/\/$/, '');
+                }
             }
-        });
+            
+            // Check submenu items first (more specific)
+            document.querySelectorAll('.submenu a').forEach(item => {
+                const linkPath = normalizePath(item.href);
+                if (linkPath === currentPath) {
+                    item.parentElement.classList.add('active');
+                    // Mark parent expandable item as active and expand it
+                    const parentExpandable = item.closest('.nav-item.expandable');
+                    if (parentExpandable) {
+                        parentExpandable.classList.add('active', 'expanded');
+                        const submenu = parentExpandable.querySelector('.submenu');
+                        if (submenu) {
+                            submenu.classList.add('show');
+                        }
+                    }
+                    activeFound = true;
+                }
+            });
+            
+            // If no submenu item is active, check main menu items
+            if (!activeFound) {
+                document.querySelectorAll('.nav-item:not(.expandable) a, .nav-item.expandable > a[href!="#"]').forEach(item => {
+                    const linkPath = normalizePath(item.href);
+                    if (linkPath === currentPath) {
+                        item.parentElement.classList.add('active');
+                        activeFound = true;
+                    }
+                });
+            }
+        }
+        
+        // Set active menu item on page load
+        setActiveMenuItem();
     </script>
 </body>
 </html>
