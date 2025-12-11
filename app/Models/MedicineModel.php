@@ -11,6 +11,9 @@ class MedicineModel extends Model
         'id', 'barcode', 'name', 'brand', 'category', 'stock', 'unit_price', 'retail_price', 'manufactured_date', 'expiry_date', 'description'
     ];
     
+    // Low stock threshold (can be configured)
+    protected $lowStockThreshold = 5;
+    
     // Dynamically check if image column exists and add it to allowedFields
     protected function initialize()
     {
@@ -25,12 +28,42 @@ class MedicineModel extends Model
             if (in_array('price', $fields)) {
                 $this->allowedFields[] = 'price';
             }
+            // Check and add status column if it doesn't exist
+            if (!in_array('status', $fields)) {
+                // Add status column with expired_soon
+                $db->query("ALTER TABLE `{$this->table}` ADD COLUMN `status` ENUM('available', 'low_stock', 'out_of_stock', 'expired_soon') DEFAULT 'available' AFTER `stock`");
+                // Sync all existing statuses
+                $this->syncAllStatuses();
+            } else {
+                // Update existing status column to include 'expired_soon' if missing
+                try {
+                    $columnInfo = $db->query("SHOW COLUMNS FROM `{$this->table}` LIKE 'status'")->getRowArray();
+                    if ($columnInfo && isset($columnInfo['Type'])) {
+                        $currentType = $columnInfo['Type'];
+                        // Check if expired_soon is not in the enum
+                        if (strpos($currentType, 'expired_soon') === false) {
+                            // Update enum to include expired_soon
+                            $db->query("ALTER TABLE `{$this->table}` MODIFY COLUMN `status` ENUM('available', 'low_stock', 'out_of_stock', 'expired_soon') DEFAULT 'available'");
+                            // Sync all statuses after adding the new enum value
+                            $this->syncAllStatuses();
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // If update fails, continue without expired_soon
+                }
+            }
+            // Dynamically add status field to allowedFields
+            if (in_array('status', $fields)) {
+                $this->allowedFields[] = 'status';
+            }
         } catch (\Exception $e) {
-            // If table doesn't exist or error, just continue without image field
+            // If table doesn't exist or error, just continue without status field
         }
     }
 
-    protected $beforeInsert = ['generateId'];
+    protected $beforeInsert = ['generateId', 'validateExpiryDate', 'updateStatus'];
+    protected $beforeUpdate = ['validateExpiryDate', 'updateStatus'];
+    protected $afterUpdate = ['syncStatusAfterUpdate'];
 
     protected function generateId(array $data)
     {
@@ -48,6 +81,192 @@ class MedicineModel extends Model
         }
         $data['data']['id'] = 'MED-' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
         return $data;
+    }
+
+    /**
+     * Validate expiration date - prevent expired dates from being saved
+     */
+    protected function validateExpiryDate(array $data)
+    {
+        $expiryDate = isset($data['data']['expiry_date']) ? $data['data']['expiry_date'] : null;
+        
+        // Only validate if expiry_date is provided and not empty
+        if (!empty($expiryDate)) {
+            $today = date('Y-m-d');
+            
+            // If expiry date is in the past, throw an exception
+            if ($expiryDate < $today) {
+                throw new \RuntimeException('Cannot add stock. This batch is already expired.');
+            }
+        }
+        
+        return $data;
+    }
+
+    /**
+     * Automatically update status based on stock level and expiration date
+     */
+    protected function updateStatus(array $data)
+    {
+        // Check if status column exists
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames($this->table);
+        if (!in_array('status', $fields)) {
+            return $data; // Status column doesn't exist, skip
+        }
+
+        $stock = isset($data['data']['stock']) ? (int)$data['data']['stock'] : null;
+        $expiryDate = isset($data['data']['expiry_date']) ? $data['data']['expiry_date'] : null;
+        
+        // If stock/expiry is not being updated, get current values from database
+        if (isset($data['id'][0])) {
+            $existing = $this->find($data['id'][0]);
+            if ($existing) {
+                if ($stock === null) {
+                    $stock = (int)($existing['stock'] ?? 0);
+                }
+                if ($expiryDate === null) {
+                    $expiryDate = $existing['expiry_date'] ?? null;
+                }
+            } else {
+                $stock = $stock ?? 0;
+            }
+        } elseif ($stock === null) {
+            return $data; // No stock info available
+        }
+
+        // Check expiration date first (highest priority)
+        $status = null;
+        if (!empty($expiryDate)) {
+            $expiry = new \DateTime($expiryDate);
+            $today = new \DateTime();
+            $cutoff = clone $today;
+            $cutoff->modify('+3 months');
+            
+            // If expiry is within 3 months, set to expired_soon
+            if ($expiry <= $cutoff) {
+                $status = 'expired_soon';
+            }
+        }
+        
+        // If not expired_soon, determine status based on stock
+        if ($status === null) {
+            if ($stock <= 0) {
+                $status = 'out_of_stock';
+            } elseif ($stock <= $this->lowStockThreshold) {
+                $status = 'low_stock';
+            } else {
+                $status = 'available';
+            }
+        }
+
+        $data['data']['status'] = $status;
+        return $data;
+    }
+
+    /**
+     * Sync status after update (for cases where stock is updated via raw SQL)
+     */
+    protected function syncStatusAfterUpdate(array $data)
+    {
+        // Check if status column exists
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames($this->table);
+        if (!in_array('status', $fields)) {
+            return $data; // Status column doesn't exist, skip
+        }
+
+        // If stock or expiry was updated, recalculate status
+        if (isset($data['id'])) {
+            $id = is_array($data['id']) ? $data['id'][0] : $data['id'];
+            
+            // Get current medicine data
+            $medicine = $this->find($id);
+            if (!$medicine) {
+                return $data;
+            }
+            
+            $stock = isset($data['data']['stock']) ? (int)$data['data']['stock'] : (int)($medicine['stock'] ?? 0);
+            $expiryDate = isset($data['data']['expiry_date']) ? $data['data']['expiry_date'] : ($medicine['expiry_date'] ?? null);
+            
+            // Check expiration date first (highest priority)
+            $status = null;
+            if (!empty($expiryDate)) {
+                $expiry = new \DateTime($expiryDate);
+                $today = new \DateTime();
+                $cutoff = clone $today;
+                $cutoff->modify('+3 months');
+                
+                // If expiry is within 3 months, set to expired_soon
+                if ($expiry <= $cutoff) {
+                    $status = 'expired_soon';
+                }
+            }
+            
+            // If not expired_soon, determine status based on stock
+            if ($status === null) {
+                if ($stock <= 0) {
+                    $status = 'out_of_stock';
+                } elseif ($stock <= $this->lowStockThreshold) {
+                    $status = 'low_stock';
+                } else {
+                    $status = 'available';
+                }
+            }
+
+            // Update status directly in database
+            $db->table($this->table)
+                ->where('id', $id)
+                ->update(['status' => $status]);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Sync status for all medicines (useful for migration or bulk updates)
+     */
+    public function syncAllStatuses()
+    {
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames($this->table);
+        if (!in_array('status', $fields)) {
+            return false; // Status column doesn't exist
+        }
+
+        $medicines = $this->findAll();
+        $today = new \DateTime();
+        $cutoff = clone $today;
+        $cutoff->modify('+3 months');
+        
+        foreach ($medicines as $medicine) {
+            $stock = (int)($medicine['stock'] ?? 0);
+            $expiryDate = $medicine['expiry_date'] ?? null;
+            
+            // Check expiration date first (highest priority)
+            $status = null;
+            if (!empty($expiryDate)) {
+                $expiry = new \DateTime($expiryDate);
+                if ($expiry <= $cutoff) {
+                    $status = 'expired_soon';
+                }
+            }
+            
+            // If not expired_soon, determine status based on stock
+            if ($status === null) {
+                if ($stock <= 0) {
+                    $status = 'out_of_stock';
+                } elseif ($stock <= $this->lowStockThreshold) {
+                    $status = 'low_stock';
+                } else {
+                    $status = 'available';
+                }
+            }
+
+            $this->update($medicine['id'], ['status' => $status]);
+        }
+
+        return true;
     }
 
     /**

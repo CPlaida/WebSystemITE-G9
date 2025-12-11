@@ -54,10 +54,30 @@ $currentSubmenu = 'inventory';
                                 <td data-col="name"><?= esc($medicine['name']) ?></td>
                                 <td data-col="brand"><?= esc($medicine['brand'] ?? '-') ?></td>
                                 <td data-col="category"><?= esc($medicine['category'] ?? '-') ?></td>
-                                <td class="out-of-stock" style="color: #dc3545; font-weight: 600;"><?= (int)$medicine['stock'] ?></td>
+                                <td class="out-of-stock" style="color: #dc3545; font-weight: 600;">
+                                    <?= (int)$medicine['stock'] ?>
+                                    <?php
+                                    // Show status badge
+                                    $status = $medicine['status'] ?? null;
+                                    if ($status === 'expired_soon') {
+                                        echo '<span class="badge" style="margin-left: 8px; background-color: #ff9800; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600;">Expiring Soon</span>';
+                                    }
+                                    ?>
+                                </td>
                                 <td data-col="unit_price">₱<?= number_format((float)($medicine['unit_price'] ?? $medicine['price'] ?? 0), 2) ?></td>
                                 <td data-col="retail_price">₱<?= number_format((float)($medicine['retail_price'] ?? $medicine['price'] ?? 0), 2) ?></td>
-                                <td data-exp="<?= esc($medicine['expiry_date'] ?? '-') ?>"><?= esc($medicine['expiry_date'] ?? '-') ?></td>
+                                <td data-exp="<?= esc($medicine['expiry_date'] ?? '-') ?>">
+                                    <?= esc($medicine['expiry_date'] ?? '-') ?>
+                                    <?php
+                                    // Show warning if expiring soon
+                                    if ($status === 'expired_soon' && !empty($medicine['expiry_date'])) {
+                                        $expiry = new \DateTime($medicine['expiry_date']);
+                                        $today = new \DateTime();
+                                        $daysLeft = $today->diff($expiry)->days;
+                                        echo '<span style="margin-left: 8px; color: #ff9800; font-size: 0.85em;">(' . $daysLeft . ' days left)</span>';
+                                    }
+                                    ?>
+                                </td>
                                 <td>
                                     <a href="<?= base_url('medicines/edit/' . $medicine['id']) ?>" class="btn" style="padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; text-decoration: none; display: inline-block;">Restock</a>
                                 </td>

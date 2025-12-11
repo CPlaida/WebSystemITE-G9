@@ -92,7 +92,30 @@ $currentSubmenu = 'inventory';
                                 <td data-col="name"><span class="medicine-name-text"><?= esc($nameText) ?></span></td>
                                 <td data-col="brand"><?= esc($m['brand']) ?></td>
                                 <td data-col="category"><?= esc($m['category']) ?></td>
-                                <td class="<?= ((int)$m['stock'] === 0 ? 'out-of-stock' : 'in-stock') ?>"><?= (int)$m['stock'] ?></td>
+                                <td class="<?= ((int)$m['stock'] === 0 ? 'out-of-stock' : 'in-stock') ?>">
+                                    <?= (int)$m['stock'] ?>
+                                    <?php
+                                    // Show status badge
+                                    $stock = (int)($m['stock'] ?? 0);
+                                    $status = $m['status'] ?? null;
+                                    
+                                    // Determine status if not set in database
+                                    if (!$status) {
+                                        if ($stock <= 0) {
+                                            $status = 'out_of_stock';
+                                        } elseif ($stock <= 5) {
+                                            $status = 'low_stock';
+                                        } else {
+                                            $status = 'available';
+                                        }
+                                    }
+                                    
+                                    // Display badge for low stock (only if stock > 0)
+                                    if ($status === 'low_stock' && $stock > 0) {
+                                        echo '<span class="badge badge-warning" style="margin-left: 8px; background-color: #ffc107; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600;">Low Stock</span>';
+                                    }
+                                    ?>
+                                </td>
                                 <td data-col="unit_price">₱<?= number_format((float)($m['unit_price'] ?? $m['price'] ?? 0), 2) ?></td>
                                 <td data-col="retail_price">₱<?= number_format((float)($m['retail_price'] ?? $m['price'] ?? 0), 2) ?></td>
                                 <td data-col="manufactured_date"><?= esc($m['manufactured_date'] ?? '-') ?></td>

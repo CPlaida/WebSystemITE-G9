@@ -24,18 +24,6 @@
     --btn-outline-hover: #e9ecef;
 }
 
-/* ============================================
-   UNIFIED BUTTON SYSTEM - Apply to ALL buttons
-   ============================================
-   
-   BUTTON COLOR SCHEME:
-   - BLUE (#2563eb): View, Edit, Save, Primary actions
-   - GREEN (#2ecc71): Complete, Success, Positive actions
-   - GRAY (#6c757d): Cancel, Secondary, Neutral actions
-   - RED (#ef4444): Delete, Danger actions
-   
-   This system overrides all other button styles in this file.
-   ============================================ */
 
 /* Base Button Styles - Universal */
 .btn,
@@ -579,8 +567,9 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     display: flex;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
     line-height: 1.5;
 }
 
@@ -777,11 +766,13 @@ body {
     padding: 20px;
     background: #f0f2f5;
     transition: all 0.3s ease;
-    min-height: 100vh;
-    overflow-y: auto;
+    height: 100vh;
+    overflow-y: hidden;
     overflow-x: hidden;
     width: calc(100vw - 280px);
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .main-content.zoomed {
@@ -1833,9 +1824,31 @@ label { display:block; margin-bottom:8px; font-weight:500; color:#2c3e50; font-s
 .btn-outline-success { color:#1cc88a; border-color:#1cc88a; background:transparent; }
 .btn-outline-success:hover { background:#1cc88a; color:#fff; }
 .filter-section { display:flex; flex-wrap:wrap; gap:.75rem; margin:0 0 .75rem 0; align-items:center; }
-.filter-btn { padding:.4rem .9rem; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:9999px; font-size:.85rem; font-weight:600; color:#6b7280; cursor:pointer; transition: all .3s; }
-.filter-btn:hover { border-color:#d1d5db; }
-.filter-btn.active { background:#4e73df; color:#fff; border-color:#4e73df; box-shadow: 0 0 0 2px rgba(78,115,223,.12); }
+.filter-btn { 
+    padding: 0.5rem 1rem; 
+    background: #f3f4f6; 
+    border: 1px solid #e5e7eb; 
+    border-radius: 6px; 
+    font-size: 0.9rem; 
+    font-weight: 600; 
+    color: #6b7280; 
+    cursor: pointer; 
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.filter-btn:hover { border-color: #d1d5db; }
+.filter-btn.active { 
+    background: #4e73df; 
+    color: #fff; 
+    border-color: #4e73df; 
+    box-shadow: 0 0 0 2px rgba(78,115,223,.12); 
+}
+.filter-buttons-group .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
 .table-container { width:100%; overflow-x:hidden; margin:0; border-radius:0; box-shadow:none; }
 .data-table { width:100%; border-collapse:separate; border-spacing:0; background:transparent; }
 .data-table thead th { background:#4e73df; color:#fff; padding:1rem 1.25rem; text-align:left; font-weight:700; font-size:.85rem; text-transform:uppercase; letter-spacing:.5px; border:none; white-space: nowrap; }
@@ -2136,12 +2149,134 @@ table th {
 .btn-view:hover { background:#0b5ed7; border-color:#0a58ca; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,.1); }
 
 /* ===== Pharmacy/PrescriptionDispencing.php ===== */
-.prescription-container { display:flex; gap:20px; margin-top:20px; }
-.prescription-main { flex:2; min-width:0; }
-.prescription-sidebar { flex:1; min-width:350px; }
+.prescription-container { 
+    display: flex; 
+    gap: 20px; 
+    margin-top: 0;
+    height: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+.prescription-main { 
+    flex: 2; 
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.prescription-main .filter-view {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.prescription-main .filter-view > .patient-search-section {
+    flex-shrink: 0;
+}
+
+.prescription-main .filter-view #patientInfo,
+.prescription-main .filter-view #prescriptionMedicines {
+    flex-shrink: 0;
+}
+
+.prescription-main .filter-view > .card {
+    flex: 1;
+    min-height: 0;
+    margin-bottom: 0;
+}
+
+/* Patient Search Section with Filter Buttons */
+.patient-search-section {
+    flex-shrink: 0;
+    margin-bottom: 20px;
+}
+
+.search-filter-row {
+    display: flex;
+    gap: 15px;
+    align-items: stretch;
+}
+
+.search-filter-row .unified-search-wrapper {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0 !important;
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.search-filter-row .unified-search-row {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+}
+
+.filter-buttons-group {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.filter-buttons-group .filter-btn {
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    height: fit-content;
+}
+
+.filter-buttons-group .filter-btn i {
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .search-filter-row {
+        flex-direction: column;
+    }
+    
+    .filter-buttons-group {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+.prescription-sidebar { 
+    flex: 1; 
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
 .card { background:#fff; border-radius:8px; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075); margin-bottom:20px; border:none; overflow:hidden; }
-.card-header { background:#f8f9fa; padding:15px 20px; border-bottom:1px solid rgba(0,0,0,0.05); font-weight:600; color:#2c3e50; font-size:1rem; }
+.prescription-main .card { 
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin-bottom: 0;
+}
+.card-header { background:#f8f9fa; padding:15px 20px; border-bottom:1px solid rgba(0,0,0,0.05); font-weight:600; color:#2c3e50; font-size:1rem; flex-shrink: 0; }
 .card-body { padding:20px; }
+.prescription-main .card .card-body { 
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
 .form-group { margin-bottom:1rem; }
 .form-group label { display:block; margin-bottom:.5rem; font-weight:500; color:#495057; font-size:.9rem; }
 .form-control { width:100%; padding:.5rem .75rem; font-size:.9rem; border:1px solid #ced4da; border-radius:4px; transition:border-color .15s; }
@@ -2162,12 +2297,34 @@ table th {
 /* Medicine Grid Styles */
 .medicine-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 15px;
     padding: 20px;
-    max-height: 600px;
+    flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     background: #f8f9fa;
+    min-height: 0;
+    max-height: 100%;
+}
+
+/* Custom scrollbar for medicine grid */
+.medicine-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.medicine-grid::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.medicine-grid::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.medicine-grid::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .medicine-card {
@@ -2179,6 +2336,9 @@ table th {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    width: 180px;
+    height: 280px;
+    flex-shrink: 0;
 }
 
 .medicine-card:hover {
@@ -2193,12 +2353,13 @@ table th {
 
 .medicine-card-image {
     width: 100%;
-    height: 120px;
+    height: 150px;
     background: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .medicine-card-image img {
@@ -2210,28 +2371,48 @@ table th {
 .medicine-card-info {
     padding: 12px;
     text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0;
 }
 
 .medicine-name {
     font-weight: 600;
     font-size: 14px;
     color: #2c3e50;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    min-height: 2.8em;
+    word-wrap: break-word;
+}
+
+.medicine-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e74c3c;
+    margin-bottom: 6px;
 }
 
 .medicine-stock {
     font-size: 12px;
     color: #6c757d;
+    margin-top: auto;
 }
 
 .medicine-stock .low-stock-warning {
     color: #ff9800;
     font-weight: 600;
     display: block;
-    margin-top: 2px;
+    margin-top: 4px;
+    font-size: 11px;
 }
 
 /* Cart Item Row Styles */
@@ -4653,6 +4834,18 @@ select[name="name_extension"].form-select,
 
 .medicine-shelf-body {
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.medicine-shelf-body .unified-search-wrapper {
+    flex-shrink: 0;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
 }
 
 .medicine-search-container {
@@ -4683,8 +4876,17 @@ select[name="name_extension"].form-select,
 .prescription-sidebar {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px);
-    max-height: calc(100vh - 120px);
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.prescription-sidebar .filter-view {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 /* Total Amount Card */
@@ -4724,6 +4926,12 @@ select[name="name_extension"].form-select,
     flex-direction: column;
     min-height: 0;
     overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.payment-card {
+    flex-shrink: 0;
+    border: 1px solid #e0e0e0;
 }
 
 .cart-header {
@@ -4757,6 +4965,76 @@ select[name="name_extension"].form-select,
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
+    padding: 15px;
+}
+
+/* Custom scrollbar for cart items */
+.cart-items-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cart-items-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.cart-items-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.cart-items-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Billing Card Styles */
+.billing-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.billing-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 15px;
+}
+
+.billing-medicines-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    margin-bottom: 15px;
+}
+
+.billing-button-container {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+/* Custom scrollbar for billing medicines list */
+.billing-medicines-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.billing-medicines-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.billing-medicines-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.billing-medicines-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 /* Simple Cart List Styles */
@@ -4987,54 +5265,72 @@ select[name="name_extension"].form-select,
 
 .payment-label {
     display: block;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 8px;
-    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    font-size: 16px;
+    letter-spacing: 0.3px;
 }
 
 .amount-input-group {
     display: flex;
     align-items: stretch;
+    margin-bottom: 12px;
 }
 
 .amount-prefix {
     background: #f3f4f6;
-    border: 1px solid #d1d5db;
+    border: 2px solid #007bff;
     border-right: 0;
-    color: #374151;
-    padding: 10px 12px;
-    border-radius: 6px 0 0 6px;
-    font-weight: 600;
+    color: #007bff;
+    padding: 14px 16px;
+    border-radius: 8px 0 0 8px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .amount-input {
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 8px 8px 0;
     text-align: right;
     border-left: 0;
-    border: 1px solid #d1d5db;
-    padding: 10px 12px;
-    font-size: 14px;
+    border: 2px solid #007bff;
+    padding: 14px 16px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    background: #fff;
+}
+
+.amount-input:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.amount-input::placeholder {
+    color: #adb5bd;
+    font-weight: 500;
+    font-size: 18px;
 }
 
 .change-badge {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .change-badge span {
-    background: #eafaf1;
-    color: #0f7a43;
-    border: 1px solid #b7f0cf;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 13px;
+    background: #d4edda;
+    color: #155724;
+    border: 2px solid #28a745;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
 .checkout-btn {
@@ -6479,6 +6775,7 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     min-width: 120px;
     max-width: 150px;
     padding: 0.75rem 0.5rem;
+    text-align: center;
 }
 
 .data-table.user-management-table td:nth-child(5) .action-group {
@@ -6488,6 +6785,8 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+    margin: 0 auto;
+    width: fit-content;
 }
 
 .data-table.user-management-table td:nth-child(5) .action-group form {
@@ -7335,5 +7634,35 @@ input[type="file"].medicine-input::-webkit-file-upload-button:hover {
     .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+/* ===== Staff Management - Action Buttons ===== */
+.staff-action-group {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.staff-action-group .btn-action {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-width: fit-content;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.staff-action-group .btn-secondary {
+    flex: 0 0 auto;
+    width: auto !important;
+}
+
+@media (max-width: 768px) {
+    .staff-action-group {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 }

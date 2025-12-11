@@ -306,11 +306,26 @@ class Pharmacy extends BaseController
             $builder = $this->db->table('medicines');
             // Select only columns that exist - check if price column exists for backward compatibility
             $hasPriceColumn = in_array('price', $fields);
+            $hasStatusColumn = in_array('status', $fields);
             $selectFields = 'id, name, brand, retail_price, unit_price, stock, expiry_date';
             if ($hasPriceColumn) {
                 $selectFields .= ', price';
             }
+            if ($hasStatusColumn) {
+                $selectFields .= ', status';
+            }
             $builder->select($selectFields);
+            
+            // Filter out out_of_stock and expired_soon items
+            if ($hasStatusColumn) {
+                $builder->where('status !=', 'out_of_stock')
+                       ->where('status !=', 'expired_soon')
+                       ->where('status IS NOT NULL', null, false);
+            } else {
+                // Fallback: filter by stock > 0
+                $builder->where('stock >', 0);
+            }
+            
             if ($hasImageColumn) {
                 $builder->select('image', true); // Add image to select
             }
@@ -329,8 +344,16 @@ class Pharmacy extends BaseController
                     ->orWhere('expiry_date IS NULL', null, false)
                     ->groupEnd();
             
-            // Only show medicines with stock > 0
-            $builder->where('stock >', 0);
+            // Filter out out_of_stock and expired_soon items (use status if available, otherwise stock > 0)
+            $hasStatusColumn = in_array('status', $fields);
+            if ($hasStatusColumn) {
+                $builder->where('status !=', 'out_of_stock')
+                       ->where('status !=', 'expired_soon')
+                       ->where('status IS NOT NULL', null, false);
+            } else {
+                // Fallback: filter by stock > 0 and expiry > 3 months
+                $builder->where('stock >', 0);
+            }
             
             $builder->orderBy('id','DESC');
             $builder->limit(50);
@@ -627,15 +650,30 @@ class Pharmacy extends BaseController
                 $medicineId = (string)$item['medicine_id'];
                 $quantity = (int)$item['quantity'];
                 
-                // Validate stock availability before decreasing
+                // Validate stock availability and status before decreasing
+                $medicineFields = ['id', 'stock', 'name'];
+                $fields = $this->db->getFieldNames('medicines');
+                if (in_array('status', $fields)) {
+                    $medicineFields[] = 'status';
+                }
+                
                 $medicine = $this->db->table('medicines')
-                    ->select('id, stock, name')
+                    ->select(implode(', ', $medicineFields))
                     ->where('id', $medicineId)
                     ->get()
                     ->getRowArray();
                 
                 if (!$medicine) {
                     throw new \Exception('Medicine not found: ' . $medicineId);
+                }
+                
+                // Check if medicine is expired_soon or out_of_stock
+                $status = $medicine['status'] ?? null;
+                if ($status === 'expired_soon') {
+                    throw new \Exception('Cannot process transaction: ' . ($medicine['name'] ?? $medicineId) . ' is expiring soon and cannot be sold.');
+                }
+                if ($status === 'out_of_stock') {
+                    throw new \Exception('Cannot process transaction: ' . ($medicine['name'] ?? $medicineId) . ' is out of stock.');
                 }
                 
                 $currentStock = (int)($medicine['stock'] ?? 0);
@@ -665,6 +703,9 @@ class Pharmacy extends BaseController
                         throw new \Exception('Failed to update stock for ' . ($medicine['name'] ?? $medicineId) . '. Stock may have changed.');
                     }
                 }
+                
+                // Update status after stock change
+                $this->updateMedicineStatus($medicineId);
                 
                 $lineTotal = $item['price'] * $quantity;
                 $this->db->table('prescription_items')->insert([
@@ -1065,6 +1106,9 @@ class Pharmacy extends BaseController
                 ->get()
                 ->getRowArray();
             
+            // Update status after stock change
+            $this->updateMedicineStatus($medicineId);
+            
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Stock reserved successfully',
@@ -1121,6 +1165,9 @@ class Pharmacy extends BaseController
                 ->set('stock', 'stock + ' . $quantity, false)
                 ->where('id', $medicineId)
                 ->update();
+            
+            // Update status after stock change
+            $this->updateMedicineStatus($medicineId);
             
             // Get updated stock
             $updated = $this->db->table('medicines')
@@ -1266,6 +1313,65 @@ class Pharmacy extends BaseController
     }
 
     // Helper function to generate transaction number
+    /**
+     * Update medicine status based on stock level and expiration date
+     */
+    private function updateMedicineStatus($medicineId)
+    {
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames('medicines');
+        
+        // Check if status column exists
+        if (!in_array('status', $fields)) {
+            return; // Status column doesn't exist, skip
+        }
+
+        // Get current stock and expiry date
+        $medicine = $db->table('medicines')
+            ->select('stock, expiry_date')
+            ->where('id', $medicineId)
+            ->get()
+            ->getRowArray();
+
+        if (!$medicine) {
+            return;
+        }
+
+        $stock = (int)($medicine['stock'] ?? 0);
+        $expiryDate = $medicine['expiry_date'] ?? null;
+        $lowStockThreshold = 5; // Match the threshold in MedicineModel
+
+        // Check expiration date first (highest priority)
+        $status = null;
+        if (!empty($expiryDate)) {
+            $expiry = new \DateTime($expiryDate);
+            $today = new \DateTime();
+            $cutoff = clone $today;
+            $cutoff->modify('+3 months');
+            
+            // If expiry is within 3 months, set to expired_soon
+            if ($expiry <= $cutoff) {
+                $status = 'expired_soon';
+            }
+        }
+        
+        // If not expired_soon, determine status based on stock
+        if ($status === null) {
+            if ($stock <= 0) {
+                $status = 'out_of_stock';
+            } elseif ($stock <= $lowStockThreshold) {
+                $status = 'low_stock';
+            } else {
+                $status = 'available';
+            }
+        }
+
+        // Update status
+        $db->table('medicines')
+            ->where('id', $medicineId)
+            ->update(['status' => $status]);
+    }
+
     private function generateTransactionNumber()
     {
         $prefix = 'TRX-';

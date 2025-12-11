@@ -145,43 +145,39 @@
                 </td>
                 <td>
                   <div class="staff-action-group">
-                    <div class="staff-action-row">
-                      <button type="button" class="btn-action btn-view" onclick="openStaffView(this)"
-                        data-name="<?= esc(trim(($member['first_name'] ?? '') . ' ' . ($member['last_name'] ?? '')), 'attr') ?>"
-                        data-role="<?= esc($member['staff_role_name'] ?? '-', 'attr') ?>"
-                        data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
-                        data-department="<?= esc($member['department_name'] ?? '-', 'attr') ?>"
-                        data-specialization="<?= esc($member['specialization_name'] ?? '-', 'attr') ?>"
-                        data-phone="<?= esc($member['phone'] ?? 'N/A', 'attr') ?>"
-                        data-email="<?= esc($member['email'] ?? 'N/A', 'attr') ?>"
-                        data-status="<?= esc(ucwords(str_replace('_', ' ', $member['status'] ?? 'active')), 'attr') ?>"
-                        data-hire_date="<?= esc($member['hire_date'] ?? 'N/A', 'attr') ?>"
-                        data-address="<?= esc($member['address'] ?? 'Not provided', 'attr') ?>"
-                      >View</button>
-                      <button type="button" class="btn-action btn-edit" onclick="openStaffEdit(this)"
-                        data-id="<?= (int)($member['id'] ?? 0) ?>"
-                        data-first_name="<?= esc($member['first_name'] ?? '', 'attr') ?>"
-                        data-middle_name="<?= esc($member['middle_name'] ?? '', 'attr') ?>"
-                        data-last_name="<?= esc($member['last_name'] ?? '', 'attr') ?>"
-                        data-gender="<?= esc($member['gender'] ?? '', 'attr') ?>"
-                        data-date_of_birth="<?= esc($member['date_of_birth'] ?? '', 'attr') ?>"
-                        data-phone="<?= esc($member['phone'] ?? '', 'attr') ?>"
-                        data-staff_email="<?= esc($member['email'] ?? '', 'attr') ?>"
-                        data-role_id="<?= esc($member['role_id'] ?? '', 'attr') ?>"
-                        data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
-                        data-department_id="<?= esc($member['department_id'] ?? '', 'attr') ?>"
-                        data-specialization_id="<?= esc($member['specialization_id'] ?? '', 'attr') ?>"
-                        data-address="<?= esc($member['address'] ?? '', 'attr') ?>"
-                        data-hire_date="<?= esc($member['hire_date'] ?? '', 'attr') ?>"
-                        data-status="<?= esc($member['status'] ?? '', 'attr') ?>"
-                        data-emergency_contact_name="<?= esc($member['emergency_contact_name'] ?? '', 'attr') ?>"
-                        data-emergency_contact_phone="<?= esc($member['emergency_contact_phone'] ?? '', 'attr') ?>"
-                      >Edit</button>
-                    </div>
+                    <button type="button" class="btn-action btn-view" onclick="openStaffView(this)"
+                      data-name="<?= esc(trim(($member['first_name'] ?? '') . ' ' . ($member['last_name'] ?? '')), 'attr') ?>"
+                      data-role="<?= esc($member['staff_role_name'] ?? '-', 'attr') ?>"
+                      data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
+                      data-department="<?= esc($member['department_name'] ?? '-', 'attr') ?>"
+                      data-specialization="<?= esc($member['specialization_name'] ?? '-', 'attr') ?>"
+                      data-phone="<?= esc($member['phone'] ?? 'N/A', 'attr') ?>"
+                      data-email="<?= esc($member['email'] ?? 'N/A', 'attr') ?>"
+                      data-status="<?= esc(ucwords(str_replace('_', ' ', $member['status'] ?? 'active')), 'attr') ?>"
+                      data-hire_date="<?= esc($member['hire_date'] ?? 'N/A', 'attr') ?>"
+                      data-address="<?= esc($member['address'] ?? 'Not provided', 'attr') ?>"
+                    >View</button>
+                    <button type="button" class="btn-action btn-edit" onclick="openStaffEdit(this)"
+                      data-id="<?= (int)($member['id'] ?? 0) ?>"
+                      data-first_name="<?= esc($member['first_name'] ?? '', 'attr') ?>"
+                      data-middle_name="<?= esc($member['middle_name'] ?? '', 'attr') ?>"
+                      data-last_name="<?= esc($member['last_name'] ?? '', 'attr') ?>"
+                      data-gender="<?= esc($member['gender'] ?? '', 'attr') ?>"
+                      data-date_of_birth="<?= esc($member['date_of_birth'] ?? '', 'attr') ?>"
+                      data-phone="<?= esc($member['phone'] ?? '', 'attr') ?>"
+                      data-staff_email="<?= esc($member['email'] ?? '', 'attr') ?>"
+                      data-role_id="<?= esc($member['role_id'] ?? '', 'attr') ?>"
+                      data-license_number="<?= esc($member['license_number'] ?? '', 'attr') ?>"
+                      data-department_id="<?= esc($member['department_id'] ?? '', 'attr') ?>"
+                      data-specialization_id="<?= esc($member['specialization_id'] ?? '', 'attr') ?>"
+                      data-address="<?= esc($member['address'] ?? '', 'attr') ?>"
+                      data-hire_date="<?= esc($member['hire_date'] ?? '', 'attr') ?>"
+                      data-status="<?= esc($member['status'] ?? '', 'attr') ?>"
+                      data-emergency_contact_name="<?= esc($member['emergency_contact_name'] ?? '', 'attr') ?>"
+                      data-emergency_contact_phone="<?= esc($member['emergency_contact_phone'] ?? '', 'attr') ?>"
+                    >Edit</button>
                     <?php if (empty($member['user_id'])): ?>
-                      <div class="staff-action-row">
-                        <a href="<?= base_url('admin/Administration/ManageUser?staff_id=' . ($member['id'] ?? 0)) ?>" class="btn-action btn-secondary" style="width: 100%;">Create Account</a>
-                      </div>
+                      <a href="<?= base_url('admin/Administration/ManageUser?staff_id=' . ($member['id'] ?? 0)) ?>" class="btn-action btn-secondary">Create Account</a>
                     <?php endif; ?>
                   </div>
                 </td>

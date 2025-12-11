@@ -5,26 +5,21 @@
 <?= $this->section('content') ?>
 <link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>" />
 
-<!-- Filter Buttons -->
-<div style="margin-bottom: 20px; padding: 15px;">
-    <div style="display: flex; gap: 10px; align-items: center;">
-        <button type="button" id="filterInpatient" class="btn btn-primary filter-btn active" data-filter="inpatient">
-            <i class="fas fa-bed"></i> Inpatient/Admitted
-        </button>
-        <button type="button" id="filterOPD" class="btn btn-outline-primary filter-btn" data-filter="opd">
-            <i class="fas fa-user-injured"></i> OPD
-        </button>
-    </div>
-</div>
-
 <div class="prescription-container">
     <!-- LEFT SIDE - Medicine Shelf / Patient Prescriptions -->
     <div class="prescription-main">
-        <!-- Inpatient View -->
-        <div id="inpatientView" class="filter-view">
-            <!-- Patient Search -->
-            <div style="margin-bottom: 20px;">
-                <div class="unified-search-wrapper" style="margin-bottom: 15px; position: relative;">
+        <!-- Patient Search with Filter Buttons - Always Visible -->
+        <div class="patient-search-section">
+            <div class="search-filter-row">
+                <div class="filter-buttons-group">
+                    <button type="button" id="filterInpatient" class="btn btn-primary filter-btn active" data-filter="inpatient">
+                        <i class="fas fa-bed"></i> Inpatient/Admitted
+                    </button>
+                    <button type="button" id="filterOPD" class="btn btn-outline-primary filter-btn" data-filter="opd">
+                        <i class="fas fa-user-injured"></i> OPD
+                    </button>
+                </div>
+                <div class="unified-search-wrapper" style="flex: 1; position: relative;">
                     <div class="unified-search-row">
                         <i class="fas fa-search unified-search-icon"></i>
                         <input type="text" id="patientSearch" class="unified-search-field" placeholder="Search admitted patient..." autocomplete="off">
@@ -32,67 +27,37 @@
                     <div id="patientDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dee2e6; border-radius: 5px; max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 5px;">
                     </div>
                 </div>
-                <div id="patientInfo" style="display: none; padding: 15px; background: #f8f9fa; border-radius: 5px; margin-bottom: 15px;">
-                    <div id="patientDetails"></div>
-                </div>
-                <div id="prescriptionMedicines" class="prescription-medicines-list" style="margin-bottom: 15px; display: none;">
-                </div>
             </div>
-            
-            <!-- Medicine Shelf for Inpatient -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="medicine-shelf-header">
-                        <i class="fas fa-pills"></i>
-                        <span>Medicine Shelf</span>
-                    </div>
-                </div>
-                <div class="card-body medicine-shelf-body">
-                    <!-- Search Bar -->
-                    <div class="unified-search-wrapper">
-                        <div class="unified-search-row">
-                            <i class="fas fa-search unified-search-icon"></i>
-                            <input type="text" id="medicineSearchInpatient" class="unified-search-field" placeholder="Search medicine">
-                        </div>
-                    </div>
-                    
-                    <!-- Medicine Grid -->
-                    <div id="medicineGridInpatient" class="medicine-grid">
-                        <!-- Medicine cards will be loaded here via JavaScript -->
-                        <div class="loading-container">
-                            <i class="fas fa-spinner fa-spin loading-spinner"></i>
-                            <p class="loading-text">Loading medicines...</p>
-                        </div>
-                    </div>
-                </div>
+            <div id="patientInfo" style="display: none; padding: 15px; background: #f8f9fa; border-radius: 5px; margin-top: 15px; margin-bottom: 15px;">
+                <div id="patientDetails"></div>
+            </div>
+            <div id="prescriptionMedicines" class="prescription-medicines-list" style="margin-bottom: 15px; display: none;">
             </div>
         </div>
-
-        <!-- OPD View - Medicine Shelf -->
-        <div id="opdView" class="filter-view" style="display: none;">
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">
-                    <div class="medicine-shelf-header">
-                        <i class="fas fa-pills"></i>
-                        <span>Medicine Shelf</span>
+        
+        <!-- Unified Medicine Shelf (same for both Inpatient and OPD) -->
+        <div class="card">
+            <div class="card-header">
+                <div class="medicine-shelf-header">
+                    <i class="fas fa-pills"></i>
+                    <span>Medicine Shelf</span>
+                </div>
+            </div>
+            <div class="card-body medicine-shelf-body">
+                <!-- Search Bar -->
+                <div class="unified-search-wrapper">
+                    <div class="unified-search-row">
+                        <i class="fas fa-search unified-search-icon"></i>
+                        <input type="text" id="medicineSearch" class="unified-search-field" placeholder="Search medicine">
                     </div>
                 </div>
-                <div class="card-body medicine-shelf-body">
-                    <!-- Search Bar -->
-                    <div class="unified-search-wrapper">
-                        <div class="unified-search-row">
-                            <i class="fas fa-search unified-search-icon"></i>
-                            <input type="text" id="medicineSearch" class="unified-search-field" placeholder="Search medicine">
-                        </div>
-                    </div>
-                    
-                    <!-- Medicine Grid -->
-                    <div id="medicineGrid" class="medicine-grid">
-                        <!-- Medicine cards will be loaded here via JavaScript -->
-                        <div class="loading-container">
-                            <i class="fas fa-spinner fa-spin loading-spinner"></i>
-                            <p class="loading-text">Loading medicines...</p>
-                        </div>
+                
+                <!-- Medicine Grid -->
+                <div id="medicineGrid" class="medicine-grid">
+                    <!-- Medicine cards will be loaded here via JavaScript -->
+                    <div class="loading-container">
+                        <i class="fas fa-spinner fa-spin loading-spinner"></i>
+                        <p class="loading-text">Loading medicines...</p>
                     </div>
                 </div>
             </div>
@@ -103,15 +68,13 @@
     <div class="prescription-sidebar">
         <!-- Inpatient Billing Section -->
         <div id="inpatientBilling" class="filter-view">
-            <div class="card">
+            <div class="card billing-card-wrapper">
                 <div class="card-header">
                     <h3><i class="fas fa-file-invoice-dollar"></i> Record to Billing</h3>
                 </div>
-                <div class="card-body">
-                    <div id="inpatientMedicinesList" style="margin-bottom: 15px;">
-                        <p style="color: #6c757d; text-align: center;">No medicines selected</p>
-                    </div>
-                    <div class="card total-amount-card" style="margin-bottom: 15px;">
+                <div class="card-body billing-card-body">
+                    <!-- Total Amount at Top -->
+                    <div class="card total-amount-card" style="margin-bottom: 15px; flex-shrink: 0;">
                         <div class="card-body total-amount-body">
                             <div class="total-amount-row">
                                 <span class="total-amount-label">Total Amount:</span>
@@ -119,17 +82,24 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-block checkout-btn" id="recordToBillingBtn" disabled>
-                        <i class="fas fa-check-circle checkout-btn-icon"></i> Record to Billing
-                    </button>
+                    <!-- Scrollable Medicines List -->
+                    <div id="inpatientMedicinesList" class="billing-medicines-list">
+                        <p style="color: #6c757d; text-align: center;">No medicines selected</p>
+                    </div>
+                    <!-- Fixed Button at Bottom -->
+                    <div class="billing-button-container">
+                        <button class="btn btn-primary btn-block checkout-btn" id="recordToBillingBtn" disabled>
+                            <i class="fas fa-check-circle checkout-btn-icon"></i> Record to Billing
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- OPD Checkout Section -->
         <div id="opdCheckout" class="filter-view" style="display: none;">
-            <!-- Total Amount -->
-            <div class="card total-amount-card">
+            <!-- Total Amount at Top -->
+            <div class="card total-amount-card" style="margin-bottom: 15px; flex-shrink: 0;">
                 <div class="card-body total-amount-body">
                     <div class="total-amount-row">
                         <span class="total-amount-label">Total Amount:</span>
@@ -138,9 +108,9 @@
                 </div>
             </div>
             
-            <!-- Cart -->
-            <div class="card cart-card">
-                <div class="card-header cart-header">
+            <!-- Cart with Scrollable Items -->
+            <div class="card cart-card" style="flex: 1; min-height: 0; display: flex; flex-direction: column; margin-bottom: 15px;">
+                <div class="card-header cart-header" style="flex-shrink: 0;">
                     <h3>
                         <i class="fas fa-shopping-cart cart-header-icon"></i>Cart Items
                     </h3>
@@ -155,8 +125,8 @@
                 </div>
             </div>
             
-            <!-- Checkout Area -->
-            <div class="card payment-card">
+            <!-- Fixed Checkout Area at Bottom -->
+            <div class="card payment-card" style="flex-shrink: 0;">
                 <div class="card-header payment-header">
                     <h3>Payment</h3>
                 </div>
@@ -189,7 +159,7 @@ $(document).ready(function() {
 
     let allMedicines = [];
     let filteredMedicines = [];
-    let cart = [];
+    let cart = []; // Unified cart for both OPD and Inpatient
     let currentFilter = 'inpatient'; // 'inpatient' or 'opd'
     let selectedPatient = null;
     let patientPrescriptions = [];
@@ -204,29 +174,31 @@ $(document).ready(function() {
         $('.filter-btn').removeClass('active btn-primary').addClass('btn-outline-primary');
         $(this).removeClass('btn-outline-primary').addClass('active btn-primary');
         
-        // Show/hide views
+        // Show/hide billing/payment sections (medicine shelf stays the same)
         if (filter === 'inpatient') {
-            $('#inpatientView').show();
-            $('#opdView').hide();
             $('#inpatientBilling').show();
             $('#opdCheckout').hide();
-            // Load medicines for Inpatient if not loaded
+            // Load medicines if not loaded
             if (allMedicines.length === 0) {
                 loadMedicines();
             } else {
-                // Update inpatient medicine grid
                 filteredMedicines = allMedicines;
-                renderMedicineGridInpatient();
+                renderMedicineGrid();
             }
+            // Update cart display for inpatient view
+            updateCart();
         } else {
-            $('#inpatientView').hide();
-            $('#opdView').show();
             $('#inpatientBilling').hide();
             $('#opdCheckout').show();
-            // Load medicines for OPD
+            // Load medicines if not loaded
             if (allMedicines.length === 0) {
                 loadMedicines();
+            } else {
+                filteredMedicines = allMedicines;
+                renderMedicineGrid();
             }
+            // Update cart display for OPD view
+            updateCart();
         }
     });
 
@@ -245,14 +217,12 @@ $(document).ready(function() {
             .then(data => {
                 allMedicines = data || [];
                 filteredMedicines = allMedicines;
-                // Render for both views
+                // Render unified medicine grid
                 renderMedicineGrid();
-                renderMedicineGridInpatient();
             })
             .catch(err => {
                 console.error('Error loading medicines:', err);
                 $('#medicineGrid').html('<div class="error-message">Error loading medicines. Please refresh the page.</div>');
-                $('#medicineGridInpatient').html('<div class="error-message">Error loading medicines. Please refresh the page.</div>');
             });
     }
 
@@ -268,10 +238,12 @@ $(document).ready(function() {
 
         filteredMedicines.forEach(med => {
             const stock = Number(med.stock || 0);
-            // Skip medicines with 0 stock
-            if (stock <= 0) {
-            return;
-        }
+            const status = med.status || null;
+            
+            // Skip medicines with 0 stock or expired_soon status
+            if (stock <= 0 || status === 'expired_soon') {
+                return;
+            }
 
             // Determine image URL
             const placeholderUrl = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\'%3E%3Crect fill=\'%23e9ecef\' width=\'120\' height=\'120\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236c757d\' font-family=\'Arial\' font-size=\'14\'%3ENo Image%3C/text%3E%3C/svg%3E';
@@ -315,12 +287,20 @@ $(document).ready(function() {
         });
     }
 
-    // Add to cart function
+    // Unified add to cart function for both OPD and Inpatient
     function addToCart(medicineId) {
         const medicine = allMedicines.find(m => m.id === medicineId);
         if (!medicine) return;
 
         const stock = Number(medicine.stock || 0);
+        const status = medicine.status || null;
+        
+        // Block if expired_soon
+        if (status === 'expired_soon') {
+            alert('This medicine is expiring soon and cannot be added to cart.');
+            return;
+        }
+        
         // Only block if stock is 0 (out of stock)
         // Low stock (1-5) is allowed but will show a warning
         if (stock <= 0) {
@@ -331,8 +311,6 @@ $(document).ready(function() {
         // Show low stock warning (non-blocking) if stock is 5 or less
         if (stock <= 5) {
             console.log('Low stock warning: ' + medicine.name + ' has only ' + stock + ' units remaining.');
-            // Optional: Show a non-blocking notification
-            // You can add a toast notification here if desired
         }
         
         // Check if already in cart
@@ -341,7 +319,8 @@ $(document).ready(function() {
             // If already in cart, just focus the quantity input
             updateCart();
             setTimeout(() => {
-                const $input = $(`.cart-qty-input[data-medicine-id="${medicineId}"]`);
+                const inputSelector = currentFilter === 'inpatient' ? '.cart-qty-input-inpatient' : '.cart-qty-input';
+                const $input = $(inputSelector + `[data-medicine-id="${medicineId}"]`);
                 if ($input.length) {
                     $input.focus();
                 }
@@ -363,7 +342,8 @@ $(document).ready(function() {
         
         // Focus the quantity input for the newly added item
         setTimeout(() => {
-            const $input = $(`.cart-qty-input[data-medicine-id="${medicineId}"]`);
+            const inputSelector = currentFilter === 'inpatient' ? '.cart-qty-input-inpatient' : '.cart-qty-input';
+            const $input = $(inputSelector + `[data-medicine-id="${medicineId}"]`);
             if ($input.length) {
                 $input.focus();
             }
@@ -489,8 +469,17 @@ $(document).ready(function() {
         $card.hide().fadeIn(300);
     }
     
-    // Update cart display - Simple list format
+    // Unified cart update function for both OPD and Inpatient
     function updateCart() {
+        if (currentFilter === 'opd') {
+            updateOPDCart();
+        } else {
+            updateInpatientCart();
+        }
+    }
+    
+    // Update OPD cart display
+    function updateOPDCart() {
         const $cartItems = $('#cartItems');
         $cartItems.empty();
         
@@ -512,7 +501,7 @@ $(document).ready(function() {
             const displayValue = item.quantity > 0 ? item.quantity : '';
             
             const $item = $(`
-                <div class="cart-item-simple-row" data-index="${index}">
+                <div class="cart-item-simple-row" data-index="${index}" data-medicine-id="${item.medicationId}">
                     <div class="cart-item-simple-name">${item.name}</div>
                     <div class="cart-item-simple-price">₱${item.price.toFixed(2)}</div>
                     <div class="cart-item-simple-qty">
@@ -536,15 +525,51 @@ $(document).ready(function() {
         updateTotal();
     }
 
-    // Update total amount
+    // Unified total update function for both OPD and Inpatient
     function updateTotal() {
-        const total = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 0)), 0);
-        
-        // Update display
-        $('#total').text('₱' + total.toFixed(2));
-        
-        if (document.getElementById('amount_received')) {
-            setTimeout(updateChange, 0);
+        if (currentFilter === 'opd') {
+            const total = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 0)), 0);
+            $('#total').text('₱' + total.toFixed(2));
+            if (document.getElementById('amount_received')) {
+                setTimeout(updateChange, 0);
+            }
+        } else {
+            // Inpatient: Calculate from cart + selected prescription medicines
+            const medicineMap = new Map();
+            
+            // Add selected prescription medicines
+            if (selectedPrescriptionMedicines && selectedPrescriptionMedicines.length > 0) {
+                selectedPrescriptionMedicines.forEach(med => {
+                    if (med.selected) {
+                        const key = med.id + '_' + med.price;
+                        const inCart = cart.some(c => c.medicationId === med.id && c.price === med.price);
+                        if (!inCart) {
+                            medicineMap.set(key, {
+                                quantity: med.quantity || 0,
+                                price: med.price
+                            });
+                        }
+                    }
+                });
+            }
+            
+            // Add cart medicines (override prescription if same)
+            cart.forEach(item => {
+                const key = item.medicationId + '_' + item.price;
+                medicineMap.set(key, {
+                    quantity: item.quantity || 0,
+                    price: item.price
+                });
+            });
+            
+            // Calculate total
+            let total = 0;
+            medicineMap.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            
+            $('#inpatientTotal').text('₱' + total.toFixed(2));
+            $('#recordToBillingBtn').prop('disabled', total <= 0);
         }
     }
 
@@ -582,132 +607,58 @@ $(document).ready(function() {
         updateCart();
     });
     
-    // Remove item from cart
+    // Unified remove item handler for both OPD and Inpatient
     $(document).on('click', '.cart-item-remove-btn', function() {
-        const index = parseInt($(this).data('index'));
-        const item = cart[index];
-        if (!item) return;
-        
-        // Just remove from cart - no stock restoration needed since stock wasn't reserved
-        cart.splice(index, 1);
-        updateCart();
+        if (currentFilter === 'opd') {
+            // OPD: Remove from cart
+            const index = parseInt($(this).data('index'));
+            cart.splice(index, 1);
+            updateCart();
+        } else {
+            // Inpatient: Remove from cart or unselect prescription
+            const $row = $(this).closest('.cart-item-simple-row');
+            const medicineId = $row.data('medicine-id');
+            const itemPrice = parseFloat($row.find('.cart-item-simple-price').text().replace('₱', '').trim()) || 0;
+            
+            const cartItem = cart.find(c => c.medicationId === medicineId && c.price === itemPrice);
+            if (cartItem) {
+                // Remove from cart
+                cart.splice(cart.indexOf(cartItem), 1);
+            } else {
+                // Unselect prescription medicine
+                const prescMed = selectedPrescriptionMedicines.find(m => m.id === medicineId && m.price === itemPrice);
+                if (prescMed) {
+                    prescMed.selected = false;
+                }
+            }
+            updateCart();
+        }
     });
     
-    // Inpatient medicine selection (similar to OPD cart)
-    let inpatientCart = [];
 
-    // Render medicine grid for inpatient
-    function renderMedicineGridInpatient() {
-        const $grid = $('#medicineGridInpatient');
-        $grid.empty();
 
-        if (filteredMedicines.length === 0) {
-            $grid.html('<div class="loading-container">No medicines found</div>');
-            return;
-        }
 
-        filteredMedicines.forEach(med => {
-            const stock = Number(med.stock || 0);
-            // Skip medicines with 0 stock
-            if (stock <= 0) {
-                return;
-            }
-
-            // Determine image URL
-            const placeholderUrl = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\'%3E%3Crect fill=\'%23e9ecef\' width=\'120\' height=\'120\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236c757d\' font-family=\'Arial\' font-size=\'14\'%3ENo Image%3C/text%3E%3C/svg%3E';
-            
-            let imageUrl = placeholderUrl;
-            
-            // Use image_url if it exists and is valid
-            if (med.image_url && typeof med.image_url === 'string' && med.image_url.trim() !== '' && med.image_url !== 'null') {
-                imageUrl = med.image_url;
-            }
-            // Fallback: construct from image field if image_url is not available
-            else if (med.image && typeof med.image === 'string' && med.image.trim() !== '' && med.image !== 'null') {
-                const baseUrl = '<?= rtrim(config("App")->baseURL, "/") ?>';
-                imageUrl = baseUrl + '/uploads/medicines/' + med.image;
-            }
-            
-            // Show low stock warning (1-5 units) but don't block
-            let stockDisplay = 'Stock: ' + stock;
-            if (stock > 0 && stock <= 5) {
-                stockDisplay = 'Stock: ' + stock + '<br><span class="low-stock-warning">(Low Stock)</span>';
-            }
-            
-            const $card = $(`
-                <div class="medicine-card" data-medicine-id="${med.id}">
-                    <div class="medicine-card-image">
-                        <img src="${imageUrl}" alt="${med.name}" onerror="this.onerror=null; this.src='${placeholderUrl}'" loading="lazy">
-                    </div>
-                    <div class="medicine-card-info">
-                        <div class="medicine-name">${med.name}</div>
-                        <div class="medicine-price">₱${Number(med.retail_price || med.price || 0).toFixed(2)}</div>
-                        <div class="medicine-stock">${stockDisplay}</div>
-                    </div>
-                </div>
-            `);
-
-            $card.on('click', function() {
-                addToInpatientCart(med.id);
-            });
-
-            $grid.append($card);
-        });
-    }
-
-    // Add medicine to inpatient cart
-    function addToInpatientCart(medicineId) {
-        const medicine = allMedicines.find(m => m.id === medicineId);
-        if (!medicine) return;
-
-        const stock = Number(medicine.stock || 0);
-        if (stock <= 0) {
-            alert('This medicine is out of stock.');
-            return;
-        }
-
-        // Check if already in cart
-        const existing = inpatientCart.find(item => item.medicationId === medicineId);
-        if (existing) {
-            // If already in cart, just update the display
-            updateInpatientCart();
-            return;
-        }
-
-        // Add to cart with quantity 1
-        inpatientCart.push({
-            id: Date.now(),
-            medicationId: medicineId,
-            name: medicine.name,
-            quantity: 1,
-            price: Number(medicine.retail_price || medicine.price || 0),
-            stock: stock
-        });
-
-        updateInpatientCart();
-    }
-
-    // Update inpatient cart display (similar to OPD cart)
+    // Update inpatient cart display (combines prescription medicines with cart)
     function updateInpatientCart() {
         // Combine prescription medicines and cart medicines into a unified list
+        // Priority: Cart items override prescription items (user is actively editing cart)
         const allSelectedMedicines = [];
+        const medicineMap = new Map();
         
-        // Add selected prescription medicines
+        // First, add selected prescription medicines (only if not in cart)
         if (selectedPrescriptionMedicines && selectedPrescriptionMedicines.length > 0) {
             selectedPrescriptionMedicines.forEach(med => {
                 if (med.selected) {
-                    // Check if already exists (merge quantities)
-                    const existing = allSelectedMedicines.find(m => m.id === med.id && m.price === med.price);
-                    if (existing) {
-                        existing.quantity += med.quantity;
-                        existing.total = existing.quantity * existing.price;
-                    } else {
-                        allSelectedMedicines.push({
+                    const key = med.id + '_' + med.price;
+                    // Only add if not already in cart
+                    const inCart = cart.some(c => c.medicationId === med.id && c.price === med.price);
+                    if (!inCart) {
+                        medicineMap.set(key, {
                             id: med.id,
                             name: med.name,
-                            quantity: med.quantity,
+                            quantity: med.quantity || 0,
                             price: med.price,
-                            total: med.total,
+                            total: med.price * (med.quantity || 0),
                             source: 'prescription',
                             stock: med.stock || 999
                         });
@@ -716,27 +667,22 @@ $(document).ready(function() {
             });
         }
         
-        // Add cart medicines
-        inpatientCart.forEach(item => {
-            if (item.quantity > 0) {
-                // Check if already exists (merge quantities)
-                const existing = allSelectedMedicines.find(m => m.id === item.medicationId && m.price === item.price);
-                if (existing) {
-                    existing.quantity += item.quantity;
-                    existing.total = existing.quantity * existing.price;
-                } else {
-                    allSelectedMedicines.push({
-                        id: item.medicationId,
-                        name: item.name,
-                        quantity: item.quantity,
-                        price: item.price,
-                        total: item.price * item.quantity,
-                        source: 'cart',
-                        stock: item.stock
-                    });
-                }
-            }
+        // Then add cart medicines (these override prescription if same medicine/price)
+        cart.forEach(item => {
+            const key = item.medicationId + '_' + item.price;
+            medicineMap.set(key, {
+                id: item.medicationId,
+                name: item.name,
+                quantity: item.quantity || 0,
+                price: item.price,
+                total: item.price * (item.quantity || 0),
+                source: 'cart',
+                stock: item.stock
+            });
         });
+        
+        // Convert map to array
+        allSelectedMedicines.push(...medicineMap.values());
         
         // Update the display
         const $container = $('#inpatientMedicinesList');
@@ -754,7 +700,8 @@ $(document).ready(function() {
         allSelectedMedicines.forEach((item, index) => {
             const medicine = allMedicines.find(m => m.id === item.id);
             const availableStock = Number(medicine?.stock || item.stock || 0);
-            const maxQuantity = item.quantity + availableStock;
+            const maxQuantity = (item.quantity || 0) + availableStock;
+            const displayValue = item.quantity > 0 ? item.quantity : '';
             
             const $item = $(`
                 <div class="cart-item-simple-row" data-index="${index}" data-medicine-id="${item.id}">
@@ -764,12 +711,13 @@ $(document).ready(function() {
                         <input type="number" 
                                class="cart-qty-input-inpatient" 
                                data-index="${index}" 
-                               value="${item.quantity}" 
+                               value="${displayValue}" 
+                               placeholder="0"
                                min="1" 
                                max="${maxQuantity}"
                                data-medicine-id="${item.id}">
                     </div>
-                    <button type="button" class="cart-item-remove-btn-inpatient" data-index="${index}" title="Remove">
+                    <button type="button" class="cart-item-remove-btn" data-index="${index}" title="Remove">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -777,113 +725,96 @@ $(document).ready(function() {
             $container.append($item);
         });
         
-        // Calculate and update total
-        const total = allSelectedMedicines.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        // Calculate and update total (only count items with quantity > 0)
+        const total = allSelectedMedicines.reduce((sum, item) => {
+            const qty = item.quantity || 0;
+            return sum + (item.price * qty);
+        }, 0);
         $('#inpatientTotal').text('₱' + total.toFixed(2));
-        $btn.prop('disabled', false);
-        
-        // Store for billing (update with current quantities)
-        selectedPrescriptionMedicines = allSelectedMedicines.map((med, idx) => ({
-            id: med.id,
-            name: med.name,
-            quantity: med.quantity,
-            price: med.price,
-            total: med.price * med.quantity,
-            selected: true,
-            index: idx
-        }));
+        $btn.prop('disabled', total <= 0);
     }
 
-    // Handle quantity input changes for inpatient (without re-rendering to preserve focus)
-    $(document).on('input', '.cart-qty-input-inpatient', function(e) {
-        e.stopPropagation();
-        const $input = $(this);
-        const medicineId = $input.data('medicine-id');
-        const inputValue = $input.val().trim();
+    // Unified quantity input handler for both OPD and Inpatient
+    $(document).on('input change blur', '.cart-qty-input, .cart-qty-input-inpatient', function() {
+        const index = parseInt($(this).data('index'));
+        const medicineId = $(this).data('medicine-id');
+        const inputValue = $(this).val().trim();
         let newQuantity = inputValue === '' ? 0 : parseInt(inputValue) || 0;
         
-        // Find the medicine
-        const medicine = allMedicines.find(m => m.id === medicineId);
-        const availableStock = Number(medicine?.stock || 0);
-        
-        // Update in inpatientCart if it's from cart
-        const cartItem = inpatientCart.find(item => item.medicationId === medicineId);
-        if (cartItem) {
-            cartItem.quantity = newQuantity;
+        if (currentFilter === 'opd') {
+            // OPD: Update cart directly
+            const item = cart[index];
+            if (!item) return;
+            
+            const medicine = allMedicines.find(m => m.id === medicineId);
+            const availableStock = Number(medicine?.stock || 0);
+            const currentQuantity = item.quantity || 0;
+            
+            if (newQuantity <= 0) {
+                item.quantity = 0;
+                updateCart();
+                return;
+            }
+            
+            if (newQuantity > availableStock) {
+                alert('Not enough stock. Available: ' + availableStock);
+                $(this).val(currentQuantity > 0 ? currentQuantity : '');
+                return;
+            }
+            
+            item.quantity = newQuantity;
+            updateCart();
+        } else {
+            // Inpatient: Update cart or prescription medicine
+            const $row = $(this).closest('.cart-item-simple-row');
+            const itemPrice = parseFloat($row.find('.cart-item-simple-price').text().replace('₱', '').trim()) || 0;
+            
+            const cartItem = cart.find(c => c.medicationId === medicineId && c.price === itemPrice);
+            const isFromCart = !!cartItem;
+            
+            if (newQuantity <= 0) {
+                if (isFromCart && cartItem) {
+                    cartItem.quantity = 0;
+                } else {
+                    const prescMed = selectedPrescriptionMedicines.find(m => m.id === medicineId && m.price === itemPrice);
+                    if (prescMed) {
+                        prescMed.quantity = 0;
+                        prescMed.total = 0;
+                    }
+                }
+                updateCart();
+                return;
+            }
+            
+            const medicine = allMedicines.find(m => m.id === medicineId);
+            const availableStock = Number(medicine?.stock || 0);
+            
+            if (newQuantity > availableStock) {
+                alert('Not enough stock. Available: ' + availableStock);
+                const currentQty = isFromCart 
+                    ? (cartItem ? (cartItem.quantity || 0) : 0)
+                    : (() => {
+                        const prescMed = selectedPrescriptionMedicines.find(m => m.id === medicineId && m.price === itemPrice);
+                        return prescMed ? (prescMed.quantity || 0) : 0;
+                    })();
+                $(this).val(currentQty > 0 ? currentQty : '');
+                return;
+            }
+            
+            if (isFromCart && cartItem) {
+                cartItem.quantity = newQuantity;
+            } else {
+                const prescMed = selectedPrescriptionMedicines.find(m => m.id === medicineId && m.price === itemPrice);
+                if (prescMed) {
+                    prescMed.quantity = newQuantity;
+                    prescMed.total = prescMed.price * newQuantity;
+                }
+            }
+            
+            updateCart();
         }
-        
-        // Update in selectedPrescriptionMedicines
-        const prescMed = selectedPrescriptionMedicines.find(m => m.id === medicineId);
-        if (prescMed) {
-            prescMed.quantity = newQuantity;
-            prescMed.total = prescMed.price * newQuantity;
-        }
-        
-        // Recalculate and update total without re-rendering
-        const total = $('#inpatientMedicinesList .cart-item-simple-row').toArray().reduce((sum, row) => {
-            const $row = $(row);
-            const qty = parseInt($row.find('.cart-qty-input-inpatient').val()) || 0;
-            const priceText = $row.find('.cart-item-simple-price').text().replace('₱', '').trim();
-            const price = parseFloat(priceText) || 0;
-            return sum + (price * qty);
-        }, 0);
-        
-        $('#inpatientTotal').text('₱' + total.toFixed(2));
     });
     
-    // Handle blur/change for validation
-    $(document).on('blur change', '.cart-qty-input-inpatient', function() {
-        const $input = $(this);
-        const medicineId = $input.data('medicine-id');
-        const inputValue = $input.val().trim();
-        let newQuantity = inputValue === '' ? 1 : parseInt(inputValue) || 1;
-        
-        // Validate minimum
-        if (newQuantity <= 0) {
-            newQuantity = 1;
-            $input.val(1);
-        }
-        
-        // Update stored values
-        const cartItem = inpatientCart.find(item => item.medicationId === medicineId);
-        if (cartItem) {
-            cartItem.quantity = newQuantity;
-        }
-        
-        const prescMed = selectedPrescriptionMedicines.find(m => m.id === medicineId);
-        if (prescMed) {
-            prescMed.quantity = newQuantity;
-            prescMed.total = prescMed.price * newQuantity;
-        }
-        
-        // Update total
-        const total = $('#inpatientMedicinesList .cart-item-simple-row').toArray().reduce((sum, row) => {
-            const $row = $(row);
-            const qty = parseInt($row.find('.cart-qty-input-inpatient').val()) || 0;
-            const priceText = $row.find('.cart-item-simple-price').text().replace('₱', '').trim();
-            const price = parseFloat(priceText) || 0;
-            return sum + (price * qty);
-        }, 0);
-        
-        $('#inpatientTotal').text('₱' + total.toFixed(2));
-    });
-    
-    // Remove item from inpatient cart
-    $(document).on('click', '.cart-item-remove-btn-inpatient', function() {
-        const index = parseInt($(this).data('index'));
-        const medicineId = $(this).closest('.cart-item-simple-row').data('medicine-id');
-        
-        // Remove from cart
-        inpatientCart = inpatientCart.filter(item => item.medicationId !== medicineId);
-        
-        // Remove from selected prescription medicines
-        const prescMed = selectedPrescriptionMedicines.find(m => m.id === medicineId);
-        if (prescMed) {
-            prescMed.selected = false;
-        }
-        
-        updateInpatientCart();
-    });
 
     // Search medicines for OPD
     $('#medicineSearch').on('input', debounce(function() {
@@ -899,19 +830,6 @@ $(document).ready(function() {
         renderMedicineGrid();
     }, 300));
 
-    // Search medicines for Inpatient
-    $('#medicineSearchInpatient').on('input', debounce(function() {
-        const term = $(this).val().toLowerCase().trim();
-        if (term === '') {
-            filteredMedicines = allMedicines;
-        } else {
-            filteredMedicines = allMedicines.filter(m => 
-                (m.name && m.name.toLowerCase().includes(term)) ||
-                (m.brand && m.brand.toLowerCase().includes(term))
-            );
-        }
-        renderMedicineGridInpatient();
-    }, 300));
 
     // Change calculator
     const formatMoney = v => '₱' + (Number(v) || 0).toFixed(2);
@@ -1016,8 +934,8 @@ $(document).ready(function() {
             selectedPatient = null;
             patientPrescriptions = [];
             selectedPrescriptionMedicines = [];
-            inpatientCart = [];
-            updateInpatientCart();
+            cart = [];
+            updateCart();
             return;
         }
         
@@ -1397,10 +1315,10 @@ $(document).ready(function() {
             if (transactionResp && transactionResp.success) {
                 alert('Successfully recorded to billing and transactions!');
                 // Reset selection
-                inpatientCart = [];
+                cart = [];
                 selectedPrescriptionMedicines.forEach(m => m.selected = false);
                 $('.medicine-checkbox').prop('checked', false);
-                updateInpatientCart();
+                updateCart();
             } else if (transactionResp && !transactionResp.success) {
                 // Billing was created but transaction failed - still show success for billing
                 console.error('Transaction error:', transactionResp);
@@ -1419,17 +1337,17 @@ $(document).ready(function() {
                 }
                 console.error('Full transaction response:', transactionResp);
                 alert('Billing recorded successfully, but transaction creation had an issue: ' + errorMsg + '\n\nCheck browser console (F12) for more details.');
-                inpatientCart = [];
+                cart = [];
                 selectedPrescriptionMedicines.forEach(m => m.selected = false);
                 $('.medicine-checkbox').prop('checked', false);
-                updateInpatientCart();
+                updateCart();
             } else {
                 // No transaction response but billing succeeded
                 alert('Billing recorded successfully!');
-                inpatientCart = [];
+                cart = [];
                 selectedPrescriptionMedicines.forEach(m => m.selected = false);
                 $('.medicine-checkbox').prop('checked', false);
-                updateInpatientCart();
+                updateCart();
             }
         })
         .catch(err => {

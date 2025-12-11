@@ -13,41 +13,67 @@ class Medicine extends BaseController
         $model = new MedicineModel();
         $cutoff = date('Y-m-d', strtotime('+3 months')); // strict 3-month rule
         
+        // Check if status column exists
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames('medicines');
+        $hasStatusColumn = in_array('status', $fields);
+
         // Show medicines whose expiry is beyond the 3-month cutoff (or no expiry)
-        // AND stock is greater than 0 (exclude out of stock items)
-        $data['medicines'] = $model->groupStart()
-                                   ->where('expiry_date >', $cutoff)
-                                   ->orWhere('expiry_date IS NULL', null, false)
-                                   ->groupEnd()
-                                   ->where('stock >', 0)
-                                   ->orderBy('id', 'DESC')
-                                   ->findAll();
+        // AND exclude out of stock items (using status if available, otherwise stock > 0)
+        $builder = $model->groupStart()
+                        ->where('expiry_date >', $cutoff)
+                        ->orWhere('expiry_date IS NULL', null, false)
+                        ->groupEnd();
+        
+        if ($hasStatusColumn) {
+            // Use status field to exclude out_of_stock
+            $builder->where('status !=', 'out_of_stock')
+                   ->orWhere('status IS NULL', null, false);
+        } else {
+            // Fallback to stock > 0 if status column doesn't exist
+            $builder->where('stock >', 0);
+        }
+        
+        $data['medicines'] = $builder->orderBy('id', 'DESC')->findAll();
 
         // counts using fresh builders to avoid state leakage (excluding anything at or within 3 months AND out of stock)
         $totalModel = new MedicineModel();
-        $data['total'] = $totalModel->groupStart()
-                                    ->where('expiry_date >', $cutoff)
-                                    ->orWhere('expiry_date IS NULL', null, false)
-                                    ->groupEnd()
-                                    ->where('stock >', 0)
-                                    ->countAllResults();
+        $totalBuilder = $totalModel->groupStart()
+                                   ->where('expiry_date >', $cutoff)
+                                   ->orWhere('expiry_date IS NULL', null, false)
+                                   ->groupEnd();
+        if ($hasStatusColumn) {
+            $totalBuilder->where('status !=', 'out_of_stock')
+                        ->orWhere('status IS NULL', null, false);
+        } else {
+            $totalBuilder->where('stock >', 0);
+        }
+        $data['total'] = $totalBuilder->countAllResults();
         
         $lowStockModel = new MedicineModel();
-        $data['low_stock'] = $lowStockModel->where('stock >', 0)
-                                           ->where('stock <=', 5)
-                                           ->groupStart()
-                                           ->where('expiry_date >', $cutoff)
-                                           ->orWhere('expiry_date IS NULL', null, false)
-                                           ->groupEnd()
-                                           ->countAllResults();
+        $lowStockBuilder = $lowStockModel->groupStart()
+                                         ->where('expiry_date >', $cutoff)
+                                         ->orWhere('expiry_date IS NULL', null, false)
+                                         ->groupEnd();
+        if ($hasStatusColumn) {
+            $lowStockBuilder->where('status', 'low_stock');
+        } else {
+            $lowStockBuilder->where('stock >', 0)
+                           ->where('stock <=', 5);
+        }
+        $data['low_stock'] = $lowStockBuilder->countAllResults();
         
         $outStockModel = new MedicineModel();
-        $data['out_stock'] = $outStockModel->where('stock', 0)
-                                           ->groupStart()
-                                           ->where('expiry_date >', $cutoff)
-                                           ->orWhere('expiry_date IS NULL', null, false)
-                                           ->groupEnd()
-                                           ->countAllResults();
+        $outStockBuilder = $outStockModel->groupStart()
+                                        ->where('expiry_date >', $cutoff)
+                                        ->orWhere('expiry_date IS NULL', null, false)
+                                        ->groupEnd();
+        if ($hasStatusColumn) {
+            $outStockBuilder->where('status', 'out_of_stock');
+        } else {
+            $outStockBuilder->where('stock', 0);
+        }
+        $data['out_stock'] = $outStockBuilder->countAllResults();
 
         // if coming from edit link, load the record to prefill modal
         $editId = $this->request->getGet('edit');
@@ -273,14 +299,24 @@ class Medicine extends BaseController
         $model = new MedicineModel();
         $cutoff = date('Y-m-d', strtotime('+3 months'));
 
-        // Get medicines with stock = 0 that are not expired (expiry > 3 months)
-        $data['out_of_stock_medicines'] = $model->where('stock', 0)
-                                                ->groupStart()
-                                                ->where('expiry_date >', $cutoff)
-                                                ->orWhere('expiry_date IS NULL', null, false)
-                                                ->groupEnd()
-                                                ->orderBy('name', 'ASC')
-                                                ->findAll();
+        // Check if status column exists
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames('medicines');
+        $hasStatusColumn = in_array('status', $fields);
+
+        // Get medicines that are out of stock and not expired (expiry > 3 months)
+        $builder = $model->groupStart()
+                        ->where('expiry_date >', $cutoff)
+                        ->orWhere('expiry_date IS NULL', null, false)
+                        ->groupEnd();
+        
+        if ($hasStatusColumn) {
+            $builder->where('status', 'out_of_stock');
+        } else {
+            $builder->where('stock', 0);
+        }
+        
+        $data['out_of_stock_medicines'] = $builder->orderBy('name', 'ASC')->findAll();
 
         // Summary statistics
         $data['total_out_of_stock'] = count($data['out_of_stock_medicines']);
@@ -324,13 +360,16 @@ class Medicine extends BaseController
             ])->setStatusCode(404);
         }
 
-        // Update stock
+        // Update stock (status will be automatically updated by model hooks)
         $model->update($id, ['stock' => $newStock]);
+
+        // Get updated medicine with status
+        $updatedMedicine = $model->find($id);
 
         return $this->response->setJSON([
             'success' => true,
             'message' => 'Medicine restocked successfully',
-            'medicine' => $model->find($id)
+            'medicine' => $updatedMedicine
         ]);
     }
 
