@@ -183,10 +183,6 @@
                               data-roleid="<?= (int)($u['role_id'] ?? 0) ?>"
                               data-status="<?= esc(strtolower($u['status'] ?? 'active'), 'attr') ?>"
                               onclick="openEdit(this)">Edit</button>
-                      <form method="post" action="<?= base_url('admin/users/delete/' . ($u['id'] ?? 0)) ?>" onsubmit="return confirm('Delete this user?');">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="btn-action btn-delete">Delete</button>
-                      </form>
                     </div>
                   <?php endif; ?>
                 </td>
