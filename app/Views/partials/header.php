@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?= $this->renderSection('title') ?> - St. Peter Hospital</title>
-    <link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/main.css') ?>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>

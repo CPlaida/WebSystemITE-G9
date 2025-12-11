@@ -3,7 +3,7 @@
 <?= $this->section('title') ?>Prescription Dispensing<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/main.css') ?>" />
 
 <div class="prescription-container">
     <!-- LEFT SIDE - Medicine Shelf / Patient Prescriptions -->

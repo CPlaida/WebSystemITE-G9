@@ -287,8 +287,15 @@ class Pharmacy extends BaseController
         try {
             $term = (string) $this->request->getGet('term');
             
-            // Check if image column exists
+            // Sync all medicine statuses to ensure expired_soon items are detected
+            $model = new MedicineModel();
             $fields = $this->db->getFieldNames('medicines');
+            $hasStatusColumn = in_array('status', $fields);
+            if ($hasStatusColumn) {
+                $model->syncAllStatuses();
+            }
+            
+            // Check if image column exists
             $hasImageColumn = in_array('image', $fields);
             
             // If column doesn't exist, try to add it automatically (fallback)
@@ -306,7 +313,6 @@ class Pharmacy extends BaseController
             $builder = $this->db->table('medicines');
             // Select only columns that exist - check if price column exists for backward compatibility
             $hasPriceColumn = in_array('price', $fields);
-            $hasStatusColumn = in_array('status', $fields);
             $selectFields = 'id, name, brand, retail_price, unit_price, stock, expiry_date';
             if ($hasPriceColumn) {
                 $selectFields .= ', price';
@@ -316,7 +322,18 @@ class Pharmacy extends BaseController
             }
             $builder->select($selectFields);
             
-            // Filter out out_of_stock and expired_soon items
+            if ($hasImageColumn) {
+                $builder->select('image', true); // Add image to select
+            }
+            
+            // Exclude anything at or within 3 months of expiry (3-month strict cutoff)
+            $cutoff = date('Y-m-d', strtotime('+3 months'));
+            $builder->groupStart()
+                    ->where('expiry_date >', $cutoff)
+                    ->orWhere('expiry_date IS NULL', null, false)
+                    ->groupEnd();
+            
+            // Filter out out_of_stock and expired_soon items (use status if available, otherwise stock > 0)
             if ($hasStatusColumn) {
                 $builder->where('status !=', 'out_of_stock')
                        ->where('status !=', 'expired_soon')
@@ -326,33 +343,11 @@ class Pharmacy extends BaseController
                 $builder->where('stock >', 0);
             }
             
-            if ($hasImageColumn) {
-                $builder->select('image', true); // Add image to select
-            }
-            
             if ($term !== '') {
                 $builder->groupStart()
                         ->like('name', $term)
                         ->orLike('brand', $term)
                         ->groupEnd();
-            }
-
-            // Exclude anything at or within 3 months of expiry (3-month strict cutoff)
-            $cutoff = date('Y-m-d', strtotime('+3 months'));
-            $builder->groupStart()
-                    ->where('expiry_date >', $cutoff)
-                    ->orWhere('expiry_date IS NULL', null, false)
-                    ->groupEnd();
-            
-            // Filter out out_of_stock and expired_soon items (use status if available, otherwise stock > 0)
-            $hasStatusColumn = in_array('status', $fields);
-            if ($hasStatusColumn) {
-                $builder->where('status !=', 'out_of_stock')
-                       ->where('status !=', 'expired_soon')
-                       ->where('status IS NOT NULL', null, false);
-            } else {
-                // Fallback: filter by stock > 0 and expiry > 3 months
-                $builder->where('stock >', 0);
             }
             
             $builder->orderBy('id','DESC');

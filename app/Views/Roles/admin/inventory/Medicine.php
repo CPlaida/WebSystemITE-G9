@@ -112,7 +112,7 @@ $currentSubmenu = 'inventory';
                                     
                                     // Display badge for low stock (only if stock > 0)
                                     if ($status === 'low_stock' && $stock > 0) {
-                                        echo '<span class="badge badge-warning" style="margin-left: 8px; background-color: #ffc107; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600;">Low Stock</span>';
+                                        echo '<span class="badge badge-low-stock"><i class="fas fa-exclamation-triangle"></i> Low Stock</span>';
                                     }
                                     ?>
                                 </td>

@@ -84,7 +84,7 @@ class MedicineModel extends Model
     }
 
     /**
-     * Validate expiration date - prevent expired dates from being saved
+     * Validate expiration date - prevent expired dates and dates less than 3 months from being saved
      */
     protected function validateExpiryDate(array $data)
     {
@@ -93,10 +93,16 @@ class MedicineModel extends Model
         // Only validate if expiry_date is provided and not empty
         if (!empty($expiryDate)) {
             $today = date('Y-m-d');
+            $threeMonthsFromNow = date('Y-m-d', strtotime('+3 months'));
             
             // If expiry date is in the past, throw an exception
             if ($expiryDate < $today) {
-                throw new \RuntimeException('Cannot add stock. This batch is already expired.');
+                throw new \RuntimeException('Cannot add or update medicine. This batch is already expired.');
+            }
+            
+            // If expiry date is less than 3 months from today, throw an exception
+            if ($expiryDate < $threeMonthsFromNow) {
+                throw new \RuntimeException('Cannot add or update medicine. Expiration date must be at least 3 months from today. Minimum expiry date: ' . date('Y-m-d', strtotime('+3 months')));
             }
         }
         

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt #<?= esc($bill['bill_number'] ?? 'N/A') ?> - St. Peter Hospital</title>
-    <link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/main.css') ?>">
     <style>
         body {
             font-family: 'Times New Roman', serif;

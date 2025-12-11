@@ -1602,3 +1602,16 @@ Stack trace:
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
 ERROR - 2025-12-11 17:36:03 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
+CRITICAL - 2025-12-11 18:51:39 --> RuntimeException: Cannot add stock. This batch is already expired.
+[Method: POST, Route: medicines/store]
+in APPPATH\Models\MedicineModel.php on line 99.
+ 1 SYSTEMPATH\BaseModel.php(1691): App\Models\MedicineModel->validateExpiryDate([...])
+ 2 SYSTEMPATH\BaseModel.php(835): CodeIgniter\BaseModel->trigger('beforeInsert', [...])
+ 3 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 4 APPPATH\Controllers\Medicine.php(179): CodeIgniter\Model->insert([...])
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Medicine->store()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

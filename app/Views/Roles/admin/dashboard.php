@@ -208,7 +208,7 @@ try {
 ?>
 
 
-    <link rel="stylesheet" href="<?= base_url('css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('css/main.css') ?>">
 
     <div class="composite-card billing-card dashboard-overview" style="margin-top:0;">
   <div class="composite-header">

@@ -17,6 +17,11 @@ class Medicine extends BaseController
         $db = \Config\Database::connect();
         $fields = $db->getFieldNames('medicines');
         $hasStatusColumn = in_array('status', $fields);
+        
+        // Sync all statuses to automatically move medicines that reach 3-month limit to stockout
+        if ($hasStatusColumn) {
+            $model->syncAllStatuses();
+        }
 
         // Show medicines whose expiry is beyond the 3-month cutoff (or no expiry)
         // AND exclude out of stock items (using status if available, otherwise stock > 0)
@@ -176,9 +181,13 @@ class Medicine extends BaseController
                 $data['image'] = $imageName;
             }
             
-            $model->insert($data);
+            try {
+                $model->insert($data);
+            } catch (\RuntimeException $e) {
+                return redirect()->back()->withInput()->with('error', $e->getMessage());
+            }
         }
-
+        
         return redirect()->to('/medicines')->with('success', 'Medicine(s) added successfully!');
     }
 
@@ -252,7 +261,12 @@ class Medicine extends BaseController
             }
         }
 
-        $model->update($id, $data);
+        try {
+            $model->update($id, $data);
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
+        
         return redirect()->to('/medicines')->with('success', 'Medicine updated successfully!');
     }
 
@@ -266,6 +280,16 @@ class Medicine extends BaseController
         
         $model = new MedicineModel();
         $cutoff = date('Y-m-d', strtotime('+3 months'));
+        
+        // Check if status column exists and sync statuses
+        $db = \Config\Database::connect();
+        $fields = $db->getFieldNames('medicines');
+        $hasStatusColumn = in_array('status', $fields);
+        
+        // Sync all statuses to automatically move medicines that reach 3-month limit
+        if ($hasStatusColumn) {
+            $model->syncAllStatuses();
+        }
 
         // Get medicines whose expiry is at or within 3 months (or already past)
         $data['expired_medicines'] = $model->where('expiry_date <=', $cutoff)
@@ -303,17 +327,21 @@ class Medicine extends BaseController
         $db = \Config\Database::connect();
         $fields = $db->getFieldNames('medicines');
         $hasStatusColumn = in_array('status', $fields);
-
-        // Get medicines that are out of stock and not expired (expiry > 3 months)
-        $builder = $model->groupStart()
-                        ->where('expiry_date >', $cutoff)
-                        ->orWhere('expiry_date IS NULL', null, false)
-                        ->groupEnd();
         
+        // Sync all statuses to automatically move medicines that reach 3-month limit
         if ($hasStatusColumn) {
-            $builder->where('status', 'out_of_stock');
+            $model->syncAllStatuses();
+        }
+
+        // Get medicines that are out of stock OR expired_soon (within 3 months)
+        if ($hasStatusColumn) {
+            $builder = $model->groupStart()
+                            ->where('status', 'out_of_stock')
+                            ->orWhere('status', 'expired_soon')
+                            ->groupEnd();
         } else {
-            $builder->where('stock', 0);
+            // Fallback: get out of stock items
+            $builder = $model->where('stock', 0);
         }
         
         $data['out_of_stock_medicines'] = $builder->orderBy('name', 'ASC')->findAll();
