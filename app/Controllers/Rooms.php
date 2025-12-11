@@ -135,19 +135,54 @@ class Rooms extends BaseController
             ->orderBy('bed', 'ASC')
             ->findAll();
 
+        // Deduplicate beds by ward+room+bed combination to prevent duplicate entries
+        // This handles cases where the same bed exists multiple times with different IDs
+        $uniqueBeds = [];
+        $processedKeys = [];
+        foreach ($beds as $bedRow) {
+            $room = trim($bedRow['room'] ?? '');
+            $bed = trim($bedRow['bed'] ?? '');
+            $ward = trim($bedRow['ward'] ?? '');
+            
+            if ($room === '' || $bed === '' || $ward === '') {
+                continue;
+            }
+            
+            // Create a unique key from ward+room+bed combination
+            $uniqueKey = strtolower($ward . '|' . $room . '|' . $bed);
+            
+            // Only keep the first occurrence (or the one with the highest ID if we want the latest)
+            if (!isset($processedKeys[$uniqueKey])) {
+                $uniqueBeds[] = $bedRow;
+                $processedKeys[$uniqueKey] = true;
+            }
+        }
+        $beds = $uniqueBeds;
+
         $bedIds = array_column($beds, 'id');
 
         $patientsByBedId = $this->getBedOccupants($bedIds);
 
         $rows = [];
+        $processedKeys = []; // Track processed ward+room+bed combinations to prevent duplicates
         foreach ($beds as $bedRow) {
-            $room = $bedRow['room'] ?? '';
-            $bed  = $bedRow['bed'] ?? '';
-            if ($room === '' || $bed === '') {
+            $room = trim($bedRow['room'] ?? '');
+            $bed  = trim($bedRow['bed'] ?? '');
+            $ward = trim($bedRow['ward'] ?? '');
+            
+            if ($room === '' || $bed === '' || $ward === '') {
                 continue;
             }
 
-            $bedId = $bedRow['id'] ?? null;
+            // Create a unique key from ward+room+bed combination
+            $uniqueKey = strtolower($ward . '|' . $room . '|' . $bed);
+            
+            // Skip if we've already processed this ward+room+bed combination
+            if (isset($processedKeys[$uniqueKey])) {
+                continue;
+            }
+            
+            $bedId = (int)($bedRow['id'] ?? 0);
             $patient = $bedId ? ($patientsByBedId[$bedId] ?? null) : null;
 
             if ($patient) {
@@ -159,7 +194,8 @@ class Rooms extends BaseController
             }
 
             $storedStatus   = $bedRow['status'] ?? 'Available';
-            $effectiveStatus = $patient ? 'Occupied' : $storedStatus;
+            // If patient is found OR bed status is Occupied, mark as Occupied
+            $effectiveStatus = ($patient || strtolower($storedStatus) === 'occupied') ? 'Occupied' : $storedStatus;
 
             $row = [
                 'bed_id'  => $bedId,
@@ -178,6 +214,7 @@ class Rooms extends BaseController
             }
 
             $rows[] = $row;
+            $processedKeys[$uniqueKey] = true; // Mark as processed
         }
 
         return $rows;
@@ -190,13 +227,18 @@ class Rooms extends BaseController
             return [];
         }
 
-        $records = $this->admissions
-            ->select('admission_details.bed_id AS admission_bed_id, patients.*')
+        // Query for active admissions with the given bed IDs
+        // Use database query builder directly to ensure proper table name handling
+        $db = \Config\Database::connect();
+        $builder = $db->table('admission_details');
+        $builder->select('admission_details.bed_id AS admission_bed_id, admission_details.status AS admission_status, admission_details.patient_id AS admission_patient_id, patients.*')
             ->join('patients', 'patients.id = admission_details.patient_id', 'left')
             ->where('admission_details.status', 'admitted')
             ->whereIn('admission_details.bed_id', $bedIds)
-            ->orderBy('admission_details.created_at', 'DESC')
-            ->findAll();
+            ->where('admission_details.bed_id IS NOT NULL')
+            ->orderBy('admission_details.created_at', 'DESC');
+        
+        $records = $builder->get()->getResultArray();
 
         $occupants = [];
         foreach ($records as $record) {
@@ -593,6 +635,8 @@ class Rooms extends BaseController
         }
 
         $available = [];
+        $processedKeys = []; // Track processed ward+room+bed combinations to prevent duplicates
+        
         foreach ($beds as $row) {
             $ward = $row['ward'] ?? '';
             $room = $row['room'] ?? '';
@@ -600,6 +644,14 @@ class Rooms extends BaseController
             $bedId = $row['id'] ?? null;
             
             if ($ward === '' || $room === '' || $bed === '' || !$bedId) {
+                continue;
+            }
+
+            // Create a unique key from ward+room+bed combination
+            $uniqueKey = strtolower($ward . '|' . $room . '|' . $bed);
+            
+            // Skip if we've already processed this ward+room+bed combination
+            if (isset($processedKeys[$uniqueKey])) {
                 continue;
             }
 
@@ -617,6 +669,8 @@ class Rooms extends BaseController
                 'room' => $room,
                 'bed'  => $bed,
             ];
+            
+            $processedKeys[$uniqueKey] = true; // Mark as processed
         }
 
         return $available;

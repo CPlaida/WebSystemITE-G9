@@ -278,7 +278,7 @@ class Appointment extends BaseController
             return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized access']);
         }
 
-        // Handle patient - prefer provided patient_id from autocomplete; fallback to name lookup/create
+        // Handle patient - prefer provided patient_id from autocomplete; fallback to name lookup (must exist)
         $patientName = trim((string)$this->request->getPost('patient_name'));
         $patientId = (string) ($this->request->getPost('patient_id') ?? '');
         
@@ -290,56 +290,44 @@ class Appointment extends BaseController
         }
 
         if ($patientId === '') {
-            // Try to find existing patient by name first (case-insensitive on first and last)
+            // Try to find existing patient by name - must exist, no auto-creation
+            // Search includes first_name, middle_name, and last_name
             $existingPatient = $this->patientModel
                 ->groupStart()
                     ->like('first_name', $patientName)
+                    ->orLike('middle_name', $patientName)
                     ->orLike('last_name', $patientName)
-                    ->orLike("CONCAT(first_name, ' ', last_name)", $patientName)
+                    ->orLike("CONCAT_WS(' ', first_name, middle_name, last_name)", $patientName)
                 ->groupEnd()
                 ->first();
             
             if ($existingPatient) {
                 $patientId = $existingPatient['id'];
             } else {
-                // Auto-create minimal patient so booking does not depend on suggestions
-                $nameParts = explode(' ', trim($patientName), 2);
-                $firstName = $nameParts[0] ?? 'Unknown';
-                $lastName = $nameParts[1] ?? 'Unknown';
-
-                $randomNum = rand(1000, 9999);
-                $email = strtolower(str_replace(' ', '.', $firstName . '.' . $lastName)) . $randomNum . '@temp.com';
-                $phone = '09' . rand(100000000, 999999999);
-
-                $newPatientData = [
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'date_of_birth' => '1990-01-01',
-                    'gender' => 'other',
-                    'address' => 'Not provided',
-                    'status' => 'active',
-                    // Ensure auto-created records from booking are not listed as outpatients
-                    'type' => 'walkin'
-                ];
-
-                $this->patientModel->skipValidation(true);
-                $patientId = $this->patientModel->insert($newPatientData);
-                $this->patientModel->skipValidation(false);
-
-                if (empty($patientId)) {
-                    $errors = $this->patientModel->errors();
-                    $errorMessage = 'Failed to create patient record';
-                    if (!empty($errors)) {
-                        $errorMessage .= ': ' . implode(', ', $errors);
-                    }
-
-                    if (!$this->request->isAJAX()) {
-                        return redirect()->back()->withInput()->with('error', $errorMessage);
-                    }
-                    return $this->response->setJSON(['success' => false, 'message' => $errorMessage]);
+                // Patient does not exist - require registration first
+                $errorMessage = 'Patient not found. Please register the patient first before booking an appointment.';
+                if (!$this->request->isAJAX()) {
+                    return redirect()->back()->withInput()->with('error', $errorMessage);
                 }
+                return $this->response->setJSON([
+                    'success' => false, 
+                    'message' => $errorMessage
+                ])->setStatusCode(404);
+            }
+        }
+        
+        // Verify patient exists (even if patient_id was provided directly)
+        if (!empty($patientId)) {
+            $patient = $this->patientModel->find($patientId);
+            if (!$patient) {
+                $errorMessage = 'Patient not found. Please register the patient first before booking an appointment.';
+                if (!$this->request->isAJAX()) {
+                    return redirect()->back()->withInput()->with('error', $errorMessage);
+                }
+                return $this->response->setJSON([
+                    'success' => false, 
+                    'message' => $errorMessage
+                ])->setStatusCode(404);
             }
         }
 

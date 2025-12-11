@@ -157,6 +157,8 @@
                                             <td>
                                                 <input type="text" name="service[]" class="form-control service" required value="<?= esc($item['service']) ?>">
                                                 <input type="hidden" name="lab_id[]" class="lab-id" value="<?= esc($item['lab_id']) ?>">
+                                                <input type="hidden" name="source_table[]" class="source-table" value="<?= esc($item['source_table']) ?>">
+                                                <input type="hidden" name="source_id[]" class="source-id" value="<?= esc($item['source_id']) ?>">
                                             </td>
                                             <td>
                                                 <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty']) ?>" required>
@@ -173,6 +175,8 @@
                             </tbody>
                         </table>
                     </div>
+                    <div id="autoChargeBreakdown" style="margin-top:10px;font-size:0.9em;color:#4b5563;"></div>
+                    <div id="autoChargeErrors" style="margin-top:6px;font-size:0.85em;color:#b91c1c;"></div>
                 </div>
 
             </div>
@@ -218,6 +222,8 @@
         <td>
             <input type="text" name="service[]" class="form-control service" required>
             <input type="hidden" name="lab_id[]" class="lab-id">
+            <input type="hidden" name="source_table[]" class="source-table">
+            <input type="hidden" name="source_id[]" class="source-id">
         </td>
         <td>
             <input type="number" name="qty[]" class="form-control qty" min="1" value="1" required>
@@ -236,20 +242,22 @@
 const patientInput = document.getElementById('patientName');
 const patientList = document.getElementById('patientList');
 const patientID = document.getElementById('patientID');
+const autoChargeBreakdown = document.getElementById('autoChargeBreakdown');
+const autoChargeErrors = document.getElementById('autoChargeErrors');
 
 async function loadPatientServices(patientId){
     try {
         const res = await fetch(`<?= base_url('billing/patient-services') ?>?patient_id=${encodeURIComponent(patientId)}`);
         const data = await res.json();
         const items = Array.isArray(data) ? data : (data.items || []);
-        if (items.length) {
-            setBillItems(items);
-        } else {
-            // No items: leave table empty
-        }
+        setBillItems(items);
+        renderAutoChargeSummary(Array.isArray(data) ? {} : (data.breakdown || {}));
+        renderAutoChargeErrors(Array.isArray(data) ? {} : (data.errors || {}));
     } catch (err) {
         try { console.error('Failed to load patient services', err); } catch(_) {}
         ensureAtLeastOneRow();
+        renderAutoChargeSummary({});
+        renderAutoChargeErrors({});
     }
 }
 
@@ -267,27 +275,36 @@ function setBillItems(items){
         const qty = parseFloat(row.querySelector('.qty').value) || 0;
         const price = parseFloat(row.querySelector('.price').value) || 0;
         row.querySelector('.amount').value = (it.amount != null ? it.amount : qty * price).toFixed ? (it.amount != null ? it.amount : qty * price) : Number(it.amount || qty * price);
-        if (it.lab_id) {
-            row.querySelector('.lab-id').value = it.lab_id;
-            // lock down auto-filled lab items from editing
-            const svcInput = row.querySelector('.service');
-            const qtyInput = row.querySelector('.qty');
-            const priceInput = row.querySelector('.price');
+        row.querySelector('.lab-id').value = it.lab_id || '';
+        row.querySelector('.source-table').value = it.source_table || '';
+        row.querySelector('.source-id').value = it.source_id || '';
+        row.dataset.category = it.category || '';
+        const shouldLock = it.locked !== undefined ? !!it.locked : !!it.lab_id;
+        const svcInput = row.querySelector('.service');
+        const qtyInput = row.querySelector('.qty');
+        const priceInput = row.querySelector('.price');
+        if (shouldLock) {
             svcInput.readOnly = true;
             qtyInput.readOnly = true;
             priceInput.readOnly = true;
             row.setAttribute('data-locked', '1');
-            // subtle style cue
             svcInput.style.backgroundColor = '#f5f5f5';
             qtyInput.style.backgroundColor = '#f5f5f5';
             priceInput.style.backgroundColor = '#f5f5f5';
-            // disable remove button
             const removeBtn = row.querySelector('.remove-item');
             if (removeBtn) {
                 removeBtn.disabled = true;
                 removeBtn.classList.add('disabled');
-                removeBtn.title = 'Linked to laboratory record';
+                removeBtn.title = 'Linked to patient record';
             }
+        } else {
+            svcInput.readOnly = false;
+            qtyInput.readOnly = false;
+            priceInput.readOnly = false;
+            svcInput.style.backgroundColor = '';
+            qtyInput.style.backgroundColor = '';
+            priceInput.style.backgroundColor = '';
+            row.removeAttribute('data-locked');
         }
         tbody.appendChild(rowFrag);
     });
@@ -298,6 +315,28 @@ function setBillItems(items){
 }
 
 function ensureAtLeastOneRow(){ /* no-op: do not auto-add blank rows */ }
+
+function renderAutoChargeSummary(breakdown){
+    if (!autoChargeBreakdown) return;
+    const entries = Object.entries(breakdown || {}).filter(([, count]) => Number(count) > 0);
+    if (!entries.length) {
+        autoChargeBreakdown.textContent = '';
+        return;
+    }
+    const parts = entries.map(([label, count]) => `${count} ${label}`);
+    autoChargeBreakdown.textContent = `Auto-loaded: ${parts.join(', ')}`;
+}
+
+function renderAutoChargeErrors(errors){
+    if (!autoChargeErrors) return;
+    const entries = Object.entries(errors || {}).filter(([, msg]) => !!msg);
+    if (!entries.length) {
+        autoChargeErrors.textContent = '';
+        return;
+    }
+    const parts = entries.map(([provider, message]) => `${provider.split('\\\\').pop()}: ${message}`);
+    autoChargeErrors.textContent = `Some charges could not be loaded: ${parts.join(' | ')}`;
+}
 
 // Also react if some other script sets patientID
 document.getElementById('patientID')?.addEventListener('change', function(){

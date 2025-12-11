@@ -24,18 +24,18 @@
         <form action="<?= base_url('appointments/create') ?>" method="POST" id="appointmentForm" class="needs-validation" novalidate>
           <?= csrf_field() ?>
           <div class="form-grid">
-            <!-- Patient Selection (Searchable Dropdown via datalist) -->
-            <div class="form-group">
+            <!-- Patient Selection (Searchable Dropdown with Autocomplete) -->
+            <div class="form-group" style="position: relative;">
               <label class="form-label required-field" for="patient_name">Patient Name</label>
-              <input type="text" list="patients_list" name="patient_name" id="patient_name" class="form-control"
-                     placeholder="Search patient by name..." value="<?= old('patient_name') ?>" required>
-              <datalist id="patients_list">
-                <?php if (isset($patients) && !empty($patients)): ?>
-                  <?php foreach ($patients as $p): ?>
-                    <option value="<?= esc(trim(($p['first_name'] ?? '') . ' ' . ($p['middle_name'] ?? '') . ' ' . ($p['last_name'] ?? '') . ' ' . ($p['name_extension'] ?? ''))) ?>"></option>
-                  <?php endforeach; ?>
-                <?php endif; ?>
-              </datalist>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" name="patient_name" id="patient_name" class="form-control"
+                       placeholder="Type name to search existing patients..." 
+                       value="<?= old('patient_name') ?>" 
+                       autocomplete="off" required>
+                <input type="hidden" name="patient_id" id="patient_id" value="">
+              </div>
+              <div id="patientResults" class="autocomplete-dropdown" style="display:none;"></div>
             </div>
 
             <!-- Date (Dynamic from schedules) -->
@@ -102,6 +102,63 @@
       const dateSelect = document.getElementById('appointment_date');
       const doctorSelect = document.getElementById('doctor_id');
       const timeSelect = document.getElementById('appointment_time');
+      const patientSearch = document.getElementById('patient_name');
+      const patientId = document.getElementById('patient_id');
+      const patientResults = document.getElementById('patientResults');
+
+      // Patient search autocomplete
+      let searchTimer = null;
+      async function doPatientSearch(term) {
+        if (!term || term.length < 2) { 
+          patientResults.style.display = 'none'; 
+          patientResults.innerHTML = ''; 
+          patientId.value = '';
+          return; 
+        }
+        try {
+          const res = await fetch(`<?= base_url('patients/search') ?>?term=${encodeURIComponent(term)}`);
+          const data = await res.json();
+          const rows = (data && Array.isArray(data.patients)) ? data.patients : [];
+          if (rows.length === 0) { 
+            patientResults.style.display = 'none'; 
+            patientResults.innerHTML = ''; 
+            return; 
+          }
+          patientResults.innerHTML = rows.map(r => 
+            `<div class="autocomplete-item" data-id="${r.id}">${r.name} <small class="text-muted">(${r.id})</small></div>`
+          ).join('');
+          patientResults.style.display = 'block';
+        } catch(e) {
+          console.error('Patient search error:', e);
+          patientResults.style.display = 'none';
+        }
+      }
+
+      if (patientSearch) {
+        patientSearch.addEventListener('input', function() {
+          clearTimeout(searchTimer);
+          const term = this.value.trim();
+          patientId.value = ''; // Clear patient ID when typing
+          searchTimer = setTimeout(() => doPatientSearch(term), 250);
+        });
+
+        // Handle patient selection
+        patientResults?.addEventListener('click', function(e) {
+          const item = e.target.closest('.autocomplete-item');
+          if (!item) return;
+          const id = item.getAttribute('data-id');
+          patientId.value = id;
+          patientResults.style.display = 'none';
+          patientSearch.value = item.textContent.trim().replace(/\s*\([^)]+\)\s*$/, ''); // Remove ID from display
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!patientSearch.contains(e.target) && !patientResults.contains(e.target)) {
+            patientResults.style.display = 'none';
+          }
+        });
+      }
 
       const setOptions = (selectEl, options, placeholder, disabled = false) => {
         selectEl.innerHTML = '';
