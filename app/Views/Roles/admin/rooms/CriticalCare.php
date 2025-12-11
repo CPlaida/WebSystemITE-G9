@@ -193,6 +193,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (tbody) {
                     const rows = Array.from(tbody.querySelectorAll('tr'));
                     rows.forEach(row => {
+                        // Skip the "No data available" row
+                        if (row.querySelector('td[colspan]')) {
+                            return;
+                        }
                         const text = row.textContent.toLowerCase();
                         if (text.includes(searchTerm)) {
                             row.style.display = '';

@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (searchInput) {
         // Get all tables on the page
-        const tables = document.querySelectorAll('table.table');
+        const tables = document.querySelectorAll('.ward-table');
         
         function performSearch() {
             const searchTerm = searchInput.value.toLowerCase().trim();
@@ -508,6 +508,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (tbody) {
                     const rows = Array.from(tbody.querySelectorAll('tr'));
                     rows.forEach(row => {
+                        // Skip the "No data available" row
+                        if (row.querySelector('td[colspan]')) {
+                            return;
+                        }
                         const text = row.textContent.toLowerCase();
                         if (text.includes(searchTerm)) {
                             row.style.display = '';
