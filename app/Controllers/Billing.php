@@ -87,8 +87,19 @@ class Billing extends BaseController
         try { $db->query("CREATE INDEX IF NOT EXISTS idx_billing_items_source_ref ON billing_items(source_table, source_id)"); } catch (\Throwable $e) { /* ignore */ }
     }
 
-    private function markSourcesAsBilled(array $items): void
+    /**
+     * Mark source items as billed only if payment status is 'paid'
+     * 
+     * @param array $items Billing items with source_table and source_id
+     * @param string|null $paymentStatus Payment status ('paid', 'pending', 'partial', 'overdue')
+     */
+    private function markSourcesAsBilled(array $items, ?string $paymentStatus = null): void
     {
+        // Only mark as billed if payment status is 'paid'
+        if (strtolower(trim($paymentStatus ?? '')) !== 'paid') {
+            return;
+        }
+        
         if (empty($items)) {
             return;
         }
@@ -708,6 +719,35 @@ class Billing extends BaseController
         $targetPatient = $data['patient_id'] ?? ($existingBill['patient_id'] ?? null);
         $hmoPayload = array_merge($existingBill, $data);
         $this->syncHmoAuthorization((int)$id, $targetPatient, $hmoPayload);
+        
+        // If payment status changed to 'paid', mark billing items as billed
+        $newPaymentStatus = $data['payment_status'] ?? null;
+        $oldPaymentStatus = $existingBill['payment_status'] ?? null;
+        if ($newPaymentStatus && strtolower($newPaymentStatus) === 'paid' && strtolower($oldPaymentStatus ?? '') !== 'paid') {
+            // Get billing items for this bill
+            $db = \Config\Database::connect();
+            $this->ensureBillingItemsTable();
+            if ($db->tableExists('billing_items')) {
+                $billingItems = $db->table('billing_items')
+                    ->where('billing_id', (int)$id)
+                    ->get()
+                    ->getResultArray();
+                
+                $items = [];
+                foreach ($billingItems as $bi) {
+                    $items[] = [
+                        'lab_id' => $bi['lab_id'] ?? null,
+                        'source_table' => $bi['source_table'] ?? null,
+                        'source_id' => $bi['source_id'] ?? null,
+                    ];
+                }
+                
+                if (!empty($items)) {
+                    $this->markSourcesAsBilled($items, 'paid');
+                }
+            }
+        }
+        
         return $this->response->setJSON(['status' => 'success', 'message' => 'Bill updated successfully']);
     }
 
@@ -775,67 +815,275 @@ class Billing extends BaseController
         $db = \Config\Database::connect();
         $db->transBegin();
         try {
-            $payload = [
-                'patient_id' => (string)$this->request->getPost('patient_id'),
-                'total_amount' => $subtotal,
-                'tax' => $tax,
-                'final_amount' => $total,
-                'payment_status' => $this->request->getPost('payment_status') ?: 'pending',
-                'payment_method' => $this->request->getPost('payment_method') ?: 'cash',
-                'philhealth_member' => $this->request->getPost('philhealth_member') ? 1 : 0,
-                'philhealth_approved_amount' => $this->request->getPost('philhealth_approved_amount') !== null ? (float)$this->request->getPost('philhealth_approved_amount') : 0.0,
-                'primary_icd10_code' => $this->request->getPost('primary_icd10_code') ?: null,
-                'primary_rvs_code' => $this->request->getPost('primary_rvs_code') ?: null,
-                'admission_date' => $this->request->getPost('admission_date') ?: null,
-                'hmo_provider_id' => $this->request->getPost('hmo_provider_id') ?: null,
-                'hmo_member_no' => $this->request->getPost('hmo_member_no') ?: null,
-                'hmo_valid_from' => $this->request->getPost('hmo_valid_from') ?: null,
-                'hmo_valid_to' => $this->request->getPost('hmo_valid_to') ?: null,
-                'hmo_loa_number' => $this->request->getPost('hmo_loa_number') ?: null,
-                'hmo_coverage_limit' => $this->request->getPost('hmo_coverage_limit') ?: null,
-                'hmo_approved_amount' => $this->request->getPost('hmo_approved_amount') ?: null,
-                'hmo_patient_share' => $this->request->getPost('hmo_patient_share') ?: null,
-                'hmo_status' => $this->request->getPost('hmo_status') ?: null,
-                'hmo_notes' => $this->request->getPost('hmo_notes') ?: null,
-                'bill_date' => $this->request->getPost('bill_date'),
-                'notes' => $this->request->getPost('notes'),
-            ];
-            $payload = $this->normalizeCoverageSplits($payload);
-            $billId = $this->billingModel->insert($payload, true);
-            $this->syncHmoAuthorization((int)$billId, $payload['patient_id'], $payload);
-
-            if ($billId && !empty($items)) {
+            $patientId = (string)$this->request->getPost('patient_id');
+            $paymentStatus = $this->request->getPost('payment_status') ?: 'pending';
+            
+            // Check if there's an existing unpaid/pending bill for this patient
+            $existingBill = $this->billingModel
+                ->where('patient_id', $patientId)
+                ->whereIn('payment_status', ['pending', 'partial', 'overdue'])
+                ->orderBy('created_at', 'DESC')
+                ->first();
+            
+            $billId = null;
+            $isUpdate = false;
+            
+            if ($existingBill) {
+                // Update existing bill
+                $billId = (int)$existingBill['id'];
+                $isUpdate = true;
+                
+                // Get existing items to merge with new items
                 $this->ensureBillingItemsTable();
+                $existingItems = [];
                 if ($db->tableExists('billing_items')) {
-                    $now = date('Y-m-d H:i:s');
-                    $rows = [];
-                    foreach ($items as $it) {
-                        $rows[] = [
-                            'billing_id' => (int)$billId,
-                            'lab_id' => isset($it['lab_id']) ? (string)$it['lab_id'] : null,
-                            'source_table' => isset($it['source_table']) ? (string)$it['source_table'] : null,
-                            'source_id' => isset($it['source_id']) ? (string)$it['source_id'] : null,
-                            'service' => $it['service'],
-                            'qty' => $it['qty'],
-                            'price' => $it['price'],
-                            'amount' => $it['amount'],
-                            'created_at' => $now,
-                            'updated_at' => $now,
-                        ];
+                    $existingItems = $db->table('billing_items')
+                        ->where('billing_id', $billId)
+                        ->get()
+                        ->getResultArray();
+                }
+                
+                // Build a set of existing item identifiers to filter duplicates
+                $existingItemKeys = [];
+                foreach ($existingItems as $ei) {
+                    $key = '';
+                    if (!empty($ei['lab_id'])) {
+                        $key = 'lab_' . $ei['lab_id'];
+                    } elseif (!empty($ei['source_table']) && !empty($ei['source_id'])) {
+                        $key = $ei['source_table'] . '_' . $ei['source_id'];
                     }
-                    if (!empty($rows)) {
-                        $db->table('billing_items')->insertBatch($rows);
-                        // Some drivers may report 0 for batch inserts; ensure rows exist, else fall back to row-by-row insert
-                        $inserted = $db->table('billing_items')->where('billing_id', (int)$billId)->countAllResults();
-                        if ($inserted === 0) {
-                            foreach ($rows as $r) {
-                                $db->table('billing_items')->insert($r);
+                    if ($key !== '') {
+                        $existingItemKeys[$key] = true;
+                    }
+                }
+                
+                // Filter out items that already exist to get only new items
+                $newItemsOnly = [];
+                $newItemsSubtotal = 0.0;
+                foreach ($items as $it) {
+                    $key = '';
+                    if (!empty($it['lab_id'])) {
+                        $key = 'lab_' . $it['lab_id'];
+                    } elseif (!empty($it['source_table']) && !empty($it['source_id'])) {
+                        $key = $it['source_table'] . '_' . $it['source_id'];
+                    }
+                    
+                    // Only count if not already in existing bill
+                    if ($key === '' || !isset($existingItemKeys[$key])) {
+                        $newItemsOnly[] = $it;
+                        $newItemsSubtotal += $it['amount'];
+                    }
+                }
+                
+                // Calculate existing subtotal
+                $existingSubtotal = 0.0;
+                foreach ($existingItems as $ei) {
+                    $existingSubtotal += (float)($ei['amount'] ?? 0);
+                }
+                
+                // Merge subtotals (existing + only new items)
+                $mergedSubtotal = $existingSubtotal + $newItemsSubtotal;
+                $mergedTax = round($mergedSubtotal * 0.12, 2);
+                $mergedTotal = round($mergedSubtotal + $mergedTax, 2);
+                
+                // Update items array to only include new items for insertion
+                $items = $newItemsOnly;
+                
+                // Update bill totals
+                $updatePayload = [
+                    'total_amount' => $mergedSubtotal,
+                    'tax' => $mergedTax,
+                    'final_amount' => $mergedTotal,
+                    'payment_status' => $paymentStatus,
+                    'payment_method' => $this->request->getPost('payment_method') ?: ($existingBill['payment_method'] ?? 'cash'),
+                    'bill_date' => $this->request->getPost('bill_date') ?: ($existingBill['bill_date'] ?? date('Y-m-d')),
+                    'notes' => $this->request->getPost('notes') ?: ($existingBill['notes'] ?? null),
+                ];
+                
+                // Update HMO and PhilHealth fields if provided
+                if ($this->request->getPost('philhealth_member') !== null) {
+                    $updatePayload['philhealth_member'] = $this->request->getPost('philhealth_member') ? 1 : 0;
+                }
+                if ($this->request->getPost('philhealth_approved_amount') !== null) {
+                    $updatePayload['philhealth_approved_amount'] = (float)$this->request->getPost('philhealth_approved_amount');
+                }
+                if ($this->request->getPost('primary_icd10_code') !== null) {
+                    $updatePayload['primary_icd10_code'] = $this->request->getPost('primary_icd10_code');
+                }
+                if ($this->request->getPost('primary_rvs_code') !== null) {
+                    $updatePayload['primary_rvs_code'] = $this->request->getPost('primary_rvs_code');
+                }
+                if ($this->request->getPost('admission_date') !== null) {
+                    $updatePayload['admission_date'] = $this->request->getPost('admission_date');
+                }
+                if ($this->request->getPost('hmo_provider_id') !== null) {
+                    $updatePayload['hmo_provider_id'] = $this->request->getPost('hmo_provider_id');
+                }
+                if ($this->request->getPost('hmo_member_no') !== null) {
+                    $updatePayload['hmo_member_no'] = $this->request->getPost('hmo_member_no');
+                }
+                if ($this->request->getPost('hmo_valid_from') !== null) {
+                    $updatePayload['hmo_valid_from'] = $this->request->getPost('hmo_valid_from');
+                }
+                if ($this->request->getPost('hmo_valid_to') !== null) {
+                    $updatePayload['hmo_valid_to'] = $this->request->getPost('hmo_valid_to');
+                }
+                if ($this->request->getPost('hmo_loa_number') !== null) {
+                    $updatePayload['hmo_loa_number'] = $this->request->getPost('hmo_loa_number');
+                }
+                if ($this->request->getPost('hmo_coverage_limit') !== null) {
+                    $updatePayload['hmo_coverage_limit'] = $this->request->getPost('hmo_coverage_limit');
+                }
+                if ($this->request->getPost('hmo_approved_amount') !== null) {
+                    $updatePayload['hmo_approved_amount'] = $this->request->getPost('hmo_approved_amount');
+                }
+                if ($this->request->getPost('hmo_patient_share') !== null) {
+                    $updatePayload['hmo_patient_share'] = $this->request->getPost('hmo_patient_share');
+                }
+                if ($this->request->getPost('hmo_status') !== null) {
+                    $updatePayload['hmo_status'] = $this->request->getPost('hmo_status');
+                }
+                if ($this->request->getPost('hmo_notes') !== null) {
+                    $updatePayload['hmo_notes'] = $this->request->getPost('hmo_notes');
+                }
+                
+                $updatePayload = $this->normalizeCoverageSplits($updatePayload);
+                $this->billingModel->update($billId, $updatePayload);
+                $this->syncHmoAuthorization($billId, $patientId, array_merge($existingBill, $updatePayload));
+                
+                // Add new items to existing bill (filter out items that already exist)
+                if (!empty($items)) {
+                    $this->ensureBillingItemsTable();
+                    if ($db->tableExists('billing_items')) {
+                        // Build a set of existing item identifiers to avoid duplicates
+                        $existingItemKeys = [];
+                        foreach ($existingItems as $ei) {
+                            $key = '';
+                            if (!empty($ei['lab_id'])) {
+                                $key = 'lab_' . $ei['lab_id'];
+                            } elseif (!empty($ei['source_table']) && !empty($ei['source_id'])) {
+                                $key = $ei['source_table'] . '_' . $ei['source_id'];
+                            }
+                            if ($key !== '') {
+                                $existingItemKeys[$key] = true;
+                            }
+                        }
+                        
+                        // Filter out items that already exist in the bill
+                        $newItems = [];
+                        foreach ($items as $it) {
+                            $key = '';
+                            if (!empty($it['lab_id'])) {
+                                $key = 'lab_' . $it['lab_id'];
+                            } elseif (!empty($it['source_table']) && !empty($it['source_id'])) {
+                                $key = $it['source_table'] . '_' . $it['source_id'];
+                            }
+                            
+                            // Only add if not already in existing bill
+                            if ($key === '' || !isset($existingItemKeys[$key])) {
+                                $newItems[] = $it;
+                            }
+                        }
+                        
+                        // Add only new items
+                        if (!empty($newItems)) {
+                            $now = date('Y-m-d H:i:s');
+                            $rows = [];
+                            foreach ($newItems as $it) {
+                                $rows[] = [
+                                    'billing_id' => $billId,
+                                    'lab_id' => isset($it['lab_id']) ? (string)$it['lab_id'] : null,
+                                    'source_table' => isset($it['source_table']) ? (string)$it['source_table'] : null,
+                                    'source_id' => isset($it['source_id']) ? (string)$it['source_id'] : null,
+                                    'service' => $it['service'],
+                                    'qty' => $it['qty'],
+                                    'price' => $it['price'],
+                                    'amount' => $it['amount'],
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ];
+                            }
+                            if (!empty($rows)) {
+                                $db->table('billing_items')->insertBatch($rows);
+                                // Some drivers may report 0 for batch inserts; ensure rows exist, else fall back to row-by-row insert
+                                $inserted = $db->table('billing_items')->where('billing_id', $billId)->countAllResults();
+                                $expectedCount = count($existingItems) + count($rows);
+                                if ($inserted < $expectedCount) {
+                                    foreach ($rows as $r) {
+                                        $db->table('billing_items')->insert($r);
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                // Create new bill
+                $payload = [
+                    'patient_id' => $patientId,
+                    'total_amount' => $subtotal,
+                    'tax' => $tax,
+                    'final_amount' => $total,
+                    'payment_status' => $paymentStatus,
+                    'payment_method' => $this->request->getPost('payment_method') ?: 'cash',
+                    'philhealth_member' => $this->request->getPost('philhealth_member') ? 1 : 0,
+                    'philhealth_approved_amount' => $this->request->getPost('philhealth_approved_amount') !== null ? (float)$this->request->getPost('philhealth_approved_amount') : 0.0,
+                    'primary_icd10_code' => $this->request->getPost('primary_icd10_code') ?: null,
+                    'primary_rvs_code' => $this->request->getPost('primary_rvs_code') ?: null,
+                    'admission_date' => $this->request->getPost('admission_date') ?: null,
+                    'hmo_provider_id' => $this->request->getPost('hmo_provider_id') ?: null,
+                    'hmo_member_no' => $this->request->getPost('hmo_member_no') ?: null,
+                    'hmo_valid_from' => $this->request->getPost('hmo_valid_from') ?: null,
+                    'hmo_valid_to' => $this->request->getPost('hmo_valid_to') ?: null,
+                    'hmo_loa_number' => $this->request->getPost('hmo_loa_number') ?: null,
+                    'hmo_coverage_limit' => $this->request->getPost('hmo_coverage_limit') ?: null,
+                    'hmo_approved_amount' => $this->request->getPost('hmo_approved_amount') ?: null,
+                    'hmo_patient_share' => $this->request->getPost('hmo_patient_share') ?: null,
+                    'hmo_status' => $this->request->getPost('hmo_status') ?: null,
+                    'hmo_notes' => $this->request->getPost('hmo_notes') ?: null,
+                    'bill_date' => $this->request->getPost('bill_date'),
+                    'notes' => $this->request->getPost('notes'),
+                ];
+                $payload = $this->normalizeCoverageSplits($payload);
+                $billId = $this->billingModel->insert($payload, true);
+                $this->syncHmoAuthorization((int)$billId, $payload['patient_id'], $payload);
 
-                $this->markSourcesAsBilled($items);
+                if ($billId && !empty($items)) {
+                    $this->ensureBillingItemsTable();
+                    if ($db->tableExists('billing_items')) {
+                        $now = date('Y-m-d H:i:s');
+                        $rows = [];
+                        foreach ($items as $it) {
+                            $rows[] = [
+                                'billing_id' => (int)$billId,
+                                'lab_id' => isset($it['lab_id']) ? (string)$it['lab_id'] : null,
+                                'source_table' => isset($it['source_table']) ? (string)$it['source_table'] : null,
+                                'source_id' => isset($it['source_id']) ? (string)$it['source_id'] : null,
+                                'service' => $it['service'],
+                                'qty' => $it['qty'],
+                                'price' => $it['price'],
+                                'amount' => $it['amount'],
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ];
+                        }
+                        if (!empty($rows)) {
+                            $db->table('billing_items')->insertBatch($rows);
+                            // Some drivers may report 0 for batch inserts; ensure rows exist, else fall back to row-by-row insert
+                            $inserted = $db->table('billing_items')->where('billing_id', (int)$billId)->countAllResults();
+                            if ($inserted === 0) {
+                                foreach ($rows as $r) {
+                                    $db->table('billing_items')->insert($r);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Only mark items as billed if payment status is 'paid'
+            if (!empty($items)) {
+                $this->markSourcesAsBilled($items, $paymentStatus);
             }
 
             $db->transCommit();
@@ -866,6 +1114,103 @@ class Billing extends BaseController
 
         $aggregator = new BillingChargeAggregator();
         $result = $aggregator->collect($patientId);
+        
+        // Check if there's an existing unpaid/pending bill for this patient
+        $existingBill = $this->billingModel
+            ->where('patient_id', $patientId)
+            ->whereIn('payment_status', ['pending', 'partial', 'overdue'])
+            ->orderBy('created_at', 'DESC')
+            ->first();
+        
+        // If there's an existing bill, include its items and filter out duplicates from new charges
+        if ($existingBill) {
+            $db = \Config\Database::connect();
+            $this->ensureBillingItemsTable();
+            if ($db->tableExists('billing_items')) {
+                $existingItems = $db->table('billing_items')
+                    ->where('billing_id', (int)$existingBill['id'])
+                    ->get()
+                    ->getResultArray();
+                
+                // Build a set of existing item identifiers to filter duplicates
+                $existingItemKeys = [];
+                foreach ($existingItems as $ei) {
+                    $key = '';
+                    if (!empty($ei['lab_id'])) {
+                        $key = 'lab_' . $ei['lab_id'];
+                    } elseif (!empty($ei['source_table']) && !empty($ei['source_id'])) {
+                        $key = $ei['source_table'] . '_' . $ei['source_id'];
+                    }
+                    if ($key !== '') {
+                        $existingItemKeys[$key] = true;
+                    }
+                }
+                
+                // Convert existing items to the format expected by the frontend
+                $existingItemsFormatted = [];
+                foreach ($existingItems as $ei) {
+                    // Determine category from source_table or service name
+                    $category = 'general';
+                    $sourceTable = $ei['source_table'] ?? '';
+                    $serviceName = strtolower($ei['service'] ?? '');
+                    
+                    if ($sourceTable === 'laboratory') {
+                        $category = 'laboratory';
+                    } elseif ($sourceTable === 'pharmacy_transactions') {
+                        $category = 'pharmacy';
+                    } elseif ($sourceTable === 'appointments') {
+                        $category = 'consultation';
+                    } elseif ($sourceTable === 'admission_details' || $sourceTable === 'patients') {
+                        if (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                            $category = 'room';
+                        }
+                    } elseif (stripos($serviceName, 'laboratory') !== false || stripos($serviceName, 'lab') !== false) {
+                        $category = 'laboratory';
+                    } elseif (stripos($serviceName, 'pharmacy') !== false) {
+                        $category = 'pharmacy';
+                    } elseif (stripos($serviceName, 'appointment') !== false || stripos($serviceName, 'consultation') !== false) {
+                        $category = 'consultation';
+                    } elseif (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                        $category = 'room';
+                    }
+                    
+                    $existingItemsFormatted[] = [
+                        'service' => $ei['service'] ?? '',
+                        'qty' => (int)($ei['qty'] ?? 1),
+                        'price' => (float)($ei['price'] ?? 0),
+                        'amount' => (float)($ei['amount'] ?? 0),
+                        'lab_id' => $ei['lab_id'] ?? null,
+                        'source_table' => $ei['source_table'] ?? null,
+                        'source_id' => $ei['source_id'] ?? null,
+                        'category' => $category,
+                        'is_existing' => true, // Mark as existing so frontend can display differently if needed
+                    ];
+                }
+                
+                // Filter out new charges that are already in the existing bill
+                $newItems = $result['items'] ?? [];
+                $filteredNewItems = [];
+                foreach ($newItems as $item) {
+                    $key = '';
+                    if (!empty($item['lab_id'])) {
+                        $key = 'lab_' . $item['lab_id'];
+                    } elseif (!empty($item['source_table']) && !empty($item['source_id'])) {
+                        $key = $item['source_table'] . '_' . $item['source_id'];
+                    }
+                    
+                    // Only include if not already in existing bill
+                    if ($key === '' || !isset($existingItemKeys[$key])) {
+                        $filteredNewItems[] = $item;
+                    }
+                }
+                
+                // Merge: existing items first, then new items
+                $result['items'] = array_merge($existingItemsFormatted, $filteredNewItems);
+                
+                // Add existing bill ID to result
+                $result['existing_bill_id'] = (int)$existingBill['id'];
+            }
+        }
 
         return $this->response->setJSON($result);
     }

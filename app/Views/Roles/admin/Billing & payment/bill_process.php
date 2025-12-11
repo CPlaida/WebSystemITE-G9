@@ -251,7 +251,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="autoChargeBreakdown" style="margin-top:10px;font-size:0.9em;color:#4b5563;"></div>
                     <div id="autoChargeErrors" style="margin-top:6px;font-size:0.85em;color:#b91c1c;"></div>
                 </div>
 
@@ -318,7 +317,6 @@
 const patientInput = document.getElementById('patientName');
 const patientList = document.getElementById('patientList');
 const patientID = document.getElementById('patientID');
-const autoChargeBreakdown = document.getElementById('autoChargeBreakdown');
 const autoChargeErrors = document.getElementById('autoChargeErrors');
 
 async function loadPatientServices(patientId){
@@ -327,12 +325,13 @@ async function loadPatientServices(patientId){
         const data = await res.json();
         const items = Array.isArray(data) ? data : (data.items || []);
         setBillItems(items);
-        renderAutoChargeSummary(Array.isArray(data) ? {} : (data.breakdown || {}));
         renderAutoChargeErrors(Array.isArray(data) ? {} : (data.errors || {}));
+        
+        // Note: The backend will automatically find and update existing unpaid bills
+        // when saving, so we don't need to change the form action here
     } catch (err) {
         try { console.error('Failed to load patient services', err); } catch(_) {}
         ensureAtLeastOneRow();
-        renderAutoChargeSummary({});
         renderAutoChargeErrors({});
     }
 }
@@ -490,17 +489,6 @@ function setBillItems(items){
 }
 
 function ensureAtLeastOneRow(){ /* no-op: do not auto-add blank rows */ }
-
-function renderAutoChargeSummary(breakdown){
-    if (!autoChargeBreakdown) return;
-    const entries = Object.entries(breakdown || {}).filter(([, count]) => Number(count) > 0);
-    if (!entries.length) {
-        autoChargeBreakdown.textContent = '';
-        return;
-    }
-    const parts = entries.map(([label, count]) => `${count} ${label}`);
-    autoChargeBreakdown.textContent = `Auto-loaded: ${parts.join(', ')}`;
-}
 
 function renderAutoChargeErrors(errors){
     if (!autoChargeErrors) return;
