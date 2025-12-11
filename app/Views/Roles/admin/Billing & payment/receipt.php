@@ -83,7 +83,7 @@
         $patientId = !empty($bill['patient_id']) ? 'PT-' . str_pad((string)$bill['patient_id'], 6, '0', STR_PAD_LEFT) : '—';
         $serviceName = $bill['service_name'] ?? ($bill['items'][0]['description'] ?? 'Hospital Services');
         $admissionDate = $bill['admission_date'] ?? ($bill['bill_date'] ?? $issueDate);
-        $physician = $bill['consulting_doctor'] ?? ($bill['notes'] ?? 'Attending Physician');
+        $physician = $bill['consulting_doctor'] ?? ($bill['notes'] ?? 'Not Specified');
         $status = ucfirst(strtolower($bill['status'] ?? ($bill['payment_status'] ?? 'Pending')));
         $subtotal = (float)($bill['subtotal'] ?? ($bill['total_amount'] ?? 0));
         $discount = (float)($bill['discount'] ?? 0);
@@ -92,6 +92,19 @@
         $philhealth = (float)($bill['philhealth_approved_amount'] ?? 0);
         $hmo = (float)($bill['hmo_approved_amount'] ?? 0);
         $patientShare = max($total - $philhealth - $hmo, 0);
+        
+        // HMO details
+        $hmoProviderName = $bill['hmo_provider_name'] ?? '';
+        $hmoMemberNo = $bill['hmo_member_no'] ?? '';
+        $hmoLoaNumber = $bill['hmo_loa_number'] ?? '';
+        $hmoValidFrom = $bill['hmo_valid_from'] ?? '';
+        $hmoValidTo = $bill['hmo_valid_to'] ?? '';
+        $hasHmo = !empty($hmoProviderName) || !empty($hmoMemberNo) || $hmo > 0;
+        
+        // PhilHealth details
+        $phRvsCode = $bill['primary_rvs_code'] ?? '';
+        $phIcdCode = $bill['primary_icd10_code'] ?? '';
+        $hasPhilhealth = $philhealth > 0 || !empty($phRvsCode) || !empty($phIcdCode);
 
         $componentMap = [
             'Room & Nursing Charges' => (float)($bill['consultation_fee'] ?? 0),
@@ -121,7 +134,6 @@
             <div class="receipt-meta">
                 <strong>Receipt / Bill #: <?= esc($billNumber) ?></strong><br>
                 Date Issued: <?= esc($formattedDate) ?><br>
-                Service: <?= esc($serviceName) ?><br>
                 Payment Status: <?= esc($status) ?><br>
                 Payment Method: <?= esc(strtoupper($bill['payment_method'] ?? 'Cash')) ?>
             </div>
@@ -274,29 +286,82 @@
             </tbody>
         </table>
 
+        <?php if ($hasPhilhealth): ?>
+        <h3 class="section-title">PhilHealth Coverage</h3>
+        <table class="info-table" style="margin-bottom:18px;">
+            <tr>
+                <td class="label">RVS Code</td>
+                <td><?= esc($phRvsCode ?: '—') ?></td>
+                <td class="label">ICD-10 Code</td>
+                <td><?= esc($phIcdCode ?: '—') ?></td>
+            </tr>
+            <tr>
+                <td class="label">Approved Amount</td>
+                <td colspan="3" style="font-weight:600; color:#065f46;">₱<?= number_format($philhealth, 2) ?></td>
+            </tr>
+        </table>
+        <?php endif; ?>
+        
+        <?php if ($hasHmo): ?>
+        <h3 class="section-title">HMO Coverage</h3>
+        <table class="info-table" style="margin-bottom:18px;">
+            <tr>
+                <td class="label">HMO Provider</td>
+                <td><?= esc($hmoProviderName ?: '—') ?></td>
+                <td class="label">Member Number</td>
+                <td><?= esc($hmoMemberNo ?: '—') ?></td>
+            </tr>
+            <tr>
+                <td class="label">LOA Number</td>
+                <td><?= esc($hmoLoaNumber ?: '—') ?></td>
+                <td class="label">Coverage Period</td>
+                <td>
+                    <?php if ($hmoValidFrom && $hmoValidTo): ?>
+                        <?= esc(date('M d, Y', strtotime($hmoValidFrom))) ?> - <?= esc(date('M d, Y', strtotime($hmoValidTo))) ?>
+                    <?php elseif ($hmoValidFrom): ?>
+                        From: <?= esc(date('M d, Y', strtotime($hmoValidFrom))) ?>
+                    <?php else: ?>
+                        —
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Approved Amount</td>
+                <td colspan="3" style="font-weight:600; color:#1e40af;">₱<?= number_format($hmo, 2) ?></td>
+            </tr>
+        </table>
+        <?php endif; ?>
+        
         <h3 class="section-title">Coverage & Balances</h3>
         <table class="summary-table">
             <tbody>
                 <tr>
-                    <td>Gross Hospital Charges</td>
-                    <td style="text-align:right;">₱<?= number_format($total, 2) ?></td>
+                    <td style="font-weight:600;">Gross Hospital Charges</td>
+                    <td style="text-align:right; font-weight:600;">₱<?= number_format($total, 2) ?></td>
                 </tr>
+                <?php if ($philhealth > 0): ?>
                 <tr>
-                    <td>PhilHealth Benefit</td>
-                    <td style="text-align:right;">₱<?= number_format($philhealth, 2) ?></td>
+                    <td>Less: PhilHealth Benefit</td>
+                    <td style="text-align:right; color:#065f46;">-₱<?= number_format($philhealth, 2) ?></td>
                 </tr>
+                <?php endif; ?>
+                <?php if ($hmo > 0): ?>
                 <tr>
-                    <td>HMO / Insurance Coverage</td>
-                    <td style="text-align:right;">₱<?= number_format($hmo, 2) ?></td>
+                    <td>Less: HMO / Insurance Coverage</td>
+                    <td style="text-align:right; color:#1e40af;">-₱<?= number_format($hmo, 2) ?></td>
                 </tr>
+                <?php endif; ?>
                 <tr class="grand-total-row">
-                    <td>Patient Balance / Payable</td>
-                    <td style="text-align:right;">₱<?= number_format($patientShare, 2) ?></td>
+                    <td style="font-size:15px;">Patient Balance / Payable</td>
+                    <td style="text-align:right; font-size:15px; color:#92400e;">₱<?= number_format($patientShare, 2) ?></td>
                 </tr>
             </tbody>
         </table>
-        <p class="totals-note">Amount paid in words: ____________________________</p>
-        <p class="totals-note">Authorized Signature: ____________________________</p>
+        <p class="totals-note" style="margin-top:20px; padding-top:20px; border-top:2px solid #0f2a5f;">
+            <strong>Amount paid in words:</strong> ____________________________<br><br>
+            <strong>Authorized Signature:</strong> ____________________________<br>
+            <span style="font-size:11px; color:#666;">Date: <?= esc($formattedDate) ?></span>
+        </p>
 
         <p style="text-align:center; margin-top:26px; font-size:12px;">
             Thank you for choosing St. Peter Hospital. For billing inquiries, please contact our Accounts Department within five (5) working days.

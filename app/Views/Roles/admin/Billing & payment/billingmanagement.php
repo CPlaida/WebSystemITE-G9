@@ -75,7 +75,7 @@
                                 <td class="action-buttons">
                                     <a href="<?= base_url('billing/show/' . (int)$bill['id']) ?>" class="btn btn-receipt" target="_blank">View Receipt</a>
                                     <?php if ($ps !== 'paid'): ?>
-                                        <button type="button" class="btn btn-edit" data-action="edit">Edit</button>
+                                        <button type="button" class="btn btn-edit" data-action="edit">Ready for Payment</button>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -130,186 +130,213 @@
         cleanUp();
         
         const content = `
-            <div style="text-align:left;">
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                    <h3 style=\"margin:0; color:#111827; font-weight:700;\">Step 1 — Bill Details</h3>
-                    <button type="button" class="step-toggle" data-target="step1_body" style="border:none; background:#e5e7eb; color:#374151; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
-                </div>
-                <div id="step1_body" class="step-body" style="margin-top:12px; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
-                    <div>
-                        <label style="margin:0; color:#374151; font-weight:600;">Invoice #</label>
-                        <input type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${('INV-' + String(bill.id).padStart(6, '0'))}" disabled>
-                    </div>
-                    <div>
-                        <label style="margin:0; color:#374151; font-weight:600;">Bill Date</label>
-                        <input id="em_bill_date" type="date" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.bill_date || ''}">
-                    </div>
-                    <div>
-                        <label style="margin:0; color:#374151; font-weight:600;">Patient</label>
-                        <input type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${bill.patient_name || 'N/A'}" disabled>
-                    </div>
-                    <div>
-                        <label style="margin:0; color:#374151; font-weight:600;">Amount</label>
-                        <input id="em_final_amount" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.final_amount || 0}">
-                    </div>
-                    <div>
-                        <label style="margin:0; color:#374151; font-weight:600;">Payment Method</label>
-                        <select id="em_payment_method" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;">
-                            ${['cash','credit','debit'].map(m => `<option value="${m}" ${String(bill.payment_method||'cash').toLowerCase()===m?'selected':''}>${m === 'cash' ? 'CASH' : (m === 'credit' ? 'CREDIT CARD' : 'DEBIT CARD')}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label style="margin:0; color:#374151; font-weight:600;">Status</label>
-                        <select id="em_payment_status" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;">
-                            ${['pending','partial','paid','overdue'].map(s => `<option value="${s}" ${String(bill.payment_status||'').toLowerCase()===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
-                        </select>
+            <div style="text-align:left; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                <!-- Step 1: Bill Details -->
+                <div style="background: #667eea; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 8px; display:flex; align-items:center; justify-content:center; color: white; font-weight: 700; font-size: 16px;">1</div>
+                            <h3 style="margin:0; color:#ffffff; font-weight:700; font-size:18px;">Bill Details</h3>
+                        </div>
+                        <button type="button" class="step-toggle" data-target="step1_body" style="border:none; background:rgba(255,255,255,0.2); color:#ffffff; padding:8px 14px; border-radius:8px; font-size:12px; cursor:pointer; transition:all 0.2s;">Hide</button>
                     </div>
                 </div>
-
-                <div style="height:1px; background:#e5e7eb; margin:16px 0;"></div>
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                    <h3 style="margin:0; color:#065f46; font-weight:700;">Step 2 — PhilHealth (if member)</h3>
-                    <button type="button" class="step-toggle" data-target="step2_body" style="border:none; background:#d1fae5; color:#065f46; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
-                </div>
-                <div id="step2_body" class="step-body" style="margin-top:12px;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <label for="em_ph_member" style="margin:0; font-weight:600; min-width:160px;">PhilHealth Member</label>
-                    <input id="em_ph_member" type="checkbox" ${String(bill.philhealth_member||'0')==='1' ? 'checked' : ''}>
-                    <span style="font-size:12px; color:#6b7280;">Check if eligible for PhilHealth</span>
-                </div>
-                <div id="ph_section" style="background:#f3f4f6; border:1px solid #e5e7eb; border-radius:6px; padding:12px;">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+                <div id="step1_body" class="step-body" style="margin-top:0; margin-bottom:24px; background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:18px;">
                         <div>
-                            <label style="margin:0; color:#374151; font-weight:600;">Admission Date</label>
-                            <input id="em_admission_date" type="date" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.admission_date || bill.bill_date || ''}">
+                            <label style="display:block; margin:0 0 8px; color:#374151; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">Invoice #</label>
+                            <input type="text" style="width:100%; padding:12px; border:2px solid #e5e7eb; border-radius:8px; background:#f9fafb; color:#6b7280; font-weight:600; transition:all 0.2s;" value="${('INV-' + String(bill.id).padStart(6, '0'))}" disabled>
                         </div>
                         <div>
-                            <label style="margin:0; color:#374151; font-weight:600;">Approved Deduction (Final)</label>
-                            <input id="em_ph_approved" type="number" step="0.01" placeholder="Select a case rate first" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.philhealth_approved_amount || ''}" disabled>
+                            <label style="display:block; margin:0 0 8px; color:#374151; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">Bill Date</label>
+                            <input id="em_bill_date" type="date" style="width:100%; padding:12px; border:2px solid #e5e7eb; border-radius:8px; transition:all 0.2s; font-size:14px;" value="${bill.bill_date || ''}" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102,126,234,0.1)'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
                         </div>
                         <div>
-                            <label style="margin:0; color:#374151; font-weight:600;">Select Case Rate(s)</label>
-                            <select id="em_ph_rate_select" multiple size="4" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; min-height:140px;">
-                            </select>
-                            <input type="hidden" id="em_ph_rate_id">
-                            <input type="hidden" id="em_ph_rate_amount">
-                            <div id="em_ph_rate_hint" style="font-size:12px; color:#6b7280; margin-top:6px;">Hold Ctrl/Cmd to pick multiple case rates (filtered by RVS/ICD + admission date)</div>
+                            <label style="display:block; margin:0 0 8px; color:#374151; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">Patient Name</label>
+                            <input type="text" style="width:100%; padding:12px; border:2px solid #e5e7eb; border-radius:8px; background:#f9fafb; color:#6b7280; font-weight:500;" value="${bill.patient_name || 'N/A'}" disabled>
                         </div>
                         <div>
-                            <label style="margin:0; color:#374151; font-weight:600;">Primary RVS Code</label>
-                            <input id="em_primary_rvs" type="text" placeholder="e.g., 48010" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.primary_rvs_code || ''}">
+                            <label style="display:block; margin:0 0 8px; color:#374151; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">Total Amount (₱)</label>
+                            <input id="em_final_amount" type="number" step="0.01" style="width:100%; padding:12px; border:2px solid #e5e7eb; border-radius:8px; transition:all 0.2s; font-size:14px; font-weight:600; color:#111827;" value="${bill.final_amount || 0}" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102,126,234,0.1)'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
                         </div>
                         <div>
-                            <label style="margin:0; color:#374151; font-weight:600;">Primary ICD-10 Code</label>
-                            <input id="em_primary_icd" type="text" placeholder="e.g., J18.9" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;" value="${bill.primary_icd10_code || ''}">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#374151; font-weight:600;">Remaining Balance</label>
-                            <input id="em_remaining" type="text" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${(() => {
-                                const gross = +bill.final_amount || 0;
-                                const ph = +bill.philhealth_approved_amount || 0;
-                                return Math.max(gross - ph, 0).toFixed(2);
-                            })()}" disabled>
-                        </div>
-                        <div style="grid-column: 1 / -1;">
-                            <label style="margin:0; color:#374151; font-weight:600;">Reason / Note</label>
-                            <textarea id="em_ph_note" rows="2" placeholder="Required if codes missing or approved < suggested" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px;">${bill.philhealth_note || ''}</textarea>
-                        </div>
-                    </div>
-                </div>
-                </div>
-
-                <div style="height:1px; background:#e5e7eb; margin:16px 0;"></div>
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                    <h3 style="margin:0 0 10px; color:#1d4ed8; font-weight:700;">Step 3 — HMO (if applicable)</h3>
-                    <button type="button" class="step-toggle" data-target="step3_body" style="border:none; background:#dbeafe; color:#1d4ed8; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
-                </div>
-                <div id="step3_body" class="step-body" style="margin-top:12px;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <label for="em_hmo_enabled" style="margin:0; font-weight:600; min-width:180px; color:#1d4ed8;">Use HMO Coverage</label>
-                    <input id="em_hmo_enabled" type="checkbox">
-                    <span style="font-size:12px; color:#6b7280;">Check if patient has an approved HMO LOA</span>
-                </div>
-                <div id="hmo_section" style="background:#eff6ff; border:1px solid #dbeafe; border-radius:6px; padding:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Provider</label>
-                            <select id="em_hmo_provider" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                                <option value="">Select HMO Provider</option>
+                            <label style="display:block; margin:0 0 8px; color:#374151; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">Payment Method</label>
+                            <select id="em_payment_method" style="width:100%; padding:12px; border:2px solid #e5e7eb; border-radius:8px; transition:all 0.2s; font-size:14px; background:white; cursor:pointer;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102,126,234,0.1)'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
+                                ${['cash','credit','debit'].map(m => `<option value="${m}" ${String(bill.payment_method||'cash').toLowerCase()===m?'selected':''}>${m === 'cash' ? 'CASH' : (m === 'credit' ? 'CREDIT CARD' : 'DEBIT CARD')}</option>`).join('')}
                             </select>
                         </div>
                         <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Member Number</label>
-                            <input id="em_hmo_member_no" type="text" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="e.g., MAXI-123456" value="${bill.hmo_member_no || ''}">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">LOA Number</label>
-                            <input id="em_hmo_loa_number" type="text" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="LOA Reference" value="${bill.hmo_loa_number || ''}">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Valid From</label>
-                            <input id="em_hmo_valid_from" type="date" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_valid_from || ''}">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Valid To</label>
-                            <input id="em_hmo_valid_to" type="date" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_valid_to || ''}">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Coverage Limit (₱)</label>
-                            <input id="em_hmo_coverage_limit" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_coverage_limit || ''}">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Approved Amount (₱)</label>
-                            <input id="em_hmo_approved_amount" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" value="${bill.hmo_approved_amount || ''}">
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">Patient Share (₱)</label>
-                            <input id="em_hmo_patient_share" type="number" step="0.01" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px; background:#f3f4f6; color:#6b7280;" value="${(() => {
-                                const gross = +bill.final_amount || 0;
-                                const ph = +bill.philhealth_approved_amount || 0;
-                                const hmo = +bill.hmo_approved_amount || 0;
-                                const afterPh = Math.max(gross - ph, 0);
-                                const remaining = Math.max(afterPh - hmo, 0);
-                                return remaining.toFixed(2);
-                            })()}" readonly>
-                        </div>
-                        <div>
-                            <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Status</label>
-                            <select id="em_hmo_status" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;">
-                                ${['pending','for-approval','approved','submitted','denied','paid'].map(s => `<option value="${s}" ${String(bill.hmo_status||'').toLowerCase()===s?'selected':''}>${s.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>`).join('')}
+                            <label style="display:block; margin:0 0 8px; color:#374151; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">Payment Status</label>
+                            <select id="em_payment_status" style="width:100%; padding:12px; border:2px solid #e5e7eb; border-radius:8px; transition:all 0.2s; font-size:14px; background:white; cursor:pointer; font-weight:600;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102,126,234,0.1)'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
+                                ${['pending','partial','paid','overdue'].map(s => `<option value="${s}" ${String(bill.payment_status||'').toLowerCase()===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
                             </select>
                         </div>
                     </div>
-                    <div style="margin-top:12px;">
-                        <label style="margin:0; color:#1e3a8a; font-weight:600;">HMO Notes</label>
-                        <textarea id="em_hmo_notes" rows="2" style="width:100%; padding:10px; border:1px solid #cbd5f5; border-radius:6px;" placeholder="Additional details for HMO claim">${bill.hmo_notes || ''}</textarea>
-                    </div>
-                </div>
                 </div>
 
-                <div style="height:1px; background:#e5e7eb; margin:24px 0 12px;"></div>
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                    <h3 style="margin:0 0 10px; color:#92400e; font-weight:700;">Step 4 — Total Billing Summary</h3>
-                    <button type="button" class="step-toggle" data-target="step4_body" style="border:none; background:#fde68a; color:#92400e; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Hide</button>
-                </div>
-                <div id="step4_body" class="step-body" style="margin-top:12px;">
-                <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:10px; padding:18px; display:flex; justify-content:space-between; align-items:center; gap:16px;">
-                    <div>
-                        <p style="margin:0; color:#92400e; font-weight:600;">Remaining Balance to Collect</p>
-                        <p style="margin:4px 0 0; color:#7c2d12; font-size:14px;">(After PhilHealth & HMO deductions)</p>
-                    </div>
-                    <div style="text-align:right;">
-                        <span style="display:block; font-size:30px; font-weight:800; color:#92400e;">₱<span id="em_total_billing_display">${(() => {
-                            const gross = +bill.final_amount || 0;
-                            const ph = +bill.philhealth_approved_amount || 0;
-                            const hmo = +bill.hmo_approved_amount || 0;
-                            const afterPh = Math.max(gross - ph, 0);
-                            const remaining = Math.max(afterPh - hmo, 0);
-                            return remaining.toFixed(2);
-                        })()}</span></span>
-                        <small style="color:#92400e;">Patient share to collect</small>
+                <!-- Step 2: PhilHealth -->
+                <div style="background: #10b981; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 8px; display:flex; align-items:center; justify-content:center; color: white; font-weight: 700; font-size: 16px;">2</div>
+                            <h3 style="margin:0; color:#ffffff; font-weight:700; font-size:18px;">PhilHealth Coverage</h3>
+                        </div>
+                        <button type="button" class="step-toggle" data-target="step2_body" style="border:none; background:rgba(255,255,255,0.2); color:#ffffff; padding:8px 14px; border-radius:8px; font-size:12px; cursor:pointer; transition:all 0.2s;">Hide</button>
                     </div>
                 </div>
+                <div id="step2_body" class="step-body" style="margin-top:0; margin-bottom:24px;">
+                    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; padding:16px; background:#ecfdf5; border-radius:10px; border:2px solid #10b981;">
+                            <input id="em_ph_member" type="checkbox" style="width:20px; height:20px; cursor:pointer; accent-color:#10b981;" ${String(bill.philhealth_member||'0')==='1' ? 'checked' : ''}>
+                            <div>
+                                <label for="em_ph_member" style="margin:0; font-weight:700; color:#065f46; font-size:15px; cursor:pointer;">PhilHealth Member</label>
+                                <p style="margin:4px 0 0; color:#047857; font-size:12px;">Check if patient is eligible for PhilHealth benefits</p>
+                            </div>
+                        </div>
+                        <div id="ph_section" style="background:#f0fdf4; border:2px solid #10b981; border-radius:12px; padding:20px; display:none;">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px;">
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Admission Date</label>
+                                    <input id="em_admission_date" type="date" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:white; transition:all 0.2s;" value="${bill.admission_date || bill.bill_date || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Approved Deduction (₱)</label>
+                                    <input id="em_ph_approved" type="number" step="0.01" placeholder="Select case rate first" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:#f9fafb; color:#6b7280; font-weight:600;" value="${bill.philhealth_approved_amount || ''}" disabled>
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Select Case Rate(s)</label>
+                                    <select id="em_ph_rate_select" multiple size="4" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; min-height:140px; background:white; cursor:pointer;">
+                                    </select>
+                                    <input type="hidden" id="em_ph_rate_id">
+                                    <input type="hidden" id="em_ph_rate_amount">
+                                    <div id="em_ph_rate_hint" style="font-size:11px; color:#047857; margin-top:8px; font-style:italic;">Hold Ctrl/Cmd to select multiple case rates</div>
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Primary RVS Code</label>
+                                    <input id="em_primary_rvs" type="text" placeholder="e.g., 48010" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:white;" value="${bill.primary_rvs_code || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Primary ICD-10 Code</label>
+                                    <input id="em_primary_icd" type="text" placeholder="e.g., J18.9" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:white;" value="${bill.primary_icd10_code || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Remaining Balance (₱)</label>
+                                    <input id="em_remaining" type="text" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:#f9fafb; color:#6b7280; font-weight:600;" value="${(() => {
+                                        const gross = +bill.final_amount || 0;
+                                        const ph = +bill.philhealth_approved_amount || 0;
+                                        return Math.max(gross - ph, 0).toFixed(2);
+                                    })()}" disabled>
+                                </div>
+                                <div style="grid-column: 1 / -1;">
+                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Reason / Note</label>
+                                    <textarea id="em_ph_note" rows="3" placeholder="Required if codes missing or approved amount is less than suggested" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:white; resize:vertical;" value="${bill.philhealth_note || ''}">${bill.philhealth_note || ''}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: HMO -->
+                <div style="background: #3b82f6; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 8px; display:flex; align-items:center; justify-content:center; color: white; font-weight: 700; font-size: 16px;">3</div>
+                            <h3 style="margin:0; color:#ffffff; font-weight:700; font-size:18px;">HMO Coverage</h3>
+                        </div>
+                        <button type="button" class="step-toggle" data-target="step3_body" style="border:none; background:rgba(255,255,255,0.2); color:#ffffff; padding:8px 14px; border-radius:8px; font-size:12px; cursor:pointer; transition:all 0.2s;">Hide</button>
+                    </div>
+                </div>
+                <div id="step3_body" class="step-body" style="margin-top:0; margin-bottom:24px;">
+                    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; padding:16px; background:#eff6ff; border-radius:10px; border:2px solid #3b82f6;">
+                            <input id="em_hmo_enabled" type="checkbox" style="width:20px; height:20px; cursor:pointer; accent-color:#3b82f6;">
+                            <div>
+                                <label for="em_hmo_enabled" style="margin:0; font-weight:700; color:#1e40af; font-size:15px; cursor:pointer;">Use HMO Coverage</label>
+                                <p style="margin:4px 0 0; color:#1d4ed8; font-size:12px;">Check if patient has an approved HMO Letter of Authorization (LOA)</p>
+                            </div>
+                        </div>
+                        <div id="hmo_section" style="background:#eff6ff; border:2px solid #3b82f6; border-radius:12px; padding:20px; display:none;">
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:18px;">
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">HMO Provider</label>
+                                    <select id="em_hmo_provider" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white; cursor:pointer;">
+                                        <option value="">Select HMO Provider</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Member Number</label>
+                                    <input id="em_hmo_member_no" type="text" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white;" placeholder="e.g., MAXI-123456" value="${bill.hmo_member_no || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">LOA Number</label>
+                                    <input id="em_hmo_loa_number" type="text" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white;" placeholder="LOA Reference" value="${bill.hmo_loa_number || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Coverage Valid From</label>
+                                    <input id="em_hmo_valid_from" type="date" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white;" value="${bill.hmo_valid_from || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Coverage Valid To</label>
+                                    <input id="em_hmo_valid_to" type="date" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white;" value="${bill.hmo_valid_to || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Approved Amount (₱)</label>
+                                    <input id="em_hmo_approved_amount" type="number" step="0.01" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white; font-weight:600;" value="${bill.hmo_approved_amount || ''}">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Patient Share (₱)</label>
+                                    <input id="em_hmo_patient_share" type="number" step="0.01" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:#f9fafb; color:#6b7280; font-weight:600;" value="${(() => {
+                                        const gross = +bill.final_amount || 0;
+                                        const ph = +bill.philhealth_approved_amount || 0;
+                                        const hmo = +bill.hmo_approved_amount || 0;
+                                        const afterPh = Math.max(gross - ph, 0);
+                                        const remaining = Math.max(afterPh - hmo, 0);
+                                        return remaining.toFixed(2);
+                                    })()}" readonly>
+                                </div>
+                            </div>
+                            <div style="margin-top:18px;">
+                                <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">HMO Notes</label>
+                                <textarea id="em_hmo_notes" rows="3" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white; resize:vertical;" placeholder="Additional details for HMO claim">${bill.hmo_notes || ''}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Summary -->
+                <div style="background: #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="background: rgba(255,255,255,0.2); width: 36px; height: 36px; border-radius: 8px; display:flex; align-items:center; justify-content:center; color: white; font-weight: 700; font-size: 16px;">4</div>
+                            <h3 style="margin:0; color:#ffffff; font-weight:700; font-size:18px;">Payment Summary</h3>
+                        </div>
+                        <button type="button" class="step-toggle" data-target="step4_body" style="border:none; background:rgba(255,255,255,0.2); color:#ffffff; padding:8px 14px; border-radius:8px; font-size:12px; cursor:pointer; transition:all 0.2s;">Hide</button>
+                    </div>
+                </div>
+                <div id="step4_body" class="step-body" style="margin-top:0;">
+                    <div style="background: #fef3c7; border:3px solid #f59e0b; border-radius:16px; padding:28px; box-shadow: 0 10px 25px rgba(245,158,11,0.2);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap;">
+                            <div>
+                                <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                                    <div>
+                                        <p style="margin:0; color:#92400e; font-weight:700; font-size:18px; letter-spacing:0.5px;">Remaining Balance to Collect</p>
+                                        <p style="margin:6px 0 0; color:#78350f; font-size:13px; opacity:0.9;">After PhilHealth & HMO deductions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align:right; background:white; padding:20px 28px; border-radius:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width:200px;">
+                                <span style="display:block; font-size:42px; font-weight:900; color:#92400e; line-height:1; margin-bottom:4px;">₱<span id="em_total_billing_display">${(() => {
+                                    const gross = +bill.final_amount || 0;
+                                    const ph = +bill.philhealth_approved_amount || 0;
+                                    const hmo = +bill.hmo_approved_amount || 0;
+                                    const afterPh = Math.max(gross - ph, 0);
+                                    const remaining = Math.max(afterPh - hmo, 0);
+                                    return remaining.toFixed(2);
+                                })()}</span></span>
+                                <small style="color:#78350f; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:1px;">Patient Share</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>`;
 
@@ -322,12 +349,20 @@
         };
         
         Swal.fire({
-            title: 'Edit Bill',
+            title: '<div style="font-size:24px; font-weight:700; color:#1f2937; margin-bottom:8px;">Billing Payment</div>',
             html: content,
-            width: 860,
+            width: 920,
             showCancelButton: true,
-            confirmButtonText: 'Save Changes',
+            confirmButtonText: '<i class="fas fa-save"></i> Save Changes',
+            cancelButtonText: '<i class="fas fa-times"></i> Cancel',
+            confirmButtonColor: '#667eea',
+            cancelButtonColor: '#6b7280',
             focusConfirm: false,
+            customClass: {
+                popup: 'billing-payment-modal',
+                confirmButton: 'swal-confirm-btn',
+                cancelButton: 'swal-cancel-btn'
+            },
             preConfirm: () => {
                 try {
                     console.log('[EditBill] preConfirm started');
@@ -344,10 +379,8 @@
                     fd.append('hmo_loa_number', document.getElementById('em_hmo_loa_number').value);
                     fd.append('hmo_valid_from', document.getElementById('em_hmo_valid_from').value);
                     fd.append('hmo_valid_to', document.getElementById('em_hmo_valid_to').value);
-                    fd.append('hmo_coverage_limit', document.getElementById('em_hmo_coverage_limit').value);
                     fd.append('hmo_approved_amount', document.getElementById('em_hmo_approved_amount').value);
                     fd.append('hmo_patient_share', document.getElementById('em_hmo_patient_share').value);
-                    fd.append('hmo_status', document.getElementById('em_hmo_status').value);
                     fd.append('hmo_notes', document.getElementById('em_hmo_notes').value);
 
                     // PhilHealth fields
@@ -681,4 +714,34 @@
         }
     });
 </script>
+<style>
+    .billing-payment-modal {
+        border-radius: 16px !important;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+    }
+    .swal-confirm-btn {
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        transition: all 0.2s !important;
+    }
+    .swal-confirm-btn:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(102,126,234,0.4) !important;
+    }
+    .swal-cancel-btn {
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+    }
+    .step-toggle:hover {
+        background: rgba(255,255,255,0.3) !important;
+        transform: scale(1.05);
+    }
+    input:focus, select:focus, textarea:focus {
+        outline: none !important;
+    }
+</style>
 <?= $this->endSection() ?>

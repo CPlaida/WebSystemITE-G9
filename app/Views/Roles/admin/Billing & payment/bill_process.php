@@ -9,10 +9,7 @@
             'hmo_valid_from',
             'hmo_valid_to',
             'hmo_loa_number',
-            'hmo_coverage_limit',
             'hmo_approved_amount',
-            'hmo_patient_share',
-            'hmo_status',
             'hmo_notes'
         ];
         foreach ($hmoFields as $field) {
@@ -100,32 +97,8 @@
                             <input type="text" id="hmo_loa_number" name="hmo_loa_number" class="form-control" placeholder="Enter LOA number" value="<?= esc($bill['hmo_loa_number'] ?? '') ?>">
                         </div>
                         <div class="form-group">
-                            <label for="hmo_coverage_limit">Coverage Limit (₱)</label>
-                            <input type="number" step="0.01" min="0" id="hmo_coverage_limit" name="hmo_coverage_limit" class="form-control" value="<?= esc($bill['hmo_coverage_limit'] ?? '') ?>">
-                        </div>
-                        <div class="form-group">
                             <label for="hmo_approved_amount">Approved Amount (₱)</label>
                             <input type="number" step="0.01" min="0" id="hmo_approved_amount" name="hmo_approved_amount" class="form-control" value="<?= esc($bill['hmo_approved_amount'] ?? '') ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="hmo_patient_share">Patient Share (₱)</label>
-                            <input type="number" step="0.01" min="0" id="hmo_patient_share" name="hmo_patient_share" class="form-control" value="<?= esc($bill['hmo_patient_share'] ?? '') ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="hmo_status">HMO Status</label>
-                            <?php $hmoStatus = strtolower($bill['hmo_status'] ?? 'pending'); ?>
-                            <select id="hmo_status" name="hmo_status" class="form-control">
-                                <?php $statuses = [
-                                    'pending' => 'Pending Pre-Auth',
-                                    'submitted' => 'Submitted to HMO',
-                                    'approved' => 'Approved',
-                                    'denied' => 'Denied',
-                                    'paid' => 'Paid'
-                                ]; ?>
-                                <?php foreach ($statuses as $value => $label): ?>
-                                    <option value="<?= esc($value) ?>" <?= $hmoStatus === $value ? 'selected' : '' ?>><?= esc($label) ?></option>
-                                <?php endforeach; ?>
-                            </select>
                         </div>
                         <div class="form-group" style="grid-column:1 / -1;">
                             <label for="hmo_notes">HMO Notes</label>

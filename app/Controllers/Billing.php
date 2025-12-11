@@ -448,6 +448,99 @@ class Billing extends BaseController
         $tax = isset($bill['tax']) ? (float)$bill['tax'] : round($subtotal * 0.12, 2);
         $total = isset($bill['final_amount']) ? (float)$bill['final_amount'] : ($subtotal + $tax);
 
+        // Load HMO provider name if hmo_provider_id exists
+        if (!empty($bill['hmo_provider_id']) && empty($bill['hmo_provider_name'])) {
+            try {
+                $hmoProvider = (new HmoProviderModel())->find((int)$bill['hmo_provider_id']);
+                if ($hmoProvider) {
+                    $bill['hmo_provider_name'] = $hmoProvider['name'] ?? '';
+                }
+            } catch (\Throwable $e) {
+                // Ignore if provider not found
+            }
+        }
+
+        // Load attending physician from admission_details or appointments
+        $attendingPhysician = null;
+        if (!empty($bill['patient_id'])) {
+            $patientId = $bill['patient_id'];
+            
+            // First, try to get from admission_details (most recent admission)
+            if ($db->tableExists('admission_details')) {
+                try {
+                    $admission = $db->table('admission_details ad')
+                        ->select('d.first_name, d.last_name, u.username, ad.attending_doctor_id')
+                        ->join('doctors d', 'd.id = ad.attending_doctor_id', 'left')
+                        ->join('users u', 'u.id = d.user_id', 'left')
+                        ->where('ad.patient_id', $patientId)
+                        ->whereIn('ad.status', ['admitted', 'discharged'])
+                        ->orderBy('ad.admission_date', 'DESC')
+                        ->orderBy('ad.created_at', 'DESC')
+                        ->limit(1)
+                        ->get()
+                        ->getRowArray();
+                    
+                    if ($admission && !empty($admission['attending_doctor_id'])) {
+                        $firstName = trim($admission['first_name'] ?? '');
+                        $lastName = trim($admission['last_name'] ?? '');
+                        $username = $admission['username'] ?? '';
+                        
+                        if (!empty($firstName) || !empty($lastName)) {
+                            $attendingPhysician = trim($firstName . ' ' . $lastName);
+                            // Remove "User" word if present
+                            $attendingPhysician = preg_replace('/\s+User\s*$/i', '', $attendingPhysician);
+                            $attendingPhysician = trim($attendingPhysician);
+                        } elseif (!empty($username)) {
+                            $attendingPhysician = preg_replace('/\s+User\s*$/i', '', $username);
+                            $attendingPhysician = trim($attendingPhysician);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore errors
+                }
+            }
+            
+            // If no admission found, try to get from most recent appointment
+            if (empty($attendingPhysician) && $db->tableExists('appointments')) {
+                try {
+                    $appointment = $db->table('appointments a')
+                        ->select('d.first_name, d.last_name, u.username, a.doctor_id')
+                        ->join('doctors d', '(d.user_id = a.doctor_id OR d.id = a.doctor_id)', 'left', false)
+                        ->join('users u', 'u.id = a.doctor_id', 'left')
+                        ->where('a.patient_id', $patientId)
+                        ->whereIn('a.status', ['completed', 'confirmed', 'in_progress'])
+                        ->orderBy('a.appointment_date', 'DESC')
+                        ->orderBy('a.created_at', 'DESC')
+                        ->limit(1)
+                        ->get()
+                        ->getRowArray();
+                    
+                    if ($appointment && !empty($appointment['doctor_id'])) {
+                        $firstName = trim($appointment['first_name'] ?? '');
+                        $lastName = trim($appointment['last_name'] ?? '');
+                        $username = $appointment['username'] ?? '';
+                        
+                        if (!empty($firstName) || !empty($lastName)) {
+                            $attendingPhysician = trim($firstName . ' ' . $lastName);
+                            // Remove "User" word if present
+                            $attendingPhysician = preg_replace('/\s+User\s*$/i', '', $attendingPhysician);
+                            $attendingPhysician = trim($attendingPhysician);
+                        } elseif (!empty($username)) {
+                            $attendingPhysician = preg_replace('/\s+User\s*$/i', '', $username);
+                            $attendingPhysician = trim($attendingPhysician);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore errors
+                }
+            }
+        }
+        
+        // Set consulting_doctor if we found an attending physician
+        if (!empty($attendingPhysician)) {
+            $bill['consulting_doctor'] = $attendingPhysician;
+        }
+
         // Provide aliases used by receipt view (derived from numeric id)
         $bill['bill_number'] = 'INV-' . str_pad((string)$id, 6, '0', STR_PAD_LEFT);
         $bill['date_issued'] = $bill['bill_date'] ?? date('Y-m-d');
@@ -748,7 +841,10 @@ class Billing extends BaseController
             }
         }
         
-        return $this->response->setJSON(['status' => 'success', 'message' => 'Bill updated successfully']);
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Bill updated successfully']);
+        }
+        return redirect()->to(base_url('billing'))->with('message', 'Bill updated successfully');
     }
 
     public function delete($id)
@@ -1098,7 +1194,7 @@ class Billing extends BaseController
         if ($this->request->isAJAX()) {
             return $this->response->setJSON(['status' => 'success', 'id' => $billId]);
         }
-        return redirect()->to(base_url('billing/show/' . $billId))->with('message', 'Bill created successfully');
+        return redirect()->to(base_url('billing'))->with('message', 'Bill saved successfully');
     }
 
     /**
