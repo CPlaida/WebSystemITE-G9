@@ -55,6 +55,7 @@ class CreateBillingTable extends Migration
         $this->forge->addField([
             'id'         => ['type' => 'INT', 'unsigned' => true, 'auto_increment' => true],
             'billing_id' => ['type' => 'INT', 'unsigned' => true],
+            'service_id' => ['type' => 'INT', 'unsigned' => true, 'null' => true, 'comment' => 'FK to services.id (optional - for catalog services)'],
             'service'    => ['type' => 'VARCHAR', 'constraint' => 255],
             'qty'        => ['type' => 'INT', 'unsigned' => true, 'default' => 1],
             'price'      => ['type' => 'DECIMAL', 'constraint' => '10,2', 'default' => 0.00],
@@ -63,7 +64,9 @@ class CreateBillingTable extends Migration
             'updated_at' => ['type' => 'DATETIME', 'null' => true],
         ]);
         $this->forge->addKey('id', true);
+        $this->forge->addKey('service_id');
         $this->forge->addForeignKey('billing_id', 'billing', 'id', 'CASCADE', 'CASCADE');
+        // FK for service_id will be added after services table is created
         $this->forge->createTable('billing_items', true);
     }
 

@@ -15,11 +15,12 @@ class PhilHealthAuditModel extends Model
     protected $allowedFields = [
         'bill_id',
         'patient_id',
+        'case_rate_id',      // NEW: FK to philhealth_case_rates.id
         'suggested_amount',
         'approved_amount',
         'officer_user_id',
         'codes_used',
-        'rate_ids',
+        'rate_ids',          // Deprecated: use case_rate_id instead
         'notes',
         'created_at',
         'updated_at',

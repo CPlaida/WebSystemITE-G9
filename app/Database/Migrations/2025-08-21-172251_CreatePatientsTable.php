@@ -142,22 +142,6 @@ class CreatePatientsTable extends Migration
                 'constraint' => 20,
                 'null'       => true,
             ],
-            'vitals_bp' => [
-                'type'       => 'VARCHAR',
-                'constraint' => 20,
-                'null'       => true,
-            ],
-            'vitals_hr' => [
-                'type'       => 'SMALLINT',
-                'constraint' => 3,
-                'unsigned'   => true,
-                'null'       => true,
-            ],
-            'vitals_temp' => [
-                'type'       => 'DECIMAL',
-                'constraint' => '4,1',
-                'null'       => true,
-            ],
             'medical_history' => [
                 'type' => 'TEXT',
                 'null' => true,

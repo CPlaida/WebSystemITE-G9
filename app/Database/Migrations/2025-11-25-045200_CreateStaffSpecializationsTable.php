@@ -60,6 +60,9 @@ class CreateStaffSpecializationsTable extends Migration
         $this->forge->createTable('staff_specializations', true);
 
         $this->seedDefaultSpecializations();
+
+        // Note: doctors table has been consolidated into staff_profiles
+        // FK constraint for specialization_id is handled in staff_profiles table creation
     }
 
     public function down()

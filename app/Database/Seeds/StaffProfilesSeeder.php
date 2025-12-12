@@ -45,69 +45,8 @@ class StaffProfilesSeeder extends Seeder
         };
         
         // Staff profiles data
+        // Note: Doctors are handled by DoctorSeeder, so only non-doctor staff are here
         $staffProfiles = [
-            // Doctors
-            [
-                'first_name' => 'Maria',
-                'middle_name' => 'Santos',
-                'last_name' => 'Cruz',
-                'gender' => 'female',
-                'date_of_birth' => '1985-03-15',
-                'phone' => '+63 912 345 6789',
-                'email' => 'maria.cruz@hospital.com',
-                'role_id' => $getRoleId('doctor'),
-                'license_number' => 'MD-2023-001',
-                'department_id' => $getDeptId('Cardiology'),
-                'specialization_id' => $getSpecId('Interventional Cardiology'),
-                'address' => '123 Medical Plaza, Quezon City',
-                'hire_date' => '2020-01-15',
-                'status' => 'active',
-                'emergency_contact_name' => 'Juan Cruz',
-                'emergency_contact_phone' => '+63 912 345 6790',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'first_name' => 'John',
-                'middle_name' => 'Reyes',
-                'last_name' => 'Garcia',
-                'gender' => 'male',
-                'date_of_birth' => '1988-07-22',
-                'phone' => '+63 912 345 6788',
-                'email' => 'john.garcia@hospital.com',
-                'role_id' => $getRoleId('doctor'),
-                'license_number' => 'MD-2023-002',
-                'department_id' => $getDeptId('Emergency Department'),
-                'specialization_id' => $getSpecId('Emergency Medicine'),
-                'address' => '456 Health Avenue, Manila',
-                'hire_date' => '2019-06-01',
-                'status' => 'active',
-                'emergency_contact_name' => 'Maria Garcia',
-                'emergency_contact_phone' => '+63 912 345 6787',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'first_name' => 'Anna',
-                'middle_name' => 'Lopez',
-                'last_name' => 'Torres',
-                'gender' => 'female',
-                'date_of_birth' => '1990-11-08',
-                'phone' => '+63 912 345 6787',
-                'email' => 'anna.torres@hospital.com',
-                'role_id' => $getRoleId('doctor'),
-                'license_number' => 'MD-2023-003',
-                'department_id' => $getDeptId('Pediatrics'),
-                'specialization_id' => $getSpecId('Pediatric Neurology'),
-                'address' => '789 Child Care St, Makati',
-                'hire_date' => '2021-03-10',
-                'status' => 'active',
-                'emergency_contact_name' => 'Carlos Torres',
-                'emergency_contact_phone' => '+63 912 345 6786',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            
             // Nurses
             [
                 'first_name' => 'Sarah',
@@ -260,54 +199,94 @@ class StaffProfilesSeeder extends Seeder
                 'updated_at' => $now,
             ],
             
-            // Inactive Staff
-            [
-                'first_name' => 'Elizabeth',
-                'middle_name' => 'Gomez',
-                'last_name' => 'Ramos',
-                'gender' => 'female',
-                'date_of_birth' => '1986-10-30',
-                'phone' => '+63 912 345 6778',
-                'email' => 'elizabeth.ramos@hospital.com',
-                'role_id' => $getRoleId('doctor'),
-                'license_number' => 'MD-2019-001',
-                'department_id' => $getDeptId('General Medicine'),
-                'specialization_id' => null,
-                'address' => '852 Medical Center, BGC',
-                'hire_date' => '2018-03-01',
-                'status' => 'inactive',
-                'emergency_contact_name' => 'Richard Ramos',
-                'emergency_contact_phone' => '+63 912 345 6777',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
         ];
         
-        // Insert staff profiles
+        // Insert staff profiles and create user accounts
         $inserted = 0;
         $skipped = 0;
+        $usersCreated = 0;
         
         foreach ($staffProfiles as $staff) {
             // Check if staff with same email or license number already exists
             $exists = false;
+            $existingProfile = null;
             if (!empty($staff['email'])) {
-                $exists = $this->db->table('staff_profiles')
+                $existingProfile = $this->db->table('staff_profiles')
                     ->where('email', $staff['email'])
-                    ->countAllResults() > 0;
+                    ->get()
+                    ->getRowArray();
+                $exists = $existingProfile !== null;
             }
             
             if (!$exists && !empty($staff['license_number'])) {
-                $exists = $this->db->table('staff_profiles')
+                $existingProfile = $this->db->table('staff_profiles')
                     ->where('license_number', $staff['license_number'])
-                    ->countAllResults() > 0;
+                    ->get()
+                    ->getRowArray();
+                $exists = $existingProfile !== null;
             }
             
             if (!$exists) {
+                // Step 1: Create user account if it doesn't exist
+                $userId = null;
+                if (!empty($staff['email'])) {
+                    $userRow = $this->db->table('users')
+                        ->where('email', $staff['email'])
+                        ->get()
+                        ->getRowArray();
+                    
+                    if (!$userRow) {
+                        // Generate username from email or name
+                        $username = str_replace('@hospital.com', '', $staff['email']);
+                        $username = str_replace('.', '_', $username);
+                        
+                        $userData = [
+                            'username' => $username,
+                            'email' => $staff['email'],
+                            'password' => password_hash('staff123', PASSWORD_DEFAULT), // Default password
+                            'role_id' => $staff['role_id'],
+                            'status' => $staff['status'] === 'active' ? 'active' : 'inactive',
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ];
+                        
+                        $this->db->table('users')->insert($userData);
+                        $userId = $this->db->insertID();
+                        $usersCreated++;
+                    } else {
+                        $userId = $userRow['id'];
+                        // Update role_id if needed
+                        if (($userRow['role_id'] ?? null) != $staff['role_id']) {
+                            $this->db->table('users')
+                                ->where('id', $userId)
+                                ->update(['role_id' => $staff['role_id'], 'updated_at' => $now]);
+                        }
+                    }
+                }
+                
+                // Step 2: Add user_id to staff profile
+                $staff['user_id'] = $userId;
+                
+                // Step 3: Insert staff profile
                 $this->db->table('staff_profiles')->insert($staff);
                 $inserted++;
                 $name = trim(($staff['last_name'] ?? '') . ', ' . ($staff['first_name'] ?? ''));
                 echo "✓ Inserted staff: {$name}\n";
             } else {
+                // Update existing profile if user_id is missing
+                if (empty($existingProfile['user_id']) && !empty($staff['email'])) {
+                    $userRow = $this->db->table('users')
+                        ->where('email', $staff['email'])
+                        ->get()
+                        ->getRowArray();
+                    
+                    if ($userRow) {
+                        $this->db->table('staff_profiles')
+                            ->where('id', $existingProfile['id'])
+                            ->update(['user_id' => $userRow['id'], 'updated_at' => $now]);
+                    }
+                }
+                
                 $skipped++;
                 $name = trim(($staff['last_name'] ?? '') . ', ' . ($staff['first_name'] ?? ''));
                 echo "- Skipped existing staff: {$name}\n";
@@ -316,6 +295,7 @@ class StaffProfilesSeeder extends Seeder
         
         echo "\nStaff Profiles Seeder completed.\n";
         echo "Inserted: {$inserted} staff profiles\n";
+        echo "Users created: {$usersCreated}\n";
         echo "Skipped: {$skipped} existing staff profiles\n";
     }
 }

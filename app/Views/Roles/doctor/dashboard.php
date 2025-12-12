@@ -15,9 +15,16 @@ try {
     $userId = session()->get('user_id');
     $doctorId = null;
     
-    // Get doctor ID from user_id
-    if ($userId && $db->tableExists('doctors')) {
-        $doctorRow = $db->table('doctors')->select('id')->where('user_id', $userId)->get()->getRowArray();
+    // Get doctor ID from user_id via staff_profiles
+    if ($userId && $db->tableExists('staff_profiles')) {
+        $doctorRow = $db->table('staff_profiles sp')
+            ->select('sp.id')
+            ->join('users u', 'u.id = sp.user_id', 'left')
+            ->join('roles r', 'r.id = u.role_id', 'left')
+            ->where('sp.user_id', $userId)
+            ->where('r.name', 'doctor')
+            ->get()
+            ->getRowArray();
         if ($doctorRow) {
             $doctorId = $doctorRow['id'];
         }

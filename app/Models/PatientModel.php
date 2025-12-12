@@ -57,9 +57,6 @@ class PatientModel extends Model
         'emergency_contact_person',
         'emergency_contact_relationship',
         'emergency_contact_phone',
-        'vitals_bp',
-        'vitals_hr',
-        'vitals_temp',
         'insurance_provider',
         'insurance_number',
         'hmo_provider_id',
@@ -101,9 +98,6 @@ class PatientModel extends Model
         'hmo_member_no' => 'permit_empty|string|max_length[100]',
         'hmo_valid_from' => 'permit_empty|valid_date',
         'hmo_valid_to' => 'permit_empty|valid_date',
-        'vitals_bp' => 'permit_empty|string|max_length[20]',
-        'vitals_hr' => 'permit_empty|integer|greater_than_equal_to[0]|less_than_equal_to[300]',
-        'vitals_temp' => 'permit_empty|decimal',
         'status' => 'in_list[active,inactive]'
     ];
 

@@ -120,7 +120,7 @@ class Doctor extends BaseController
             });
         }
         
-        // Note: doctor_id here is users.id; addSchedule will normalize to doctors.id before insert
+        // Note: doctor_id here is users.id; addSchedule will normalize to staff_profiles.id before insert
 
         $data = [
             'schedules' => $schedules,
@@ -156,10 +156,11 @@ class Doctor extends BaseController
                                              ->findAll();
         
         // Get doctor's info
-        $doctor = $this->userModel->select('doctors.id AS doctor_id, users.id AS user_id, users.username, doctors.first_name, doctors.last_name')
+        $doctor = $this->userModel->select('staff_profiles.id AS doctor_id, users.id AS user_id, users.username, staff_profiles.first_name, staff_profiles.last_name')
                                 ->join('roles r', 'users.role_id = r.id', 'left')
-                                ->join('doctors', 'doctors.user_id = users.id', 'left')
+                                ->join('staff_profiles', 'staff_profiles.user_id = users.id', 'left')
                                 ->where('users.id', $doctorId)
+                                ->where('r.name', 'doctor')
                                 ->first();
         
         // For view compatibility
@@ -227,74 +228,108 @@ class Doctor extends BaseController
 
             $data = [
                 'doctor_id' => $this->request->getPost('doctor_id'),
-                'doctor_name' => $this->request->getPost('doctor_name'),
-                'department' => $this->request->getPost('department'),
+                'department_id' => $this->request->getPost('department_id') ?: $this->request->getPost('department'),
                 'shift_type' => $this->request->getPost('shift_type'),
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'notes' => $this->request->getPost('notes') ?? ''
             ];
+            
+            // Convert department name to department_id if needed
+            if (!empty($data['department_id']) && !is_numeric($data['department_id'])) {
+                $db = \Config\Database::connect();
+                $dept = $db->table('staff_departments')
+                    ->where('name', $data['department_id'])
+                    ->get()
+                    ->getRowArray();
+                $data['department_id'] = $dept ? $dept['id'] : null;
+            } else {
+                $data['department_id'] = !empty($data['department_id']) ? (int)$data['department_id'] : null;
+            }
 
-            // Normalize/validate doctor_id (users.id as VARCHAR) and ensure a doctor profile exists
+            // Normalize/validate doctor_id (now staff_profiles.id as INT)
+            // Accept either staff_profiles.id (INT) or user_id (VARCHAR) and convert to staff_profiles.id
             try {
                 $db = \Config\Database::connect();
-                $doctorsTbl = $db->table('doctors');
+                $staffProfilesTbl = $db->table('staff_profiles');
                 $usersTbl = $db->table('users');
+                $rolesTbl = $db->table('roles');
 
                 $providedId = trim((string)($data['doctor_id'] ?? ''));
+                $staffProfileId = null;
+                
                 if ($providedId !== '') {
-                    // Ensure user exists
-                    $userRow = $usersTbl->where('id', $providedId)->get()->getRowArray();
-                    if ($userRow) {
-                        // Ensure doctors profile exists keyed by user_id
-                        $existing = $doctorsTbl->where('user_id', $userRow['id'])->get()->getRowArray();
-                        if (!$existing) {
-                            $email = trim((string)($userRow['email'] ?? ''));
-                            if ($email === '') {
-                                $email = 'doc_' . $userRow['id'] . '@local'; // unique fallback
-                            }
-                            $uname = (string) ($userRow['username'] ?? 'Doctor User');
-                            $parts = preg_split('/\s+/', trim($uname));
-                            $first = ucfirst($parts[0] ?? 'Doctor');
-                            $last  = ucfirst($parts[1] ?? 'User');
-                            $insert = [
-                                'user_id'          => (string)$userRow['id'],
-                                'email'            => $email,
-                                'first_name'       => $first,
-                                'last_name'        => $last,
-                                'specialization'   => 'General',
-                                'license_number'   => 'LIC-' . $userRow['id'], // unique fallback
-                                'experience_years' => 0,
-                                'consultation_fee' => 0.00,
-                                'status'           => 'active',
-                            ];
-                            $doctorsTbl->insert($insert);
-                        }
-                        if (empty($data['doctor_name'])) {
-                            $uname = (string) ($userRow['username'] ?? 'Doctor');
-                            $data['doctor_name'] = ucfirst(str_replace('dr.', 'Dr. ', $uname));
+                    // Check if it's already a staff_profiles.id (numeric)
+                    if (is_numeric($providedId)) {
+                        $staffProfile = $staffProfilesTbl->where('id', (int)$providedId)->get()->getRowArray();
+                        if ($staffProfile) {
+                            $staffProfileId = (int)$staffProfile['id'];
                         }
                     }
+                    
+                    // If not found as staff_profiles.id, try as user_id
+                    if (!$staffProfileId) {
+                        $userRow = $usersTbl->select('users.*, roles.name AS role_name')
+                            ->join('roles', 'roles.id = users.role_id', 'left')
+                            ->where('users.id', $providedId)
+                            ->where('roles.name', 'doctor')
+                            ->get()->getRowArray();
+                        if ($userRow) {
+                            // Ensure staff profile exists keyed by user_id
+                            $existing = $staffProfilesTbl->where('user_id', $userRow['id'])->get()->getRowArray();
+                            if (!$existing) {
+                                $email = trim((string)($userRow['email'] ?? ''));
+                                if ($email === '') {
+                                    $email = 'doc_' . $userRow['id'] . '@local'; // unique fallback
+                                }
+                                $uname = (string) ($userRow['username'] ?? 'Doctor User');
+                                $parts = preg_split('/\s+/', trim($uname));
+                                $first = ucfirst($parts[0] ?? 'Doctor');
+                                $last  = ucfirst($parts[1] ?? 'User');
+                                // Get doctor role_id
+                                $doctorRole = $rolesTbl->where('name', 'doctor')->get()->getRowArray();
+                                $insert = [
+                                    'user_id'          => (string)$userRow['id'],
+                                    'email'            => $email,
+                                    'first_name'       => $first,
+                                    'last_name'        => $last,
+                                    'role_id'          => $doctorRole['id'] ?? null,
+                                    'license_number'   => 'LIC-' . $userRow['id'], // unique fallback
+                                    'status'           => 'active',
+                                ];
+                                $staffProfilesTbl->insert($insert);
+                                $staffProfileId = (int)$db->insertID();
+                            } else {
+                                $staffProfileId = (int)$existing['id'];
+                            }
+                            
+                            // doctor_name is no longer stored - it's derived from staff_profiles
+                        }
+                    }
+                }
+                
+                // Update data['doctor_id'] to use staff_profiles.id
+                if ($staffProfileId) {
+                    $data['doctor_id'] = $staffProfileId;
                 }
             } catch (\Throwable $e) {
                 log_message('error', 'Doctor ID normalization failed: ' . $e->getMessage());
             }
 
-            // Safety: verify doctor_id points to a valid doctor user (users.id with doctor role)
+            // Safety: verify doctor_id points to a valid staff profile with doctor role
             try {
                 $db = \Config\Database::connect();
-                $doctorUser = $db->table('users u')
-                    ->select('u.id')
-                    ->join('roles r', 'u.role_id = r.id', 'left')
-                    ->where('u.id', trim((string)($data['doctor_id'] ?? '')))
-                    ->groupStart()
-                        ->like('r.name', 'doctor', 'both')
-                    ->groupEnd()
+                $doctorProfile = $db->table('staff_profiles sp')
+                    ->select('sp.id')
+                    ->join('roles r', 'r.id = sp.role_id', 'left')
+                    ->where('sp.id', (int)($data['doctor_id'] ?? 0))
+                    ->where('r.name', 'doctor')
+                    ->where('sp.status', 'active')
                     ->get()->getRowArray();
-                if (!$doctorUser) {
+                if (!$doctorProfile) {
                     return $this->response->setStatusCode(400)->setJSON([
                         'success' => false,
-                        'message' => 'Unable to resolve doctor. Please select a valid doctor user.'
+                        'message' => 'Unable to resolve doctor. Please select a valid doctor profile.'
                     ]);
                 }
             } catch (\Throwable $e) {
@@ -342,10 +377,10 @@ class Doctor extends BaseController
             }
 
             // Validate required fields
-            if (empty($data['doctor_id']) || empty($data['shift_type']) || empty($data['department'])) {
+            if (empty($data['doctor_id']) || empty($data['shift_type'])) {
                 return $this->response->setStatusCode(400)->setJSON([
                     'success' => false, 
-                    'message' => 'Missing required fields: doctor_id, shift_type, or department'
+                    'message' => 'Missing required fields: doctor_id or shift_type'
                 ]);
             }
 
@@ -395,8 +430,7 @@ class Doctor extends BaseController
 
         $data = [
             'doctor_id' => $this->request->getPost('doctor_id'),
-            'doctor_name' => $this->request->getPost('doctor_name'),
-            'department' => $this->request->getPost('department'),
+            'department_id' => $this->request->getPost('department_id') ?: $this->request->getPost('department'),
             'shift_type' => $this->request->getPost('shift_type'),
             'shift_date' => $this->request->getPost('shift_date'),
             'start_time' => $this->request->getPost('start_time'),
@@ -404,6 +438,18 @@ class Doctor extends BaseController
             'status' => $this->request->getPost('status'),
             'notes' => $this->request->getPost('notes') ?? ''
         ];
+        
+        // Convert department name to department_id if needed
+        if (!empty($data['department_id']) && !is_numeric($data['department_id'])) {
+            $db = \Config\Database::connect();
+            $dept = $db->table('staff_departments')
+                ->where('name', $data['department_id'])
+                ->get()
+                ->getRowArray();
+            $data['department_id'] = $dept ? $dept['id'] : null;
+        } else {
+            $data['department_id'] = !empty($data['department_id']) ? (int)$data['department_id'] : null;
+        }
 
         // Check for conflicts (excluding current record)
         if (isset($data['doctor_id'], $data['shift_date'], $data['start_time'], $data['end_time'])) {

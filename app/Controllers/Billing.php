@@ -53,8 +53,12 @@ class Billing extends BaseController
         if ($db->tableExists('billing_items')) {
             try {
                 $fields = array_map('strtolower', $db->getFieldNames('billing_items'));
+                if (!in_array('service_id', $fields, true)) {
+                    $db->query("ALTER TABLE billing_items ADD COLUMN service_id INT UNSIGNED NULL AFTER billing_id");
+                    $db->query("CREATE INDEX IF NOT EXISTS idx_billing_items_service_id ON billing_items(service_id)");
+                }
                 if (!in_array('lab_id', $fields, true)) {
-                    $db->query("ALTER TABLE billing_items ADD COLUMN lab_id VARCHAR(20) NULL AFTER billing_id");
+                    $db->query("ALTER TABLE billing_items ADD COLUMN lab_id VARCHAR(20) NULL AFTER service_id");
                     $db->query("CREATE INDEX IF NOT EXISTS idx_billing_items_lab_id ON billing_items(lab_id)");
                 }
                 if (!in_array('source_table', $fields, true)) {
@@ -71,6 +75,7 @@ class Billing extends BaseController
         $db->query("CREATE TABLE IF NOT EXISTS billing_items (
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             billing_id INT UNSIGNED NOT NULL,
+            service_id INT UNSIGNED NULL,
             lab_id VARCHAR(20) NULL,
             source_table VARCHAR(64) NULL,
             source_id VARCHAR(64) NULL,
@@ -80,7 +85,8 @@ class Billing extends BaseController
             amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
-            INDEX idx_billing_items_billing_id (billing_id)
+            INDEX idx_billing_items_billing_id (billing_id),
+            INDEX idx_billing_items_service_id (service_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
         try { $db->query("CREATE INDEX IF NOT EXISTS idx_billing_items_lab_id ON billing_items(lab_id)"); } catch (\Throwable $e) { /* ignore */ }
         try { $db->query("CREATE INDEX IF NOT EXISTS idx_billing_items_source_table ON billing_items(source_table)"); } catch (\Throwable $e) { /* ignore */ }
@@ -469,9 +475,9 @@ class Billing extends BaseController
             if ($db->tableExists('admission_details')) {
                 try {
                     $admission = $db->table('admission_details ad')
-                        ->select('d.first_name, d.last_name, u.username, ad.attending_doctor_id')
-                        ->join('doctors d', 'd.id = ad.attending_doctor_id', 'left')
-                        ->join('users u', 'u.id = d.user_id', 'left')
+                        ->select('sp.first_name, sp.last_name, u.username, ad.attending_doctor_id')
+                        ->join('staff_profiles sp', 'sp.id = ad.attending_doctor_id', 'left')
+                        ->join('users u', 'u.id = sp.user_id', 'left')
                         ->where('ad.patient_id', $patientId)
                         ->whereIn('ad.status', ['admitted', 'discharged'])
                         ->orderBy('ad.admission_date', 'DESC')
@@ -504,9 +510,11 @@ class Billing extends BaseController
             if (empty($attendingPhysician) && $db->tableExists('appointments')) {
                 try {
                     $appointment = $db->table('appointments a')
-                        ->select('d.first_name, d.last_name, u.username, a.doctor_id')
-                        ->join('doctors d', '(d.user_id = a.doctor_id OR d.id = a.doctor_id)', 'left', false)
-                        ->join('users u', 'u.id = a.doctor_id', 'left')
+                        ->select('sp.first_name, sp.last_name, u.username, a.doctor_id')
+                        ->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left')
+                        ->join('users u', 'u.id = sp.user_id', 'left')
+                        ->join('roles r', 'r.id = sp.role_id', 'left')
+                        ->where('r.name', 'doctor')
                         ->where('a.patient_id', $patientId)
                         ->whereIn('a.status', ['completed', 'confirmed', 'in_progress'])
                         ->orderBy('a.appointment_date', 'DESC')
@@ -1088,6 +1096,7 @@ class Billing extends BaseController
                             foreach ($newItems as $it) {
                                 $rows[] = [
                                     'billing_id' => $billId,
+                                    'service_id' => isset($it['service_id']) ? (int)$it['service_id'] : null,
                                     'lab_id' => isset($it['lab_id']) ? (string)$it['lab_id'] : null,
                                     'source_table' => isset($it['source_table']) ? (string)$it['source_table'] : null,
                                     'source_id' => isset($it['source_id']) ? (string)$it['source_id'] : null,
@@ -1152,6 +1161,7 @@ class Billing extends BaseController
                         foreach ($items as $it) {
                             $rows[] = [
                                 'billing_id' => (int)$billId,
+                                'service_id' => isset($it['service_id']) ? (int)$it['service_id'] : null,
                                 'lab_id' => isset($it['lab_id']) ? (string)$it['lab_id'] : null,
                                 'source_table' => isset($it['source_table']) ? (string)$it['source_table'] : null,
                                 'source_id' => isset($it['source_id']) ? (string)$it['source_id'] : null,

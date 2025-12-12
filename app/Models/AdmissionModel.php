@@ -35,7 +35,7 @@ class AdmissionModel extends Model
         'admission_date' => 'required|valid_date',
         'admission_time' => 'permit_empty',
         'admission_type' => 'required|in_list[emergency,elective,transfer]',
-        'attending_doctor_id' => 'required|is_not_unique[doctors.id]',
+        'attending_doctor_id' => 'required|is_not_unique[staff_profiles.id]',
         'ward' => 'permit_empty|string|max_length[100]',
         'room' => 'permit_empty|string|max_length[100]',
         'bed_id' => 'required|integer|is_not_unique[beds.id]',

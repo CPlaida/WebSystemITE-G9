@@ -1,19 +1,427 @@
-CRITICAL - 2025-12-12 06:25:35 --> ErrorException: Undefined variable $role
-[Method: GET, Route: reports]
-in APPPATH\Controllers\Reports.php on line 172.
- 1 APPPATH\Controllers\Reports.php(172): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $role', 'C:\\xampp\\htdocs\\WebSystemITE-G9\\app\\Controllers\\Reports.php', 172)
- 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports->index()
- 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports))
- 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
- 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
- 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
- 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-CRITICAL - 2025-12-12 06:31:50 --> Error: Call to undefined method CodeIgniter\Database\MySQLi\Builder::first()
-[Method: POST, Route: appointments/create]
-in APPPATH\Controllers\Appointment.php on line 446.
- 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->create()
- 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
- 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
- 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
- 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
- 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-12 07:19:44 --> mysqli_sql_exception: Can't create table `hms_g9`.`patient_vitals` (errno: 150 "Foreign key constraint is incorrectly formed") in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `p...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-120000_CreatePatientVitalsTable.php(61): CodeIgniter\Database\Forge->createTable('patient_vitals', true)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreatePatientVitalsTable->up()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-12 08:15:59 --> mysqli_sql_exception: Can't DROP COLUMN `hmo_authorization_id`; check that it exists in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `bi...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `bi...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE `bi...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(799): CodeIgniter\Database\BaseConnection->query('ALTER TABLE `bi...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-21-021900_AddHmoSupport.php(404): CodeIgniter\Database\Forge->dropColumn('billing', Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\AddHmoSupport->down()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(289): CodeIgniter\Database\MigrationRunner->migrate('down', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRollback.php(101): CodeIgniter\Database\MigrationRunner->regress(0)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRollback->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate:rollbac...', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(86): CodeIgniter\CLI\BaseCommand->call('migrate:rollbac...', Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#14 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#15 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-12 08:15:59 --> mysqli_sql_exception: Can't create table `hms_g9`.`doctor_schedules` (errno: 121 "Duplicate key on write or update") in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE doc...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE doc...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE doc...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-25-045100_CreateStaffDepartmentsTable.php(61): CodeIgniter\Database\BaseConnection->query('ALTER TABLE doc...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateStaffDepartmentsTable->up()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate', Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(87): CodeIgniter\CLI\BaseCommand->call('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#14 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#15 {main}
+ERROR - 2025-12-12 08:36:42 --> mysqli_sql_exception: Unknown column 'philhealth_audit_id' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `p...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(151): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(123): App\Database\Migrations\CreateBillPhilhealthAudits->migratePhilhealthData()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateBillPhilhealthAudits->up()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate', Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(87): CodeIgniter\CLI\BaseCommand->call('migrate', Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
+#14 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#15 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#16 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#17 {main}
+ERROR - 2025-12-12 08:41:26 --> mysqli_sql_exception: Cannot drop index 'fk_patients_hmo_provider': needed in a foreign key constraint in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `pa...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `pa...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE `pa...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(799): CodeIgniter\Database\BaseConnection->query('ALTER TABLE `pa...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-21-021900_AddHmoSupport.php(418): CodeIgniter\Database\Forge->dropColumn('patients', Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\AddHmoSupport->down()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(289): CodeIgniter\Database\MigrationRunner->migrate('down', Object(stdClass))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRollback.php(101): CodeIgniter\Database\MigrationRunner->regress(0)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRollback->run(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate:rollbac...', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(86): CodeIgniter\CLI\BaseCommand->call('migrate:rollbac...', Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#14 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#15 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-12 08:41:26 --> mysqli_sql_exception: Can't create table `hms_g9`.`doctor_schedules` (errno: 121 "Duplicate key on write or update") in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE doc...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE doc...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE doc...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-25-045100_CreateStaffDepartmentsTable.php(61): CodeIgniter\Database\BaseConnection->query('ALTER TABLE doc...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateStaffDepartmentsTable->up()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate', Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(87): CodeIgniter\CLI\BaseCommand->call('migrate', Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#14 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#15 {main}
+ERROR - 2025-12-12 08:42:49 --> mysqli_sql_exception: Unknown column 'philhealth_audit_id' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `p...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `p...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `p...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `p...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(159): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(123): App\Database\Migrations\CreateBillPhilhealthAudits->migratePhilhealthData()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateBillPhilhealthAudits->up()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate', Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(87): CodeIgniter\CLI\BaseCommand->call('migrate', Array)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
+#14 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#15 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#16 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#17 {main}
+ERROR - 2025-12-12 15:15:45 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`staff_profiles`, CONSTRAINT `staff_profiles_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `st...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `st...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `st...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `st...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\StaffProfilesSeeder.php(271): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\StaffProfilesSeeder->run()
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Seeds\DatabaseSeeder.php(21): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Seeder.php(149): App\Database\Seeds\DatabaseSeeder->run()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#13 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#14 {main}
+ERROR - 2025-12-12 15:24:46 --> mysqli_sql_exception: Unknown column 'd.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `users`....', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `users`....')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `users`....')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`....', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-12 15:24:46 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'd.first_name' in 'field list'
+[Method: GET, Route: patients/inpatient]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = :r2.name:
+AND `r`.`name` = :r.name:
+AND `users`.`status` = :users.status:
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', [...], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-12 15:24:46 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'd.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = :r2.name:
+AND `r`.`name` = :r.name:
+AND `users`.`status` = :users.status:
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', [...], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-12 15:24:46 --> [Caused by] mysqli_sql_exception: Unknown column 'd.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = :r2.name:
+AND `r`.`name` = :r.name:
+AND `users`.`status` = :users.status:
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', [...], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-12 15:25:09 --> mysqli_sql_exception: Unknown column 'd.first_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `users`....', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `users`....')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `users`....')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`....', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-12 15:25:09 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'd.first_name' in 'field list'
+[Method: GET, Route: patients/inpatient]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = :r2.name:
+AND `r`.`name` = :r.name:
+AND `users`.`status` = :users.status:
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', [...], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-12 15:25:09 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'd.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = :r2.name:
+AND `r`.`name` = :r.name:
+AND `users`.`status` = :users.status:
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', [...], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-12 15:25:09 --> [Caused by] mysqli_sql_exception: Unknown column 'd.first_name' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = \'doctor\'
+AND `r`.`name` = \'doctor\'
+AND `users`.`status` = \'active\'
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `users`.`id`, COALESCE(NULLIF(CONCAT(d.first_name, \' \', d.last_name), \' \'), users.username) AS display_name, `d`.`first_name`, `d`.`last_name`, `users`.`username`
+FROM `users`
+LEFT JOIN `roles` `r` ON `users`.`role_id` = `r`.`id`
+LEFT JOIN `staff_profiles` `sp` ON `sp`.`user_id` = `users`.`id`
+LEFT JOIN `roles` `r2` ON `r2`.`id` = `sp`.`role_id`
+WHERE `r2`.`name` = :r2.name:
+AND `r`.`name` = :r.name:
+AND `users`.`status` = :users.status:
+ORDER BY `d`.`first_name` ASC, `users`.`username` ASC', [...], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Patients.php(286): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Patients->inpatient()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Patients))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-12 15:31:26 --> mysqli_sql_exception: Unknown column 'doctor_name' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `do...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `do...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `do...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `do...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Models\DoctorScheduleModel.php(391): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(395): App\Models\DoctorScheduleModel->addScheduleRange(Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->addSchedule()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 {main}
+ERROR - 2025-12-12 15:31:26 --> Add Schedule Error: Unknown column 'doctor_name' in 'field list'
+ERROR - 2025-12-12 15:37:10 --> mysqli_sql_exception: Unknown column 'source_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `source_...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `source_...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `source_...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `source_...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\AbstractChargeProvider.php(84): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\AppointmentChargeProvider.php(70): App\Services\Billing\Providers\AbstractChargeProvider->filterOutAlreadyLinked(Array, 'appointments')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(41): App\Services\Billing\Providers\AppointmentChargeProvider->getCharges('PAT-251212-0001')
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1222): App\Services\Billing\BillingChargeAggregator->collect('PAT-251212-0001')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->patientServices()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}

@@ -1,8 +1,19 @@
 <?php
 namespace App\Services\Billing\Providers;
 
+use App\Models\ServiceModel;
+
 class RoomChargeProvider extends AbstractChargeProvider
 {
+    protected ?ServiceModel $serviceModel = null;
+    
+    public function __construct(?\CodeIgniter\Database\ConnectionInterface $db = null)
+    {
+        parent::__construct($db);
+        if (class_exists(ServiceModel::class)) {
+            $this->serviceModel = new ServiceModel();
+        }
+    }
     public function getCharges(string $patientId): array
     {
         $patientId = trim($patientId);
@@ -37,10 +48,15 @@ class RoomChargeProvider extends AbstractChargeProvider
                     foreach ($admissions as $row) {
                         $bedId = (int)($row['bed_id'] ?? 0);
                         $bed = $bedId && isset($beds[$bedId]) ? $beds[$bedId] : null;
-                        $rate = $bed ? (float)($bed['room_rate'] ?? 0) : 0.0;
-                        if ($rate <= 0) {
-                            $rate = $this->inferRateFromType($bed);
-                        }
+                        $ward = $row['ward'] ?? ($bed['ward'] ?? 'Room');
+                        $bedType = $bed['bed_type'] ?? '';
+                        
+                        // Determine rate and service_id
+                        $rateInfo = $this->determineRoomRate($ward, $bedType, $bed);
+                        $rate = $rateInfo['rate'];
+                        $serviceId = $rateInfo['service_id'];
+                        $serviceName = $rateInfo['service_name'];
+                        
                         // Use default rate if still 0
                         if ($rate <= 0) {
                             $rate = 500.0; // Default room rate
@@ -50,10 +66,27 @@ class RoomChargeProvider extends AbstractChargeProvider
                             $days = 1;
                         }
                         $amount = $rate * $days;
-                        $ward = $row['ward'] ?? ($bed['ward'] ?? 'Room');
                         $roomNum = $row['room'] ?? ($bed['room'] ?? '');
-                        $service = sprintf('Room %s %s - %d day%s', $ward, $roomNum ? "#{$roomNum}" : '', $days, $days > 1 ? 's' : '');
+                        
+                        // Build service description
+                        if ($serviceName) {
+                            $service = sprintf('%s - %s %s - %d day%s', 
+                                $serviceName, 
+                                $ward, 
+                                $roomNum ? "#{$roomNum}" : '', 
+                                $days, 
+                                $days > 1 ? 's' : ''
+                            );
+                        } else {
+                            $service = sprintf('Room %s %s - %d day%s', 
+                                $ward, 
+                                $roomNum ? "#{$roomNum}" : '', 
+                                $days, 
+                                $days > 1 ? 's' : ''
+                            );
+                        }
                         $service = trim(preg_replace('/\s+/', ' ', $service));
+                        
                         $item = $this->defaultItem();
                         $item['service'] = $service;
                         $item['qty'] = $days;
@@ -62,6 +95,12 @@ class RoomChargeProvider extends AbstractChargeProvider
                         $item['category'] = 'room';
                         $item['source_table'] = 'admission_details';
                         $item['source_id'] = (string)($row['id'] ?? '');
+                        
+                        // Add service_id if available
+                        if ($serviceId) {
+                            $item['service_id'] = $serviceId;
+                        }
+                        
                         $items[] = $item;
                     }
                 }
@@ -83,10 +122,15 @@ class RoomChargeProvider extends AbstractChargeProvider
                 $bed = $bed[$bedId] ?? null;
                 
                 if ($bed) {
-                    $rate = (float)($bed['room_rate'] ?? 0);
-                    if ($rate <= 0) {
-                        $rate = $this->inferRateFromType($bed);
-                    }
+                    $ward = $bed['ward'] ?? 'Room';
+                    $bedType = $bed['bed_type'] ?? '';
+                    
+                    // Determine rate and service_id
+                    $rateInfo = $this->determineRoomRate($ward, $bedType, $bed);
+                    $rate = $rateInfo['rate'];
+                    $serviceId = $rateInfo['service_id'];
+                    $serviceName = $rateInfo['service_name'];
+                    
                     if ($rate <= 0) {
                         $rate = 500.0; // Default room rate
                     }
@@ -94,9 +138,25 @@ class RoomChargeProvider extends AbstractChargeProvider
                     // Use 1 day as default if no admission date
                     $days = 1;
                     $amount = $rate * $days;
-                    $ward = $bed['ward'] ?? 'Room';
                     $roomNum = $bed['room'] ?? '';
-                    $service = sprintf('Room %s %s - %d day%s', $ward, $roomNum ? "#{$roomNum}" : '', $days, $days > 1 ? 's' : '');
+                    
+                    // Build service description
+                    if ($serviceName) {
+                        $service = sprintf('%s - %s %s - %d day%s', 
+                            $serviceName, 
+                            $ward, 
+                            $roomNum ? "#{$roomNum}" : '', 
+                            $days, 
+                            $days > 1 ? 's' : ''
+                        );
+                    } else {
+                        $service = sprintf('Room %s %s - %d day%s', 
+                            $ward, 
+                            $roomNum ? "#{$roomNum}" : '', 
+                            $days, 
+                            $days > 1 ? 's' : ''
+                        );
+                    }
                     $service = trim(preg_replace('/\s+/', ' ', $service));
                     
                     $item = $this->defaultItem();
@@ -107,6 +167,12 @@ class RoomChargeProvider extends AbstractChargeProvider
                     $item['category'] = 'room';
                     $item['source_table'] = 'patients';
                     $item['source_id'] = (string)$patientId;
+                    
+                    // Add service_id if available
+                    if ($serviceId) {
+                        $item['service_id'] = $serviceId;
+                    }
+                    
                     $items[] = $item;
                 }
             }
@@ -136,6 +202,139 @@ class RoomChargeProvider extends AbstractChargeProvider
         return $map;
     }
 
+    /**
+     * Determine room rate from services table or fallback to hardcoded values
+     * 
+     * @param string $ward
+     * @param string $bedType
+     * @param array|null $bed
+     * @return array{rate: float, service_id: int|null, service_name: string|null}
+     */
+    protected function determineRoomRate(string $ward, string $bedType, ?array $bed): array
+    {
+        $result = [
+            'rate' => 0.0,
+            'service_id' => null,
+            'service_name' => null,
+        ];
+        
+        // Priority 1: Use room_rate from bed if available
+        if ($bed && isset($bed['room_rate']) && (float)$bed['room_rate'] > 0) {
+            $result['rate'] = (float)$bed['room_rate'];
+            // Try to find matching service
+            $service = $this->findRoomServiceByWard($ward, $bedType);
+            if ($service) {
+                $result['service_id'] = (int)$service['id'];
+                $result['service_name'] = $service['name'] ?? null;
+            }
+            return $result;
+        }
+        
+        // Priority 2: Look up service from services table
+        $service = $this->findRoomServiceByWard($ward, $bedType);
+        if ($service && isset($service['base_price']) && (float)$service['base_price'] > 0) {
+            $result['rate'] = (float)$service['base_price'];
+            $result['service_id'] = (int)$service['id'];
+            $result['service_name'] = $service['name'] ?? null;
+            return $result;
+        }
+        
+        // Priority 3: Fallback to hardcoded values (for backward compatibility)
+        $result['rate'] = $this->inferRateFromType($bed);
+        return $result;
+    }
+    
+    /**
+     * Find room service by ward and bed type
+     * 
+     * @param string $ward
+     * @param string $bedType
+     * @return array|null
+     */
+    protected function findRoomServiceByWard(string $ward, string $bedType): ?array
+    {
+        if ($this->serviceModel === null) {
+            return null;
+        }
+        
+        $wardLower = strtolower(trim($ward));
+        $typeLower = strtolower(trim($bedType));
+        
+        // Map ward/bed_type to service codes
+        $codeMap = [
+            // Critical Care Units
+            'icu' => 'ROOM-ICU',
+            'nicu' => 'ROOM-NICU',
+            'picu' => 'ROOM-PICU',
+            'ccu' => 'ROOM-CCU',
+            'coronary care unit' => 'ROOM-CCU',
+            'micu' => 'ROOM-MICU',
+            'medical icu' => 'ROOM-MICU',
+            'sicu' => 'ROOM-SICU',
+            'surgical icu' => 'ROOM-SICU',
+            
+            // Specialized Rooms
+            'ed' => 'ROOM-ED',
+            'emergency department' => 'ROOM-ED',
+            'iso' => 'ROOM-ISOLATION',
+            'isolation' => 'ROOM-ISOLATION',
+            'isolation room' => 'ROOM-ISOLATION',
+            'ld' => 'ROOM-LD',
+            'labor & delivery' => 'ROOM-LD',
+            'labor and delivery' => 'ROOM-LD',
+            'delivery room' => 'ROOM-LD',
+            'sdu' => 'ROOM-SDU',
+            'step-down unit' => 'ROOM-SDU',
+            
+            // General Wards
+            'pedia ward' => 'ROOM-PEDIA',
+            'pediatric ward' => 'ROOM-PEDIA',
+            'male ward' => 'ROOM-WARD',
+            'female ward' => 'ROOM-WARD',
+            'general ward' => 'ROOM-WARD',
+            'ward' => 'ROOM-WARD',
+            
+            // Semi-Private and Private
+            'semi-private ward' => 'ROOM-SEMIPRIVATE',
+            'semi-private' => 'ROOM-SEMIPRIVATE',
+            'private suites' => 'ROOM-PRIVATE',
+            'private' => 'ROOM-PRIVATE',
+            'private ward' => 'ROOM-PRIVATE',
+            'private room' => 'ROOM-PRIVATE',
+        ];
+        
+        // Check ward first, then bed_type
+        $code = null;
+        foreach ([$wardLower, $typeLower] as $key) {
+            if ($key && isset($codeMap[$key])) {
+                $code = $codeMap[$key];
+                break;
+            }
+        }
+        
+        if ($code) {
+            try {
+                $service = $this->serviceModel->where('code', $code)
+                    ->where('active', 1)
+                    ->where('category', 'room')
+                    ->first();
+                if ($service) {
+                    return $service;
+                }
+            } catch (\Throwable $e) {
+                // Ignore errors
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Fallback method for inferring rate from type (backward compatibility)
+     * 
+     * @param array|null $bed
+     * @return float
+     */
     protected function inferRateFromType(?array $bed): float
     {
         if (!$bed) {

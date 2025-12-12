@@ -38,10 +38,10 @@ class CreatePatientVitalsTable extends Migration
                 'comment'    => 'e.g. 36.7',
             ],
             'recorded_by' => [
-                'type'       => 'INT',
-                'constraint' => 11,
+                'type'       => 'VARCHAR',
+                'constraint' => 20,
                 'null'       => true,
-                'comment'    => 'users.id of recorder',
+                'comment'    => 'users.id of recorder (VARCHAR to match users.id type)',
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -55,6 +55,9 @@ class CreatePatientVitalsTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addKey('patient_id');
+        $this->forge->addKey('recorded_by');
+        $this->forge->addForeignKey('patient_id', 'patients', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('recorded_by', 'users', 'id', 'SET NULL', 'CASCADE');
         $this->forge->createTable('patient_vitals', true);
     }
 

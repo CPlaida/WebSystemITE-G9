@@ -274,12 +274,14 @@ class Patients extends BaseController
         $this->requireRole(['admin', 'nurse', 'receptionist']);
         
         $doctors = $this->userModel
-            ->select("users.id, COALESCE(NULLIF(CONCAT(d.first_name, ' ', d.last_name), ' '), users.username) AS display_name, d.first_name, d.last_name, users.username")
+            ->select("users.id, COALESCE(NULLIF(CONCAT(sp.first_name, ' ', sp.last_name), ' '), users.username) AS display_name, sp.first_name, sp.last_name, users.username")
             ->join('roles r', 'users.role_id = r.id', 'left')
-            ->join('doctors d', 'd.user_id = users.id', 'left')
+            ->join('staff_profiles sp', 'sp.user_id = users.id', 'left')
+            ->join('roles r2', 'r2.id = sp.role_id', 'left')
+            ->where('r2.name', 'doctor')
             ->where('r.name', 'doctor')
             ->where('users.status', 'active')
-            ->orderBy('d.first_name', 'ASC')
+            ->orderBy('sp.first_name', 'ASC')
             ->orderBy('users.username', 'ASC')
             ->findAll();
 
@@ -447,15 +449,15 @@ class Patients extends BaseController
                 'beds.ward AS bed_ward',
                 'beds.room AS bed_room',
                 'beds.bed AS bed_label',
-                'doctors.id AS attending_doctor_id',
+                'staff_profiles.id AS attending_doctor_id',
                 'users.username AS physician_username',
-                "COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), ' ', TRIM(doctors.last_name)), ' '), users.username, CONCAT('Doctor #', doctors.id)) AS physician_name",
+                "COALESCE(NULLIF(CONCAT(TRIM(staff_profiles.first_name), ' ', TRIM(staff_profiles.last_name)), ' '), users.username, CONCAT('Doctor #', staff_profiles.id)) AS physician_name",
                 'role.name AS physician_role',
             ])
             ->join('patients', 'patients.id = admission_details.patient_id', 'left')
             ->join('beds', 'beds.id = admission_details.bed_id', 'left')
-            ->join('doctors', 'doctors.id = admission_details.attending_doctor_id', 'left')
-            ->join('users', 'users.id = doctors.user_id', 'left')
+            ->join('staff_profiles', 'staff_profiles.id = admission_details.attending_doctor_id', 'left')
+            ->join('users', 'users.id = staff_profiles.user_id', 'left')
             ->join('roles role', 'role.id = users.role_id', 'left')
             ->where('admission_details.status', 'admitted');
         
@@ -504,14 +506,14 @@ class Patients extends BaseController
                 'admission_details.ward AS admission_ward',
                 'admission_details.room AS admission_room',
                 'patients.*',
-                'doctors.id AS attending_doctor_id',
+                'staff_profiles.id AS attending_doctor_id',
                 'users.username AS physician_username',
-                "COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), ' ', TRIM(doctors.last_name)), ' '), users.username, CONCAT('Doctor #', doctors.id)) AS physician_name",
+                "COALESCE(NULLIF(CONCAT(TRIM(staff_profiles.first_name), ' ', TRIM(staff_profiles.last_name)), ' '), users.username, CONCAT('Doctor #', staff_profiles.id)) AS physician_name",
                 'role.name AS physician_role',
             ])
             ->join('patients', 'patients.id = admission_details.patient_id', 'left')
-            ->join('doctors', 'doctors.id = admission_details.attending_doctor_id', 'left')
-            ->join('users', 'users.id = doctors.user_id', 'left')
+            ->join('staff_profiles', 'staff_profiles.id = admission_details.attending_doctor_id', 'left')
+            ->join('users', 'users.id = staff_profiles.user_id', 'left')
             ->join('roles role', 'role.id = users.role_id', 'left')
             ->where('admission_details.status', 'discharged');
         

@@ -95,11 +95,12 @@ class AppointmentModel extends Model
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name, 
                          p.phone as patient_phone, 
-                         u.username as doctor_name, 
-                         u.email as doctor_email');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name, 
+                         COALESCE(sp.email, u.email) as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
-        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
+        $builder->join('roles r', 'r.id = sp.role_id', 'left');
         $builder->where('r.name', 'doctor');
         // Status priority across lists (active first)
         $builder->orderBy("FIELD(a.status, 'scheduled','confirmed','in_progress','completed','cancelled','no_show')", 'ASC', false);
@@ -125,11 +126,12 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name, 
-                         u.username as doctor_name, 
-                         u.email as doctor_email');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name, 
+                         COALESCE(sp.email, u.email) as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
-        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
+        $builder->join('roles r', 'r.id = sp.role_id', 'left');
         $builder->where('r.name', 'doctor');
         $builder->where('a.appointment_date >=', $startDate);
         $builder->where('a.appointment_date <=', $endDate);
@@ -158,10 +160,11 @@ class AppointmentModel extends Model
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name, 
                          p.phone as patient_phone,
-                         u.username as doctor_name,
-                         u.email as doctor_email');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name,
+                         COALESCE(sp.email, u.email) as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
 
         if ($doctorId !== null) {
             $builder->where('a.doctor_id', $doctorId);
@@ -193,10 +196,11 @@ class AppointmentModel extends Model
     {
         $builder = $this->db->table('appointments a');
         $builder->select('a.*, 
-                         u.username as doctor_name, 
-                         u.email as doctor_email');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
-        $builder->join('roles r', 'u.role_id = r.id', 'left');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name, 
+                         COALESCE(sp.email, u.email) as doctor_email');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
+        $builder->join('roles r', 'r.id = sp.role_id', 'left');
         $builder->where('r.name', 'doctor');
         $builder->where('a.patient_id', $patientId);
         $builder->orderBy('a.appointment_date', 'DESC');
@@ -214,11 +218,12 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name, 
-                         u.username as doctor_name, 
-                         u.email as doctor_email');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name, 
+                         COALESCE(sp.email, u.email) as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
-        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
+        $builder->join('roles r', 'r.id = sp.role_id', 'left');
         $builder->where('r.name', 'doctor');
         $builder->where('a.status', $status);
         $builder->orderBy('a.appointment_date', 'ASC');
@@ -244,11 +249,12 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name, 
-                         u.username as doctor_name, 
-                         u.email as doctor_email');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name, 
+                         COALESCE(sp.email, u.email) as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
-        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
+        $builder->join('roles r', 'r.id = sp.role_id', 'left');
         $builder->where('r.name', 'doctor');
         $builder->where('a.appointment_date >=', date('Y-m-d'));
         $builder->whereIn('a.status', ['scheduled', 'confirmed']);
@@ -324,18 +330,22 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name, 
-                         u.username as doctor_name, 
-                         u.email as doctor_email');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name, 
+                         COALESCE(sp.email, u.email) as doctor_email');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
-        $builder->join('roles r', 'u.role_id = r.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
+        $builder->join('roles r', 'r.id = sp.role_id', 'left');
         $builder->where('r.name', 'doctor');
         
         $builder->groupStart();
         $builder->like('a.id', $searchTerm);
         $builder->orLike('p.first_name', $searchTerm);
         $builder->orLike('p.last_name', $searchTerm);
+        $builder->orLike('sp.first_name', $searchTerm);
+        $builder->orLike('sp.last_name', $searchTerm);
         $builder->orLike('u.username', $searchTerm);
+        $builder->orLike('sp.email', $searchTerm);
         $builder->orLike('u.email', $searchTerm);
         $builder->orLike('a.reason', $searchTerm);
         $builder->groupEnd();
@@ -355,9 +365,10 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name,
-                         u.username as doctor_name');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
 
         if (!empty($filters['start_date'])) {
             $builder->where('a.appointment_date >=', $filters['start_date']);
@@ -445,9 +456,10 @@ class AppointmentModel extends Model
         $builder->select('a.*, 
                          p.first_name as patient_first_name, 
                          p.last_name as patient_last_name,
-                         u.username as doctor_name');
+                         COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name');
         $builder->join('patients p', 'a.patient_id = p.id', 'left');
-        $builder->join('users u', 'a.doctor_id = u.id', 'left');
+        $builder->join('staff_profiles sp', 'sp.id = a.doctor_id', 'left');
+        $builder->join('users u', 'u.id = sp.user_id', 'left');
 
         if (!empty($filters['start_date'])) {
             $builder->where('a.appointment_date >=', $filters['start_date']);
@@ -493,8 +505,9 @@ class AppointmentModel extends Model
         $db = \Config\Database::connect();
 
         $scheduleBuilder = $db->table('doctor_schedules ds');
-        $scheduleBuilder->select('ds.*, u.username as doctor_name');
-        $scheduleBuilder->join('users u', 'ds.doctor_id = u.id', 'left');
+        $scheduleBuilder->select('ds.*, COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name');
+        $scheduleBuilder->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left');
+        $scheduleBuilder->join('users u', 'u.id = sp.user_id', 'left');
 
         if (!empty($filters['start_date'])) {
             $scheduleBuilder->where('ds.shift_date >=', $filters['start_date']);

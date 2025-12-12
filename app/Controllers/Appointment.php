@@ -130,10 +130,10 @@ class Appointment extends BaseController
         // Get all dates with schedules
         $allDates = $db->table('doctor_schedules ds')
             ->select('ds.shift_date')
-            ->join('users u', 'ds.doctor_id = u.id', 'left')
+            ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
             ->where('ds.shift_date >=', $today)
             ->where('ds.status !=', 'cancelled')
-            ->where('u.status', 'active')
+            ->where('sp.status', 'active')
             ->distinct()
             ->orderBy('ds.shift_date', 'ASC')
             ->get()->getResultArray();
@@ -241,11 +241,12 @@ class Appointment extends BaseController
 
         $db = \Config\Database::connect();
         $rows = $db->table('doctor_schedules ds')
-            ->select("ds.doctor_id, COALESCE(u.username, ds.doctor_name) AS name, u.email")
-            ->join('users u', 'u.id = ds.doctor_id', 'left')
+            ->select("ds.doctor_id, COALESCE(CONCAT(sp.first_name, ' ', sp.last_name), u.username) AS name, COALESCE(sp.email, u.email) as email")
+            ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
+            ->join('users u', 'u.id = sp.user_id', 'left')
             ->where('ds.shift_date', $date)
             ->where('ds.status !=', 'cancelled')
-            ->where('u.status', 'active')
+            ->where('sp.status', 'active')
             ->groupBy('ds.doctor_id, name, u.email')
             ->orderBy('name', 'ASC')
             ->get()->getResultArray();
@@ -277,13 +278,15 @@ class Appointment extends BaseController
         $isToday = ($date === $today);
 
         // 1) Load doctor's shift blocks for the selected date (only if doctor is active)
+        // Note: doctorId here should be staff_profiles.id, but we need to handle both cases
         $rows = $db->table('doctor_schedules ds')
             ->select('ds.start_time, ds.end_time')
-            ->join('users u', 'ds.doctor_id = u.id', 'left')
+            ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
+            ->join('users u', 'u.id = sp.user_id', 'left')
             ->where('ds.doctor_id', $doctorId)
             ->where('ds.shift_date', $date)
             ->where('ds.status !=', 'cancelled')
-            ->where('u.status', 'active')
+            ->where('sp.status', 'active')
             ->orderBy('ds.start_time', 'ASC')
             ->get()->getResultArray();
 
@@ -467,11 +470,11 @@ class Appointment extends BaseController
         // Check if appointment time is within any of the doctor's shift blocks
         $shifts = $db->table('doctor_schedules ds')
             ->select('ds.start_time, ds.end_time')
-            ->join('users u', 'ds.doctor_id = u.id', 'left')
+            ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
             ->where('ds.doctor_id', $data['doctor_id'])
             ->where('ds.shift_date', $data['appointment_date'])
             ->where('ds.status !=', 'cancelled')
-            ->where('u.status', 'active')
+            ->where('sp.status', 'active')
             ->get()->getResultArray();
 
         if (empty($shifts)) {
@@ -568,11 +571,12 @@ class Appointment extends BaseController
                      patients.first_name as patient_first_name, 
                      patients.last_name as patient_last_name,
                      patients.phone as patient_phone,
-                     users.username as doctor_name, 
-                     users.email as doctor_email')
+                     COALESCE(CONCAT(sp.first_name, " ", sp.last_name), users.username) as doctor_name, 
+                     COALESCE(sp.email, users.email) as doctor_email')
             ->join('patients', 'patients.id = appointments.patient_id', 'left')
-            ->join('users', 'users.id = appointments.doctor_id', 'left')
-            ->join('roles r', 'users.role_id = r.id', 'left')
+            ->join('staff_profiles sp', 'sp.id = appointments.doctor_id', 'left')
+            ->join('users', 'users.id = sp.user_id', 'left')
+            ->join('roles r', 'r.id = sp.role_id', 'left')
             ->where('r.name', 'doctor')
             ->where('appointments.id', $id)
             ->first();

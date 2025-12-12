@@ -53,6 +53,21 @@ class CreateStaffDepartmentsTable extends Migration
         $this->forge->createTable('staff_departments', true);
 
         $this->seedDefaultDepartments();
+
+        // Add FK constraint for doctor_schedules.department_id if table exists
+        if ($this->db->tableExists('doctor_schedules') && $this->db->fieldExists('department_id', 'doctor_schedules')) {
+            try {
+                // Check if FK constraint already exists by attempting to add it
+                $this->db->query("ALTER TABLE doctor_schedules 
+                    ADD CONSTRAINT fk_doctor_schedules_department 
+                    FOREIGN KEY (department_id) 
+                    REFERENCES staff_departments(id) 
+                    ON DELETE SET NULL 
+                    ON UPDATE CASCADE");
+            } catch (\Exception $e) {
+                // FK constraint may already exist, ignore error
+            }
+        }
     }
 
     public function down()

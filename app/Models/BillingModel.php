@@ -39,6 +39,9 @@ class BillingModel extends Model
         'final_amount',      // amount equivalent
         'payment_status',    // status equivalent (pending/partial/paid/overdue)
         'payment_method',
+        // Normalized HMO reference (new)
+        'hmo_authorization_id',
+        // Legacy HMO fields (kept for backward compatibility, will be removed later)
         'hmo_provider_id',
         'hmo_member_no',
         'hmo_valid_from',
@@ -55,7 +58,9 @@ class BillingModel extends Model
         'service_id',        // added via migration to link to services
         'created_at',
         'updated_at',
-        // PhilHealth fields
+        // Normalized PhilHealth reference (new)
+        'philhealth_audit_id',
+        // Legacy PhilHealth fields (kept for backward compatibility, will be removed later)
         'philhealth_member',
         'philhealth_suggested_amount',
         'philhealth_approved_amount',
@@ -87,10 +92,35 @@ class BillingModel extends Model
             $builder->select('s.name AS service_name, s.base_price AS service_price')
                     ->join('services s', 's.id = b.service_id', 'left');
         }
-        if ($this->tableHas('hmo_providers')) {
+        
+        // Join normalized HMO authorization (preferred)
+        if ($this->tableHas('billing', 'hmo_authorization_id') && $this->tableHas('hmo_authorizations')) {
+            $builder->select('ha.loa_number AS hmo_loa_number, ha.coverage_limit AS hmo_coverage_limit, 
+                            ha.approved_amount AS hmo_approved_amount, ha.patient_share AS hmo_patient_share, 
+                            ha.status AS hmo_status, ha.notes AS hmo_notes')
+                    ->join('hmo_authorizations ha', 'ha.id = b.hmo_authorization_id', 'left')
+                    ->join('hmo_providers hp', 'hp.id = ha.provider_id', 'left')
+                    ->select('hp.name AS hmo_provider_name, hp.id AS hmo_provider_id');
+        } elseif ($this->tableHas('hmo_providers')) {
+            // Fallback to legacy field
             $builder->select('hp.name AS hmo_provider_name')
                     ->join('hmo_providers hp', 'hp.id = b.hmo_provider_id', 'left');
         }
+        
+        // Join normalized PhilHealth audit (preferred)
+        if ($this->tableHas('billing', 'philhealth_audit_id') && $this->tableHas('bill_philhealth_audits')) {
+            $builder->select('pha.suggested_amount AS philhealth_suggested_amount, 
+                            pha.approved_amount AS philhealth_approved_amount, 
+                            pha.codes_used AS philhealth_codes_used, 
+                            pha.officer_user_id AS philhealth_verified_by, 
+                            pha.created_at AS philhealth_verified_at,
+                            pha.case_rate_id AS philhealth_case_rate_id')
+                    ->join('bill_philhealth_audits pha', 'pha.id = b.philhealth_audit_id', 'left')
+                    ->join('philhealth_case_rates pcr', 'pcr.id = pha.case_rate_id', 'left')
+                    ->select('pcr.code AS philhealth_code, pcr.description AS philhealth_description, 
+                            pcr.rate_total AS philhealth_rate_total');
+        }
+        
         return $builder;
     }
 

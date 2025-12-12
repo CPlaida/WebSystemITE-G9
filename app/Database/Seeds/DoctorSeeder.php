@@ -9,6 +9,8 @@ class DoctorSeeder extends Seeder
 {
     public function run()
     {
+        // Doctor data - creates users and staff_profiles
+        // Note: Specializations must exist in staff_specializations table
         $doctors = [
             [
                 'username' => 'dr.smith',
@@ -16,12 +18,8 @@ class DoctorSeeder extends Seeder
                 'last_name' => 'Smith',
                 'email' => 'john.smith@hospital.com',
                 'phone' => '+1234567890',
-                'specialization' => 'Internal Medicine',
+                'specialization' => 'Internal Medicine', // Will be matched to staff_specializations.name
                 'license_number' => 'LIC001234',
-                'experience_years' => 15,
-                'qualification' => 'MD, MBBS',
-                'consultation_fee' => 150.00,
-                'schedule' => 'Mon-Fri: 09:00-17:00',
                 'status' => 'active',
             ],
             [
@@ -30,12 +28,8 @@ class DoctorSeeder extends Seeder
                 'last_name' => 'Johnson',
                 'email' => 'sarah.johnson@hospital.com',
                 'phone' => '+1234567891',
-                'specialization' => 'Cardiology',
+                'specialization' => 'Cardiology', // Will be matched to staff_specializations.name
                 'license_number' => 'LIC001235',
-                'experience_years' => 12,
-                'qualification' => 'MD, Cardiology Specialist',
-                'consultation_fee' => 200.00,
-                'schedule' => 'Mon-Wed-Fri: 10:00-18:00',
                 'status' => 'active',
             ],
             [
@@ -44,12 +38,8 @@ class DoctorSeeder extends Seeder
                 'last_name' => 'Brown',
                 'email' => 'michael.brown@hospital.com',
                 'phone' => '+1234567892',
-                'specialization' => 'Pediatrics',
+                'specialization' => 'Pediatrics', // Will be matched to staff_specializations.name
                 'license_number' => 'LIC001236',
-                'experience_years' => 8,
-                'qualification' => 'MD, Pediatrics',
-                'consultation_fee' => 120.00,
-                'schedule' => 'Tue-Thu-Sat: 08:00-16:00',
                 'status' => 'active',
             ],
         ];
@@ -70,12 +60,16 @@ class DoctorSeeder extends Seeder
 
         $createdUsers = 0;
         $updatedUsers = 0;
-        $upsertedDoctors = 0;
-        $hasDoctorsTable = $this->db->tableExists('doctors');
+        $upsertedProfiles = 0;
+        
+        if (!$this->db->tableExists('staff_profiles')) {
+            echo "Error: 'staff_profiles' table does not exist. Please run migrations first." . PHP_EOL;
+            return;
+        }
 
         $userModel = new UserModel();
         foreach ($doctors as $doc) {
-            // Find-or-create user by email via model so ID generator runs
+            // Step 1: Find or create user account
             $userRow = $this->db->table('users')->where('email', $doc['email'])->get()->getRowArray();
             if (!$userRow) {
                 $userData = [
@@ -88,7 +82,6 @@ class DoctorSeeder extends Seeder
                     'updated_at' => $now,
                 ];
                 $userModel->insert($userData);
-                // Retrieve by email to get generated string ID
                 $userRow = $this->db->table('users')->where('email', $doc['email'])->get()->getRowArray();
                 $createdUsers++;
             } else {
@@ -98,51 +91,57 @@ class DoctorSeeder extends Seeder
                         'role_id' => $doctorRoleId,
                         'updated_at' => $now,
                     ]);
-                    // refresh row
                     $userRow = $this->db->table('users')->where('email', $doc['email'])->get()->getRowArray();
                     $updatedUsers++;
                 }
             }
             $userId = $userRow['id'];
 
-            // Upsert doctor profile if table exists
-            if ($hasDoctorsTable) {
-                $profile = [
-                    'user_id'          => $userId,
-                    'first_name'       => $doc['first_name'],
-                    'last_name'        => $doc['last_name'],
-                    'email'            => $doc['email'],
-                    'phone'            => $doc['phone'],
-                    'specialization'   => $doc['specialization'],
-                    'license_number'   => $doc['license_number'],
-                    'experience_years' => $doc['experience_years'],
-                    'qualification'    => $doc['qualification'],
-                    'consultation_fee' => $doc['consultation_fee'],
-                    'schedule'         => $doc['schedule'],
-                    'status'           => $doc['status'],
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
-                ];
-
-                // Match by email first (or fallback to user_id)
-                $existing = $this->db->table('doctors')->where('email', $doc['email'])->get();
-                $existingRow = $existing ? $existing->getRowArray() : null;
-
-                if ($existingRow) {
-                    $this->db->table('doctors')->where('id', $existingRow['id'])->update($profile);
-                } else {
-                    $this->db->table('doctors')->insert($profile);
+            // Step 2: Find or create staff profile (staff_profiles.id is what appointments/doctor_schedules reference)
+            // Try to find specialization_id by name
+            $specializationId = null;
+            if (!empty($doc['specialization']) && $this->db->tableExists('staff_specializations')) {
+                $specRow = $this->db->table('staff_specializations')
+                    ->where('name', $doc['specialization'])
+                    ->get()
+                    ->getRowArray();
+                if ($specRow) {
+                    $specializationId = $specRow['id'];
                 }
-                $upsertedDoctors++;
             }
+
+            $profile = [
+                'user_id'          => $userId,
+                'first_name'       => $doc['first_name'],
+                'last_name'        => $doc['last_name'],
+                'email'            => $doc['email'],
+                'phone'            => $doc['phone'],
+                'role_id'          => $doctorRoleId,
+                'license_number'   => $doc['license_number'],
+                'specialization_id' => $specializationId,
+                'status'           => $doc['status'],
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ];
+
+            // Check if profile exists by user_id (preferred) or email
+            $existing = $this->db->table('staff_profiles')
+                ->where('user_id', $userId)
+                ->orWhere('email', $doc['email'])
+                ->get()
+                ->getRowArray();
+
+            if ($existing) {
+                $this->db->table('staff_profiles')->where('id', $existing['id'])->update($profile);
+            } else {
+                $this->db->table('staff_profiles')->insert($profile);
+            }
+            $upsertedProfiles++;
         }
 
         $this->db->transComplete();
 
         $status = $this->db->transStatus() ? 'committed' : 'rolled back';
-        if (!$hasDoctorsTable) {
-            echo "Note: 'doctors' table not found. Skipped doctor profile upserts." . PHP_EOL;
-        }
-        echo "Doctor seeding {$status}. Users created: {$createdUsers}, users updated: {$updatedUsers}, doctor profiles upserted: {$upsertedDoctors}." . PHP_EOL;
+        echo "Doctor seeding {$status}. Users created: {$createdUsers}, users updated: {$updatedUsers}, staff profiles upserted: {$upsertedProfiles}." . PHP_EOL;
     }
 }

@@ -16,8 +16,7 @@ class DoctorScheduleModel extends Model
     protected $allowedFields = [
         'id',
         'doctor_id',
-        'doctor_name',
-        'department',
+        'department_id',
         'shift_type',
         'shift_date',
         'start_time',
@@ -63,8 +62,7 @@ class DoctorScheduleModel extends Model
 
     protected $validationRules = [
         'doctor_id' => 'required',
-        'doctor_name' => 'required|max_length[255]',
-        'department' => 'required|max_length[100]',
+        'department_id' => 'permit_empty|integer',
         'shift_type' => 'required',
         'shift_date' => 'required|valid_date',
         'start_time' => 'required',
@@ -75,12 +73,6 @@ class DoctorScheduleModel extends Model
     protected $validationMessages = [
         'doctor_id' => [
             'required' => 'Doctor ID is required'
-        ],
-        'doctor_name' => [
-            'required' => 'Doctor name is required'
-        ],
-        'department' => [
-            'required' => 'Department is required'
         ],
         'shift_type' => [
             'required' => 'Shift type is required'
@@ -100,12 +92,13 @@ class DoctorScheduleModel extends Model
         
         // Get schedules excluding those for doctors who are inactive
         return $db->table('doctor_schedules ds')
-                   ->select('ds.*')
-                   ->join('users u', 'ds.doctor_id = u.id', 'left')
+                   ->select('ds.*, COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name')
+                   ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
+                   ->join('users u', 'u.id = sp.user_id', 'left')
                    ->where('ds.shift_date >=', $startDate)
                    ->where('ds.shift_date <=', $endDate)
                    ->where('ds.status !=', 'cancelled')
-                   ->where('u.status', 'active')
+                   ->where('sp.status', 'active')
                    ->orderBy('ds.shift_date', 'ASC')
                    ->orderBy('ds.start_time', 'ASC')
                    ->get()
@@ -123,13 +116,14 @@ class DoctorScheduleModel extends Model
         
         // Get schedules excluding those for doctors who are inactive
         return $db->table('doctor_schedules ds')
-                   ->select('ds.*')
-                   ->join('users u', 'ds.doctor_id = u.id', 'left')
+                   ->select('ds.*, COALESCE(CONCAT(sp.first_name, " ", sp.last_name), u.username) as doctor_name')
+                   ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
+                   ->join('users u', 'u.id = sp.user_id', 'left')
                    ->where('ds.shift_date', $date)
                    ->where('ds.status !=', 'cancelled')
-                   ->where('u.status', 'active')
+                   ->where('sp.status', 'active')
                    ->orderBy('ds.start_time', 'ASC')
-                   ->orderBy('ds.doctor_name', 'ASC')
+                   ->orderBy('sp.first_name', 'ASC')
                    ->get()
                    ->getResultArray();
     }
@@ -377,8 +371,7 @@ class DoctorScheduleModel extends Model
                 // Prepare schedule data for this date and time range
                 $scheduleData = [
                     'doctor_id' => $doctorId,
-                    'doctor_name' => $data['doctor_name'],
-                    'department' => $data['department'],
+                    'department_id' => $data['department_id'] ?? null,
                     'shift_type' => $shiftType,
                     'shift_date' => $dateStr,
                     'start_time' => $startTime,

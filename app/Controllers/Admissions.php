@@ -43,15 +43,15 @@ class Admissions extends BaseController
         // Only admin, nurse, and receptionist can create admissions
         $this->requireRole(['admin', 'nurse', 'receptionist']);
         
-        // Doctors list for dropdown (doctor_id used as FK)
+        // Doctors list for dropdown (doctor_id used as FK to staff_profiles)
         $doctors = $this->userModel
-            ->select("d.id AS doctor_id, users.id AS user_id, COALESCE(NULLIF(CONCAT(d.first_name, ' ', d.last_name), ' '), users.username) AS display_name, d.first_name, d.last_name, users.username")
+            ->select("sp.id AS doctor_id, users.id AS user_id, COALESCE(NULLIF(CONCAT(sp.first_name, ' ', sp.last_name), ' '), users.username) AS display_name, sp.first_name, sp.last_name, users.username")
             ->join('roles r', 'users.role_id = r.id', 'left')
-            ->join('doctors d', 'd.user_id = users.id', 'left')
+            ->join('staff_profiles sp', 'sp.user_id = users.id', 'left')
             ->where('r.name', 'doctor')
             ->where('users.status', 'active')
-            ->where('d.id IS NOT NULL', null, false)
-            ->orderBy('d.first_name', 'ASC')
+            ->where('sp.id IS NOT NULL', null, false)
+            ->orderBy('sp.first_name', 'ASC')
             ->orderBy('users.username', 'ASC')
             ->findAll();
 
@@ -79,7 +79,7 @@ class Admissions extends BaseController
             'admission_date' => 'required|valid_date',
             'admission_time' => 'permit_empty',
             'admission_type' => 'required|in_list[emergency,elective,transfer]',
-            'attending_doctor_id' => 'required|is_not_unique[doctors.id]',
+            'attending_doctor_id' => 'required|is_not_unique[staff_profiles.id]',
             'ward' => 'permit_empty|max_length[100]',
             'room' => 'permit_empty|max_length[100]',
             'bed_id' => 'required|integer|is_not_unique[beds.id]',
