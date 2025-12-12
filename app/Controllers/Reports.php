@@ -169,7 +169,7 @@ class Reports extends BaseController
                 break;
                 
             case 'doctor-performance':
-                if ($role !== 'admin') {
+                if (session('role') !== 'admin') {
                     return redirect()->to('login')->with('error', 'Unauthorized access');
                 }
                 $filters = [

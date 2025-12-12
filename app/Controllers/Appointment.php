@@ -112,8 +112,8 @@ class Appointment extends BaseController
     }
 
     /**
-     * JSON: Get available schedule dates (distinct shift_date >= today)
-     * Filters out past dates
+     * JSON: Get available schedule dates (only dates with available time slots)
+     * Filters out dates that have no available time slots for any doctor
      */
     public function getAvailableDates()
     {
@@ -124,7 +124,11 @@ class Appointment extends BaseController
 
         $today = date('Y-m-d');
         $db = \Config\Database::connect();
-        $rows = $db->table('doctor_schedules ds')
+        $tz = new \DateTimeZone('Asia/Manila');
+        $now = new \DateTime('now', $tz);
+        
+        // Get all dates with schedules
+        $allDates = $db->table('doctor_schedules ds')
             ->select('ds.shift_date')
             ->join('users u', 'ds.doctor_id = u.id', 'left')
             ->where('ds.shift_date >=', $today)
@@ -134,8 +138,90 @@ class Appointment extends BaseController
             ->orderBy('ds.shift_date', 'ASC')
             ->get()->getResultArray();
 
-        $dates = array_values(array_unique(array_map(function($r){ return $r['shift_date']; }, $rows)));
-        return $this->response->setJSON(['success' => true, 'dates' => $dates]);
+        $datesWithSlots = [];
+        
+        // Check each date to see if it has any available time slots
+        foreach ($allDates as $row) {
+            $date = $row['shift_date'];
+            $isToday = ($date === $today);
+            
+            // Get all doctors with schedules for this date
+            $doctors = $db->table('doctor_schedules ds')
+                ->select('ds.doctor_id')
+                ->join('users u', 'ds.doctor_id = u.id', 'left')
+                ->where('ds.shift_date', $date)
+                ->where('ds.status !=', 'cancelled')
+                ->where('u.status', 'active')
+                ->groupBy('ds.doctor_id')
+                ->get()->getResultArray();
+            
+            $hasAvailableSlot = false;
+            
+            // Check each doctor for available slots
+            foreach ($doctors as $doctor) {
+                $doctorId = $doctor['doctor_id'];
+                
+                // Get doctor's shift blocks
+                $shifts = $db->table('doctor_schedules ds')
+                    ->select('ds.start_time, ds.end_time')
+                    ->join('users u', 'ds.doctor_id = u.id', 'left')
+                    ->where('ds.doctor_id', $doctorId)
+                    ->where('ds.shift_date', $date)
+                    ->where('ds.status !=', 'cancelled')
+                    ->where('u.status', 'active')
+                    ->orderBy('ds.start_time', 'ASC')
+                    ->get()->getResultArray();
+
+                if (empty($shifts)) {
+                    continue;
+                }
+
+                // Get booked appointment times
+                $booked = $db->table('appointments')
+                    ->select('appointment_time')
+                    ->where('doctor_id', $doctorId)
+                    ->where('appointment_date', $date)
+                    ->whereNotIn('status', ['cancelled', 'no_show'])
+                    ->get()->getResultArray();
+                
+                $bookedSet = [];
+                foreach ($booked as $b) {
+                    $t = substr($b['appointment_time'], 0, 5) . ':00';
+                    $bookedSet[$t] = true;
+                }
+
+                // Check for available slots
+                foreach ($shifts as $shift) {
+                    $start = new \DateTime($date . ' ' . $shift['start_time'], $tz);
+                    $end = new \DateTime($date . ' ' . $shift['end_time'], $tz);
+                    if ($end <= $start) {
+                        $end->modify('+1 day');
+                    }
+                    $cursor = clone $start;
+                    while ($cursor < $end) {
+                        // For today, skip past time slots
+                        if ($isToday && $cursor <= $now) {
+                            $cursor->modify('+1 hour');
+                            continue;
+                        }
+                        
+                        $value = $cursor->format('H:i:00');
+                        if (!isset($bookedSet[$value])) {
+                            $hasAvailableSlot = true;
+                            break 3; // Break out of all loops
+                        }
+                        $cursor->modify('+1 hour');
+                    }
+                }
+            }
+            
+            // Only include dates with at least one available slot
+            if ($hasAvailableSlot) {
+                $datesWithSlots[] = $date;
+            }
+        }
+
+        return $this->response->setJSON(['success' => true, 'dates' => $datesWithSlots]);
     }
 
     /**
