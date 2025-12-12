@@ -128,12 +128,15 @@ class Appointment extends BaseController
         $now = new \DateTime('now', $tz);
         
         // Get all dates with schedules
+        // Note: doctor_id in doctor_schedules references staff_profiles.id, not users.id
         $allDates = $db->table('doctor_schedules ds')
             ->select('ds.shift_date')
             ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
+            ->join('users u', 'u.id = sp.user_id', 'left')
             ->where('ds.shift_date >=', $today)
             ->where('ds.status !=', 'cancelled')
             ->where('sp.status', 'active')
+            ->where('u.status', 'active')
             ->distinct()
             ->orderBy('ds.shift_date', 'ASC')
             ->get()->getResultArray();
@@ -146,11 +149,14 @@ class Appointment extends BaseController
             $isToday = ($date === $today);
             
             // Get all doctors with schedules for this date
+            // Note: doctor_id in doctor_schedules references staff_profiles.id, not users.id
             $doctors = $db->table('doctor_schedules ds')
                 ->select('ds.doctor_id')
-                ->join('users u', 'ds.doctor_id = u.id', 'left')
+                ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
+                ->join('users u', 'u.id = sp.user_id', 'left')
                 ->where('ds.shift_date', $date)
                 ->where('ds.status !=', 'cancelled')
+                ->where('sp.status', 'active')
                 ->where('u.status', 'active')
                 ->groupBy('ds.doctor_id')
                 ->get()->getResultArray();
@@ -162,12 +168,15 @@ class Appointment extends BaseController
                 $doctorId = $doctor['doctor_id'];
                 
                 // Get doctor's shift blocks
+                // Note: doctor_id in doctor_schedules references staff_profiles.id, not users.id
                 $shifts = $db->table('doctor_schedules ds')
                     ->select('ds.start_time, ds.end_time')
-                    ->join('users u', 'ds.doctor_id = u.id', 'left')
+                    ->join('staff_profiles sp', 'sp.id = ds.doctor_id', 'left')
+                    ->join('users u', 'u.id = sp.user_id', 'left')
                     ->where('ds.doctor_id', $doctorId)
                     ->where('ds.shift_date', $date)
                     ->where('ds.status !=', 'cancelled')
+                    ->where('sp.status', 'active')
                     ->where('u.status', 'active')
                     ->orderBy('ds.start_time', 'ASC')
                     ->get()->getResultArray();
@@ -199,12 +208,18 @@ class Appointment extends BaseController
                     }
                     $cursor = clone $start;
                     while ($cursor < $end) {
-                        // For today, skip past time slots
-                        if ($isToday && $cursor <= $now) {
-                            $cursor->modify('+1 hour');
-                            continue;
+                        // For today, only include future time slots (must be strictly after current time)
+                        // This ensures we don't show time slots that have already passed
+                        if ($isToday) {
+                            // Compare the full datetime (date + time) to current datetime
+                            if ($cursor <= $now) {
+                                $cursor->modify('+1 hour');
+                                continue;
+                            }
                         }
                         
+                        // For future dates, all slots are valid
+                        // For today, only future slots pass the check above
                         $value = $cursor->format('H:i:00');
                         if (!isset($bookedSet[$value])) {
                             $hasAvailableSlot = true;
@@ -319,10 +334,15 @@ class Appointment extends BaseController
             }
             $cursor = clone $start;
             while ($cursor < $end) {
-                // For today, skip past time slots
-                if ($isToday && $cursor <= $now) {
-                    $cursor->modify('+1 hour');
-                    continue;
+                // For today, only show upcoming time slots (must be strictly after current time)
+                // This ensures we don't show time slots that have already passed
+                // For future dates, show all available slots
+                if ($isToday) {
+                    // Compare the full datetime (date + time) to current datetime
+                    if ($cursor <= $now) {
+                        $cursor->modify('+1 hour');
+                        continue;
+                    }
                 }
                 
                 $value = $cursor->format('H:i:00'); // submit value
@@ -331,6 +351,11 @@ class Appointment extends BaseController
                 }
                 $cursor->modify('+1 hour');
             }
+        }
+        
+        // If today and no available slots after filtering, return empty
+        if ($isToday && empty($slots)) {
+            return $this->response->setJSON(['success' => true, 'times' => []]);
         }
 
         // 4) Build response array
@@ -341,6 +366,63 @@ class Appointment extends BaseController
         }
 
         return $this->response->setJSON(['success' => true, 'times' => $times]);
+    }
+
+    /**
+     * JSON: Check if patient already has an appointment on a specific date or has an active appointment
+     */
+    public function checkPatientAppointment()
+    {
+        $allowedRoles = ['admin', 'nurse', 'receptionist'];
+        if (!in_array(session('role'), $allowedRoles)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized'])->setStatusCode(401);
+        }
+
+        $patientId = $this->request->getGet('patient_id');
+        $date = $this->request->getGet('date');
+        
+        if (!$patientId) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Invalid parameters'])->setStatusCode(400);
+        }
+
+        $today = date('Y-m-d');
+        $message = null;
+        $hasConflict = false;
+        $conflictType = null; // 'same_date' or 'active'
+
+        // Check if patient has an active appointment (status = scheduled)
+        $activeAppointment = $this->appointmentModel
+            ->where('patient_id', $patientId)
+            ->where('status', 'scheduled')
+            ->first();
+
+        if ($activeAppointment) {
+            $hasConflict = true;
+            $conflictType = 'active';
+            $message = 'This patient still has an active appointment.';
+        } elseif ($date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            // Check if patient already has an appointment on this date (excluding cancelled/no_show)
+            $existingAppointment = $this->appointmentModel
+                ->where('patient_id', $patientId)
+                ->where('appointment_date', $date)
+                ->whereNotIn('status', ['cancelled', 'no_show'])
+                ->first();
+
+            if ($existingAppointment) {
+                $hasConflict = true;
+                $conflictType = 'same_date';
+                $message = ($date === $today) 
+                    ? 'This patient already has an appointment today.'
+                    : 'This patient already has an appointment on this date.';
+            }
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'hasAppointment' => $hasConflict,
+            'conflictType' => $conflictType,
+            'message' => $message
+        ]);
     }
     
     /**
@@ -485,6 +567,47 @@ class Appointment extends BaseController
                 'success' => false,
                 'message' => 'Doctor is not available on the selected date'
             ]);
+        }
+
+        // Check if patient has an active appointment (status = scheduled)
+        $activeAppointment = $this->appointmentModel
+            ->where('patient_id', $patientId)
+            ->where('status', 'scheduled')
+            ->first();
+        
+        if ($activeAppointment) {
+            $errorMessage = 'This patient still has an active appointment.';
+            if (!$this->request->isAJAX()) {
+                return redirect()->back()->withInput()->with('error', $errorMessage);
+            }
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => $errorMessage
+            ])->setStatusCode(409); // 409 Conflict
+        }
+
+        // Check if patient already has an appointment on the selected date
+        $existingAppointment = $this->appointmentModel
+            ->where('patient_id', $patientId)
+            ->where('appointment_date', $data['appointment_date'])
+            ->whereNotIn('status', ['cancelled', 'no_show'])
+            ->first();
+        
+        if ($existingAppointment) {
+            // Check if the selected date is today for more accurate message
+            $selectedDate = $data['appointment_date'];
+            $today = date('Y-m-d');
+            $errorMessage = ($selectedDate === $today) 
+                ? 'This patient already has an appointment today.'
+                : 'This patient already has an appointment on this date.';
+            
+            if (!$this->request->isAJAX()) {
+                return redirect()->back()->withInput()->with('error', $errorMessage);
+            }
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => $errorMessage
+            ])->setStatusCode(409); // 409 Conflict
         }
 
         // Check if appointment time falls within any shift block

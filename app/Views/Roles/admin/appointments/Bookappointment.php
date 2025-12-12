@@ -21,6 +21,11 @@
           </div>
         <?php endif; ?>
 
+        <!-- Duplicate Appointment Error Message (shown at top) -->
+        <div id="duplicateAppointmentError" class="alert alert-danger" style="display:none; background-color: #f8d7da; color: #721c24; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c2c7;">
+          <i class="fas fa-exclamation-circle"></i> <span id="duplicateErrorMessage"></span>
+        </div>
+
         <form action="<?= base_url('appointments/create') ?>" method="POST" id="appointmentForm" class="needs-validation" novalidate>
           <?= csrf_field() ?>
           <div class="form-grid">
@@ -139,6 +144,18 @@
           clearTimeout(searchTimer);
           const term = this.value.trim();
           patientId.value = ''; // Clear patient ID when typing
+          
+          // Clear duplicate error when patient is cleared
+          if (!term) {
+            duplicateErrorDiv.style.display = 'none';
+            hasDuplicateAppointment = false;
+            form.querySelector('button[type="submit"]').disabled = false;
+            if (duplicateErrorTimeout) {
+              clearTimeout(duplicateErrorTimeout);
+              duplicateErrorTimeout = null;
+            }
+          }
+          
           searchTimer = setTimeout(() => doPatientSearch(term), 250);
         });
 
@@ -150,6 +167,10 @@
           patientId.value = id;
           patientResults.style.display = 'none';
           patientSearch.value = item.textContent.trim().replace(/\s*\([^)]+\)\s*$/, ''); // Remove ID from display
+          
+          // Check for duplicate appointment when patient is selected
+          // This will check for active appointments even if date is not selected
+          checkDuplicateAppointment();
         });
 
         // Close dropdown when clicking outside
@@ -191,6 +212,75 @@
           setOptions(timeSelect, [], 'Select a doctor first', true);
         } else if (level === 'doctor') {
           setOptions(timeSelect, [], 'Select a doctor first', true);
+        }
+      };
+
+      // Check for duplicate appointment
+      const duplicateErrorDiv = document.getElementById('duplicateAppointmentError');
+      const duplicateErrorMessage = document.getElementById('duplicateErrorMessage');
+      let hasDuplicateAppointment = false;
+      let duplicateErrorTimeout = null;
+
+      const checkDuplicateAppointment = async () => {
+        const patientIdValue = patientId.value;
+        const selectedDate = dateSelect.value;
+        
+        // Clear any existing timeout
+        if (duplicateErrorTimeout) {
+          clearTimeout(duplicateErrorTimeout);
+          duplicateErrorTimeout = null;
+        }
+        
+        // Hide error if patient is not selected
+        if (!patientIdValue) {
+          duplicateErrorDiv.style.display = 'none';
+          hasDuplicateAppointment = false;
+          // Clear timeout if error is cleared
+          if (duplicateErrorTimeout) {
+            clearTimeout(duplicateErrorTimeout);
+            duplicateErrorTimeout = null;
+          }
+          return;
+        }
+
+        try {
+          // Build URL with patient_id (required) and date (optional)
+          let url = '<?= base_url('appointments/check-patient') ?>?patient_id=' + encodeURIComponent(patientIdValue);
+          if (selectedDate) {
+            url += '&date=' + encodeURIComponent(selectedDate);
+          }
+          
+          const res = await fetch(url);
+          const data = await res.json();
+          
+          if (data.success && data.hasAppointment) {
+            duplicateErrorMessage.textContent = data.message || 'This patient has a conflicting appointment.';
+            duplicateErrorDiv.style.display = 'block';
+            hasDuplicateAppointment = true;
+            // Disable form submission
+            form.querySelector('button[type="submit"]').disabled = true;
+            
+            // Auto-hide error message after 5 seconds
+            duplicateErrorTimeout = setTimeout(() => {
+              duplicateErrorDiv.style.display = 'none';
+              duplicateErrorTimeout = null;
+            }, 5000);
+          } else {
+            duplicateErrorDiv.style.display = 'none';
+            hasDuplicateAppointment = false;
+            // Enable form submission
+            form.querySelector('button[type="submit"]').disabled = false;
+            // Clear timeout if error is cleared before 5 seconds
+            if (duplicateErrorTimeout) {
+              clearTimeout(duplicateErrorTimeout);
+              duplicateErrorTimeout = null;
+            }
+          }
+        } catch (e) {
+          console.error('Error checking duplicate appointment:', e);
+          // On error, don't block submission but log it
+          duplicateErrorDiv.style.display = 'none';
+          hasDuplicateAppointment = false;
         }
       };
 
@@ -255,6 +345,19 @@
         clearDependent('date');
         if (this.value) {
           loadDoctors(this.value);
+          // Check for duplicate appointment when date changes
+          if (patientId.value) {
+            checkDuplicateAppointment();
+          }
+        } else {
+          // Clear duplicate error if date is cleared
+          duplicateErrorDiv.style.display = 'none';
+          hasDuplicateAppointment = false;
+          // Clear timeout if error is cleared
+          if (duplicateErrorTimeout) {
+            clearTimeout(duplicateErrorTimeout);
+            duplicateErrorTimeout = null;
+          }
         }
       });
 
@@ -265,12 +368,44 @@
         }
       });
 
-      // Client-side validation styling
+      // Client-side validation styling and real-time validation
       form.addEventListener('submit', function(event) {
         if (!form.checkValidity()) {
           event.preventDefault();
           event.stopPropagation();
+          form.classList.add('was-validated');
+          return;
         }
+        
+        // Prevent submission if patient already has an appointment on this date
+        if (hasDuplicateAppointment) {
+          event.preventDefault();
+          event.stopPropagation();
+          alert('This patient already has an appointment on this date. Please select a different date.');
+          dateSelect.focus();
+          form.classList.add('was-validated');
+          return;
+        }
+        
+        // Additional real-time validation: prevent booking past appointments
+        const selectedDate = dateSelect.value;
+        const selectedTime = timeSelect.value;
+        
+        if (selectedDate && selectedTime) {
+          const now = new Date();
+          const appointmentDateTime = new Date(selectedDate + ' ' + selectedTime);
+          
+          // Check if the selected appointment time is in the past
+          if (appointmentDateTime <= now) {
+            event.preventDefault();
+            event.stopPropagation();
+            alert('Cannot book appointments in the past. Please select a future date and time.');
+            timeSelect.focus();
+            form.classList.add('was-validated');
+            return;
+          }
+        }
+        
         form.classList.add('was-validated');
       }, false);
 

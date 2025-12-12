@@ -238,10 +238,16 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="form-label" for="date_of_birth">Date of Birth</label>
+                <label class="form-label" for="date_of_birth">Date of Birth <span class="text-danger">*</span></label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-calendar text-muted"></i></span>
-                  <input type="date" id="date_of_birth" name="date_of_birth" class="form-control">
+                  <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" max="<?= date('Y-m-d') ?>" required>
+                </div>
+                <div id="ageDisplay" style="margin-top: 4px; font-size: 0.875rem; color: #6c757d; display: none;">
+                  <i class="fas fa-birthday-cake"></i> <span id="ageValue">-</span> years old
+                </div>
+                <div id="ageError" class="alert alert-danger" style="display:none; margin-top: 8px; padding: 8px 12px; font-size: 0.9em;">
+                  <i class="fas fa-exclamation-circle"></i> Staff must be 18 years old and above.
                 </div>
               </div>
               <div class="form-group">
@@ -538,6 +544,11 @@
       resetAddressFields();
       composeAddressFromParts();
       updateStaffSummary();
+      // Reset age validation when opening modal
+      if (ageDisplay) ageDisplay.style.display = 'none';
+      if (ageError) ageError.style.display = 'none';
+      isAgeValid = false;
+      if (dateOfBirthInput) dateOfBirthInput.setCustomValidity('');
       staffModal.style.display = 'flex';
     }
 
@@ -561,6 +572,10 @@
       handleDepartmentChange();
       hydrateAddressFields(dataset.address || '');
       updateStaffSummary();
+      // Calculate and display age when editing
+      if (dateOfBirthInput) {
+        validateAge();
+      }
       staffModal.style.display = 'flex';
     }
 
@@ -587,7 +602,79 @@
       staffViewModal.style.display = 'none';
     }
 
-    staffForm.addEventListener('submit', function() {
+    // Age calculation and validation
+    const dateOfBirthInput = document.getElementById('date_of_birth');
+    const ageDisplay = document.getElementById('ageDisplay');
+    const ageValue = document.getElementById('ageValue');
+    const ageError = document.getElementById('ageError');
+    let isAgeValid = false;
+
+    function calculateAge(dateOfBirth) {
+      if (!dateOfBirth) return null;
+      
+      const today = new Date();
+      const birthDate = new Date(dateOfBirth);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      return age;
+    }
+
+    function validateAge() {
+      const dob = dateOfBirthInput ? dateOfBirthInput.value : '';
+      if (!dob) {
+        if (ageDisplay) ageDisplay.style.display = 'none';
+        if (ageError) ageError.style.display = 'none';
+        isAgeValid = false;
+        return;
+      }
+
+      const age = calculateAge(dob);
+      if (age !== null) {
+        if (ageValue) ageValue.textContent = age;
+        if (ageDisplay) ageDisplay.style.display = 'block';
+        
+        if (age < 18) {
+          if (ageError) ageError.style.display = 'block';
+          isAgeValid = false;
+          if (dateOfBirthInput) {
+            dateOfBirthInput.setCustomValidity('Staff must be 18 years old and above.');
+          }
+        } else {
+          if (ageError) ageError.style.display = 'none';
+          isAgeValid = true;
+          if (dateOfBirthInput) {
+            dateOfBirthInput.setCustomValidity('');
+          }
+        }
+      } else {
+        if (ageDisplay) ageDisplay.style.display = 'none';
+        if (ageError) ageError.style.display = 'none';
+        isAgeValid = false;
+      }
+    }
+
+    if (dateOfBirthInput) {
+      dateOfBirthInput.addEventListener('change', validateAge);
+      dateOfBirthInput.addEventListener('input', validateAge);
+    }
+
+    staffForm.addEventListener('submit', function(event) {
+      // Validate age before submission
+      validateAge();
+      
+      if (!isAgeValid && dateOfBirthInput && dateOfBirthInput.value) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (ageError) ageError.style.display = 'block';
+        if (dateOfBirthInput) dateOfBirthInput.focus();
+        return false;
+      }
+      
       setTimeout(() => closeStaffModal(), 0);
     });
 

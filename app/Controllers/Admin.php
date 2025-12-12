@@ -25,16 +25,22 @@ class Admin extends BaseController
         $roles = $db->table('roles')->select('id, name')->orderBy('name','ASC')->get()->getResultArray();
 
         $staffModel = new StaffProfileModel();
+        
+        // Get staff without user_id OR with invalid user_id (orphaned references)
         $staffOptions = $staffModel->select(
             'staff_profiles.id, staff_profiles.first_name, staff_profiles.middle_name, staff_profiles.last_name, '
-            . 'staff_profiles.email as staff_email, staff_profiles.role_id, '
+            . 'staff_profiles.email as staff_email, staff_profiles.role_id, staff_profiles.user_id, '
             . 'staff_profiles.department_id, staff_profiles.specialization_id, '
             . 'roles.name as role_name, sd.name as department_name, ss.name as specialization_name'
         )
             ->join('roles', 'roles.id = staff_profiles.role_id', 'left')
             ->join('staff_departments sd', 'sd.id = staff_profiles.department_id', 'left')
             ->join('staff_specializations ss', 'ss.id = staff_profiles.specialization_id', 'left')
-            ->where('staff_profiles.user_id', null)
+            ->join('users u', 'u.id = staff_profiles.user_id', 'left')
+            ->groupStart()
+                ->where('staff_profiles.user_id', null)
+                ->orWhere('u.id', null)  // Include staff with orphaned user_id references
+            ->groupEnd()
             ->orderBy('staff_profiles.last_name', 'ASC')
             ->orderBy('staff_profiles.first_name', 'ASC')
             ->findAll();
@@ -57,10 +63,52 @@ class Admin extends BaseController
         $prefillId = (int) ($this->request->getGet('staff_id') ?? 0);
         $prefillStaff = null;
         if ($prefillId > 0) {
+            // First try to find in the filtered list
             foreach ($staffOptions as $option) {
                 if ((int)$option['id'] === $prefillId) {
                     $prefillStaff = $option;
                     break;
+                }
+            }
+            
+            // If not found, fetch directly (in case they don't have user_id but weren't included for some reason)
+            if (!$prefillStaff) {
+                $directStaff = $staffModel->select(
+                    'staff_profiles.id, staff_profiles.first_name, staff_profiles.middle_name, staff_profiles.last_name, '
+                    . 'staff_profiles.email as staff_email, staff_profiles.role_id, staff_profiles.user_id, '
+                    . 'staff_profiles.department_id, staff_profiles.specialization_id, '
+                    . 'roles.name as role_name, sd.name as department_name, ss.name as specialization_name'
+                )
+                    ->join('roles', 'roles.id = staff_profiles.role_id', 'left')
+                    ->join('staff_departments sd', 'sd.id = staff_profiles.department_id', 'left')
+                    ->join('staff_specializations ss', 'ss.id = staff_profiles.specialization_id', 'left')
+                    ->where('staff_profiles.id', $prefillId)
+                    ->first();
+                
+                if ($directStaff && empty($directStaff['user_id'])) {
+                    $fullName = trim(($directStaff['last_name'] ?? '') . ', ' . ($directStaff['first_name'] ?? '') . ' ' . ($directStaff['middle_name'] ?? ''));
+                    $directStaff['full_name'] = preg_replace('/\s+/', ' ', $fullName);
+                    $directStaff['username_suggestion'] = $this->generateUsernameSuggestion($directStaff);
+                    $labelParts = [$directStaff['full_name']];
+                    if (!empty($directStaff['role_name'])) {
+                        $labelParts[] = '(' . $directStaff['role_name'] . ')';
+                    }
+                    if (!empty($directStaff['department_name'])) {
+                        $labelParts[] = $directStaff['department_name'];
+                    }
+                    $directStaff['display_label'] = trim(implode(' ', $labelParts));
+                    $prefillStaff = $directStaff;
+                    // Also add to staffOptions if not already there
+                    $exists = false;
+                    foreach ($staffOptions as $opt) {
+                        if ((int)$opt['id'] === $prefillId) {
+                            $exists = true;
+                            break;
+                        }
+                    }
+                    if (!$exists) {
+                        $staffOptions[] = $directStaff;
+                    }
                 }
             }
         }
@@ -388,6 +436,17 @@ class Admin extends BaseController
         $staffModel = new StaffProfileModel();
         $payload = $this->buildStaffPayload();
 
+        // Validate age (must be 18 or older)
+        if (!empty($payload['date_of_birth'])) {
+            $birthDate = new \DateTime($payload['date_of_birth']);
+            $today = new \DateTime();
+            $age = $today->diff($birthDate)->y;
+            
+            if ($age < 18) {
+                return redirect()->back()->withInput()->with('error', 'Staff must be 18 years old and above.');
+            }
+        }
+
         $roleSyncResult = $this->syncRoleFromUser($payload);
         if ($roleSyncResult !== true) {
             return $roleSyncResult;
@@ -423,6 +482,17 @@ class Admin extends BaseController
         }
 
         $payload = $this->buildStaffPayload();
+
+        // Validate age (must be 18 or older)
+        if (!empty($payload['date_of_birth'])) {
+            $birthDate = new \DateTime($payload['date_of_birth']);
+            $today = new \DateTime();
+            $age = $today->diff($birthDate)->y;
+            
+            if ($age < 18) {
+                return redirect()->back()->withInput()->with('error', 'Staff must be 18 years old and above.');
+            }
+        }
 
         $roleSyncResult = $this->syncRoleFromUser($payload);
         if ($roleSyncResult !== true) {

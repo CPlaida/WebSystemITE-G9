@@ -3,6 +3,7 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
+use App\Models\UserModel;
 
 class StaffProfilesSeeder extends Seeder
 {
@@ -205,6 +206,7 @@ class StaffProfilesSeeder extends Seeder
         $inserted = 0;
         $skipped = 0;
         $usersCreated = 0;
+        $userModel = new UserModel();
         
         foreach ($staffProfiles as $staff) {
             // Check if staff with same email or license number already exists
@@ -230,10 +232,7 @@ class StaffProfilesSeeder extends Seeder
                 // Step 1: Create user account if it doesn't exist
                 $userId = null;
                 if (!empty($staff['email'])) {
-                    $userRow = $this->db->table('users')
-                        ->where('email', $staff['email'])
-                        ->get()
-                        ->getRowArray();
+                    $userRow = $userModel->where('email', $staff['email'])->first();
                     
                     if (!$userRow) {
                         // Generate username from email or name
@@ -250,16 +249,15 @@ class StaffProfilesSeeder extends Seeder
                             'updated_at' => $now,
                         ];
                         
-                        $this->db->table('users')->insert($userData);
-                        $userId = $this->db->insertID();
+                        // Use model to insert so ID is auto-generated
+                        $userModel->insert($userData);
+                        $userId = $userModel->getInsertID();
                         $usersCreated++;
                     } else {
                         $userId = $userRow['id'];
                         // Update role_id if needed
                         if (($userRow['role_id'] ?? null) != $staff['role_id']) {
-                            $this->db->table('users')
-                                ->where('id', $userId)
-                                ->update(['role_id' => $staff['role_id'], 'updated_at' => $now]);
+                            $userModel->update($userId, ['role_id' => $staff['role_id'], 'updated_at' => $now]);
                         }
                     }
                 }
@@ -275,10 +273,7 @@ class StaffProfilesSeeder extends Seeder
             } else {
                 // Update existing profile if user_id is missing
                 if (empty($existingProfile['user_id']) && !empty($staff['email'])) {
-                    $userRow = $this->db->table('users')
-                        ->where('email', $staff['email'])
-                        ->get()
-                        ->getRowArray();
+                    $userRow = $userModel->where('email', $staff['email'])->first();
                     
                     if ($userRow) {
                         $this->db->table('staff_profiles')

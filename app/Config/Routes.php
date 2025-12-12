@@ -68,6 +68,8 @@ $routes->get('admin/Administration/ManageUser', 'Admin::manageUsers', ['filter' 
 $routes->get('admin/Administration/StaffManagement', 'Admin::manageStaff', ['filter' => 'auth:admin,itstaff']);
 // Admin user CRUD endpoints - Admin and IT Staff
 $routes->post('admin/users/create', 'Admin::createUser', ['filter' => 'auth:admin,itstaff']);
+$routes->get('admin/users/update', 'Admin::manageUsers', ['filter' => 'auth:admin,itstaff']);
+$routes->get('admin/users/update/(:segment)', 'Admin::manageUsers', ['filter' => 'auth:admin,itstaff']);
 $routes->post('admin/users/update/(:segment)', 'Admin::updateUser/$1', ['filter' => 'auth:admin,itstaff']);
 $routes->post('admin/users/delete/(:segment)', 'Admin::deleteUser/$1', ['filter' => 'auth:admin,itstaff']);
 $routes->post('admin/users/reset-password/(:segment)', 'Admin::resetPassword/$1', ['filter' => 'auth:admin,itstaff']);
@@ -114,6 +116,7 @@ $routes->post('appointments/delete/(:any)', 'Appointment::delete/$1');
 $routes->get('appointments/available-dates', 'Appointment::getAvailableDates');
 $routes->get('appointments/doctors-by-date', 'Appointment::getDoctorsByDate');
 $routes->get('appointments/times-by-doctor', 'Appointment::getTimesByDoctorAndDate');
+$routes->get('appointments/check-patient', 'Appointment::checkPatientAppointment');
 
 // Appointment Query Routes
 $routes->get('appointments/doctor/(:num)', 'Appointment::getByDoctor/$1');
