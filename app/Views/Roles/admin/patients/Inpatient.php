@@ -632,6 +632,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
+  // Define loadCities and loadBarangays functions in global scope for access from province handler
+  const loadCities = async (provCode) => {
+    if (!provCode) return;
+    try {
+      const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
+      cityOptions = await res.json();
+    } catch (e) {
+      console.error('Failed to load cities:', e);
+      cityOptions = [];
+    }
+  };
+
+  const loadBarangays = async (cityCode) => {
+    if (!cityCode) return;
+    try {
+      const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
+      barangayOptions = await res.json();
+    } catch (e) {
+      console.error('Failed to load barangays:', e);
+      barangayOptions = [];
+    }
+  };
+
   // Province autocomplete
   if (provinceInput && provinceDropdown) {
     loadProvinces();
@@ -656,6 +679,40 @@ document.addEventListener('DOMContentLoaded', function () {
         hideDropdown(cityDropdown);
         hideDropdown(barangayDropdown);
         composeAddress();
+        
+        // Automatically load and show cities when province is selected
+        if (cityInput && cityDropdown) {
+          loadCities(item.code).then(() => {
+            if (cityOptions.length > 0) {
+              showDropdown(cityDropdown, cityOptions.slice(0, 10), (cityItem) => {
+                selectedCity = cityItem;
+                cityInput.value = cityItem.name;
+                cityCode.value = cityItem.code;
+                barangayInput.value = '';
+                barangayCode.value = '';
+                barangayInput.disabled = false;
+                barangayOptions = [];
+                selectedBarangay = null;
+                hideDropdown(barangayDropdown);
+                composeAddress();
+                
+                // Automatically load and show barangays when city is selected
+                if (barangayInput && barangayDropdown) {
+                  loadBarangays(cityItem.code).then(() => {
+                    if (barangayOptions.length > 0) {
+                      showDropdown(barangayDropdown, barangayOptions.slice(0, 10), (brgyItem) => {
+                        selectedBarangay = brgyItem;
+                        barangayInput.value = brgyItem.name;
+                        barangayCode.value = brgyItem.code;
+                        composeAddress();
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
       });
     });
 
@@ -672,7 +729,47 @@ document.addEventListener('DOMContentLoaded', function () {
           barangayInput.value = '';
           barangayCode.value = '';
           barangayInput.disabled = true;
+          cityOptions = [];
+          barangayOptions = [];
+          selectedCity = null;
+          selectedBarangay = null;
+          hideDropdown(cityDropdown);
+          hideDropdown(barangayDropdown);
           composeAddress();
+          
+          // Automatically load and show cities when province is selected
+          if (cityInput && cityDropdown) {
+            loadCities(item.code).then(() => {
+              if (cityOptions.length > 0) {
+                showDropdown(cityDropdown, cityOptions.slice(0, 10), (cityItem) => {
+                  selectedCity = cityItem;
+                  cityInput.value = cityItem.name;
+                  cityCode.value = cityItem.code;
+                  barangayInput.value = '';
+                  barangayCode.value = '';
+                  barangayInput.disabled = false;
+                  barangayOptions = [];
+                  selectedBarangay = null;
+                  hideDropdown(barangayDropdown);
+                  composeAddress();
+                  
+                  // Automatically load and show barangays when city is selected
+                  if (barangayInput && barangayDropdown) {
+                    loadBarangays(cityItem.code).then(() => {
+                      if (barangayOptions.length > 0) {
+                        showDropdown(barangayDropdown, barangayOptions.slice(0, 10), (brgyItem) => {
+                          selectedBarangay = brgyItem;
+                          barangayInput.value = brgyItem.name;
+                          barangayCode.value = brgyItem.code;
+                          composeAddress();
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
         });
       }
     });
@@ -687,16 +784,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // City autocomplete
   if (cityInput && cityDropdown) {
-    const loadCities = async (provCode) => {
-      if (!provCode) return;
-      try {
-        const res = await fetch(`${apiBase}/cities/${encodeURIComponent(provCode)}`);
-        cityOptions = await res.json();
-      } catch (e) {
-        console.error('Failed to load cities:', e);
-        cityOptions = [];
-      }
-    };
+    // loadCities is already defined above in global scope
 
     cityInput.addEventListener('input', (e) => {
       if (!selectedProvince) return;
@@ -715,6 +803,20 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedBarangay = null;
             hideDropdown(barangayDropdown);
             composeAddress();
+            
+            // Automatically load and show barangays when city is selected
+            if (barangayInput && barangayDropdown) {
+              loadBarangays(item.code).then(() => {
+                if (barangayOptions.length > 0) {
+                  showDropdown(barangayDropdown, barangayOptions.slice(0, 10), (brgyItem) => {
+                    selectedBarangay = brgyItem;
+                    barangayInput.value = brgyItem.name;
+                    barangayCode.value = brgyItem.code;
+                    composeAddress();
+                  });
+                }
+              });
+            }
           });
         });
       } else {
@@ -731,6 +833,20 @@ document.addEventListener('DOMContentLoaded', function () {
           selectedBarangay = null;
           hideDropdown(barangayDropdown);
           composeAddress();
+          
+          // Automatically load and show barangays when city is selected
+          if (barangayInput && barangayDropdown) {
+            loadBarangays(item.code).then(() => {
+              if (barangayOptions.length > 0) {
+                showDropdown(barangayDropdown, barangayOptions.slice(0, 10), (brgyItem) => {
+                  selectedBarangay = brgyItem;
+                  barangayInput.value = brgyItem.name;
+                  barangayCode.value = brgyItem.code;
+                  composeAddress();
+                });
+              }
+            });
+          }
         });
       }
     });
@@ -762,16 +878,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Barangay autocomplete
   if (barangayInput && barangayDropdown) {
-    const loadBarangays = async (cityCode) => {
-      if (!cityCode) return;
-      try {
-        const res = await fetch(`${apiBase}/barangays/${encodeURIComponent(cityCode)}`);
-        barangayOptions = await res.json();
-      } catch (e) {
-        console.error('Failed to load barangays:', e);
-        barangayOptions = [];
-      }
-    };
+    // loadBarangays is already defined above in global scope
 
     barangayInput.addEventListener('input', (e) => {
       if (!selectedCity) return;
