@@ -572,24 +572,60 @@ class Billing extends BaseController
         // Return JSON for modal editing
         $bill = $this->billingModel->findWithRelations((int)$id);
         if (!$bill) return $this->response->setStatusCode(404)->setJSON(['error' => 'Not found']);
+        
+        // Load HMO authorization data if it exists (using billing_id relationship)
+        if (empty($bill['hmo_loa_number']) || empty($bill['hmo_approved_amount'])) {
+            try {
+                $authModel = new HmoAuthorizationModel();
+                $hmoAuth = $authModel->where('billing_id', (int)$id)->first();
+                if ($hmoAuth) {
+                    // Override with data from hmo_authorizations table if not already set
+                    if (empty($bill['hmo_loa_number']) && !empty($hmoAuth['loa_number'])) {
+                        $bill['hmo_loa_number'] = $hmoAuth['loa_number'];
+                    }
+                    if (empty($bill['hmo_approved_amount']) && $hmoAuth['approved_amount'] !== null) {
+                        $bill['hmo_approved_amount'] = (float)$hmoAuth['approved_amount'];
+                    }
+                    if (empty($bill['hmo_coverage_limit']) && $hmoAuth['coverage_limit'] !== null) {
+                        $bill['hmo_coverage_limit'] = (float)$hmoAuth['coverage_limit'];
+                    }
+                    if (empty($bill['hmo_patient_share']) && $hmoAuth['patient_share'] !== null) {
+                        $bill['hmo_patient_share'] = (float)$hmoAuth['patient_share'];
+                    }
+                    if (empty($bill['hmo_status']) && !empty($hmoAuth['status'])) {
+                        $bill['hmo_status'] = $hmoAuth['status'];
+                    }
+                    if (empty($bill['hmo_notes']) && !empty($hmoAuth['notes'])) {
+                        $bill['hmo_notes'] = $hmoAuth['notes'];
+                    }
+                    // Also set provider_id if not already set
+                    if (empty($bill['hmo_provider_id']) && !empty($hmoAuth['provider_id'])) {
+                        $bill['hmo_provider_id'] = $hmoAuth['provider_id'];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore if table doesn't exist or other errors
+            }
+        }
+        
         if (!empty($bill['patient_id'])) {
-            $needsHydration = empty($bill['hmo_provider_id']) && empty($bill['hmo_member_no']);
-            if ($needsHydration) {
-                $patient = (new PatientModel())->find($bill['patient_id']);
-                if ($patient) {
-                    foreach ([
-                        'hmo_provider_id',
-                        'hmo_member_no',
-                        'hmo_valid_from',
-                        'hmo_valid_to',
-                        'hmo_loa_number',
-                        'hmo_coverage_limit',
-                        'hmo_status',
-                        'hmo_notes'
-                    ] as $field) {
-                        if (empty($bill[$field]) && isset($patient[$field])) {
-                            $bill[$field] = $patient[$field];
-                        }
+            // Always try to load HMO data from patient if any HMO fields are missing
+            // This ensures the patient's registered HMO provider is available in the payment modal
+            $patient = (new PatientModel())->find($bill['patient_id']);
+            if ($patient) {
+                foreach ([
+                    'hmo_provider_id',
+                    'hmo_member_no',
+                    'hmo_valid_from',
+                    'hmo_valid_to',
+                    'hmo_loa_number',
+                    'hmo_coverage_limit',
+                    'hmo_status',
+                    'hmo_notes'
+                ] as $field) {
+                    // Load from patient if the field is empty in the bill
+                    if (empty($bill[$field]) && isset($patient[$field]) && !empty($patient[$field])) {
+                        $bill[$field] = $patient[$field];
                     }
                 }
             }

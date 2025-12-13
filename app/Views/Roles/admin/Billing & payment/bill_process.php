@@ -70,7 +70,7 @@
                     <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:12px;">
                         <div class="form-group">
                             <label for="hmo_provider_id">HMO Provider</label>
-                            <select id="hmo_provider_id" name="hmo_provider_id" class="form-control">
+                            <select id="hmo_provider_id" name="hmo_provider_id" class="form-control" disabled style="background-color:#f3f4f6; cursor:not-allowed;">
                                 <option value="">Select Provider</option>
                                 <?php $selectedProvider = $bill['hmo_provider_id'] ?? ''; ?>
                                 <?php foreach ($hmoProviders as $provider): ?>
@@ -79,18 +79,19 @@
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                            <input type="hidden" name="hmo_provider_id" value="<?= esc($bill['hmo_provider_id'] ?? '') ?>">
                         </div>
                         <div class="form-group">
                             <label for="hmo_member_no">Member Number</label>
-                            <input type="text" id="hmo_member_no" name="hmo_member_no" class="form-control" placeholder="e.g., MAXI-123456" value="<?= esc($bill['hmo_member_no'] ?? '') ?>">
+                            <input type="text" id="hmo_member_no" name="hmo_member_no" class="form-control" placeholder="e.g., MAXI-123456" value="<?= esc($bill['hmo_member_no'] ?? '') ?>" readonly style="background-color:#f3f4f6; cursor:not-allowed;">
                         </div>
                         <div class="form-group">
                             <label for="hmo_valid_from">Coverage Valid From</label>
-                            <input type="date" id="hmo_valid_from" name="hmo_valid_from" class="form-control" value="<?= esc($bill['hmo_valid_from'] ?? '') ?>">
+                            <input type="date" id="hmo_valid_from" name="hmo_valid_from" class="form-control" value="<?= esc($bill['hmo_valid_from'] ?? '') ?>" readonly style="background-color:#f3f4f6; cursor:not-allowed;">
                         </div>
                         <div class="form-group">
                             <label for="hmo_valid_to">Coverage Valid To</label>
-                            <input type="date" id="hmo_valid_to" name="hmo_valid_to" class="form-control" value="<?= esc($bill['hmo_valid_to'] ?? '') ?>">
+                            <input type="date" id="hmo_valid_to" name="hmo_valid_to" class="form-control" value="<?= esc($bill['hmo_valid_to'] ?? '') ?>" readonly style="background-color:#f3f4f6; cursor:not-allowed;">
                         </div>
                         <div class="form-group">
                             <label for="hmo_loa_number">Letter of Authorization (LOA) #</label>
@@ -166,21 +167,21 @@
                                         
                                         // Add items for this category
                                         foreach ($groupedItems[$cat] as $item): ?>
-                                            <tr data-category="<?= esc($cat) ?>">
+                                            <tr data-category="<?= esc($cat) ?>" data-locked="1">
                                                 <td>
-                                                    <input type="text" name="service[]" class="form-control service" required value="<?= esc($item['service']) ?>">
+                                                    <input type="text" name="service[]" class="form-control service" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" required value="<?= esc($item['service']) ?>">
                                                     <input type="hidden" name="lab_id[]" class="lab-id" value="<?= esc($item['lab_id'] ?? '') ?>">
                                                     <input type="hidden" name="source_table[]" class="source-table" value="<?= esc($item['source_table'] ?? '') ?>">
                                                     <input type="hidden" name="source_id[]" class="source-id" value="<?= esc($item['source_id'] ?? '') ?>">
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty'] ?? 1) ?>" required>
+                                                    <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty'] ?? 1) ?>" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" required>
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price'] ?? 0) ?>" required>
+                                                    <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price'] ?? 0) ?>" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" required>
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="amount[]" class="form-control amount" readonly value="<?= esc($item['amount'] ?? 0) ?>">
+                                                    <input type="number" name="amount[]" class="form-control amount" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" value="<?= esc($item['amount'] ?? 0) ?>">
                                                 </td>
                                             </tr>
                                         <?php endforeach;
@@ -200,21 +201,21 @@
                                         </tr>
                                         <?php
                                         foreach ($catItems as $item): ?>
-                                            <tr data-category="<?= esc($cat) ?>">
+                                            <tr data-category="<?= esc($cat) ?>" data-locked="1">
                                                 <td>
-                                                    <input type="text" name="service[]" class="form-control service" required value="<?= esc($item['service']) ?>">
+                                                    <input type="text" name="service[]" class="form-control service" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" required value="<?= esc($item['service']) ?>">
                                                     <input type="hidden" name="lab_id[]" class="lab-id" value="<?= esc($item['lab_id'] ?? '') ?>">
                                                     <input type="hidden" name="source_table[]" class="source-table" value="<?= esc($item['source_table'] ?? '') ?>">
                                                     <input type="hidden" name="source_id[]" class="source-id" value="<?= esc($item['source_id'] ?? '') ?>">
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty'] ?? 1) ?>" required>
+                                                    <input type="number" name="qty[]" class="form-control qty" min="1" value="<?= esc($item['qty'] ?? 1) ?>" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" required>
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price'] ?? 0) ?>" required>
+                                                    <input type="number" name="price[]" class="form-control price" step="0.01" min="0" value="<?= esc($item['price'] ?? 0) ?>" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" required>
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="amount[]" class="form-control amount" readonly value="<?= esc($item['amount'] ?? 0) ?>">
+                                                    <input type="number" name="amount[]" class="form-control amount" readonly style="background-color:#f5f5f5; cursor:not-allowed; border:none;" value="<?= esc($item['amount'] ?? 0) ?>">
                                                 </td>
                                             </tr>
                                         <?php endforeach;
@@ -365,32 +366,31 @@ function setBillItems(items){
             row.querySelector('.source-table').value = it.source_table || '';
             row.querySelector('.source-id').value = it.source_id || '';
             row.dataset.category = it.category || '';
-            const shouldLock = it.locked !== undefined ? !!it.locked : !!it.lab_id;
+            // Make ALL items readonly/display-only
             const svcInput = row.querySelector('.service');
             const qtyInput = row.querySelector('.qty');
             const priceInput = row.querySelector('.price');
-            if (shouldLock) {
-                svcInput.readOnly = true;
-                qtyInput.readOnly = true;
-                priceInput.readOnly = true;
-                row.setAttribute('data-locked', '1');
-                svcInput.style.backgroundColor = '#f5f5f5';
-                qtyInput.style.backgroundColor = '#f5f5f5';
-                priceInput.style.backgroundColor = '#f5f5f5';
-                const removeBtn = row.querySelector('.remove-item');
-                if (removeBtn) {
-                    removeBtn.disabled = true;
-                    removeBtn.classList.add('disabled');
-                    removeBtn.title = 'Linked to patient record';
-                }
-            } else {
-                svcInput.readOnly = false;
-                qtyInput.readOnly = false;
-                priceInput.readOnly = false;
-                svcInput.style.backgroundColor = '';
-                qtyInput.style.backgroundColor = '';
-                priceInput.style.backgroundColor = '';
-                row.removeAttribute('data-locked');
+            row.setAttribute('data-locked', '1');
+            // Store original values to prevent changes
+            qtyInput.setAttribute('data-original-value', qtyInput.value);
+            priceInput.setAttribute('data-original-value', priceInput.value);
+            svcInput.readOnly = true;
+            qtyInput.readOnly = true;
+            priceInput.readOnly = true;
+            svcInput.style.backgroundColor = '#f5f5f5';
+            svcInput.style.cursor = 'not-allowed';
+            svcInput.style.border = 'none';
+            qtyInput.style.backgroundColor = '#f5f5f5';
+            qtyInput.style.cursor = 'not-allowed';
+            qtyInput.style.border = 'none';
+            priceInput.style.backgroundColor = '#f5f5f5';
+            priceInput.style.cursor = 'not-allowed';
+            priceInput.style.border = 'none';
+            const removeBtn = row.querySelector('.remove-item');
+            if (removeBtn) {
+                removeBtn.disabled = true;
+                removeBtn.classList.add('disabled');
+                removeBtn.title = 'Items are display-only';
             }
             tbody.appendChild(rowFrag);
         });
@@ -424,32 +424,31 @@ function setBillItems(items){
             row.querySelector('.source-table').value = it.source_table || '';
             row.querySelector('.source-id').value = it.source_id || '';
             row.dataset.category = it.category || '';
-            const shouldLock = it.locked !== undefined ? !!it.locked : !!it.lab_id;
+            // Make ALL items readonly/display-only
             const svcInput = row.querySelector('.service');
             const qtyInput = row.querySelector('.qty');
             const priceInput = row.querySelector('.price');
-            if (shouldLock) {
-                svcInput.readOnly = true;
-                qtyInput.readOnly = true;
-                priceInput.readOnly = true;
-                row.setAttribute('data-locked', '1');
-                svcInput.style.backgroundColor = '#f5f5f5';
-                qtyInput.style.backgroundColor = '#f5f5f5';
-                priceInput.style.backgroundColor = '#f5f5f5';
-                const removeBtn = row.querySelector('.remove-item');
-                if (removeBtn) {
-                    removeBtn.disabled = true;
-                    removeBtn.classList.add('disabled');
-                    removeBtn.title = 'Linked to patient record';
-                }
-            } else {
-                svcInput.readOnly = false;
-                qtyInput.readOnly = false;
-                priceInput.readOnly = false;
-                svcInput.style.backgroundColor = '';
-                qtyInput.style.backgroundColor = '';
-                priceInput.style.backgroundColor = '';
-                row.removeAttribute('data-locked');
+            row.setAttribute('data-locked', '1');
+            // Store original values to prevent changes
+            qtyInput.setAttribute('data-original-value', qtyInput.value);
+            priceInput.setAttribute('data-original-value', priceInput.value);
+            svcInput.readOnly = true;
+            qtyInput.readOnly = true;
+            priceInput.readOnly = true;
+            svcInput.style.backgroundColor = '#f5f5f5';
+            svcInput.style.cursor = 'not-allowed';
+            svcInput.style.border = 'none';
+            qtyInput.style.backgroundColor = '#f5f5f5';
+            qtyInput.style.cursor = 'not-allowed';
+            qtyInput.style.border = 'none';
+            priceInput.style.backgroundColor = '#f5f5f5';
+            priceInput.style.cursor = 'not-allowed';
+            priceInput.style.border = 'none';
+            const removeBtn = row.querySelector('.remove-item');
+            if (removeBtn) {
+                removeBtn.disabled = true;
+                removeBtn.classList.add('disabled');
+                removeBtn.title = 'Items are display-only';
             }
             tbody.appendChild(rowFrag);
         });
@@ -561,6 +560,15 @@ if (patientInput) {
 document.addEventListener('input', function(e) {
     if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
         const row = e.target.closest('tr');
+        // Don't allow changes to locked items
+        if (row && row.hasAttribute('data-locked')) {
+            // Restore original value
+            const originalValue = e.target.getAttribute('data-original-value') || e.target.defaultValue;
+            if (originalValue) {
+                e.target.value = originalValue;
+            }
+            return;
+        }
         const qty = parseFloat(row.querySelector('.qty').value) || 0;
         const price = parseFloat(row.querySelector('.price').value) || 0;
         row.querySelector('.amount').value = (qty * price).toFixed(2);

@@ -93,18 +93,31 @@ class BillingModel extends Model
                     ->join('services s', 's.id = b.service_id', 'left');
         }
         
-        // Join normalized HMO authorization (preferred)
-        if ($this->tableHas('billing', 'hmo_authorization_id') && $this->tableHas('hmo_authorizations')) {
-            $builder->select('ha.loa_number AS hmo_loa_number, ha.coverage_limit AS hmo_coverage_limit, 
-                            ha.approved_amount AS hmo_approved_amount, ha.patient_share AS hmo_patient_share, 
-                            ha.status AS hmo_status, ha.notes AS hmo_notes')
-                    ->join('hmo_authorizations ha', 'ha.id = b.hmo_authorization_id', 'left')
-                    ->join('hmo_providers hp', 'hp.id = ha.provider_id', 'left')
-                    ->select('hp.name AS hmo_provider_name, hp.id AS hmo_provider_id');
-        } elseif ($this->tableHas('hmo_providers')) {
-            // Fallback to legacy field
-            $builder->select('hp.name AS hmo_provider_name')
-                    ->join('hmo_providers hp', 'hp.id = b.hmo_provider_id', 'left');
+        // Join HMO authorization data using billing_id (the actual relationship used by syncHmoAuthorization)
+        if ($this->tableHas('hmo_authorizations')) {
+            // Join hmo_authorizations table and select fields, preferring hmo_authorizations data over legacy billing fields
+            $builder->select('COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, 
+                            COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, 
+                            COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, 
+                            COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, 
+                            COALESCE(ha.status, b.hmo_status) AS hmo_status, 
+                            COALESCE(ha.notes, b.hmo_notes) AS hmo_notes,
+                            COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id')
+                    ->join('hmo_authorizations ha', 'ha.billing_id = b.id', 'left');
+        }
+        
+        // Join HMO providers
+        if ($this->tableHas('hmo_providers')) {
+            if ($this->tableHas('hmo_authorizations')) {
+                // Join using provider_id from hmo_authorizations first, then fallback to billing table
+                $builder->join('hmo_providers hp_auth', 'hp_auth.id = ha.provider_id', 'left')
+                        ->join('hmo_providers hp', 'hp.id = b.hmo_provider_id', 'left')
+                        ->select('COALESCE(hp_auth.name, hp.name) AS hmo_provider_name');
+            } else {
+                // Fallback to legacy field in billing table
+                $builder->select('hp.name AS hmo_provider_name')
+                        ->join('hmo_providers hp', 'hp.id = b.hmo_provider_id', 'left');
+            }
         }
         
         // Join normalized PhilHealth audit (preferred)

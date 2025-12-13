@@ -500,6 +500,39 @@ class Appointment extends BaseController
                     'message' => $errorMessage
                 ])->setStatusCode(404);
             }
+            
+            // Check if patient is inpatient/admitted - only outpatients can make appointments
+            $patientType = strtolower(trim((string)($patient['type'] ?? '')));
+            if ($patientType === 'inpatient') {
+                $errorMessage = 'Inpatient/admitted patients cannot book appointments. Only outpatients can schedule appointments.';
+                if (!$this->request->isAJAX()) {
+                    return redirect()->back()->withInput()->with('error', $errorMessage);
+                }
+                return $this->response->setJSON([
+                    'success' => false, 
+                    'message' => $errorMessage
+                ])->setStatusCode(400);
+            }
+            
+            // Also check if patient has an active admission (status = 'admitted')
+            $db = \Config\Database::connect();
+            if ($db->tableExists('admission_details')) {
+                $activeAdmission = $db->table('admission_details')
+                    ->where('patient_id', $patientId)
+                    ->where('status', 'admitted')
+                    ->first();
+                
+                if ($activeAdmission) {
+                    $errorMessage = 'Patient is currently admitted. Only outpatients can book appointments.';
+                    if (!$this->request->isAJAX()) {
+                        return redirect()->back()->withInput()->with('error', $errorMessage);
+                    }
+                    return $this->response->setJSON([
+                        'success' => false, 
+                        'message' => $errorMessage
+                    ])->setStatusCode(400);
+                }
+            }
         }
 
         $rules = [

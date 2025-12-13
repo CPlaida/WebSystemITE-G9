@@ -25,6 +25,32 @@ class AppointmentChargeProvider extends AbstractChargeProvider
             return [];
         }
 
+        // Only show appointment charges for outpatients - exclude inpatients/admitted patients
+        if ($this->tableExists('patients')) {
+            $patient = $this->db->table('patients')
+                ->select('type')
+                ->where('id', $patientId)
+                ->get()
+                ->getRowArray();
+            
+            // If patient type is 'inpatient', exclude appointment charges
+            if ($patient && strtolower(trim((string)($patient['type'] ?? ''))) === 'inpatient') {
+                return [];
+            }
+            
+            // Also check if patient has an active admission
+            if ($this->tableExists('admission_details')) {
+                $activeAdmission = $this->db->table('admission_details')
+                    ->where('patient_id', $patientId)
+                    ->where('status', 'admitted')
+                    ->countAllResults();
+                
+                if ($activeAdmission > 0) {
+                    return [];
+                }
+            }
+        }
+
         $builder = $this->db->table('appointments a');
         $builder->select('a.id, a.appointment_date, a.appointment_time, a.status, a.doctor_id, a.appointment_type');
         

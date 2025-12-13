@@ -259,13 +259,14 @@
                             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:18px;">
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">HMO Provider</label>
-                                    <select id="em_hmo_provider" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white; cursor:pointer;">
+                                    <select id="em_hmo_provider" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:#f3f4f6; cursor:not-allowed;" disabled>
                                         <option value="">Select HMO Provider</option>
                                     </select>
+                                    <input type="hidden" id="em_hmo_provider_hidden" value="${bill.hmo_provider_id || ''}">
                                 </div>
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Member Number</label>
-                                    <input id="em_hmo_member_no" type="text" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white;" placeholder="e.g., MAXI-123456" value="${bill.hmo_member_no || ''}">
+                                    <input id="em_hmo_member_no" type="text" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:#f3f4f6; cursor:not-allowed;" placeholder="e.g., MAXI-123456" value="${bill.hmo_member_no || ''}" readonly>
                                 </div>
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">LOA Number</label>
@@ -273,11 +274,11 @@
                                 </div>
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Coverage Valid From</label>
-                                    <input id="em_hmo_valid_from" type="date" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white;" value="${bill.hmo_valid_from || ''}">
+                                    <input id="em_hmo_valid_from" type="date" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:#f3f4f6; cursor:not-allowed;" value="${bill.hmo_valid_from || ''}" readonly>
                                 </div>
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Coverage Valid To</label>
-                                    <input id="em_hmo_valid_to" type="date" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:white;" value="${bill.hmo_valid_to || ''}">
+                                    <input id="em_hmo_valid_to" type="date" style="width:100%; padding:12px; border:2px solid #3b82f6; border-radius:8px; background:#f3f4f6; cursor:not-allowed;" value="${bill.hmo_valid_to || ''}" readonly>
                                 </div>
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#1e40af; font-weight:600; font-size:13px;">Approved Amount (₱)</label>
@@ -374,7 +375,9 @@
                     fd.append('payment_method', paymentMethod);
                     const hmoEnabled = document.getElementById('em_hmo_enabled')?.checked ? '1' : '0';
                     fd.append('use_hmo', hmoEnabled);
-                    fd.append('hmo_provider_id', document.getElementById('em_hmo_provider').value);
+                    // Use hidden field value since select is disabled
+                    const hmoProviderValue = document.getElementById('em_hmo_provider_hidden')?.value || document.getElementById('em_hmo_provider').value;
+                    fd.append('hmo_provider_id', hmoProviderValue);
                     fd.append('hmo_member_no', document.getElementById('em_hmo_member_no').value);
                     fd.append('hmo_loa_number', document.getElementById('em_hmo_loa_number').value);
                     fd.append('hmo_valid_from', document.getElementById('em_hmo_valid_from').value);
@@ -407,13 +410,17 @@
 
                     if (hmoEnabled === '1') {
                         const requiredHmoFields = [
-                            { id: 'em_hmo_provider', label: 'HMO Provider' },
+                            { id: 'em_hmo_provider_hidden', label: 'HMO Provider', fallback: 'em_hmo_provider' },
                             { id: 'em_hmo_member_no', label: 'HMO Member Number' },
                             { id: 'em_hmo_loa_number', label: 'HMO LOA Number' },
                             { id: 'em_hmo_approved_amount', label: 'HMO Approved Amount' }
                         ];
                         for (const field of requiredHmoFields) {
-                            const el = document.getElementById(field.id);
+                            let el = document.getElementById(field.id);
+                            // Use fallback if main field doesn't exist or is empty
+                            if ((!el || !String(el.value || '').trim()) && field.fallback) {
+                                el = document.getElementById(field.fallback);
+                            }
                             if (!el || !String(el.value || '').trim()) {
                                 Swal.showValidationMessage(field.label + ' is required when HMO coverage is enabled.');
                                 return false;
@@ -569,7 +576,9 @@
         const populateHmoProviders = () => {
             if (!hmoProviderEl) return;
             const providers = Array.isArray(window.hmoProviders) ? window.hmoProviders : [];
-            const selected = String(bill.hmo_provider_id ?? '');
+            // Get the selected provider ID from bill data or hidden field
+            const hiddenField = document.getElementById('em_hmo_provider_hidden');
+            const selected = String(bill.hmo_provider_id ?? (hiddenField?.value || '') ?? '');
             hmoProviderEl.innerHTML = '<option value="">Select HMO Provider</option>';
             providers.forEach(provider => {
                 const opt = document.createElement('option');
@@ -577,9 +586,17 @@
                 opt.textContent = provider.name ?? provider.provider_name ?? 'Unnamed Provider';
                 if (opt.value && opt.value === selected) {
                     opt.selected = true;
+                    // Also update hidden field
+                    if (hiddenField) {
+                        hiddenField.value = opt.value;
+                    }
                 }
                 hmoProviderEl.appendChild(opt);
             });
+            // If provider was selected, also update the hidden field
+            if (selected && hiddenField) {
+                hiddenField.value = selected;
+            }
         };
 
         const loadRates = async () => {
@@ -652,6 +669,11 @@
         paymentMethodEl?.addEventListener('change', toggleHmo);
         hmoEnabledEl?.addEventListener('change', toggleHmo);
 
+        // Auto-check HMO checkbox if patient has HMO data
+        if (hmoEnabledEl && (bill.hmo_provider_id || bill.hmo_member_no || bill.hmo_loa_number)) {
+            hmoEnabledEl.checked = true;
+        }
+        
         populateHmoProviders();
         togglePh();
         toggleHmo();
