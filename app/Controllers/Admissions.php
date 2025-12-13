@@ -6,6 +6,7 @@ use App\Models\AdmissionModel;
 use App\Models\PatientModel;
 use App\Models\UserModel;
 use App\Models\BedModel;
+use App\Services\Billing\BillingChargeAggregator;
 
 class Admissions extends BaseController
 {
@@ -190,6 +191,150 @@ class Admissions extends BaseController
                 'success' => false,
                 'message' => 'Patient is not currently admitted.'
             ])->setStatusCode(409);
+        }
+
+        // Check if patient has unpaid bills or unbilled charges before allowing discharge
+        $patientId = $admission['patient_id'] ?? null;
+        if (!empty($patientId)) {
+            $db = db_connect();
+            $hasUnpaidBills = false;
+            $hasUnbilledCharges = false;
+            $totalUnpaid = 0;
+            $billCount = 0;
+            $unbilledItemsCount = 0;
+            $unbilledTotal = 0;
+            
+            // Check if billing table exists and has payment_status column
+            if ($db->tableExists('billing')) {
+                // Check for unpaid bills - bills where payment_status is NOT 'paid'
+                // This includes 'pending', 'partial', 'overdue', or any other status
+                $unpaidBills = $db->table('billing')
+                    ->where('patient_id', $patientId)
+                    ->where('payment_status !=', 'paid')
+                    ->get()
+                    ->getResultArray();
+                
+                if (!empty($unpaidBills)) {
+                    $hasUnpaidBills = true;
+                    // Calculate total unpaid amount
+                    foreach ($unpaidBills as $bill) {
+                        $finalAmount = (float)($bill['final_amount'] ?? 0);
+                        $totalUnpaid += $finalAmount;
+                    }
+                    $billCount = count($unpaidBills);
+                }
+            }
+            
+            // Check for unbilled charges (items that should be billed but haven't been saved yet)
+            // Always check for unbilled charges, regardless of bill payment status
+            try {
+                $aggregator = new BillingChargeAggregator();
+                $result = $aggregator->collect($patientId);
+                $allUnbilledItems = $result['items'] ?? [];
+                
+                if (!empty($allUnbilledItems)) {
+                    // Filter out items that are already linked to ANY bills (paid or unpaid)
+                    // Items in bills are already billed, so they shouldn't block discharge
+                    if ($db->tableExists('billing_items') && $db->tableExists('billing')) {
+                        // Get all billing_items that belong to ANY bills for this patient
+                        $allBillIds = $db->table('billing')
+                            ->select('id')
+                            ->where('patient_id', $patientId)
+                            ->get()
+                            ->getResultArray();
+                        
+                        $allBillIdList = array_column($allBillIds, 'id');
+                        
+                        if (!empty($allBillIdList)) {
+                            // Get all items linked to any bills (paid or unpaid)
+                            $allBillItems = $db->table('billing_items')
+                                ->whereIn('billing_id', $allBillIdList)
+                                ->get()
+                                ->getResultArray();
+                            
+                            // Build a set of items already in any bills
+                            $billedItemKeys = [];
+                            foreach ($allBillItems as $bi) {
+                                $key = '';
+                                if (!empty($bi['lab_id'])) {
+                                    $key = 'lab_' . $bi['lab_id'];
+                                } elseif (!empty($bi['source_table']) && !empty($bi['source_id'])) {
+                                    $key = $bi['source_table'] . '_' . $bi['source_id'];
+                                }
+                                if ($key !== '') {
+                                    $billedItemKeys[$key] = true;
+                                }
+                            }
+                            
+                            // Filter out items that are already in any bills
+                            $unbilledItems = [];
+                            foreach ($allUnbilledItems as $item) {
+                                $key = '';
+                                if (!empty($item['lab_id'])) {
+                                    $key = 'lab_' . $item['lab_id'];
+                                } elseif (!empty($item['source_table']) && !empty($item['source_id'])) {
+                                    $key = $item['source_table'] . '_' . $item['source_id'];
+                                }
+                                
+                                // Only include if not already in any bill
+                                if ($key === '' || !isset($billedItemKeys[$key])) {
+                                    $unbilledItems[] = $item;
+                                }
+                            }
+                        } else {
+                            // No bills at all, so all unbilled items are truly unbilled
+                            $unbilledItems = $allUnbilledItems;
+                        }
+                    } else {
+                        // If tables don't exist, use all items (fallback)
+                        $unbilledItems = $allUnbilledItems;
+                    }
+                    
+                    if (!empty($unbilledItems)) {
+                        $hasUnbilledCharges = true;
+                        $unbilledItemsCount = count($unbilledItems);
+                        foreach ($unbilledItems as $item) {
+                            $amount = (float)($item['amount'] ?? 0);
+                            $unbilledTotal += $amount;
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // If aggregator fails, log but don't block discharge
+                log_message('error', 'Error checking unbilled charges during discharge: ' . $e->getMessage());
+            }
+            
+            // Block discharge if there are unpaid bills OR unbilled charges
+            if ($hasUnpaidBills || $hasUnbilledCharges) {
+                $messages = [];
+                
+                if ($hasUnpaidBills) {
+                    $messages[] = sprintf(
+                        '%d unpaid bill(s) with a total balance of ₱%s',
+                        $billCount,
+                        number_format($totalUnpaid, 2)
+                    );
+                }
+                
+                if ($hasUnbilledCharges) {
+                    $messages[] = sprintf(
+                        '%d unbilled charge(s) with a total amount of ₱%s',
+                        $unbilledItemsCount,
+                        number_format($unbilledTotal, 2)
+                    );
+                }
+                
+                $message = 'Cannot discharge patient. Patient has ' . implode(' and ', $messages) . '. Please ensure all bills are paid and all charges are billed before discharging.';
+                
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => $message,
+                    'unpaid_bills_count' => $billCount,
+                    'total_unpaid' => $totalUnpaid,
+                    'unbilled_items_count' => $unbilledItemsCount,
+                    'unbilled_total' => $unbilledTotal,
+                ])->setStatusCode(409);
+            }
         }
 
         $db = db_connect();

@@ -37,19 +37,15 @@ class RoomChargeProvider extends AbstractChargeProvider
                     ->groupEnd();
             }
             
-            // Only include admitted status (current active admission) OR discharged admissions
-            // that haven't been linked to billing_items (not yet billed)
+            // Only include admissions that haven't been linked to billing_items (not yet billed)
+            // IMPORTANT: Check ALL billing_items (from both paid and unpaid bills) to prevent duplicates
             if ($this->tableExists('billing_items')) {
-                // Include admitted status OR discharged that are not linked to billing_items
-                // Use a subquery to exclude discharged admissions already in billing_items
-                $builder->groupStart()
-                    ->where('ad.status', 'admitted')
-                    ->orGroupStart()
-                        ->where('ad.status', 'discharged')
-                        // Exclude discharged admissions that are already linked to billing_items
-                        ->where('NOT EXISTS (SELECT 1 FROM billing_items bi WHERE bi.source_table = \'admission_details\' AND CAST(bi.source_id AS UNSIGNED) = ad.id)', null, false)
-                        ->groupEnd()
-                    ->groupEnd();
+                // Include admitted OR discharged admissions that are NOT already in billing_items
+                // This prevents the same admission from being billed multiple times
+                $builder->whereIn('ad.status', ['admitted', 'discharged'])
+                    // Exclude admissions that are already linked to billing_items (from ANY bill, paid or unpaid)
+                    // Use string comparison to handle both string and numeric source_id values
+                    ->where('NOT EXISTS (SELECT 1 FROM billing_items bi WHERE bi.source_table = \'admission_details\' AND (bi.source_id = CAST(ad.id AS CHAR) OR CAST(bi.source_id AS UNSIGNED) = ad.id))', null, false);
             } else {
                 // If billing_items table doesn't exist, show both admitted and discharged
                 $builder->whereIn('ad.status', ['admitted', 'discharged']);
@@ -62,6 +58,43 @@ class RoomChargeProvider extends AbstractChargeProvider
                 // Additional filter to exclude admissions already linked to billing_items
                 // This is a safety net to ensure we don't show already-billed admissions
                 $admissions = $this->filterOutAlreadyLinked($admissions, 'admission_details');
+                
+                // Remove duplicates: if multiple admissions exist for the same bed, only keep the most recent one
+                // Also ensure we don't have duplicate admission IDs
+                if (!empty($admissions)) {
+                    $bedAdmissionMap = [];
+                    $admissionIdMap = [];
+                    foreach ($admissions as $admission) {
+                        $admissionId = (int)($admission['id'] ?? 0);
+                        $bedId = (int)($admission['bed_id'] ?? 0);
+                        
+                        // Skip if we've already processed this admission ID
+                        if ($admissionId > 0 && isset($admissionIdMap[$admissionId])) {
+                            continue;
+                        }
+                        
+                        if ($bedId > 0) {
+                            // If we haven't seen this bed yet, or this admission is more recent, keep it
+                            if (!isset($bedAdmissionMap[$bedId]) || 
+                                ($admission['admission_date'] ?? '') > ($bedAdmissionMap[$bedId]['admission_date'] ?? '')) {
+                                $bedAdmissionMap[$bedId] = $admission;
+                                if ($admissionId > 0) {
+                                    $admissionIdMap[$admissionId] = true;
+                                }
+                            }
+                        } else {
+                            // If no bed_id, keep the admission (shouldn't happen, but safety)
+                            // Use admission ID as key to avoid duplicates
+                            if ($admissionId > 0) {
+                                $bedAdmissionMap['no_bed_' . $admissionId] = $admission;
+                                $admissionIdMap[$admissionId] = true;
+                            } else {
+                                $bedAdmissionMap[] = $admission;
+                            }
+                        }
+                    }
+                    $admissions = array_values($bedAdmissionMap);
+                }
                 
                 if (!empty($admissions)) {
                     $bedIds = array_values(array_filter(array_map(fn($row) => $row['bed_id'] ?? null, $admissions)));
