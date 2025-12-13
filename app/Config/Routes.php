@@ -256,6 +256,7 @@ $routes->group('api/pharmacy', ['namespace' => 'App\\Controllers'], function($ro
 // Unified Admissions Routes (for all roles)
 $routes->group('admissions', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
     $routes->get('create', 'Admissions::create');
+    $routes->get('check', 'Admissions::checkAdmission');
     $routes->post('store', 'Admissions::store');
     $routes->post('(:num)/discharge', 'Admissions::discharge/$1');
 });
@@ -282,6 +283,7 @@ $routes->group('rooms', ['namespace' => 'App\\Controllers', 'filter' => 'auth'],
 // Unified Admissions Routes (for all roles)
 $routes->group('admissions', ['namespace' => 'App\\Controllers', 'filter' => 'auth'], function($routes) {
     $routes->get('create', 'Admissions::create');
+    $routes->get('check', 'Admissions::checkAdmission');
     $routes->post('store', 'Admissions::store');
     $routes->post('(:num)/discharge', 'Admissions::discharge/$1');
 });
@@ -328,6 +330,7 @@ $routes->get('admin/pharmacy/transaction/print/(:num)', 'Pharmacy::printTransact
             $routes->get('register', 'Patients::register');
             $routes->get('inpatient', 'Patients::inpatient');
             $routes->get('admission', 'Admissions::create');
+            $routes->get('admission/check', 'Admissions::checkAdmission');
             $routes->post('admission/store', 'Admissions::store');
             $routes->post('admission/(:num)/discharge', 'Admissions::discharge/$1');
             $routes->post('register', 'Patients::processRegister');  

@@ -210,6 +210,28 @@
       const addr = p.address || [p.street, p.barangay, p.city, p.province].filter(Boolean).join(', ');
       document.getElementById('p_address').value = addr || '';
       summary.style.display = 'grid';
+
+      // Check if patient is already admitted
+      const checkRes = await fetch(`<?= base_url('admin/patients/admission/check') ?>?patient_id=${encodeURIComponent(id)}`);
+      const checkData = await checkRes.json();
+      if (checkData.success && checkData.is_admitted) {
+        const admission = checkData.admission;
+        const admissionDate = admission.admission_date ? new Date(admission.admission_date).toLocaleDateString() : 'N/A';
+        const location = [admission.ward, admission.room].filter(Boolean).join(' / ') || 'N/A';
+        await Swal.fire({
+          icon: 'warning',
+          title: 'Patient Already Admitted',
+          html: `This patient is already admitted and has not been discharged.<br><br>
+                 <strong>Admission Date:</strong> ${admissionDate}<br>
+                 <strong>Location:</strong> ${location}<br><br>
+                 Please discharge the patient first before creating a new admission.`,
+          confirmButtonText: 'OK'
+        });
+        // Clear the selection
+        patientId.value = '';
+        search.value = '';
+        summary.style.display = 'none';
+      }
     }catch(e){ console.error(e); }
   });
 

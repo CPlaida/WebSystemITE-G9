@@ -63,6 +63,39 @@ class Admissions extends BaseController
         ]);
     }
 
+    /**
+     * Check if a patient is already admitted
+     */
+    public function checkAdmission()
+    {
+        // Only admin, nurse, and receptionist can check admission status
+        $this->requireRole(['admin', 'nurse', 'receptionist']);
+
+        $patientId = $this->request->getGet('patient_id');
+        if (!$patientId) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Patient ID is required'
+            ])->setStatusCode(400);
+        }
+
+        $existingAdmission = $this->admissionModel
+            ->where('patient_id', $patientId)
+            ->where('status', 'admitted')
+            ->first();
+
+        return $this->response->setJSON([
+            'success' => true,
+            'is_admitted' => !empty($existingAdmission),
+            'admission' => $existingAdmission ? [
+                'id' => $existingAdmission['id'],
+                'admission_date' => $existingAdmission['admission_date'],
+                'ward' => $existingAdmission['ward'],
+                'room' => $existingAdmission['room'],
+            ] : null
+        ]);
+    }
+
     public function store()
     {
         // Only admin, nurse, and receptionist can create admissions
@@ -104,6 +137,19 @@ class Admissions extends BaseController
                 'success' => false,
                 'message' => 'Patient not found.'
             ])->setStatusCode(404);
+        }
+
+        // Check if patient is already admitted (prevent double admission)
+        $existingAdmission = $this->admissionModel
+            ->where('patient_id', $patientId)
+            ->where('status', 'admitted')
+            ->first();
+        
+        if ($existingAdmission) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'This patient is already admitted and has not been discharged. Please discharge the patient first before creating a new admission.'
+            ])->setStatusCode(409);
         }
 
         // Verify bed is available
