@@ -51,9 +51,139 @@ class Reports extends BaseController
             'admin' => 'admin',
             'accounting' => 'admin', // Accountants use admin views (unified)
             'accountant' => 'admin', // Accountants use admin views (unified)
+            'doctor' => 'admin',
+            'nurse' => 'admin',
+            'receptionist' => 'admin',
+            'labstaff' => 'admin',
+            'pharmacist' => 'admin',
+            'itstaff' => 'admin',
         ];
         $roleFolder = $roleMap[$role] ?? 'admin';
         return "Roles/{$roleFolder}/Reports/{$viewName}";
+    }
+
+    /**
+     * Get role-to-report mapping
+     * 
+     * @return array
+     */
+    protected function getRoleReportMapping(): array
+    {
+        return [
+            'admin' => [
+                'revenue',
+                'outstanding-payments',
+                'patient-statistics',
+                'appointment-statistics',
+                'laboratory-tests',
+                'prescriptions',
+                'medicine-inventory',
+                'medicine-sales',
+                'admissions',
+                'discharges',
+                'doctor-performance',
+                'philhealth-claims',
+                'hmo-claims',
+            ],
+            'itstaff' => [
+                'revenue',
+                'outstanding-payments',
+                'patient-statistics',
+                'appointment-statistics',
+                'laboratory-tests',
+                'prescriptions',
+                'medicine-inventory',
+                'medicine-sales',
+                'admissions',
+                'discharges',
+                'doctor-performance',
+                'philhealth-claims',
+                'hmo-claims',
+            ],
+            'accountant' => [
+                'revenue',
+                'outstanding-payments',
+                'philhealth-claims',
+                'hmo-claims',
+            ],
+            'accounting' => [
+                'revenue',
+                'outstanding-payments',
+                'philhealth-claims',
+                'hmo-claims',
+            ],
+            'doctor' => [
+                'patient-statistics',
+                'appointment-statistics',
+                'prescriptions',
+                'doctor-performance',
+            ],
+            'nurse' => [
+                'patient-statistics',
+                'admissions',
+                'discharges',
+            ],
+            'receptionist' => [
+                'appointment-statistics',
+                'admissions',
+                'discharges',
+            ],
+            'labstaff' => [
+                'laboratory-tests',
+            ],
+            'pharmacist' => [
+                'medicine-inventory',
+                'medicine-sales',
+            ],
+        ];
+    }
+
+    /**
+     * Get allowed reports for current user role
+     * 
+     * @return array
+     */
+    protected function getAllowedReports(): array
+    {
+        $role = session('role');
+        $mapping = $this->getRoleReportMapping();
+        return $mapping[$role] ?? [];
+    }
+
+    /**
+     * Check if current user can access a specific report
+     * 
+     * @param string $reportType
+     * @return bool
+     */
+    protected function canAccessReport(string $reportType): bool
+    {
+        $allowedReports = $this->getAllowedReports();
+        return in_array($reportType, $allowedReports, true);
+    }
+
+    /**
+     * Get report display names
+     * 
+     * @return array
+     */
+    protected function getReportNames(): array
+    {
+        return [
+            'revenue' => 'Revenue Report',
+            'outstanding-payments' => 'Outstanding Payments',
+            'patient-statistics' => 'Patient Statistics',
+            'appointment-statistics' => 'Appointment Statistics',
+            'laboratory-tests' => 'Laboratory Tests',
+            'prescriptions' => 'Prescriptions',
+            'medicine-inventory' => 'Medicine Inventory',
+            'medicine-sales' => 'Medicine Sales',
+            'admissions' => 'Admissions',
+            'discharges' => 'Discharges',
+            'doctor-performance' => 'Doctor Performance',
+            'philhealth-claims' => 'PhilHealth Claims',
+            'hmo-claims' => 'HMO Claims',
+        ];
     }
 
     /**
@@ -61,9 +191,41 @@ class Reports extends BaseController
      */
     public function index()
     {
-        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
+        // Allow all authenticated roles to access reports page
+        $allowedRoles = ['admin', 'accounting', 'accountant', 'itstaff', 'doctor', 'nurse', 'receptionist', 'labstaff', 'pharmacist'];
+        $this->requireRole($allowedRoles);
 
-        $reportType = $this->request->getGet('type') ?? 'revenue';
+        $reportType = $this->request->getGet('type') ?? '';
+        $allowedReports = $this->getAllowedReports();
+        
+        // If no report type specified, use first allowed report
+        if (empty($reportType) && !empty($allowedReports)) {
+            $reportType = $allowedReports[0];
+        }
+        
+        // Validate report access - block unauthorized report requests
+        if (!empty($reportType) && !$this->canAccessReport($reportType)) {
+            return redirect()->to('reports')->with('error', 'You do not have permission to access this report.');
+        }
+        
+        // If user has no allowed reports, show message
+        if (empty($allowedReports)) {
+            $data = [
+                'title' => 'Reports',
+                'active_menu' => 'reports',
+                'reportType' => null,
+                'reportData' => [],
+                'filters' => [],
+                'allowedReports' => [],
+                'reportNames' => $this->getReportNames(),
+            ];
+            return view($this->getRoleViewPath('index'), $data);
+        }
+        
+        // Ensure reportType is set to a valid allowed report
+        if (empty($reportType) || !in_array($reportType, $allowedReports, true)) {
+            $reportType = $allowedReports[0];
+        }
         
         // Get report data based on type
         $reportData = [];
@@ -169,9 +331,7 @@ class Reports extends BaseController
                 break;
                 
             case 'doctor-performance':
-                if (session('role') !== 'admin') {
-                    return redirect()->to('login')->with('error', 'Unauthorized access');
-                }
+                // Permission check is already done in index() method via canAccessReport()
                 $filters = [
                     'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),
                     'end_date' => $this->request->getGet('end_date') ?? date('Y-m-d'),
@@ -209,6 +369,8 @@ class Reports extends BaseController
             'reportType' => $reportType,
             'reportData' => $reportData,
             'filters' => $filters,
+            'allowedReports' => $allowedReports,
+            'reportNames' => $this->getReportNames(),
         ];
 
         return view($this->getRoleViewPath('index'), $data);
@@ -237,7 +399,13 @@ class Reports extends BaseController
      */
     public function revenue()
     {
-        $this->requireRole(['admin', 'accounting', 'accountant', 'itstaff']);
+        $allowedRoles = ['admin', 'accounting', 'accountant', 'itstaff', 'doctor', 'nurse', 'receptionist', 'labstaff', 'pharmacist'];
+        $this->requireRole($allowedRoles);
+        
+        // Check if user can access this specific report
+        if (!$this->canAccessReport('revenue')) {
+            return redirect()->to('reports')->with('error', 'You do not have permission to access this report.');
+        }
 
         $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
         $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
@@ -677,7 +845,13 @@ class Reports extends BaseController
      */
     public function doctorPerformance()
     {
-        $this->requireRole(['admin']);
+        $allowedRoles = ['admin', 'accounting', 'accountant', 'itstaff', 'doctor', 'nurse', 'receptionist', 'labstaff', 'pharmacist'];
+        $this->requireRole($allowedRoles);
+        
+        // Check if user can access this specific report
+        if (!$this->canAccessReport('doctor-performance')) {
+            return redirect()->to('reports')->with('error', 'You do not have permission to access this report.');
+        }
 
         $filters = [
             'start_date' => $this->request->getGet('start_date') ?? date('Y-m-01'),

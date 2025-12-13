@@ -157,14 +157,17 @@ $roleName = getRoleName();
         </li>
         <?php endif; ?>
 
-        <!-- Reports - Admin, Accounting, IT Staff only -->
-        <?php if (hasPermission('reports') && !in_array($role, ['nurse', 'doctor'])): ?>
-            <li class="nav-item expandable">
-            <a href="<?= base_url('reports') ?>">
-                <span class="text">Reports</span>
-                <span class="arrow">›</span>
-            </a>
-        </li>
+        <!-- Reports - All roles (with role-based filtering) -->
+        <?php 
+        // All authenticated roles can access reports, but with filtered report types
+        $allowedRolesForReports = ['admin', 'accounting', 'accountant', 'itstaff', 'doctor', 'nurse', 'receptionist', 'labstaff', 'pharmacist'];
+        if (in_array($role, $allowedRolesForReports)): ?>
+            <li class="nav-item">
+                <a href="<?= base_url('reports') ?>">
+                    <span class="text">Reports</span>
+                    <span class="arrow">›</span>
+                </a>
+            </li>
         <?php endif; ?>
 
         <!-- Logout -->

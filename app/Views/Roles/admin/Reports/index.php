@@ -18,19 +18,21 @@
                     <div style="display: flex; flex-direction: column;">
                         <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #374151; font-size: 14px; letter-spacing: 0.3px;">Report Type <span style="color: #ef4444;">*</span></label>
                         <select name="type" id="reportType" style="width: 100%; padding: 12px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background-color: #ffffff; color: #374151; transition: border-color 0.2s; font-family: inherit;" onchange="document.getElementById('reportForm').submit();">
-                            <option value="revenue" <?= ($reportType ?? 'revenue') === 'revenue' ? 'selected' : '' ?>>Revenue Report</option>
-                            <option value="outstanding-payments" <?= ($reportType ?? '') === 'outstanding-payments' ? 'selected' : '' ?>>Outstanding Payments</option>
-                            <option value="patient-statistics" <?= ($reportType ?? '') === 'patient-statistics' ? 'selected' : '' ?>>Patient Statistics</option>
-                            <option value="appointment-statistics" <?= ($reportType ?? '') === 'appointment-statistics' ? 'selected' : '' ?>>Appointment Statistics</option>
-                            <option value="laboratory-tests" <?= ($reportType ?? '') === 'laboratory-tests' ? 'selected' : '' ?>>Laboratory Tests</option>
-                            <option value="prescriptions" <?= ($reportType ?? '') === 'prescriptions' ? 'selected' : '' ?>>Prescriptions</option>
-                            <option value="medicine-inventory" <?= ($reportType ?? '') === 'medicine-inventory' ? 'selected' : '' ?>>Medicine Inventory</option>
-                            <option value="medicine-sales" <?= ($reportType ?? '') === 'medicine-sales' ? 'selected' : '' ?>>Medicine Sales</option>
-                            <option value="admissions" <?= ($reportType ?? '') === 'admissions' ? 'selected' : '' ?>>Admissions</option>
-                            <option value="discharges" <?= ($reportType ?? '') === 'discharges' ? 'selected' : '' ?>>Discharges</option>
-                            <option value="doctor-performance" <?= ($reportType ?? '') === 'doctor-performance' ? 'selected' : '' ?>>Doctor Performance</option>
-                            <option value="philhealth-claims" <?= ($reportType ?? '') === 'philhealth-claims' ? 'selected' : '' ?>>PhilHealth Claims</option>
-                            <option value="hmo-claims" <?= ($reportType ?? '') === 'hmo-claims' ? 'selected' : '' ?>>HMO Claims</option>
+                            <?php 
+                            $allowedReports = $allowedReports ?? [];
+                            $reportNames = $reportNames ?? [];
+                            
+                            if (empty($allowedReports)): ?>
+                                <option value="">No reports available for your role</option>
+                            <?php else: ?>
+                                <?php foreach ($allowedReports as $reportKey): ?>
+                                    <?php if (isset($reportNames[$reportKey])): ?>
+                                        <option value="<?= esc($reportKey) ?>" <?= ($reportType ?? '') === $reportKey ? 'selected' : '' ?>>
+                                            <?= esc($reportNames[$reportKey]) ?>
+                                        </option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                     
@@ -128,39 +130,46 @@
     <!-- Report Content -->
     <div id="reportContent">
         <?php
-        $reportTitles = [
-            'revenue' => 'Revenue Report',
-            'outstanding-payments' => 'Outstanding Payments Report',
-            'patient-statistics' => 'Patient Statistics Report',
-            'appointment-statistics' => 'Appointment Statistics Report',
-            'laboratory-tests' => 'Laboratory Tests Report',
-            'prescriptions' => 'Prescription Report',
-            'medicine-inventory' => 'Medicine Inventory Report',
-            'medicine-sales' => 'Medicine Sales Report',
-            'admissions' => 'Admission Report',
-            'discharges' => 'Discharge Report',
-            'doctor-performance' => 'Doctor Performance Report',
-            'philhealth-claims' => 'PhilHealth Claims Report',
-            'hmo-claims' => 'HMO Claims Report'
-        ];
-        $currentReportTitle = $reportTitles[$reportType ?? 'revenue'] ?? 'Report';
-        ?>
+        $reportNames = $reportNames ?? [];
+        $currentReportTitle = isset($reportType) && isset($reportNames[$reportType]) 
+            ? $reportNames[$reportType] 
+            : 'Report';
         
-        <!-- Report Header -->
-        <div class="card" style="margin-bottom: 20px;">
-            <div class="card-body">
-                <div>
-                    <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 600; color: #2c3e50;"><?= $currentReportTitle ?></h2>
-                    <?php 
-                    $startDate = $filters['start_date'] ?? date('Y-m-01');
-                    $endDate = $filters['end_date'] ?? date('Y-m-d');
-                    ?>
-                    <p style="margin: 0; font-size: 14px; color: #7f8c8d;">Period: <?= date('F d, Y', strtotime($startDate)) ?> - <?= date('F d, Y', strtotime($endDate)) ?></p>
+        // Show message if no reports available
+        if (empty($allowedReports ?? [])): ?>
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="card-body">
+                    <div class="alert alert-info" style="margin: 0; padding: 16px; background-color: #e3f2fd; border: 1px solid #90caf9; border-radius: 6px; color: #1565c0;">
+                        <strong>No Reports Available</strong><br>
+                        You do not have permission to access any reports. Please contact your administrator.
+                    </div>
                 </div>
             </div>
-        </div>
+        <?php elseif (empty($reportType)): ?>
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="card-body">
+                    <div class="alert alert-info" style="margin: 0; padding: 16px; background-color: #e3f2fd; border: 1px solid #90caf9; border-radius: 6px; color: #1565c0;">
+                        <strong>Select a Report</strong><br>
+                        Please select a report type from the dropdown above to view report data.
+                    </div>
+                </div>
+            </div>
+        <?php else: ?>
+            <!-- Report Header -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="card-body">
+                    <div>
+                        <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 600; color: #2c3e50;"><?= esc($currentReportTitle) ?></h2>
+                        <?php 
+                        $startDate = $filters['start_date'] ?? date('Y-m-01');
+                        $endDate = $filters['end_date'] ?? date('Y-m-d');
+                        ?>
+                        <p style="margin: 0; font-size: 14px; color: #7f8c8d;">Period: <?= date('F d, Y', strtotime($startDate)) ?> - <?= date('F d, Y', strtotime($endDate)) ?></p>
+                    </div>
+                </div>
+            </div>
 
-        <?php if (($reportType ?? 'revenue') === 'revenue'): ?>
+            <?php if (($reportType ?? '') === 'revenue'): ?>
             <!-- Revenue Report -->
             <div class="card-container" style="margin-bottom: 20px; grid-template-columns: repeat(2, 1fr);">
                 <div class="card" style="padding: 35px 30px;">
@@ -890,6 +899,7 @@
                     <p style="text-align: center; padding: 40px; color: #7f8c8d; font-size: 16px;">Please select a report type from the dropdown above to generate a report.</p>
                 </div>
             </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>

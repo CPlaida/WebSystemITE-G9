@@ -18,25 +18,28 @@ if (!function_exists('hasPermission')) {
                 'pharmacy', 'inventory', 'rooms', 'reports', 'administration', 'staff_management'
             ],
             'doctor' => [
-                'dashboard', 'patients', 'appointments', 'laboratory', 'schedule'
+                'dashboard', 'patients', 'appointments', 'laboratory', 'schedule', 'reports'
             ],
             'nurse' => [
-                'dashboard', 'patients', 'appointments', 'laboratory','admissions', 'rooms'
+                'dashboard', 'patients', 'appointments', 'laboratory','admissions', 'rooms', 'reports'
             ],
             'pharmacist' => [
-                'dashboard', 'pharmacy', 'inventory', 'prescriptions', 'transactions'
+                'dashboard', 'pharmacy', 'inventory', 'prescriptions', 'transactions', 'reports'
+            ],
+            'accountant' => [
+                'dashboard', 'billing', 'reports', 'transactions'
             ],
             'accounting' => [
                 'dashboard', 'billing', 'reports', 'transactions'
             ],
             'labstaff' => [
-                'dashboard', 'laboratory', 'test_results'
+                'dashboard', 'laboratory', 'test_results', 'reports'
             ],
             'itstaff' => [
                 'dashboard', 'administration', 'reports'
             ],
             'receptionist' => [
-                'dashboard', 'patients', 'appointments', 'rooms', 'admissions'
+                'dashboard', 'patients', 'appointments', 'rooms', 'admissions', 'reports'
             ],
         ];
         
