@@ -22,6 +22,7 @@
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="pending">Pending</button>
                     <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="cancelled">Cancelled</button>
                     <button class="filter-btn" data-filter="today">Today</button>
                     <button class="filter-btn" data-filter="week">This Week</button>
                 </div>
@@ -36,8 +37,7 @@
                                     <th>Test Type</th>
                                     <th>Test Date</th>
                                     <th>Status</th>
-                                    <th>Notes</th>
-                                    <th>Actions</th>
+                                    <th style="width: 200px; text-align: center;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="testResultsTableBody">
@@ -49,18 +49,37 @@
                                             $addUrl = $identifier ? base_url('laboratory/testresult/add/' . $identifier) : base_url('laboratory/testresult/add');
                                             $status = $item['status'] ?? 'pending';
                                         ?>
+                                        <?php 
+                                        $statusLower = strtolower((string)$status);
+                                        $statusClass = 'status-pending';
+                                        if ($statusLower === 'completed') {
+                                            $statusClass = 'status-completed';
+                                        } elseif ($statusLower === 'cancelled') {
+                                            $statusClass = 'status-cancelled';
+                                        } elseif ($statusLower === 'in_progress') {
+                                            $statusClass = 'status-in-progress';
+                                        }
+                                        $canAddResult = $statusLower !== 'completed' && $statusLower !== 'cancelled';
+                                        ?>
                                         <tr data-status="<?= esc($status) ?>" data-date="<?= esc($item['test_date'] ?? '') ?>">
                                             <td><?= esc($item['test_id'] ?? $item['id'] ?? 'N/A') ?></td>
                                             <td><?= esc($item['patient_name'] ?? $item['test_name'] ?? 'N/A') ?></td>
                                             <td><?= esc($item['test_type'] ?? 'N/A') ?></td>
                                             <td><?= esc($item['test_date'] ?? 'N/A') ?></td>
-                                            <td><span class="status-badge <?= $status === 'pending' ? 'status-pending' : 'status-completed' ?>"><?= esc($status) ?></span></td>
-                                            <td><?= esc($item['notes'] ?? '—') ?></td>
-                                            <td>
-                                                <div class="action-buttons">
+                                            <td><span class="status-badge <?= $statusClass ?>"><?= esc($status) ?></span></td>
+                                            <td style="text-align: center; padding: 0.5rem;">
+                                                <div class="action-buttons" style="justify-content: center; gap: 4px;">
                                                     <a href="<?= $viewUrl ?>" class="btn btn-primary btn-sm" role="button">View</a>
-                                                    <?php if (strtolower((string)$status) !== 'completed' && in_array(session('role'), ['admin', 'labstaff'])): ?>
+                                                    <?php if ($canAddResult && in_array(session('role'), ['admin', 'labstaff'])): ?>
                                                         <a href="<?= $addUrl ?>" class="btn btn-primary btn-sm" role="button">Add Result</a>
+                                                    <?php endif; ?>
+                                                    <?php if ($canAddResult && in_array(session('role'), ['admin', 'labstaff'])): ?>
+                                                        <form method="POST" action="<?= base_url('laboratory/testresult/cancel/' . ($item['id'] ?? $item['test_id'] ?? '')) ?>" style="display: inline-block; margin: 0;" onsubmit="return confirm('Are you sure you want to cancel this laboratory request? This action cannot be undone.');">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-danger btn-sm" role="button" style="white-space: nowrap;">
+                                                                <i class="fas fa-times-circle"></i> Cancel
+                                                            </button>
+                                                        </form>
                                                     <?php endif; ?>
                                                 </div>
                                             </td>
@@ -131,7 +150,7 @@
                     startOfWeek.setDate(today.getDate() - today.getDay());
                     
                     filteredData = filteredData.filter(item => {
-                        if (activeFilter === 'pending' || activeFilter === 'completed') {
+                        if (activeFilter === 'pending' || activeFilter === 'completed' || activeFilter === 'cancelled') {
                             return (item.status || 'pending') === activeFilter;
                         } else if (activeFilter === 'today') {
                             const itemDate = new Date(item.test_date);
@@ -150,8 +169,7 @@
                         const searchableText = [
                             item.test_id || '',
                             item.patient_name || '',
-                            item.test_type || '',
-                            item.notes || ''
+                            item.test_type || ''
                         ].join(' ').toLowerCase();
                         
                         return searchableText.includes(searchTerm);
@@ -167,7 +185,7 @@
                 if (!data || data.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #666;">
                                 <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
                                 No test results found matching your criteria.
                             </td>
@@ -191,18 +209,41 @@
                         ? '<?= base_url('laboratory/testresult/add/') ?>' + identifier
                         : '<?= base_url('laboratory/testresult/add') ?>';
                     
-                    const isCompleted = String(item.status || '').toLowerCase() === 'completed';
+                    const status = String(item.status || '').toLowerCase();
+                    const isCompleted = status === 'completed';
+                    const isCancelled = status === 'cancelled';
+                    const canAddResult = !isCompleted && !isCancelled;
+                    
+                    // Determine status badge class
+                    let statusClass = 'status-pending';
+                    if (status === 'completed') {
+                        statusClass = 'status-completed';
+                    } else if (status === 'cancelled') {
+                        statusClass = 'status-cancelled';
+                    } else if (status === 'in_progress') {
+                        statusClass = 'status-in-progress';
+                    }
+                    
+                    const cancelForm = canAddResult ? `
+                        <form method="POST" action="<?= base_url('laboratory/testresult/cancel/') ?>${identifier}" style="display: inline;" onsubmit="return confirm('Are you sure you want to cancel this laboratory request? This action cannot be undone.');">
+                            <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>">
+                            <button type="submit" class="btn btn-danger btn-sm" role="button" style="margin-left: 4px;">
+                                <i class="fas fa-times-circle"></i> Cancel
+                            </button>
+                        </form>
+                    ` : '';
+                    
                     row.innerHTML = `
                         <td>${item.test_id || 'N/A'}</td>
                         <td>${item.patient_name || 'N/A'}</td>
                         <td>${item.test_type || 'N/A'}</td>
                         <td>${item.test_date || 'N/A'}</td>
-                        <td><span class="status-badge ${String(item.status).toLowerCase() === 'pending' ? 'status-pending' : 'status-completed'}">${item.status || 'pending'}</span></td>
-                        <td>${item.notes || '—'}</td>
-                        <td>
-                            <div class="action-buttons">
+                        <td><span class="status-badge ${statusClass}">${item.status || 'pending'}</span></td>
+                        <td style="text-align: center; padding: 0.5rem;">
+                            <div class="action-buttons" style="justify-content: center; gap: 4px;">
                                 <a href="${viewUrl}" class="btn btn-primary btn-sm" role="button">View</a>
-                                ${!isCompleted ? `<a href="${addUrl}" class="btn btn-primary btn-sm" role="button">Add Result</a>` : ''}
+                                ${canAddResult ? `<a href="${addUrl}" class="btn btn-primary btn-sm" role="button">Add Result</a>` : ''}
+                                ${cancelForm}
                             </div>
                         </td>
                     `;
@@ -237,7 +278,7 @@
             } else {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                        <td colspan="6" style="text-align: center; padding: 2rem;">
                             <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
                             Loading test results...
                         </td>
@@ -264,7 +305,7 @@
                     if (allTestResults.length === 0) {
                         tableBody.innerHTML = `
                             <tr>
-                                <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                                <td colspan="6" style="text-align: center; padding: 2rem; color: #666;">
                                     <i class="fas fa-flask" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
                                     No test results found. Create your first lab request to get started.
                                 </td>
@@ -280,7 +321,7 @@
                     console.error('Error loading data:', error);
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 2rem; color: #dc3545;">
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #dc3545;">
                                 <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
                                 Error loading test results: ${error.message}
                                 <br><small>Please refresh the page or contact support if the problem persists.</small>

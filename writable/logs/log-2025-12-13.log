@@ -1109,179 +1109,23 @@ Stack trace:
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
 ERROR - 2025-12-13 06:18:29 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
-ERROR - 2025-12-13 10:41:58 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pi`.*, ...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pi`.*, ...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(1269): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getPatientPrescriptions()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 10:41:58 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
-ERROR - 2025-12-13 11:22:28 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pi`.*, ...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pi`.*, ...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(1269): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getPatientPrescriptions()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 11:22:28 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
-ERROR - 2025-12-13 15:20:16 --> mysqli_sql_exception: Unknown column 'philhealth_audit_id' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `p...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `p...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `p...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `p...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(156): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(123): App\Database\Migrations\CreateBillPhilhealthAudits->migratePhilhealthData()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateBillPhilhealthAudits->up()
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate', Array)
-#11 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(87): CodeIgniter\CLI\BaseCommand->call('migrate', Array)
-#12 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
-#13 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
-#14 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
-#15 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
-#16 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
-#17 {main}
-ERROR - 2025-12-13 15:21:25 --> mysqli_sql_exception: Unknown column 'philhealth_audit_id' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `p...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `p...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `p...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `p...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(156): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-11-14-210200_CreateBillPhilhealthAudits.php(123): App\Database\Migrations\CreateBillPhilhealthAudits->migratePhilhealthData()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateBillPhilhealthAudits->up()
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate', Array)
-#11 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(87): CodeIgniter\CLI\BaseCommand->call('migrate', Array)
-#12 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
-#13 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
-#14 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
-#15 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
-#16 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
-#17 {main}
-ERROR - 2025-12-13 15:27:18 --> mysqli_sql_exception: Table 'patients' already exists in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `p...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `p...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `p...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `p...')
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-08-21-172251_CreatePatientsTable.php(167): CodeIgniter\Database\Forge->createTable('patients')
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreatePatientsTable->up()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
-#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
-#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
-#13 {main}
-ERROR - 2025-12-13 15:28:02 --> mysqli_sql_exception: Table 'patients' already exists in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `p...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `p...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `p...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `p...')
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-08-21-172251_CreatePatientsTable.php(167): CodeIgniter\Database\Forge->createTable('patients')
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreatePatientsTable->up()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
-#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
-#12 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
-#13 {main}
-ERROR - 2025-12-13 15:29:00 --> mysqli_sql_exception: Table 'patients' already exists in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `p...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `p...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `p...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `p...')
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-08-21-172251_CreatePatientsTable.php(167): CodeIgniter\Database\Forge->createTable('patients')
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreatePatientsTable->up()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\BaseCommand.php(119): CodeIgniter\CLI\Commands->run('migrate', Array)
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\MigrateRefresh.php(87): CodeIgniter\CLI\BaseCommand->call('migrate', Array)
-#11 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\MigrateRefresh->run(Array)
-#12 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate:refresh', Array)
-#13 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
-#14 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
-#15 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
-#16 {main}
-CRITICAL - 2025-12-13 15:54:22 --> Error: Call to undefined method CodeIgniter\Database\MySQLi\Builder::first()
-[Method: POST, Route: appointments/create]
-in APPPATH\Controllers\Appointment.php on line 523.
- 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->create()
- 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
- 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
- 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
- 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
- 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-CRITICAL - 2025-12-13 15:54:40 --> Error: Call to undefined method CodeIgniter\Database\MySQLi\Builder::first()
-[Method: POST, Route: appointments/create]
-in APPPATH\Controllers\Appointment.php on line 523.
- 1 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Appointment->create()
- 2 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Appointment))
- 3 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
- 4 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
- 5 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
- 6 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-ERROR - 2025-12-13 15:56:53 --> mysqli_sql_exception: Unknown column 'source_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `source_...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `source_...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `source_...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `source_...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\AbstractChargeProvider.php(84): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\AppointmentChargeProvider.php(96): App\Services\Billing\Providers\AbstractChargeProvider->filterOutAlreadyLinked(Array, 'appointments')
-#6 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(42): App\Services\Billing\Providers\AppointmentChargeProvider->getCharges('PAT-251213-0002')
-#7 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1348): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0002')
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->patientServices()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#13 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#14 {main}
-ERROR - 2025-12-13 15:57:57 --> mysqli_sql_exception: Unknown column 'lab_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 12:45:25 --> mysqli_sql_exception: Unknown column 'lab_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `lab_id`...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `lab_id`...')
 #2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `lab_id`...')
 #3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `lab_id`...', Array, false)
 #4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\LaboratoryChargeProvider.php(59): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(42): App\Services\Billing\Providers\LaboratoryChargeProvider->getCharges('PAT-251213-0001')
-#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1348): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->patientServices()
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(41): App\Services\Billing\Providers\LaboratoryChargeProvider->getCharges('PAT-251213-0001')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admissions.php(278): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admissions->discharge('1')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admissions))
 #9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
 #10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
 #11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #13 {main}
-ERROR - 2025-12-13 15:57:57 --> mysqli_sql_exception: Unknown column 'source_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 12:45:25 --> mysqli_sql_exception: Unknown column 'source_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `source_...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `source_...')
@@ -1289,24 +1133,40 @@ Stack trace:
 #3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `source_...', Array, false)
 #4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\AbstractChargeProvider.php(84): CodeIgniter\Database\BaseBuilder->get()
 #5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\LaboratoryChargeProvider.php(96): App\Services\Billing\Providers\AbstractChargeProvider->filterOutAlreadyLinked(Array, 'laboratory', 'id')
-#6 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(42): App\Services\Billing\Providers\LaboratoryChargeProvider->getCharges('PAT-251213-0001')
-#7 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1348): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->patientServices()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(41): App\Services\Billing\Providers\LaboratoryChargeProvider->getCharges('PAT-251213-0001')
+#7 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admissions.php(278): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admissions->discharge('1')
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admissions))
 #10 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
 #11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
 #12 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #13 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #14 {main}
-ERROR - 2025-12-13 15:57:57 --> mysqli_sql_exception: Unknown column 'source_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 12:45:25 --> mysqli_sql_exception: Unknown column 'bi.source_table' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `source_...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `source_...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `source_...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `source_...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\RoomChargeProvider.php(59): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(42): App\Services\Billing\Providers\RoomChargeProvider->getCharges('PAT-251213-0001')
-#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1348): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ad`.`id...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ad`.`id...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ad`.`id...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ad`.`id...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\RoomChargeProvider.php(55): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(41): App\Services\Billing\Providers\RoomChargeProvider->getCharges('PAT-251213-0001')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Admissions.php(278): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Admissions->discharge('1')
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admissions))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-13 13:22:30 --> mysqli_sql_exception: Unknown column 'bi.source_table' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ad`.`id...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ad`.`id...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ad`.`id...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ad`.`id...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\RoomChargeProvider.php(55): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(41): App\Services\Billing\Providers\RoomChargeProvider->getCharges('PAT-251213-0001')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1258): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
 #7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->patientServices()
 #8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
 #9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
@@ -1314,23 +1174,7 @@ Stack trace:
 #11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #13 {main}
-ERROR - 2025-12-13 15:57:57 --> mysqli_sql_exception: Unknown column 'source_id' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `source_...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `source_...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `source_...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `source_...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\DoctorFeeProvider.php(72): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(42): App\Services\Billing\Providers\DoctorFeeProvider->getCharges('PAT-251213-0001')
-#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1348): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->patientServices()
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#13 {main}
-ERROR - 2025-12-13 16:01:04 --> mysqli_sql_exception: Duplicate column name 'status' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 13:23:07 --> mysqli_sql_exception: Duplicate column name 'status' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `me...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `me...')
@@ -1346,7 +1190,47 @@ Stack trace:
 #11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #13 {main}
-ERROR - 2025-12-13 16:03:20 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescriptions`, CONSTRAINT `prescriptions_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 13:23:16 --> mysqli_sql_exception: Unknown column 'bi.source_table' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ad`.`id...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ad`.`id...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ad`.`id...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ad`.`id...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\Providers\RoomChargeProvider.php(55): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Services\Billing\BillingChargeAggregator.php(41): App\Services\Billing\Providers\RoomChargeProvider->getCharges('PAT-251213-0001')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(1258): App\Services\Billing\BillingChargeAggregator->collect('PAT-251213-0001')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->patientServices()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-13 13:36:14 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 13:36:17 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 13:36:18 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 13:36:19 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 13:36:38 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 13:36:54 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 13:38:04 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 13:38:16 --> Failed to get test result: Undefined variable $currentStatus
+ERROR - 2025-12-13 16:07:59 --> mysqli_sql_exception: Duplicate column name 'status' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `me...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `me...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE `me...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\app\Models\MedicineModel.php(34): CodeIgniter\Database\BaseConnection->query('ALTER TABLE `me...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(373): App\Models\MedicineModel->initialize()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(159): CodeIgniter\BaseModel->__construct(NULL)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(66): CodeIgniter\Model->__construct()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->medicine()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-13 16:08:30 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescriptions`, CONSTRAINT `prescriptions_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
@@ -1360,7 +1244,7 @@ Stack trace:
 #9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
-ERROR - 2025-12-13 16:03:20 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 16:08:30 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
@@ -1374,21 +1258,7 @@ Stack trace:
 #9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
-ERROR - 2025-12-13 16:03:20 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(706): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:03:20 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`pharmacy_transactions`, CONSTRAINT `pharmacy_transactions_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 16:08:30 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`pharmacy_transactions`, CONSTRAINT `pharmacy_transactions_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `ph...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ph...')
@@ -1402,208 +1272,8 @@ Stack trace:
 #9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
-ERROR - 2025-12-13 16:03:20 --> Failed to get transaction ID: {"code":1452,"message":"Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`pharmacy_transactions`, CONSTRAINT `pharmacy_transactions_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)"}
-ERROR - 2025-12-13 16:05:07 --> mysqli_sql_exception: Can't create table `hms_g9`.`pharmacy_transactions` (errno: 121 "Duplicate key on write or update") in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE pha...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE pha...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE pha...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-12-15-100000_MakePharmacyTransactionPatientIdNullable.php(29): CodeIgniter\Database\BaseConnection->query('ALTER TABLE pha...')
-#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\MakePharmacyTransactionPatientIdNullable->up()
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
-#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
-#11 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
-#12 {main}
-ERROR - 2025-12-13 16:05:42 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescriptions`, CONSTRAINT `prescriptions_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(652): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:05:42 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(719): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:05:42 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(719): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:05:42 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(719): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:05:42 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(719): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:05:42 --> Transaction failed: {"code":0,"message":""}
-ERROR - 2025-12-13 16:07:39 --> mysqli_sql_exception: Column 'patient_id' cannot be null in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(650): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:07:39 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(717): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:07:39 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(717): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:07:39 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(717): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:07:39 --> Transaction failed: {"code":0,"message":""}
-ERROR - 2025-12-13 16:09:20 --> mysqli_sql_exception: Column 'patient_id' cannot be null in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(650): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:09:20 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(717): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:09:20 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(717): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:09:20 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`prescription_items`, CONSTRAINT `prescription_items_prescription_id_foreign` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `pr...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `pr...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `pr...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `pr...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(717): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->createTransaction()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:09:20 --> Transaction failed: {"code":0,"message":""}
-ERROR - 2025-12-13 16:11:14 --> mysqli_sql_exception: Can't create table `hms_g9`.`prescriptions` (errno: 121 "Duplicate key on write or update") in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 16:08:30 --> Failed to get transaction ID: {"code":1452,"message":"Cannot add or update a child row: a foreign key constraint fails (`hms_g9`.`pharmacy_transactions`, CONSTRAINT `pharmacy_transactions_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)"}
+ERROR - 2025-12-13 16:47:24 --> mysqli_sql_exception: Can't create table `hms_g9`.`prescriptions` (errno: 121 "Duplicate key on write or update") in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE pre...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE pre...')
@@ -1618,248 +1288,71 @@ Stack trace:
 #10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
 #11 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
 #12 {main}
-ERROR - 2025-12-13 16:11:14 --> Could not re-add FK (may already exist): Can't create table `hms_g9`.`prescriptions` (errno: 121 "Duplicate key on write or update")
-ERROR - 2025-12-13 16:20:45 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 16:47:24 --> Could not re-add FK (may already exist): Can't create table `hms_g9`.`prescriptions` (errno: 121 "Duplicate key on write or update")
+ERROR - 2025-12-13 16:47:24 --> mysqli_sql_exception: Can't create table `hms_g9`.`prescriptions` (errno: 121 "Duplicate key on write or update") in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pi`.*, ...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pi`.*, ...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(1287): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getPatientPrescriptions()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:20:45 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
-ERROR - 2025-12-13 16:56:42 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE pre...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE pre...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE pre...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\app\Database\Migrations\2025-12-15-100000_MakePharmacyTransactionPatientIdNullable.php(31): CodeIgniter\Database\BaseConnection->query('ALTER TABLE pre...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(876): App\Database\Migrations\MakePharmacyTransactionPatientIdNullable->up()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#11 C:\xampp\htdocs\WebSystemITE-G9\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#12 {main}
+ERROR - 2025-12-13 16:48:04 --> mysqli_sql_exception: Duplicate column name 'status' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pi`.*, ...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pi`.*, ...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(1287): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getPatientPrescriptions()
-#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
-#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-#11 {main}
-ERROR - 2025-12-13 16:56:42 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
-ERROR - 2025-12-13 16:58:15 --> mysqli_sql_exception: Unknown column 'patient_name' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
-Stack trace:
-#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `b`.*, C...', 0)
-#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `b`.*, C...')
-#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `b`.*, C...')
-#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, C...', Array, false)
-#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
-#5 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
-#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
-#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->index()
-#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `me...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `me...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE `me...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\app\Models\MedicineModel.php(34): CodeIgniter\Database\BaseConnection->query('ALTER TABLE `me...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(373): App\Models\MedicineModel->initialize()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(159): CodeIgniter\BaseModel->__construct(NULL)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Medicine.php(45): CodeIgniter\Model->__construct()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Medicine->index()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
 #9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
 #10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
 #11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #13 {main}
-CRITICAL - 2025-12-13 16:58:15 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'patient_name' in 'where clause'
-[Method: GET, Route: billing]
-in SYSTEMPATH\Database\BaseConnection.php on line 684.
- 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE :patient_name: ESCAPE \'!\'
-OR  `p`.`first_name` LIKE :p.first_name: ESCAPE \'!\'
-OR  `p`.`last_name` LIKE :p.last_name: ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE :b.bill_date: ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE :b.payment_status: ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE :b.payment_method: ESCAPE \'!\'
-OR  `s`.`name` LIKE :s.name: ESCAPE \'!\'
-OR  `b`.`id` LIKE :b.id: ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC', [...], false)
- 2 APPPATH\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
- 3 APPPATH\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
- 4 APPPATH\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
- 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
- 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
- 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
- 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
- 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-CRITICAL - 2025-12-13 16:58:15 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'patient_name' in 'where clause'
-in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
- 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC')
- 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC')
- 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE :patient_name: ESCAPE \'!\'
-OR  `p`.`first_name` LIKE :p.first_name: ESCAPE \'!\'
-OR  `p`.`last_name` LIKE :p.last_name: ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE :b.bill_date: ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE :b.payment_status: ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE :b.payment_method: ESCAPE \'!\'
-OR  `s`.`name` LIKE :s.name: ESCAPE \'!\'
-OR  `b`.`id` LIKE :b.id: ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC', [...], false)
- 4 APPPATH\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
- 5 APPPATH\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
- 6 APPPATH\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
- 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
- 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
- 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
-10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
-11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-CRITICAL - 2025-12-13 16:58:15 --> [Caused by] mysqli_sql_exception: Unknown column 'patient_name' in 'where clause'
-in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
- 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC', 0)
- 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC')
- 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
-OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC')
- 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
-FROM `billing` `b`
-LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
-LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
-LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
-LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
-LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
-LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
-LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
-WHERE   (
-`patient_name` LIKE :patient_name: ESCAPE \'!\'
-OR  `p`.`first_name` LIKE :p.first_name: ESCAPE \'!\'
-OR  `p`.`last_name` LIKE :p.last_name: ESCAPE \'!\'
-OR  `b`.`bill_date` LIKE :b.bill_date: ESCAPE \'!\'
-OR  `b`.`payment_status` LIKE :b.payment_status: ESCAPE \'!\'
-OR  `b`.`payment_method` LIKE :b.payment_method: ESCAPE \'!\'
-OR  `s`.`name` LIKE :s.name: ESCAPE \'!\'
-OR  `b`.`id` LIKE :b.id: ESCAPE \'!\'
- )
-ORDER BY `b`.`created_at` DESC', [...], false)
- 5 APPPATH\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
- 6 APPPATH\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
- 7 APPPATH\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
- 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
- 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
-10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
-11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
-12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
-13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
-ERROR - 2025-12-13 16:59:05 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+ERROR - 2025-12-13 16:48:04 --> mysqli_sql_exception: Duplicate column name 'status' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `me...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `me...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE `me...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\app\Models\MedicineModel.php(34): CodeIgniter\Database\BaseConnection->query('ALTER TABLE `me...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(373): App\Models\MedicineModel->initialize()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(159): CodeIgniter\BaseModel->__construct(NULL)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Medicine.php(58): CodeIgniter\Model->__construct()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Medicine->index()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-13 16:48:04 --> mysqli_sql_exception: Duplicate column name 'status' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `me...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `me...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE `me...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\app\Models\MedicineModel.php(34): CodeIgniter\Database\BaseConnection->query('ALTER TABLE `me...')
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(373): App\Models\MedicineModel->initialize()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(159): CodeIgniter\BaseModel->__construct(NULL)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Medicine.php(71): CodeIgniter\Model->__construct()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Medicine->index()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Medicine))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-13 16:58:41 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
 Stack trace:
 #0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
 #1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
@@ -1873,4 +1366,4 @@ Stack trace:
 #9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
-ERROR - 2025-12-13 16:59:05 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
+ERROR - 2025-12-13 16:58:41 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'

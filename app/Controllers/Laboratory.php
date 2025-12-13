@@ -84,7 +84,7 @@ class Laboratory extends BaseController
             // Normalize output
             $results = array_map(function($r){
                 return [
-                    'id' => (int)($r['id'] ?? 0),
+                    'id' => trim((string)($r['id'] ?? '')),
                     'name' => trim((string)($r['name'] ?? '')),
                     'type' => (string)($r['type'] ?? '')
                 ];
@@ -169,6 +169,7 @@ class Laboratory extends BaseController
                             'stored_path' => $entry['stored_path'] ?? null,
                             'mime' => $entry['mime'] ?? 'application/octet-stream',
                             'size' => $entry['size'] ?? null,
+                            'test_type' => $entry['test_type'] ?? '', // Include test_type from manifest
                             'index' => $idx,
                         ];
                     }
@@ -317,10 +318,90 @@ class Laboratory extends BaseController
 
         // Map form fields to database fields
         $patientName = $this->request->getPost('patient_name');
-        $testType = $this->request->getPost('test_type');
+        $patientId = $this->request->getPost('patient_id');
+        $testTypesJson = $this->request->getPost('test_types');
         $priority = $this->request->getPost('priority');
         $clinicalNotes = $this->request->getPost('clinical_notes');
         $testDate = $this->request->getPost('test_date');
+        
+        // Parse test types from JSON or fallback to single test_type
+        $testTypes = [];
+        if (!empty($testTypesJson)) {
+            $decoded = json_decode($testTypesJson, true);
+            if (is_array($decoded) && !empty($decoded)) {
+                $testTypes = array_values(array_filter(array_map('trim', $decoded)));
+            }
+        }
+        
+        // Fallback to old single test_type field if test_types is empty
+        if (empty($testTypes)) {
+            $singleTestType = $this->request->getPost('test_type');
+            if (!empty($singleTestType)) {
+                $testTypes = [trim($singleTestType)];
+            }
+        }
+        
+        if (empty($testTypes)) {
+            if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
+                return $this->response->setJSON(['success' => false, 'message' => 'Please add at least one test type.']);
+            }
+            return redirect()->back()->withInput()->with('error', 'Please add at least one test type.');
+        }
+        
+        // Validate patient_id is provided
+        if (empty($patientId)) {
+            if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
+                return $this->response->setJSON(['success' => false, 'message' => 'Please select a valid patient from the suggestions.']);
+            }
+            return redirect()->back()->withInput()->with('error', 'Please select a valid patient from the suggestions.');
+        }
+        
+        // Normalize patient_id to string for consistent comparison
+        $patientId = trim((string)$patientId);
+        
+        // Check for pending/incomplete laboratory requests for this patient
+        $hasPending = $this->checkPatientHasPendingRequest($patientId);
+        
+        if ($hasPending) {
+            $errorMsg = "This patient already has a pending laboratory request. Please wait until it is completed.";
+            
+            if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
+                return $this->response->setJSON(['success' => false, 'message' => $errorMsg]);
+            }
+            return redirect()->back()->withInput()->with('error', $errorMsg);
+        }
+        
+        // Check for duplicate requests (same patient, same test types, not completed/cancelled)
+        // This is a more specific check after the pending check
+        $existingRequests = $this->labModel
+            ->where('patient_id', $patientId)
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->findAll();
+        
+        if (!empty($existingRequests)) {
+            foreach ($existingRequests as $existing) {
+                $existingTestTypes = $this->parseTestTypes($existing['test_type'] ?? '');
+                $newTestTypes = $testTypes;
+                
+                // Sort both arrays for comparison
+                sort($existingTestTypes);
+                sort($newTestTypes);
+                
+                // Check if test types match exactly
+                if ($existingTestTypes === $newTestTypes) {
+                    $testTypesList = implode(', ', array_map('ucfirst', $newTestTypes));
+                    $errorMsg = "A duplicate laboratory request already exists for this patient with the same test types ({$testTypesList}). Request ID: {$existing['id']}";
+                    
+                    if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') === 'application/json') {
+                        return $this->response->setJSON(['success' => false, 'message' => $errorMsg]);
+                    }
+                    return redirect()->back()->withInput()->with('error', $errorMsg);
+                }
+            }
+        }
+        
+        // Store test types as JSON array
+        $testType = count($testTypes) === 1 ? $testTypes[0] : json_encode($testTypes);
 
         // Validate test date - cannot be in the past
         $today = date('Y-m-d');
@@ -336,10 +417,14 @@ class Laboratory extends BaseController
 
         // patient_name is expected to be the actual name from the form
 
+        // Store test types as JSON array (multiple test types)
+        $testTypeValue = count($testTypes) === 1 ? $testTypes[0] : json_encode($testTypes);
+
         // Simple data array without foreign key dependencies
         $data = [
             'test_name' => $patientName,
-            'test_type' => $testType,
+            'patient_id' => $patientId, // Store patient_id for validation
+            'test_type' => $testTypeValue, // JSON array for multiple, or single string
             'priority' => $priority,
             'test_date' => $validTestDate,
             'test_time' => date('H:i:s'),
@@ -347,15 +432,16 @@ class Laboratory extends BaseController
             'notes' => $clinicalNotes
         ];
 
-        // Attempt to snapshot service_id and cost from services table
+        // Attempt to snapshot service_id and cost from services table (use first test type for service lookup)
         try {
             $svcModel = new ServiceModel();
             $svc = null;
-            if (!empty($testType)) {
-                $svc = $svcModel->findByCodeOrName($testType);
+            if (!empty($testTypes[0])) {
+                $firstTestType = $testTypes[0];
+                $svc = $svcModel->findByCodeOrName($firstTestType);
                 if (!$svc) {
                     // fallback: try case-insensitive name match
-                    $svc = $svcModel->where('LOWER(name)', strtolower($testType))->where('active', 1)->get()->getRowArray();
+                    $svc = $svcModel->where('LOWER(name)', strtolower($firstTestType))->where('active', 1)->get()->getRowArray();
                 }
             }
             if ($svc) {
@@ -718,6 +804,48 @@ class Laboratory extends BaseController
             // Add status badge class
             $testResult['status_class'] = $testResult['status'] === 'completed' ? 'badge-success' : 'badge-warning';
 
+            // Per-test-type progress
+            $allTestTypes = $this->parseTestTypes($testResult['test_type'] ?? '');
+            $completedTypes = $this->getCompletedTestTypes($testResult, false);
+            
+            // Load per-test-type notes from metadata
+            $testTypeNotes = [];
+            $resultDir = $testResult['result_file_path'] ?? '';
+            if (!empty($resultDir)) {
+                $notesMetadataPath = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $resultDir) . DIRECTORY_SEPARATOR . 'test_type_notes.json';
+                if (file_exists($notesMetadataPath)) {
+                    $testTypeNotes = json_decode(file_get_contents($notesMetadataPath), true) ?: [];
+                }
+            }
+            
+            // Get all attachments and filter by test type
+            $allAttachments = $testResult['attachments'] ?? [];
+            
+            $processedTests = [];
+            foreach ($allTestTypes as $tt) {
+                // Get notes specific to this test type
+                $testSpecificNotes = $testTypeNotes[$tt] ?? '';
+                
+                // Filter attachments for this specific test type
+                $testSpecificAttachments = array_filter($allAttachments, function($attachment) use ($tt) {
+                    return isset($attachment['test_type']) && $attachment['test_type'] === $tt;
+                });
+                
+                $processedTests[] = [
+                    'id' => $testResult['id'],
+                    'test_type' => $tt,
+                    'status' => in_array($tt, $completedTypes) ? 'completed' : ($testResult['status'] === 'completed' ? 'completed' : $testResult['status']),
+                    'has_results' => in_array($tt, $completedTypes),
+                    'is_completed' => in_array($tt, $completedTypes),
+                    'notes' => $testSpecificNotes, // Only notes for this specific test type
+                    'attachments' => array_values($testSpecificAttachments), // Only attachments for this test type
+                ];
+            }
+            $testResult['all_tests'] = $processedTests;
+            $testResult['completed_count'] = count($completedTypes);
+            $testResult['total_count'] = count($allTestTypes);
+            $testResult['all_test_types_completed'] = $testResult['completed_count'] > 0 && $testResult['completed_count'] === $testResult['total_count'];
+
             $data = [
                 'title' => 'View Test Result',
                 'user' => session()->get('username'),
@@ -739,6 +867,9 @@ class Laboratory extends BaseController
             return redirect()->to('/login')->with('error', 'Access denied. You do not have permission to access this page.');
         }
 
+        // Handle form submission
+        if (strtolower($this->request->getMethod()) === 'post') {
+            try {
         // Accept test_id from POST body if route parameter is missing
         if (empty($testId)) {
             $testId = $this->request->getPost('test_id');
@@ -747,39 +878,25 @@ class Laboratory extends BaseController
             return redirect()->to('laboratory/testresult')->with('error', 'Test ID is required');
         }
 
-        // Handle form submission
-        if (strtolower($this->request->getMethod()) === 'post') {
-            try {
                 $testRecord = $this->labModel->find($testId);
                 if (!$testRecord) {
                     return redirect()->to('laboratory/testresult')->with('error', 'Test not found');
                 }
 
-                $allowedExtensions = ['pdf', 'csv', 'txt', 'xml', 'json', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
-                $uploadedFiles = $this->request->getFileMultiple('result_files');
-                if (empty($uploadedFiles)) {
-                    $singleFile = $this->request->getFile('result_file');
-                    if ($singleFile) {
-                        $uploadedFiles = [$singleFile];
-                    }
+                // Block adding results to completed requests
+                if ($testRecord['status'] === 'completed') {
+                    return redirect()->to('laboratory/testresult/view/' . $testId)->with('error', 'This request is already completed and cannot be modified.');
                 }
 
-                $validFiles = [];
-                foreach ($uploadedFiles as $file) {
-                    if (!$file || !$file->isValid() || $file->getSize() <= 0) {
-                        continue;
-                    }
-                    $extension = strtolower($file->getClientExtension() ?: $file->getExtension());
-                    if (!in_array($extension, $allowedExtensions)) {
-                        return redirect()->back()->withInput()->with('error', 'Unsupported file type detected. Allowed: PDF, CSV, TXT, XML, JSON, Excel, Word, and common image formats.');
-                    }
-                    $validFiles[] = [$file, $extension];
-                }
-
-                if (empty($validFiles)) {
-                    return redirect()->back()->withInput()->with('error', 'Please upload at least one analyzer output file.');
-                }
-
+                // Handle multiple test types from form submission
+                $allTestTypes = $this->parseTestTypes($testRecord['test_type'] ?? '');
+                $resultFiles = $_FILES['result_files'] ?? [];
+                $notesData = $this->request->getPost('notes') ?? [];
+                
+                // Process each test type that has files
+                $processedTestTypes = [];
+                $allManifestEntries = [];
+                $totalSize = 0;
                 $timestamp = time();
                 $relativeDir = 'uploads/lab_results/' . $testId . '_' . $timestamp;
                 $uploadDir = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativeDir);
@@ -788,72 +905,150 @@ class Laboratory extends BaseController
                     mkdir($uploadDir, 0775, true);
                 }
 
-                $manifestEntries = [];
-                $totalSize = 0;
+                $allowedExtensions = ['pdf', 'csv', 'txt', 'xml', 'json', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
 
-                foreach ($validFiles as $idx => [$file, $extension]) {
-                    $clientName = $file->getClientName();
-                    $safeBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo($clientName, PATHINFO_FILENAME) ?: ('attachment_' . ($idx + 1)));
-                    $storedName = $safeBase . '_' . uniqid('', true) . '.' . $extension;
+                // Process files for each test type
+                foreach ($allTestTypes as $testType) {
+                    // Check if this test type has files
+                    if (!isset($resultFiles['name'][$testType]) || empty($resultFiles['name'][$testType])) {
+                        continue;
+                    }
 
-                    $file->move($uploadDir, $storedName, true);
+                    // Disallow re-adding results to a completed test type
+                    if ($this->checkTestTypeHasResults($testId, $testType)) {
+                        continue; // Skip completed test types
+                    }
 
-                    $storedRelative = rtrim($relativeDir, '/\\') . '/' . $storedName;
-                    $size = $file->getSize();
-                    $totalSize += $size;
-
-                    $manifestEntries[] = [
-                        'label' => $clientName,
-                        'stored_path' => $storedRelative,
-                        'mime' => $file->getClientMimeType(),
-                        'size' => $size,
-                    ];
+                    $files = $resultFiles['name'][$testType];
+                    $tmpNames = $resultFiles['tmp_name'][$testType];
+                    $sizes = $resultFiles['size'][$testType];
+                    $errors = $resultFiles['error'][$testType];
+                    
+                    if (!is_array($files)) {
+                        $files = [$files];
+                        $tmpNames = [$tmpNames];
+                        $sizes = [$sizes];
+                        $errors = [$errors];
                 }
 
-                file_put_contents($uploadDir . DIRECTORY_SEPARATOR . 'manifest.json', json_encode($manifestEntries, JSON_PRETTY_PRINT));
+                $validFiles = [];
+                    foreach ($files as $idx => $fileName) {
+                        if ($errors[$idx] !== UPLOAD_ERR_OK || empty($tmpNames[$idx])) {
+                        continue;
+                    }
 
+                        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                    if (!in_array($extension, $allowedExtensions)) {
+                            continue;
+                        }
+
+                        $fileSize = $sizes[$idx];
+                        if ($fileSize <= 0 || $fileSize > 10 * 1024 * 1024) { // 10MB limit
+                            continue;
+                        }
+
+                        $validFiles[] = [
+                            'name' => $fileName,
+                            'tmp_name' => $tmpNames[$idx],
+                            'size' => $fileSize,
+                            'extension' => $extension,
+                        ];
+                    }
+
+                    if (empty($validFiles)) {
+                        continue;
+                    }
+
+                    // Move files and create manifest entries
+                    foreach ($validFiles as $idx => $fileInfo) {
+                        $clientName = $fileInfo['name'];
+                    $safeBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo($clientName, PATHINFO_FILENAME) ?: ('attachment_' . ($idx + 1)));
+                        $storedName = $safeBase . '_' . uniqid('', true) . '.' . $fileInfo['extension'];
+
+                        $targetPath = $uploadDir . DIRECTORY_SEPARATOR . $storedName;
+                        if (move_uploaded_file($fileInfo['tmp_name'], $targetPath)) {
+                    $storedRelative = rtrim($relativeDir, '/\\') . '/' . $storedName;
+                            $mimeType = mime_content_type($targetPath) ?: 'application/octet-stream';
+
+                            $allManifestEntries[] = [
+                        'label' => $clientName,
+                        'stored_path' => $storedRelative,
+                                'mime' => $mimeType,
+                                'size' => $fileInfo['size'],
+                                'test_type' => $testType,
+                                'index' => count($allManifestEntries),
+                            ];
+                            
+                            $totalSize += $fileInfo['size'];
+                        }
+                    }
+
+                    // Track completion for this test type
+                    $this->updateCompletedTestTypes($testId, $testType);
+                    $processedTestTypes[] = $testType;
+                }
+
+                if (empty($processedTestTypes)) {
+                    return redirect()->back()->withInput()->with('error', 'Please select at least one test type and upload files.');
+                }
+
+                // Save manifest
+                if (!empty($allManifestEntries)) {
+                    file_put_contents($uploadDir . DIRECTORY_SEPARATOR . 'manifest.json', json_encode($allManifestEntries, JSON_PRETTY_PRINT));
+                }
+
+                // Update database
                 $fileMeta = [
                     'result_file_path' => $relativeDir,
-                    'result_file_name' => count($manifestEntries) === 1 ? ($manifestEntries[0]['label'] ?? 'Result File') : 'Multiple files (' . count($manifestEntries) . ')',
-                    'result_file_type' => $manifestEntries[0]['mime'] ?? 'application/octet-stream',
+                    'result_file_name' => count($allManifestEntries) === 1 ? ($allManifestEntries[0]['label'] ?? 'Result File') : 'Multiple files (' . count($allManifestEntries) . ')',
+                    'result_file_type' => $allManifestEntries[0]['mime'] ?? 'application/octet-stream',
                     'result_file_size' => $totalSize,
                 ];
 
-                // Capture notes and (optional) interpretation from form
-                $notes = $this->request->getPost('notes');
-                $interpretation = $this->request->getPost('interpretation');
-                if ((empty($notes) || trim($notes) === '') && !empty($interpretation)) {
-                    $notes = $interpretation;
+                // Combine notes from all test types
+                $combinedNotes = '';
+                if (is_array($notesData)) {
+                    $notesArray = [];
+                    foreach ($notesData as $tt => $note) {
+                        if (!empty(trim($note))) {
+                            $notesArray[] = ucfirst($tt) . ': ' . trim($note);
+                        }
+                    }
+                    $combinedNotes = implode("\n\n", $notesArray);
+                } else {
+                    $combinedNotes = trim($notesData ?? '');
                 }
+
+                // Reload record to get updated completed types
+                $testRecord = $this->labModel->find($testId);
+                $completedTypes = $this->getCompletedTestTypes($testRecord, false);
+                $allCompleted = count($completedTypes) === count($allTestTypes) && count($allTestTypes) > 0;
 
                 $updateData = [
                     'test_results' => null,
                     'normal_range' => null,
-                    'notes' => $notes,
-                    'status' => 'completed',
+                    'notes' => $combinedNotes,
+                    'status' => !empty($completedTypes) ? 'in_progress' : ($testRecord['status'] ?? 'pending'),
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
 
-                if (!empty($fileMeta ?? [])) {
+                if (!empty($fileMeta)) {
                     $updateData = array_merge($updateData, $fileMeta);
                 }
 
                 $result = $this->labModel->update($testId, $updateData);
 
                 if ($result) {
-                    if (!empty($testRecord['result_file_path']) && $testRecord['result_file_path'] !== ($fileMeta['result_file_path'] ?? null)) {
-                        $this->deleteResultFile($testRecord['result_file_path']);
-                    }
-                    
+                    $message = 'Test results added successfully for: ' . implode(', ', $processedTestTypes);
                     if ($this->request->isAJAX()) {
                         return $this->response->setJSON([
                             'success' => true,
-                            'message' => 'Test result added successfully and status updated to Completed'
+                            'message' => $message,
+                            'all_completed' => $allCompleted
                         ]);
                     }
-                    // Redirect to the detailed view so the user immediately sees the saved results
                     return redirect()->to('laboratory/testresult/view/' . $testId)
-                        ->with('success', 'Test result added successfully and status updated to Completed');
+                        ->with('success', $message);
                 } else {
                     log_message('error', 'AddTestResult update failed', ['test_id' => $testId]);
                     if ($this->request->isAJAX()) {
@@ -884,11 +1079,30 @@ class Laboratory extends BaseController
                 return redirect()->to('laboratory/testresult')->with('error', 'Test not found');
             }
 
+            $allTestTypes = $this->parseTestTypes($testResult['test_type'] ?? '');
+            $completedTypes = $this->getCompletedTestTypes($testResult, false);
+
+            // Build list with status
+            $testTypeItems = [];
+            foreach ($allTestTypes as $tt) {
+                $testTypeItems[] = [
+                    'name' => $tt,
+                    'completed' => in_array($tt, $completedTypes),
+                ];
+            }
+
+            $completedCount = count($completedTypes);
+            $totalCount = count($allTestTypes);
+
             $data = [
                 'title' => 'Add Test Result',
                 'user' => session()->get('username'),
                 'role' => session()->get('role'),
-                'testResult' => $testResult
+                'testResult' => $testResult,
+                'testTypes' => $testTypeItems,
+                'completedTestTypes' => $completedTypes,
+                'completedCount' => $completedCount,
+                'totalCount' => $totalCount
             ];
 
             return view($this->getRoleViewPath('AddTestResult'), $data);
@@ -898,7 +1112,422 @@ class Laboratory extends BaseController
         }
     }
 
-                
+    /**
+     * Mark the entire request as completed when all test types have results
+     */
+    public function markRequestComplete($testId = null)
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+            return redirect()->to('/login')->with('error', 'Access denied.');
+        }
 
-    
+        if (empty($testId)) {
+            return redirect()->back()->with('error', 'Test ID is required.');
+        }
+
+        $testRecord = $this->labModel->find($testId);
+        if (!$testRecord) {
+            return redirect()->back()->with('error', 'Test not found.');
+        }
+
+        $allTypes = $this->parseTestTypes($testRecord['test_type'] ?? '');
+        $completedTypes = $this->getCompletedTestTypes($testRecord, false);
+        $allCompleted = count($completedTypes) === count($allTypes) && count($allTypes) > 0;
+
+        if (!$allCompleted) {
+            $remaining = array_diff($allTypes, $completedTypes);
+            return redirect()->back()->with('error', 'Cannot mark request as complete. Some test types still need results: ' . implode(', ', $remaining));
+        }
+
+        $this->labModel->update($testId, [
+            'status' => 'completed',
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return redirect()->back()->with('success', 'Request marked as completed.');
+    }
+
+    /* ---------- Helpers for per-test-type completion ---------- */
+    private function parseTestTypes($value): array
+    {
+        if (empty($value)) {
+            return [];
+        }
+        if (is_array($value)) {
+            return array_values(array_filter($value));
+        }
+        $decoded = json_decode($value, true);
+        if (is_array($decoded)) {
+            return array_values(array_filter($decoded));
+        }
+        // fallback comma separated
+        return array_values(array_filter(array_map('trim', explode(',', (string)$value))));
+    }
+
+    private function getCompletedTestTypes(array $record, bool $decodeOnly = true): array
+    {
+        $raw = $record['completed_test_types'] ?? null;
+        if (empty($raw)) {
+            return [];
+        }
+        if (is_array($raw)) {
+            return array_values(array_filter($raw));
+        }
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded)) {
+            return array_values(array_filter($decoded));
+        }
+        return [];
+    }
+
+    private function checkTestTypeHasResults($testId, $testType): bool
+    {
+        $record = $this->labModel->find($testId);
+        if (!$record) {
+            return false;
+        }
+        $completed = $this->getCompletedTestTypes($record, false);
+        return in_array($testType, $completed);
+    }
+
+    private function updateCompletedTestTypes($testId, $testType)
+    {
+        $record = $this->labModel->find($testId);
+        if (!$record) {
+            return;
+        }
+        $completed = $this->getCompletedTestTypes($record, false);
+        if (!in_array($testType, $completed)) {
+            $completed[] = $testType;
+        }
+        
+        $allTestTypes = $this->parseTestTypes($record['test_type'] ?? '');
+        $allCompleted = count($completed) === count($allTestTypes) && count($allTestTypes) > 0;
+        
+        // Special case: If only one test type, automatically mark as completed when file is added
+        $isSingleTestType = count($allTestTypes) === 1;
+        
+        $updateData = [
+            'completed_test_types' => json_encode(array_values($completed)),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+        
+        // Auto-complete if all test types have results, or if single test type
+        if ($allCompleted || ($isSingleTestType && count($completed) === 1)) {
+            $updateData['status'] = 'completed';
+        } elseif (!empty($completed) && $record['status'] === 'pending') {
+            // Set to in_progress if some types are done but not all
+            $updateData['status'] = 'in_progress';
+        }
+        
+        $this->labModel->update($testId, $updateData);
+    }
+
+    /**
+     * Save results for a single test type
+     */
+    public function saveTestTypeResult()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Access denied'
+            ])->setStatusCode(403);
+        }
+
+        try {
+            $testId = $this->request->getPost('test_id');
+            $testType = $this->request->getPost('test_type');
+            
+            if (empty($testId) || empty($testType)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Test ID and test type are required'
+                ])->setStatusCode(400);
+            }
+
+            $testRecord = $this->labModel->find($testId);
+            if (!$testRecord) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Test not found'
+                ])->setStatusCode(404);
+            }
+
+            // Block adding results to completed requests
+            if ($testRecord['status'] === 'completed') {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'This request is already completed and cannot be modified'
+                ])->setStatusCode(400);
+            }
+
+            // Check if this test type already has results
+            if ($this->checkTestTypeHasResults($testId, $testType)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'This test type already has results and cannot be modified'
+                ])->setStatusCode(400);
+            }
+
+            // Verify test type exists in request
+            $allTestTypes = $this->parseTestTypes($testRecord['test_type'] ?? '');
+            if (!in_array($testType, $allTestTypes)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Invalid test type for this request'
+                ])->setStatusCode(400);
+            }
+
+            // Process files for this test type
+            $resultFiles = $_FILES['result_files'] ?? [];
+            $notes = $this->request->getPost('notes') ?? '';
+            
+            if (!isset($resultFiles['name'][$testType]) || empty($resultFiles['name'][$testType])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Please upload at least one file for this test type'
+                ])->setStatusCode(400);
+            }
+
+            $files = $resultFiles['name'][$testType];
+            $tmpNames = $resultFiles['tmp_name'][$testType];
+            $sizes = $resultFiles['size'][$testType];
+            $errors = $resultFiles['error'][$testType];
+            
+            if (!is_array($files)) {
+                $files = [$files];
+                $tmpNames = [$tmpNames];
+                $sizes = [$sizes];
+                $errors = [$errors];
+            }
+
+            $allowedExtensions = ['pdf', 'csv', 'txt', 'xml', 'json', 'xls', 'xlsx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+            $validFiles = [];
+            
+            foreach ($files as $idx => $fileName) {
+                if ($errors[$idx] !== UPLOAD_ERR_OK || empty($tmpNames[$idx])) {
+                    continue;
+                }
+
+                $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                if (!in_array($extension, $allowedExtensions)) {
+                    continue;
+                }
+
+                $fileSize = $sizes[$idx];
+                if ($fileSize <= 0 || $fileSize > 10 * 1024 * 1024) {
+                    continue;
+                }
+
+                $validFiles[] = [
+                    'name' => $fileName,
+                    'tmp_name' => $tmpNames[$idx],
+                    'size' => $fileSize,
+                    'extension' => $extension,
+                ];
+            }
+
+            if (empty($validFiles)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'No valid files uploaded. Please check file format and size (max 10MB)'
+                ])->setStatusCode(400);
+            }
+
+            // Get existing manifest if any
+            $existingManifest = [];
+            $existingDir = $testRecord['result_file_path'] ?? '';
+            if (!empty($existingDir)) {
+                $existingManifestPath = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $existingDir) . DIRECTORY_SEPARATOR . 'manifest.json';
+                if (file_exists($existingManifestPath)) {
+                    $existingManifest = json_decode(file_get_contents($existingManifestPath), true) ?: [];
+                }
+            }
+
+            // Use existing directory or create new one
+            $timestamp = time();
+            if (!empty($existingDir) && is_dir(rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $existingDir))) {
+                $relativeDir = $existingDir;
+                $uploadDir = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativeDir);
+            } else {
+                $relativeDir = 'uploads/lab_results/' . $testId . '_' . $timestamp;
+                $uploadDir = rtrim(WRITEPATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativeDir);
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0775, true);
+                }
+            }
+
+            $manifestEntries = [];
+            $totalSize = 0;
+
+            // Move files and create manifest entries
+            foreach ($validFiles as $idx => $fileInfo) {
+                $clientName = $fileInfo['name'];
+                $safeBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo($clientName, PATHINFO_FILENAME) ?: ('attachment_' . ($idx + 1)));
+                $storedName = $safeBase . '_' . uniqid('', true) . '.' . $fileInfo['extension'];
+
+                $targetPath = $uploadDir . DIRECTORY_SEPARATOR . $storedName;
+                if (move_uploaded_file($fileInfo['tmp_name'], $targetPath)) {
+                    $storedRelative = rtrim($relativeDir, '/\\') . '/' . $storedName;
+                    $mimeType = mime_content_type($targetPath) ?: 'application/octet-stream';
+                    
+                    $manifestEntries[] = [
+                        'label' => $clientName,
+                        'stored_path' => $storedRelative,
+                        'mime' => $mimeType,
+                        'size' => $fileInfo['size'],
+                        'test_type' => $testType,
+                        'index' => count($existingManifest) + count($manifestEntries),
+                    ];
+                    
+                    $totalSize += $fileInfo['size'];
+                }
+            }
+
+            if (empty($manifestEntries)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Failed to upload files'
+                ])->setStatusCode(500);
+            }
+
+            // Merge with existing manifest
+            $allManifestEntries = array_merge($existingManifest, $manifestEntries);
+            file_put_contents($uploadDir . DIRECTORY_SEPARATOR . 'manifest.json', json_encode($allManifestEntries, JSON_PRETTY_PRINT));
+
+            // Update database
+            $fileMeta = [
+                'result_file_path' => $relativeDir,
+                'result_file_name' => count($allManifestEntries) === 1 ? ($allManifestEntries[0]['label'] ?? 'Result File') : 'Multiple files (' . count($allManifestEntries) . ')',
+                'result_file_type' => $allManifestEntries[0]['mime'] ?? 'application/octet-stream',
+                'result_file_size' => ($testRecord['result_file_size'] ?? 0) + $totalSize,
+            ];
+
+            // Store notes per test type in manifest metadata
+            // We'll store notes in a separate metadata structure
+            $testTypeNotes = [];
+            $notesMetadataPath = $uploadDir . DIRECTORY_SEPARATOR . 'test_type_notes.json';
+            if (file_exists($notesMetadataPath)) {
+                $testTypeNotes = json_decode(file_get_contents($notesMetadataPath), true) ?: [];
+            }
+            
+            if (!empty($notes)) {
+                $testTypeNotes[$testType] = trim($notes);
+            }
+            
+            // Save test type notes metadata
+            if (!empty($testTypeNotes)) {
+                file_put_contents($notesMetadataPath, json_encode($testTypeNotes, JSON_PRETTY_PRINT));
+            }
+            
+            // Keep combined notes for backward compatibility (but won't be used for per-test display)
+            $combinedNotes = $testRecord['notes'] ?? '';
+
+            // Update completed test types
+            $this->updateCompletedTestTypes($testId, $testType);
+
+            // Reload record to get updated status
+            $testRecord = $this->labModel->find($testId);
+            $completedTypes = $this->getCompletedTestTypes($testRecord, false);
+            $allTestTypes = $this->parseTestTypes($testRecord['test_type'] ?? '');
+            $allCompleted = count($completedTypes) === count($allTestTypes) && count($allTestTypes) > 0;
+
+            $updateData = array_merge($fileMeta, [
+                'notes' => $combinedNotes,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            $this->labModel->update($testId, $updateData);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Test results saved successfully for ' . $testType,
+                'test_type' => $testType,
+                'all_completed' => $allCompleted
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to save test type result: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to save test result: ' . $e->getMessage()
+            ])->setStatusCode(500);
+        }
+    }
+
+    /**
+     * Check if patient has pending requests
+     * GET /laboratory/request/check-pending?patient_id=xxx
+     */
+    public function checkPatientPendingRequest()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'doctor', 'admin', 'nurse'])) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Access denied']);
+        }
+
+        $patientId = $this->request->getGet('patient_id');
+        if (empty($patientId)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Patient ID is required']);
+        }
+
+        $hasPending = $this->checkPatientHasPendingRequest($patientId);
+        
+        return $this->response->setJSON([
+            'success' => true,
+            'has_pending' => $hasPending,
+            'message' => $hasPending ? 'This patient already has a pending laboratory request. Please wait until it is completed.' : ''
+        ]);
+    }
+
+    /**
+     * Helper method to check if patient has pending requests
+     */
+    private function checkPatientHasPendingRequest($patientId)
+    {
+        $pendingRequests = $this->labModel
+            ->where('patient_id', $patientId)
+            ->whereIn('status', ['pending', 'in_progress', 'scheduled'])
+            ->findAll();
+        
+        return !empty($pendingRequests);
+    }
+
+    /**
+     * Cancel a laboratory request
+     * POST /laboratory/testresult/cancel/(:segment)
+     */
+    public function cancelRequest($testId = null)
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['labstaff', 'admin'])) {
+            return redirect()->to('/login')->with('error', 'Access denied');
+        }
+
+        if (empty($testId)) {
+            return redirect()->back()->with('error', 'Test ID is required');
+        }
+
+        try {
+            $testRecord = $this->labModel->find($testId);
+            if (!$testRecord) {
+                return redirect()->back()->with('error', 'Laboratory request not found');
+            }
+
+            $currentStatus = strtolower($testRecord['status'] ?? 'pending');
+            if (in_array($currentStatus, ['completed', 'cancelled'])) {
+                return redirect()->back()->with('error', 'Cannot cancel a request that is already ' . $currentStatus);
+            }
+
+            // Update status to cancelled
+            $this->labModel->update($testId, [
+                'status' => 'cancelled',
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            return redirect()->back()->with('success', 'Laboratory request has been cancelled successfully');
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to cancel laboratory request: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to cancel laboratory request');
+        }
+    }
 }

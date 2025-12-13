@@ -44,6 +44,10 @@ class CreateLaboratoryTable extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
             ],
+            'completed_test_types' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
             'priority' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 20,
