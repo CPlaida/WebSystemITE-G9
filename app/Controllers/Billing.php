@@ -1470,7 +1470,241 @@ class Billing extends BaseController
         $rows = $builder->orderBy('case_type', 'DESC')->get()->getResultArray();
         log_message('debug', 'Found ' . count($rows) . ' matching case rates');
 
-        $rates = array_map(function($r){
+        // Get all active services from the services table to filter case rates
+        $db = \Config\Database::connect();
+        $activeServices = [];
+        $serviceCodes = [];
+        $serviceNames = [];
+        
+        if ($db->tableExists('services')) {
+            $services = $db->table('services')
+                ->select('code, name, category')
+                ->where('active', 1)
+                ->get()
+                ->getResultArray();
+            
+            foreach ($services as $svc) {
+                $code = strtoupper(trim($svc['code'] ?? ''));
+                $name = strtolower(trim($svc['name'] ?? ''));
+                $category = strtolower(trim($svc['category'] ?? ''));
+                
+                if ($code !== '') {
+                    $serviceCodes[] = $code;
+                    $activeServices[$code] = [
+                        'name' => $name,
+                        'category' => $category,
+                    ];
+                }
+                if ($name !== '') {
+                    $serviceNames[] = $name;
+                }
+            }
+        }
+        
+        log_message('debug', 'Found ' . count($activeServices) . ' active services in system');
+
+        // Helper function to match case rate to a service
+        // Note: Surgical procedures (RVS codes like 48010) and ICD diagnosis codes are always valid
+        // and don't need to match services. Only room/lab/consultation rates need service matching.
+        $matchesService = function($rateCode, $rateDescription) use ($serviceCodes, $serviceNames, $activeServices) {
+            $rateCode = strtoupper(trim($rateCode ?? ''));
+            $rateDesc = strtolower(trim($rateDescription ?? ''));
+            
+            // Always include ICD codes (diagnoses) - they don't need service matching
+            if (preg_match('/^[A-Z]\d{2,3}(\.\d+)?$/', $rateCode)) {
+                return true; // ICD-10 code format
+            }
+            
+            // Always include standard RVS surgical/procedure codes (numeric codes like 48010, 47562)
+            // These are valid medical procedure codes even without matching services
+            if (preg_match('/^\d{5}$/', $rateCode)) {
+                // Check if it's a surgical procedure (not a service code)
+                $isSurgical = stripos($rateDesc, 'appendectomy') !== false ||
+                             stripos($rateDesc, 'cholecystectomy') !== false ||
+                             stripos($rateDesc, 'surgical') !== false ||
+                             stripos($rateDesc, 'surgery') !== false;
+                if ($isSurgical) {
+                    return true; // Surgical procedures are always valid
+                }
+            }
+            
+            // Direct code match with services
+            if ($rateCode !== '' && in_array($rateCode, $serviceCodes, true)) {
+                return true;
+            }
+            
+            // Check if rate code matches service code pattern
+            foreach ($serviceCodes as $svcCode) {
+                // Exact match
+                if ($rateCode === $svcCode) {
+                    return true;
+                }
+                // Partial match (e.g., ROOM-ICU matches ROOM-ICU)
+                if (strpos($rateCode, $svcCode) === 0 || strpos($svcCode, $rateCode) === 0) {
+                    return true;
+                }
+            }
+            
+            // Match by description keywords - only for service-based rates
+            $keywords = [
+                'blood' => ['LAB-BLOOD', 'blood test', 'cbc', 'complete blood'],
+                'urine' => ['LAB-URINE', 'urine test', 'urinalysis'],
+                'x-ray' => ['IMG-XRAY', 'x-ray', 'xray', 'chest x-ray'],
+                'mri' => ['IMG-MRI', 'mri', 'mri scan'],
+                'ct' => ['IMG-CT', 'ct scan', 'ct'],
+                'ultrasound' => ['IMG-US', 'ultrasound'],
+                'ecg' => ['CARD-ECG', 'ecg', 'electrocardiogram'],
+                'consultation' => ['CONS-CONSULT', 'consultation'],
+                'follow-up' => ['CONS-FOLLOWUP', 'follow-up', 'followup'],
+                'emergency' => ['CONS-EMERGENCY', 'emergency'],
+                'routine' => ['CONS-ROUTINE', 'routine'],
+                'icu' => ['ROOM-ICU', 'icu'],
+                'nicu' => ['ROOM-NICU', 'nicu'],
+                'private' => ['ROOM-PRIVATE', 'private room'],
+                'semi-private' => ['ROOM-SEMIPRIVATE', 'semi-private'],
+                'ward' => ['ROOM-WARD', 'ward', 'general ward'],
+                'pedia' => ['ROOM-PEDIA', 'pediatric', 'pedia'],
+                'isolation' => ['ROOM-ISOLATION', 'isolation'],
+                'sdu' => ['ROOM-SDU', 'step-down'],
+                'ed' => ['ROOM-ED', 'emergency department'],
+                'ld' => ['ROOM-LD', 'labor', 'delivery'],
+            ];
+            
+            foreach ($keywords as $key => $matches) {
+                foreach ($matches as $match) {
+                    if (stripos($rateCode, $match) !== false || stripos($rateDesc, $match) !== false) {
+                        // Check if corresponding service exists
+                        $svcCode = $matches[0] ?? '';
+                        if ($svcCode !== '' && in_array($svcCode, $serviceCodes, true)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            return false;
+        };
+
+        // Helper function to determine category from code or description
+        $getCategory = function($code, $description) {
+            $code = strtoupper(trim($code ?? ''));
+            $desc = strtolower(trim($description ?? ''));
+            
+            // Room & Bed Charges
+            if (strpos($code, 'ROOM-') === 0 || 
+                stripos($desc, 'room') !== false || 
+                stripos($desc, 'ward') !== false || 
+                stripos($desc, 'icu') !== false ||
+                stripos($desc, 'nicu') !== false ||
+                stripos($desc, 'isolation') !== false ||
+                stripos($desc, 'accommodation') !== false) {
+                return 'room';
+            }
+            
+            // Laboratory & Diagnostic Tests
+            if (stripos($desc, 'blood') !== false ||
+                stripos($desc, 'cbc') !== false ||
+                stripos($desc, 'urinalysis') !== false ||
+                stripos($desc, 'glucose') !== false ||
+                stripos($desc, 'lipid') !== false ||
+                stripos($desc, 'creatinine') !== false ||
+                stripos($desc, 'bun') !== false ||
+                stripos($desc, 'sgpt') !== false ||
+                stripos($desc, 'sgot') !== false ||
+                stripos($desc, 'alt') !== false ||
+                stripos($desc, 'ast') !== false ||
+                stripos($desc, 'alkaline') !== false ||
+                stripos($desc, 'hba1c') !== false ||
+                stripos($desc, 'culture') !== false ||
+                stripos($desc, 'x-ray') !== false ||
+                stripos($desc, 'xray') !== false ||
+                stripos($desc, 'ecg') !== false ||
+                stripos($desc, 'echocardiography') !== false ||
+                stripos($desc, 'ultrasound') !== false ||
+                stripos($desc, 'ct scan') !== false ||
+                stripos($desc, 'mri') !== false ||
+                stripos($desc, 'laboratory') !== false ||
+                stripos($desc, 'lab') !== false) {
+                return 'laboratory';
+            }
+            
+            // Consultation & Professional Fees
+            if (stripos($desc, 'consultation') !== false ||
+                stripos($desc, 'office') !== false ||
+                stripos($desc, 'outpatient') !== false ||
+                stripos($desc, 'visit') !== false ||
+                stripos($desc, 'emergency') !== false ||
+                stripos($desc, 'department') !== false ||
+                (strpos($code, '992') === 0)) {
+                return 'consultation';
+            }
+            
+            // Pharmacy & Medications
+            if (stripos($desc, 'iv') !== false ||
+                stripos($desc, 'intravenous') !== false ||
+                stripos($desc, 'infusion') !== false ||
+                stripos($desc, 'injection') !== false ||
+                stripos($desc, 'medication') !== false ||
+                stripos($desc, 'therapeutic') !== false ||
+                (strpos($code, '963') === 0)) {
+                return 'pharmacy';
+            }
+            
+            // Surgical Procedures
+            if (stripos($desc, 'appendectomy') !== false ||
+                stripos($desc, 'cholecystectomy') !== false ||
+                stripos($desc, 'surgical') !== false ||
+                stripos($desc, 'surgery') !== false ||
+                (strpos($code, '480') === 0) ||
+                (strpos($code, '475') === 0)) {
+                return 'surgical';
+            }
+            
+            // Other Services
+            if (stripos($desc, 'oxygen') !== false ||
+                stripos($desc, 'nebulization') !== false ||
+                stripos($desc, 'aerosol') !== false ||
+                stripos($desc, 'physical therapy') !== false ||
+                stripos($desc, 'wound') !== false ||
+                stripos($desc, 'dressing') !== false ||
+                stripos($desc, 'catheter') !== false ||
+                stripos($desc, 'transfusion') !== false) {
+                return 'other';
+            }
+            
+            // ICD Codes (Diagnoses) - usually fall under surgical or other
+            if (strpos($code, 'J') === 0 || strpos($code, 'A') === 0 || strpos($code, 'I') === 0) {
+                return 'diagnosis';
+            }
+            
+            return 'other';
+        };
+        
+        // Filter and map rates - only include those that match existing services
+        $filteredRows = [];
+        foreach ($rows as $r) {
+            $rateCode = $r['code'] ?? '';
+            $rateDesc = $r['description'] ?? '';
+            
+            // If no services exist, show all rates (backward compatibility)
+            if (empty($activeServices)) {
+                $filteredRows[] = $r;
+                continue;
+            }
+            
+            // Check if this rate matches any service
+            if ($matchesService($rateCode, $rateDesc)) {
+                $filteredRows[] = $r;
+                log_message('debug', "Including rate: {$rateCode} - {$rateDesc}");
+            } else {
+                log_message('debug', "Excluding rate (no matching service): {$rateCode} - {$rateDesc}");
+            }
+        }
+        
+        log_message('debug', 'Filtered to ' . count($filteredRows) . ' rates matching existing services');
+
+        // Map rates and assign categories
+        $rates = array_map(function($r) use ($getCategory) {
             $facility = (float)($r['facility_share'] ?? 0);
             $professional = (float)($r['professional_share'] ?? 0);
             $amount = $facility + $professional;
@@ -1491,13 +1725,62 @@ class Billing extends BaseController
                 'code_type' => $r['code_type'] ?? null,
                 'code' => $r['code'] ?? null,
                 'case_type' => $r['case_type'] ?? null,
+                'category' => $getCategory($r['code'] ?? '', $r['description'] ?? ''),
             ];
             log_message('debug', 'Mapped rate: ' . json_encode($rateData));
             return $rateData;
-        }, $rows);
+        }, $filteredRows);
+        
+        // Group rates by category
+        $groupedRates = [];
+        $categoryOrder = ['surgical', 'diagnosis', 'room', 'consultation', 'laboratory', 'pharmacy', 'other'];
+        $categoryLabels = [
+            'surgical' => 'Surgical Procedures',
+            'diagnosis' => 'Diagnoses (ICD)',
+            'room' => 'Room & Bed Charges',
+            'consultation' => 'Consultation & Professional Fees',
+            'laboratory' => 'Laboratory & Diagnostic Tests',
+            'pharmacy' => 'Pharmacy & Medications',
+            'other' => 'Other Services',
+        ];
+        
+        foreach ($rates as $rate) {
+            $category = $rate['category'] ?? 'other';
+            if (!isset($groupedRates[$category])) {
+                $groupedRates[$category] = [
+                    'label' => $categoryLabels[$category] ?? ucfirst($category),
+                    'rates' => [],
+                ];
+            }
+            $groupedRates[$category]['rates'][] = $rate;
+        }
+        
+        // Sort categories according to order, then by amount within each category
+        $orderedGroups = [];
+        foreach ($categoryOrder as $cat) {
+            if (isset($groupedRates[$cat])) {
+                // Sort rates within category by amount (descending)
+                usort($groupedRates[$cat]['rates'], function($a, $b) {
+                    return ($b['amount'] ?? 0) <=> ($a['amount'] ?? 0);
+                });
+                $orderedGroups[$cat] = $groupedRates[$cat];
+            }
+        }
+        // Add any remaining categories not in the order list
+        foreach ($groupedRates as $cat => $group) {
+            if (!isset($orderedGroups[$cat])) {
+                usort($group['rates'], function($a, $b) {
+                    return ($b['amount'] ?? 0) <=> ($a['amount'] ?? 0);
+                });
+                $orderedGroups[$cat] = $group;
+            }
+        }
 
-        $response = ['rates' => $rates];
-        log_message('debug', 'Returning response: ' . json_encode($response));
+        $response = [
+            'rates' => $rates, // Keep flat list for backward compatibility
+            'grouped' => $orderedGroups, // New grouped structure
+        ];
+        log_message('debug', 'Returning response with ' . count($orderedGroups) . ' categories');
         
         return $this->response->setJSON($response);
     }

@@ -121,7 +121,6 @@
                 return clone;
             };
             window.currentRateInputs.rvsEl = safeReplace(window.currentRateInputs.rvsEl);
-            window.currentRateInputs.icdEl = safeReplace(window.currentRateInputs.icdEl);
             window.currentRateInputs.adEl = safeReplace(window.currentRateInputs.adEl);
             window.currentRateInputs.rateSel = safeReplace(window.currentRateInputs.rateSel);
         };
@@ -214,10 +213,6 @@
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Primary RVS Code</label>
                                     <input id="em_primary_rvs" type="text" placeholder="e.g., 48010" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:white;" value="${bill.primary_rvs_code || ''}">
-                                </div>
-                                <div>
-                                    <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Primary ICD-10 Code</label>
-                                    <input id="em_primary_icd" type="text" placeholder="e.g., J18.9" style="width:100%; padding:12px; border:2px solid #10b981; border-radius:8px; background:white;" value="${bill.primary_icd10_code || ''}">
                                 </div>
                                 <div>
                                     <label style="display:block; margin:0 0 8px; color:#065f46; font-weight:600; font-size:13px;">Remaining Balance (₱)</label>
@@ -344,7 +339,6 @@
         // Store references to input elements for cleanup
         window.currentRateInputs = {
             rvsEl: null,
-            icdEl: null,
             adEl: null,
             rateSel: null
         };
@@ -391,7 +385,6 @@
                     fd.append('philhealth_member', phMember);
                     fd.append('admission_date', document.getElementById('em_admission_date').value);
                     fd.append('primary_rvs_code', document.getElementById('em_primary_rvs').value);
-                    fd.append('primary_icd10_code', document.getElementById('em_primary_icd').value);
                     const approved = document.getElementById('em_ph_approved').value;
 
                     if (phMember === '1') {
@@ -465,7 +458,6 @@
         });
         // Get references to input elements
         const rvsEl = document.getElementById('em_primary_rvs');
-        const icdEl = document.getElementById('em_primary_icd');
         const adEl = document.getElementById('em_admission_date');
         const rateSel = document.getElementById('em_ph_rate_select');
         const rateId = document.getElementById('em_ph_rate_id');
@@ -558,9 +550,8 @@
                 const cval = opt.dataset.code || '';
                 if (ctype === 'RVS') {
                     if (rvsEl) rvsEl.value = cval;
-                    if (icdEl) icdEl.value = '';
                 } else if (ctype === 'ICD') {
-                    if (icdEl) icdEl.value = cval;
+                    // ICD codes are handled by case rate selection, no separate input field
                     if (rvsEl) rvsEl.value = '';
                 }
             }
@@ -602,14 +593,12 @@
         const loadRates = async () => {
             if (!rateSel) return;
             const rvs = (rvsEl?.value || '').trim();
-            const icd = (icdEl?.value || '').trim();
             const ad = (adEl?.value || '').trim();
-            console.log('Loading rates with:', { rvs, icd, ad });
+            console.log('Loading rates with:', { rvs, ad });
             rateSel.innerHTML = '<option value="" disabled>Loading…</option>';
             try {
                 const qs = new URLSearchParams();
                 if (rvs) qs.append('rvs', rvs);
-                if (icd) qs.append('icd', icd);
                 if (ad) qs.append('admission', ad);
                 const url = '<?= base_url('billing/caseRates') ?>' + (qs.toString() ? ('?' + qs.toString()) : '');
                 console.log('Fetching from URL:', url);
@@ -617,25 +606,64 @@
                 console.log('Response status:', res.status);
                 const data = await res.json();
                 console.log('Response data:', data);
+                
+                // Use grouped structure if available, otherwise fall back to flat rates
+                const grouped = data?.grouped || {};
                 const rates = Array.isArray(data?.rates) ? data.rates : [];
-                console.log('Parsed rates:', rates);
+                
                 rateSel.innerHTML = '';
-                rates.forEach(r => {
-                    const opt = document.createElement('option');
-                    opt.value = r.id;
-                    opt.textContent = r.label;
-                    opt.dataset.amount = String(r.amount || '0');
-                    opt.dataset.codeType = r.code_type || '';
-                    opt.dataset.code = r.code || '';
-                    rateSel.appendChild(opt);
-                });
-                if (savedRateIds.length) {
-                    const savedSet = new Set(savedRateIds.map(id => String(id)));
-                    Array.from(rateSel.options).forEach(opt => {
-                        opt.selected = savedSet.has(String(opt.value));
+                
+                // If grouped data is available, use optgroups
+                if (Object.keys(grouped).length > 0) {
+                    Object.keys(grouped).forEach(category => {
+                        const group = grouped[category];
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = group.label || category;
+                        optgroup.dataset.category = category;
+                        
+                        (group.rates || []).forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r.id;
+                            opt.textContent = r.label;
+                            opt.dataset.amount = String(r.amount || '0');
+                            opt.dataset.codeType = r.code_type || '';
+                            opt.dataset.code = r.code || '';
+                            opt.dataset.category = r.category || category;
+                            optgroup.appendChild(opt);
+                        });
+                        
+                        if (optgroup.children.length > 0) {
+                            rateSel.appendChild(optgroup);
+                        }
+                    });
+                } else {
+                    // Fallback to flat list if no grouped data
+                    console.log('Parsed rates:', rates);
+                    rates.forEach(r => {
+                        const opt = document.createElement('option');
+                        opt.value = r.id;
+                        opt.textContent = r.label;
+                        opt.dataset.amount = String(r.amount || '0');
+                        opt.dataset.codeType = r.code_type || '';
+                        opt.dataset.code = r.code || '';
+                        rateSel.appendChild(opt);
                     });
                 }
-                if (rates.length === 0) {
+                // Restore saved selections (works with both flat and grouped structure)
+                if (savedRateIds.length) {
+                    const savedSet = new Set(savedRateIds.map(id => String(id)));
+                    // Get all options including those in optgroups
+                    const allOptions = rateSel.querySelectorAll('option');
+                    allOptions.forEach(opt => {
+                        if (opt.value && savedSet.has(String(opt.value))) {
+                            opt.selected = true;
+                        }
+                    });
+                }
+                
+                // Check if we have any rates (either flat or grouped)
+                const hasRates = Object.keys(grouped).length > 0 || rates.length > 0;
+                if (!hasRates) {
                     console.warn('No rates found for the given criteria');
                     rateSel.innerHTML = '<option value="" disabled>No matching rates found</option>';
                 }
@@ -656,7 +684,6 @@
 
         ['change', 'input'].forEach(event => {
             rvsEl?.addEventListener(event, loadRates);
-            icdEl?.addEventListener(event, loadRates);
             adEl?.addEventListener(event, loadRates);
         });
         rateSel?.addEventListener('change', applyRateSelectionSummary);
@@ -669,9 +696,9 @@
         paymentMethodEl?.addEventListener('change', toggleHmo);
         hmoEnabledEl?.addEventListener('change', toggleHmo);
 
-        // Auto-check HMO checkbox if patient has HMO data
-        if (hmoEnabledEl && (bill.hmo_provider_id || bill.hmo_member_no || bill.hmo_loa_number)) {
-            hmoEnabledEl.checked = true;
+        // HMO checkbox defaults to unchecked - user must manually check it if needed
+        if (hmoEnabledEl) {
+            hmoEnabledEl.checked = false;
         }
         
         populateHmoProviders();
