@@ -436,12 +436,20 @@ class Admin extends BaseController
         $staffModel = new StaffProfileModel();
         $payload = $this->buildStaffPayload();
 
-        // Validate age (must be 18 or older)
+        // Validate date of birth (must not be in the future and must be 18 or older)
         if (!empty($payload['date_of_birth'])) {
             $birthDate = new \DateTime($payload['date_of_birth']);
             $today = new \DateTime();
-            $age = $today->diff($birthDate)->y;
+            $today->setTime(0, 0, 0); // Reset time to midnight for accurate date comparison
+            $birthDate->setTime(0, 0, 0);
             
+            // Check if birthday is in the future
+            if ($birthDate > $today) {
+                return redirect()->back()->withInput()->with('error', 'Date of birth cannot be in the future.');
+            }
+            
+            // Check if staff is at least 18 years old
+            $age = $today->diff($birthDate)->y;
             if ($age < 18) {
                 return redirect()->back()->withInput()->with('error', 'Staff must be 18 years old and above.');
             }
@@ -483,12 +491,20 @@ class Admin extends BaseController
 
         $payload = $this->buildStaffPayload();
 
-        // Validate age (must be 18 or older)
+        // Validate date of birth (must not be in the future and must be 18 or older)
         if (!empty($payload['date_of_birth'])) {
             $birthDate = new \DateTime($payload['date_of_birth']);
             $today = new \DateTime();
-            $age = $today->diff($birthDate)->y;
+            $today->setTime(0, 0, 0); // Reset time to midnight for accurate date comparison
+            $birthDate->setTime(0, 0, 0);
             
+            // Check if birthday is in the future
+            if ($birthDate > $today) {
+                return redirect()->back()->withInput()->with('error', 'Date of birth cannot be in the future.');
+            }
+            
+            // Check if staff is at least 18 years old
+            $age = $today->diff($birthDate)->y;
             if ($age < 18) {
                 return redirect()->back()->withInput()->with('error', 'Staff must be 18 years old and above.');
             }
