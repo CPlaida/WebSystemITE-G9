@@ -1352,7 +1352,52 @@ class Billing extends BaseController
                 // Add existing bill ID to result
                 $result['existing_bill_id'] = (int)$existingBill['id'];
             }
+        } else {
+            // Even if no existing bill, ensure only one bed fee is displayed
+            $result['items'] = $result['items'] ?? [];
         }
+
+        // Limit bed/room charges to only one per patient
+        // Keep the one with the highest amount (most recent/longest stay)
+        $roomItems = [];
+        $otherItems = [];
+        foreach ($result['items'] as $item) {
+            $category = $item['category'] ?? 'general';
+            $sourceTable = $item['source_table'] ?? '';
+            $serviceName = strtolower($item['service'] ?? '');
+            
+            // Check if it's a room/bed charge
+            $isRoomCharge = false;
+            if ($category === 'room') {
+                $isRoomCharge = true;
+            } elseif ($sourceTable === 'admission_details' || $sourceTable === 'patients') {
+                if (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                    $isRoomCharge = true;
+                }
+            } elseif (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                $isRoomCharge = true;
+            }
+            
+            if ($isRoomCharge) {
+                $roomItems[] = $item;
+            } else {
+                $otherItems[] = $item;
+            }
+        }
+        
+        // If multiple room charges, keep only the one with the highest amount
+        if (count($roomItems) > 1) {
+            // Sort by amount descending and keep only the first one
+            usort($roomItems, function($a, $b) {
+                $amountA = (float)($a['amount'] ?? 0);
+                $amountB = (float)($b['amount'] ?? 0);
+                return $amountB <=> $amountA; // Descending order
+            });
+            $roomItems = [array_shift($roomItems)]; // Keep only the first (highest amount)
+        }
+        
+        // Combine: room items first (if any), then other items
+        $result['items'] = array_merge($roomItems, $otherItems);
 
         return $this->response->setJSON($result);
     }
