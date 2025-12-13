@@ -58,7 +58,9 @@ class DoctorFeeProvider extends AbstractChargeProvider
         
         // Get already billed days for each admission (for incremental billing)
         $billedDaysMap = [];
-        if ($this->tableExists('billing_items')) {
+        if ($this->tableExists('billing_items') && 
+            $this->fieldExists('billing_items', 'source_table') && 
+            $this->fieldExists('billing_items', 'source_id')) {
             $admissionIds = array_map(function($ad) {
                 return (int)($ad['id'] ?? 0);
             }, $admissions);

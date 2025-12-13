@@ -8,7 +8,7 @@
 <div class="prescription-container">
     <!-- LEFT SIDE - Medicine Shelf / Patient Prescriptions -->
     <div class="prescription-main">
-        <!-- Patient Search with Filter Buttons - Always Visible -->
+        <!-- Patient Search with Filter Buttons - Visible only for Inpatient -->
         <div class="patient-search-section">
             <div class="search-filter-row">
                 <div class="filter-buttons-group">
@@ -19,7 +19,7 @@
                         <i class="fas fa-user-injured"></i> OPD
                     </button>
                 </div>
-                <div class="unified-search-wrapper" style="flex: 1; position: relative;">
+                <div id="patientSearchWrapper" class="unified-search-wrapper" style="flex: 1; position: relative;">
                     <div class="unified-search-row">
                         <i class="fas fa-search unified-search-icon"></i>
                         <input type="text" id="patientSearch" class="unified-search-field" placeholder="Search admitted patient..." autocomplete="off">
@@ -178,6 +178,8 @@ $(document).ready(function() {
         if (filter === 'inpatient') {
             $('#inpatientBilling').show();
             $('#opdCheckout').hide();
+            // Show patient search for inpatient
+            $('#patientSearchWrapper').show();
             // Load medicines if not loaded
             if (allMedicines.length === 0) {
                 loadMedicines();
@@ -190,6 +192,16 @@ $(document).ready(function() {
         } else {
             $('#inpatientBilling').hide();
             $('#opdCheckout').show();
+            // Hide patient search for OPD (walk-in, no patient ID needed)
+            $('#patientSearchWrapper').hide();
+            $('#patientDropdown').hide();
+            $('#patientInfo').hide();
+            $('#prescriptionMedicines').hide();
+            $('#patientSearch').val('');
+            // Clear selected patient data for OPD
+            selectedPatient = null;
+            patientPrescriptions = [];
+            selectedPrescriptionMedicines = [];
             // Load medicines if not loaded
             if (allMedicines.length === 0) {
                 loadMedicines();

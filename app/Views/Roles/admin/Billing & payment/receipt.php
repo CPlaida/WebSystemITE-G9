@@ -357,6 +357,79 @@
                 </tr>
             </tbody>
         </table>
+        
+        <?php
+        // Get payment information
+        $totalPaid = (float)($bill['total_paid'] ?? 0);
+        $remainingBalance = (float)($bill['remaining_balance'] ?? $patientShare);
+        $payments = $bill['payments'] ?? [];
+        $paymentStatus = strtolower($bill['payment_status'] ?? $bill['status'] ?? 'pending');
+        
+        // If payment status is 'paid', ensure remaining balance is 0
+        if ($paymentStatus === 'paid') {
+            $remainingBalance = 0.0;
+        }
+        
+        // Ensure remaining balance is 0 if fully paid (handle rounding)
+        if ($remainingBalance < 0.01) {
+            $remainingBalance = 0.0;
+        }
+        
+        // If total paid equals or exceeds patient share, it's fully paid
+        if ($totalPaid >= $patientShare && $patientShare > 0) {
+            $remainingBalance = 0.0;
+        }
+        ?>
+        
+        <?php if (!empty($payments) || $totalPaid > 0): ?>
+        <h3 class="section-title">Payment Summary</h3>
+        <table class="summary-table" style="margin-bottom:18px;">
+            <tbody>
+                <?php if (!empty($payments)): ?>
+                    <?php foreach ($payments as $payment): ?>
+                        <tr>
+                            <td>
+                                Payment on <?= esc(date('M d, Y', strtotime($payment['payment_date'] ?? $payment['created_at'] ?? date('Y-m-d')))) ?>
+                                <?php if (!empty($payment['payment_method'])): ?>
+                                    (<?= esc(strtoupper($payment['payment_method'])) ?>)
+                                <?php endif; ?>
+                            </td>
+                            <td style="text-align:right; color:#059669;">₱<?= number_format((float)($payment['amount'] ?? 0), 2) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td>Total Amount Paid</td>
+                        <td style="text-align:right; color:#059669;">₱<?= number_format($totalPaid, 2) ?></td>
+                    </tr>
+                <?php endif; ?>
+                <tr style="background-color: #f0fdf4; font-weight: 600;">
+                    <td>Total Paid</td>
+                    <td style="text-align:right; color:#059669;">₱<?= number_format($totalPaid, 2) ?></td>
+                </tr>
+                <?php if ($remainingBalance > 0): ?>
+                <tr class="grand-total-row">
+                    <td style="font-size:15px; color:#dc2626;">
+                        Remaining Balance
+                    </td>
+                    <td style="text-align:right; font-size:15px; color:#dc2626; font-weight:700;">
+                        ₱<?= number_format($remainingBalance, 2) ?>
+                    </td>
+                </tr>
+                <?php else: ?>
+                <tr class="grand-total-row">
+                    <td style="font-size:15px; color:#059669;">
+                        Payment Status
+                    </td>
+                    <td style="text-align:right; font-size:15px; color:#059669; font-weight:700;">
+                        ✓ Paid
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <?php endif; ?>
+        
         <p class="totals-note" style="margin-top:20px; padding-top:20px; border-top:2px solid #0f2a5f;">
             <strong>Amount paid in words:</strong> ____________________________<br><br>
             <strong>Authorized Signature:</strong> ____________________________<br>

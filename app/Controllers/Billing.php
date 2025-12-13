@@ -555,17 +555,33 @@ class Billing extends BaseController
         // Load payment information
         $payments = [];
         $totalPaid = 0.0;
-        $remainingBalance = $total;
+        
+        // Use final_amount consistently (this is the total bill amount)
+        $finalAmount = (float)($bill['final_amount'] ?? $total);
+        
+        // Get PhilHealth and HMO deductions
+        $philhealthAmount = (float)($bill['philhealth_approved_amount'] ?? 0);
+        $hmoAmount = (float)($bill['hmo_approved_amount'] ?? 0);
+        
+        // Calculate patient share (total minus deductions)
+        $patientShare = max(0, $finalAmount - $philhealthAmount - $hmoAmount);
         
         $db = \Config\Database::connect();
         if ($db->tableExists('payments')) {
             $payments = $this->paymentModel->getPaymentsByBill((int)$id);
             $totalPaid = $this->paymentModel->getTotalPaid((int)$id);
-            $remainingBalance = max(0, $total - $totalPaid);
         } else {
             // Fallback to amount_paid field if payments table doesn't exist yet
             $totalPaid = (float)($bill['amount_paid'] ?? 0);
-            $remainingBalance = max(0, $total - $totalPaid);
+        }
+        
+        // Calculate remaining balance (patient share minus payments)
+        // Use small tolerance (0.01) for rounding errors
+        $remainingBalance = max(0, $patientShare - $totalPaid);
+        
+        // If remaining balance is very small (less than 0.01), consider it fully paid
+        if ($remainingBalance < 0.01) {
+            $remainingBalance = 0.0;
         }
 
         // Provide aliases used by receipt view (derived from numeric id)
@@ -2234,6 +2250,33 @@ class Billing extends BaseController
         $allPayments = $this->paymentModel->getPaymentsByBill($payment['billing_id']);
         $totalPaid = $this->paymentModel->getTotalPaid($payment['billing_id']);
 
+        // Calculate remaining balance accounting for PhilHealth and HMO deductions
+        $finalAmount = (float)($bill['final_amount'] ?? 0);
+        $philhealthAmount = (float)($bill['philhealth_approved_amount'] ?? 0);
+        $hmoAmount = (float)($bill['hmo_approved_amount'] ?? 0);
+        
+        // Calculate patient share (total minus deductions)
+        $patientShare = max(0, $finalAmount - $philhealthAmount - $hmoAmount);
+        
+        // Calculate remaining balance (patient share minus payments)
+        $remainingBalance = max(0, $patientShare - $totalPaid);
+        
+        // If remaining balance is very small (less than 0.01), consider it fully paid
+        if ($remainingBalance < 0.01) {
+            $remainingBalance = 0.0;
+        }
+        
+        // If payment status is 'paid', ensure remaining balance is 0
+        $paymentStatus = strtolower($bill['payment_status'] ?? 'pending');
+        if ($paymentStatus === 'paid') {
+            $remainingBalance = 0.0;
+        }
+        
+        // If total paid equals or exceeds patient share, it's fully paid
+        if ($totalPaid >= $patientShare && $patientShare > 0) {
+            $remainingBalance = 0.0;
+        }
+
         return view($this->getRoleViewPath('payment_receipt'), [
             'title' => 'Payment Receipt',
             'payment' => $payment,
@@ -2241,7 +2284,10 @@ class Billing extends BaseController
             'patient' => $patient,
             'allPayments' => $allPayments,
             'totalPaid' => $totalPaid,
-            'remainingBalance' => max(0, (float)($bill['final_amount'] ?? 0) - $totalPaid),
+            'remainingBalance' => $remainingBalance,
+            'patientShare' => $patientShare,
+            'philhealthAmount' => $philhealthAmount,
+            'hmoAmount' => $hmoAmount,
         ]);
     }
 }

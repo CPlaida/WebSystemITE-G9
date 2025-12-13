@@ -523,6 +523,19 @@ class Pharmacy extends BaseController
         $pid = trim((string)($data['patient_id'] ?? ''));
         if ($pid === '') {
             $data['patient_id'] = null;
+        } else {
+            // Validate that patient exists if patient_id is provided
+            $patientExists = $this->db->table('patients')
+                ->where('id', $pid)
+                ->countAllResults() > 0;
+            
+            if (!$patientExists) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Invalid patient ID. Patient not found in database.',
+                    'errors' => ['patient_id' => 'Patient with ID "' . $pid . '" does not exist']
+                ])->setStatusCode(400);
+            }
         }
         
         // Check if this is an inpatient transaction
@@ -631,13 +644,18 @@ class Pharmacy extends BaseController
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
             
-            // Add patient_id if provided
-            if (!empty($data['patient_id'])) {
-                $prescriptionData['patient_id'] = (string)$data['patient_id'];
-            }
+            // Add patient_id if provided (set to NULL if empty)
+            $prescriptionData['patient_id'] = !empty($data['patient_id']) ? (string)$data['patient_id'] : null;
             
             $this->db->table('prescriptions')->insert($prescriptionData);
             $prescriptionId = $this->db->insertID();
+            
+            // Validate prescription was created
+            if (!$prescriptionId) {
+                $error = $this->db->error();
+                log_message('error', 'Failed to create prescription: ' . json_encode($error));
+                throw new \Exception('Failed to create prescription record. Error: ' . ($error['message'] ?? 'Unknown error'));
+            }
 
             // Insert items and decrease stock during checkout
             $totalItems = 0;
@@ -718,7 +736,7 @@ class Pharmacy extends BaseController
             $transactionNumber = $this->generateTransactionNumber();
             $transactionData = [
                 'transaction_number' => $transactionNumber,
-                'patient_id' => !empty($data['patient_id']) ? (string)$data['patient_id'] : '',
+                'patient_id' => !empty($data['patient_id']) ? (string)$data['patient_id'] : null,
                 'date' => $data['date'],
                 'total_items' => $totalItems,
                 'total_amount' => $total,

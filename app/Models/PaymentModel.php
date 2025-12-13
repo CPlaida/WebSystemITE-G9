@@ -67,11 +67,14 @@ class PaymentModel extends Model
      */
     public function getTotalPaid(int $billingId): float
     {
-        $result = $this->selectSum('amount')
+        $result = $this->selectSum('amount', 'total')
             ->where('billing_id', $billingId)
             ->first();
         
-        return (float)($result['amount'] ?? 0);
+        // Handle both 'amount' and 'total' keys (CodeIgniter may return either)
+        $total = (float)($result['total'] ?? $result['amount'] ?? 0);
+        
+        return $total;
     }
 
     /**

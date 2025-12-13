@@ -70,6 +70,10 @@ abstract class AbstractChargeProvider implements ChargeProviderInterface
         if (empty($rows) || !$this->tableExists('billing_items')) {
             return $rows;
         }
+        // Check if source_table and source_id columns exist
+        if (!$this->fieldExists('billing_items', 'source_table') || !$this->fieldExists('billing_items', 'source_id')) {
+            return $rows;
+        }
         $ids = array_values(array_filter(array_map(function ($row) use ($idKey) {
             return $row[$idKey] ?? null;
         }, $rows)));

@@ -141,28 +141,70 @@
             </tr>
         </table>
 
+        <?php
+        $philhealthAmount = (float)($philhealthAmount ?? $bill['philhealth_approved_amount'] ?? 0);
+        $hmoAmount = (float)($hmoAmount ?? $bill['hmo_approved_amount'] ?? 0);
+        $patientShare = (float)($patientShare ?? ($billTotal - $philhealthAmount - $hmoAmount));
+        
+        // Ensure remaining balance is 0 if fully paid
+        if ($remainingBalance < 0.01) {
+            $remainingBalance = 0.0;
+        }
+        ?>
+        
         <div class="section-title">Payment Summary</div>
         <table class="summary-table">
             <tr>
-                <td style="text-align:right; padding-right:20px;">Bill Total:</td>
+                <td style="text-align:right; padding-right:20px;">Gross Bill Total:</td>
                 <td style="text-align:right; font-weight:600;">₱<?= number_format($billTotal, 2) ?></td>
             </tr>
+            <?php if ($philhealthAmount > 0): ?>
             <tr>
-                <td style="text-align:right; padding-right:20px;">Total Paid (Before):</td>
+                <td style="text-align:right; padding-right:20px; color:#065f46;">Less: PhilHealth Benefit</td>
+                <td style="text-align:right; color:#065f46;">-₱<?= number_format($philhealthAmount, 2) ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php if ($hmoAmount > 0): ?>
+            <tr>
+                <td style="text-align:right; padding-right:20px; color:#1e40af;">Less: HMO / Insurance Coverage</td>
+                <td style="text-align:right; color:#1e40af;">-₱<?= number_format($hmoAmount, 2) ?></td>
+            </tr>
+            <?php endif; ?>
+            <tr style="background:#fafbff;">
+                <td style="text-align:right; padding-right:20px; font-weight:700;">Patient Balance / Payable:</td>
+                <td style="text-align:right; font-weight:700;">₱<?= number_format($patientShare, 2) ?></td>
+            </tr>
+            <tr>
+                <td style="text-align:right; padding-right:20px;">Total Paid (Before This Payment):</td>
                 <td style="text-align:right;">₱<?= number_format($totalPaid - $paymentAmount, 2) ?></td>
             </tr>
             <tr style="background:#ecfdf5;">
-                <td style="text-align:right; padding-right:20px; font-weight:700; color:#059669;">Payment Amount:</td>
+                <td style="text-align:right; padding-right:20px; font-weight:700; color:#059669;">This Payment Amount:</td>
                 <td style="text-align:right;" class="payment-amount">₱<?= number_format($paymentAmount, 2) ?></td>
             </tr>
             <tr>
-                <td style="text-align:right; padding-right:20px;">Total Paid (After):</td>
+                <td style="text-align:right; padding-right:20px;">Total Paid (After This Payment):</td>
                 <td style="text-align:right; font-weight:600;">₱<?= number_format($totalPaid, 2) ?></td>
             </tr>
-            <tr>
-                <td style="text-align:right; padding-right:20px;">Remaining Balance:</td>
-                <td style="text-align:right; font-weight:700; color:<?= $remainingBalance > 0 ? '#dc2626' : '#059669' ?>;">₱<?= number_format($remainingBalance, 2) ?></td>
+            <?php if ($remainingBalance > 0): ?>
+            <tr class="grand-total-row">
+                <td style="text-align:right; padding-right:20px; font-size:15px; color:#dc2626;">
+                    Remaining Balance
+                </td>
+                <td style="text-align:right; font-size:15px; font-weight:700; color:#dc2626;">
+                    ₱<?= number_format($remainingBalance, 2) ?>
+                </td>
             </tr>
+            <?php else: ?>
+            <tr class="grand-total-row">
+                <td style="text-align:right; padding-right:20px; font-size:15px; color:#059669;">
+                    Payment Status
+                </td>
+                <td style="text-align:right; font-size:15px; font-weight:700; color:#059669;">
+                    ✓ Paid
+                </td>
+            </tr>
+            <?php endif; ?>
         </table>
 
         <?php if (!empty($notes)): ?>

@@ -520,7 +520,7 @@ class Appointment extends BaseController
                 $activeAdmission = $db->table('admission_details')
                     ->where('patient_id', $patientId)
                     ->where('status', 'admitted')
-                    ->first();
+                    ->get()->getRowArray();
                 
                 if ($activeAdmission) {
                     $errorMessage = 'Patient is currently admitted. Only outpatients can book appointments.';

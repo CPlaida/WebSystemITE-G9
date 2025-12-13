@@ -52,18 +52,25 @@ class LaboratoryChargeProvider extends AbstractChargeProvider
             $ids = array_values(array_filter(array_map(fn($r) => $r['id'] ?? null, $rows)));
             if (!empty($ids)) {
                 try {
-                    // Check for items linked via lab_id
-                    $linkedByLabId = $this->db->table('billing_items')
-                        ->select('lab_id')
-                        ->whereIn('lab_id', $ids)
-                        ->get()->getResultArray();
+                    $linkedByLabId = [];
+                    $linkedBySource = [];
                     
-                    // Check for items linked via source_table and source_id
-                    $linkedBySource = $this->db->table('billing_items')
-                        ->select('source_id')
-                        ->where('source_table', 'laboratory')
-                        ->whereIn('source_id', array_map('strval', $ids))
-                        ->get()->getResultArray();
+                    // Check for items linked via lab_id (if column exists)
+                    if ($this->fieldExists('billing_items', 'lab_id')) {
+                        $linkedByLabId = $this->db->table('billing_items')
+                            ->select('lab_id')
+                            ->whereIn('lab_id', $ids)
+                            ->get()->getResultArray();
+                    }
+                    
+                    // Check for items linked via source_table and source_id (if columns exist)
+                    if ($this->fieldExists('billing_items', 'source_table') && $this->fieldExists('billing_items', 'source_id')) {
+                        $linkedBySource = $this->db->table('billing_items')
+                            ->select('source_id')
+                            ->where('source_table', 'laboratory')
+                            ->whereIn('source_id', array_map('strval', $ids))
+                            ->get()->getResultArray();
+                    }
                     
                     $linkedSet = [];
                     // Add lab_ids from lab_id column
