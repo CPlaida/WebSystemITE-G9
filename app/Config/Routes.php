@@ -142,8 +142,15 @@ $routes->post('billing/update/(:num)', 'Billing::update/$1', ['filter' => 'auth'
 $routes->get('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth']);
 $routes->post('billing/delete/(:num)', 'Billing::delete/$1', ['filter' => 'auth']);
 $routes->get('billing/show/(:num)', 'Billing::show/$1', ['filter' => 'auth']);
+$routes->get('billing/payment/(:num)', 'Billing::paymentPage/$1', ['filter' => 'auth']);
 // PhilHealth case rates endpoint
 $routes->get('billing/caseRates', 'Billing::caseRates', ['filter' => 'auth']);
+// Payment routes
+$routes->post('billing/processPayment/(:num)', 'Billing::processPayment/$1', ['filter' => 'auth']);
+$routes->post('billing/processPayment', 'Billing::processPayment', ['filter' => 'auth']); // Alternative format
+$routes->get('billing/getPayments/(:num)', 'Billing::getPayments/$1', ['filter' => 'auth']);
+$routes->get('billing/getPayments', 'Billing::getPayments', ['filter' => 'auth']); // Alternative format
+$routes->get('billing/paymentReceipt/(:num)', 'Billing::paymentReceipt/$1', ['filter' => 'auth']);
 
 // Reports Routes - Unified interface
 $routes->group('reports', ['filter' => 'auth'], function($routes) {

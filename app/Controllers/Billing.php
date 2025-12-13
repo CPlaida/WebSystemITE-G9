@@ -6,6 +6,7 @@ use CodeIgniter\Controller;
 use App\Models\BillingModel;
 use App\Models\LaboratoryModel;
 use App\Models\ServiceModel;
+use App\Models\PaymentModel;
 use App\Models\Financial\PhilHealthAuditModel;
 use App\Models\Financial\PhilHealthCaseRateModel;
 use App\Models\Financial\HmoProviderModel;
@@ -17,10 +18,12 @@ use App\Services\Billing\BillingChargeAggregator;
 class Billing extends BaseController
 {
     protected $billingModel;
+    protected $paymentModel;
 
     public function __construct()
     {
         $this->billingModel = new BillingModel();
+        $this->paymentModel = new PaymentModel();
         helper(['form', 'url']);
     }
 
@@ -97,7 +100,7 @@ class Billing extends BaseController
      * Mark source items as billed only if payment status is 'paid'
      * 
      * @param array $items Billing items with source_table and source_id
-     * @param string|null $paymentStatus Payment status ('paid', 'pending', 'partial', 'overdue')
+     * @param string|null $paymentStatus Payment status ('paid', 'pending', 'partial')
      */
     private function markSourcesAsBilled(array $items, ?string $paymentStatus = null): void
     {
@@ -300,7 +303,7 @@ class Billing extends BaseController
         $rules = [
             'patient_id' => 'required',
             'final_amount' => 'required|numeric',
-            'payment_status' => 'required|in_list[pending,partial,paid,overdue]',
+            'payment_status' => 'required|in_list[pending,partial,paid]',
             'payment_method' => 'required|in_list[cash,credit,debit]',
             'bill_date' => 'required|valid_date',
         ];
@@ -549,6 +552,22 @@ class Billing extends BaseController
             $bill['consulting_doctor'] = $attendingPhysician;
         }
 
+        // Load payment information
+        $payments = [];
+        $totalPaid = 0.0;
+        $remainingBalance = $total;
+        
+        $db = \Config\Database::connect();
+        if ($db->tableExists('payments')) {
+            $payments = $this->paymentModel->getPaymentsByBill((int)$id);
+            $totalPaid = $this->paymentModel->getTotalPaid((int)$id);
+            $remainingBalance = max(0, $total - $totalPaid);
+        } else {
+            // Fallback to amount_paid field if payments table doesn't exist yet
+            $totalPaid = (float)($bill['amount_paid'] ?? 0);
+            $remainingBalance = max(0, $total - $totalPaid);
+        }
+
         // Provide aliases used by receipt view (derived from numeric id)
         $bill['bill_number'] = 'INV-' . str_pad((string)$id, 6, '0', STR_PAD_LEFT);
         $bill['date_issued'] = $bill['bill_date'] ?? date('Y-m-d');
@@ -557,6 +576,9 @@ class Billing extends BaseController
         $bill['subtotal'] = $subtotal;
         $bill['tax'] = $tax;
         $bill['total'] = $total;
+        $bill['payments'] = $payments;
+        $bill['total_paid'] = $totalPaid;
+        $bill['remaining_balance'] = $remainingBalance;
 
         return view($this->getRoleViewPath('receipt'), ['bill' => $bill]);
     }
@@ -564,6 +586,22 @@ class Billing extends BaseController
     public function get($id)
     {
         $bill = $this->billingModel->findWithRelations((int)$id);
+        
+        // Load payment information
+        $payments = [];
+        $totalPaid = 0.0;
+        $db = \Config\Database::connect();
+        if ($db->tableExists('payments')) {
+            $payments = $this->paymentModel->getPaymentsByBill((int)$id);
+            $totalPaid = $this->paymentModel->getTotalPaid((int)$id);
+        } else {
+            $totalPaid = (float)($bill['amount_paid'] ?? 0);
+        }
+        
+        $bill['payments'] = $payments;
+        $bill['total_paid'] = $totalPaid;
+        $bill['remaining_balance'] = max(0, (float)($bill['final_amount'] ?? 0) - $totalPaid);
+        
         return $this->response->setJSON($bill);
     }
 
@@ -572,6 +610,32 @@ class Billing extends BaseController
         // Return JSON for modal editing
         $bill = $this->billingModel->findWithRelations((int)$id);
         if (!$bill) return $this->response->setStatusCode(404)->setJSON(['error' => 'Not found']);
+        
+        // Load payment information
+        $payments = [];
+        $totalPaid = 0.0;
+        $db = \Config\Database::connect();
+        if ($db->tableExists('payments')) {
+            $payments = $this->paymentModel->getPaymentsByBill((int)$id);
+            $totalPaid = $this->paymentModel->getTotalPaid((int)$id);
+            
+            // Auto-update payment_status based on amount_paid
+            $finalAmount = (float)($bill['final_amount'] ?? 0);
+            if ($totalPaid >= $finalAmount) {
+                $bill['payment_status'] = 'paid';
+            } elseif ($totalPaid > 0) {
+                $bill['payment_status'] = 'partial';
+            } else {
+                $bill['payment_status'] = 'pending';
+            }
+            
+            $bill['total_paid'] = $totalPaid;
+            $bill['amount_paid'] = $totalPaid;
+            $bill['remaining_balance'] = max(0, $finalAmount - $totalPaid);
+        } else {
+            $totalPaid = (float)($bill['amount_paid'] ?? 0);
+            $bill['total_paid'] = $totalPaid;
+        }
         
         // Load HMO authorization data if it exists (using billing_id relationship)
         if (empty($bill['hmo_loa_number']) || empty($bill['hmo_approved_amount'])) {
@@ -651,7 +715,7 @@ class Billing extends BaseController
             'patient_id' => 'permit_empty',
             'service_id' => 'permit_empty|integer',
             'final_amount' => 'permit_empty|numeric',
-            'payment_status' => 'permit_empty|in_list[pending,partial,paid,overdue]',
+            'payment_status' => 'permit_empty|in_list[pending,partial,paid]',
             'bill_date' => 'permit_empty|valid_date',
             'payment_method' => 'permit_empty|in_list[cash,credit,debit]',
             'philhealth_member' => 'permit_empty|in_list[0,1]',
@@ -852,6 +916,32 @@ class Billing extends BaseController
             $data = array_filter($data, fn($v) => $v !== null);
         }
 
+        // Auto-calculate payment_status based on amount_paid if payments table exists
+        $db = \Config\Database::connect();
+        if ($db->tableExists('payments')) {
+            $totalPaid = $this->paymentModel->getTotalPaid((int)$id);
+            $finalAmount = (float)($data['final_amount'] ?? $existingBill['final_amount'] ?? 0);
+            
+            // Auto-update payment_status based on amount_paid
+            if ($totalPaid >= $finalAmount) {
+                $data['payment_status'] = 'paid';
+            } elseif ($totalPaid > 0) {
+                $data['payment_status'] = 'partial';
+            } else {
+                $data['payment_status'] = 'pending';
+            }
+            
+            // Update amount_paid and last_payment_date
+            $data['amount_paid'] = $totalPaid;
+            $lastPayment = $this->paymentModel->where('billing_id', (int)$id)
+                ->orderBy('payment_date', 'DESC')
+                ->orderBy('created_at', 'DESC')
+                ->first();
+            if ($lastPayment) {
+                $data['last_payment_date'] = $lastPayment['payment_date'] ?? $lastPayment['created_at'];
+            }
+        }
+
         $this->billingModel->save($data);
         $targetPatient = $data['patient_id'] ?? ($existingBill['patient_id'] ?? null);
         $hmoPayload = array_merge($existingBill, $data);
@@ -961,7 +1051,7 @@ class Billing extends BaseController
             // Check if there's an existing unpaid/pending bill for this patient
             $existingBill = $this->billingModel
                 ->where('patient_id', $patientId)
-                ->whereIn('payment_status', ['pending', 'partial', 'overdue'])
+                ->whereIn('payment_status', ['pending', 'partial'])
                 ->orderBy('created_at', 'DESC')
                 ->first();
             
@@ -1802,5 +1892,356 @@ class Billing extends BaseController
         log_message('debug', 'Returning response with ' . count($orderedGroups) . ' categories');
         
         return $this->response->setJSON($response);
+    }
+
+    /**
+     * Process a payment for a bill
+     */
+    public function processPayment($billingId = null)
+    {
+        $this->requireRole(['admin', 'accounting', 'accountant', 'receptionist']);
+        
+        if (!$this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid request method'
+            ])->setStatusCode(400);
+        }
+
+        $billingId = (int)($billingId ?? $this->request->getPost('billing_id'));
+        if ($billingId <= 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Billing ID is required'
+            ])->setStatusCode(400);
+        }
+
+        $bill = $this->billingModel->find($billingId);
+        if (!$bill) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Bill not found'
+            ])->setStatusCode(404);
+        }
+
+        $rules = [
+            'amount' => 'required|decimal|greater_than[0]',
+            'payment_method' => 'permit_empty|in_list[cash,credit,debit]',
+            'payment_date' => 'permit_empty|valid_date',
+            'notes' => 'permit_empty|string',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $this->validator->getErrors()
+            ])->setStatusCode(422);
+        }
+
+        $amount = (float)$this->request->getPost('amount');
+        $paymentMethod = $this->request->getPost('payment_method') ?: 'cash';
+        $paymentDate = $this->request->getPost('payment_date') ?: date('Y-m-d H:i:s');
+        $notes = $this->request->getPost('notes') ?: null;
+
+        // Calculate current amount paid
+        $currentAmountPaid = $this->paymentModel->getTotalPaid($billingId);
+        $finalAmount = (float)($bill['final_amount'] ?? 0);
+        
+        // Get PhilHealth and HMO deductions from POST (current form values) or database (fallback)
+        // This allows using the latest values even if bill hasn't been saved yet
+        $philhealthAmount = (float)($this->request->getPost('philhealth_approved_amount') ?? $bill['philhealth_approved_amount'] ?? 0);
+        $hmoAmount = (float)($this->request->getPost('hmo_approved_amount') ?? $bill['hmo_approved_amount'] ?? 0);
+        
+        // Calculate actual remaining balance (after deductions)
+        $patientShare = max(0, $finalAmount - $philhealthAmount - $hmoAmount);
+        $remainingBalance = max(0, $patientShare - $currentAmountPaid);
+        
+        // Check if payment would exceed remaining balance (allow slight overpayment for rounding)
+        if ($amount > ($remainingBalance + 0.01)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => "Payment amount exceeds remaining balance. Remaining: ₱" . number_format($remainingBalance, 2),
+                'remaining_balance' => $remainingBalance
+            ])->setStatusCode(400);
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // Create payment record
+            $paymentData = [
+                'billing_id' => $billingId,
+                'patient_id' => $bill['patient_id'],
+                'amount' => $amount,
+                'payment_method' => $paymentMethod,
+                'payment_date' => $paymentDate,
+                'notes' => $notes,
+                'created_by' => session('user_id') ?? null,
+            ];
+
+            if (!$this->paymentModel->insert($paymentData)) {
+                throw new \Exception('Failed to create payment record');
+            }
+
+            // Calculate new total amount paid
+            $newAmountPaid = $currentAmountPaid + $amount;
+
+            // Auto-update payment status based on patient share (not total bill amount)
+            $newPaymentStatus = 'pending';
+            // Patient share is what the patient needs to pay after deductions
+            if ($newAmountPaid >= $patientShare) {
+                $newPaymentStatus = 'paid';
+            } elseif ($newAmountPaid > 0) {
+                $newPaymentStatus = 'partial';
+            }
+
+            // Update billing record
+            $updateData = [
+                'amount_paid' => $newAmountPaid,
+                'last_payment_date' => $paymentDate,
+                'payment_status' => $newPaymentStatus,
+            ];
+
+            // If fully paid, mark sources as billed
+            if ($newPaymentStatus === 'paid' && strtolower($bill['payment_status'] ?? '') !== 'paid') {
+                $db->table('billing_items')
+                    ->where('billing_id', $billingId)
+                    ->get()
+                    ->getResultArray();
+                
+                $items = [];
+                $billingItems = $db->table('billing_items')
+                    ->where('billing_id', $billingId)
+                    ->get()
+                    ->getResultArray();
+                
+                foreach ($billingItems as $bi) {
+                    $items[] = [
+                        'lab_id' => $bi['lab_id'] ?? null,
+                        'source_table' => $bi['source_table'] ?? null,
+                        'source_id' => $bi['source_id'] ?? null,
+                    ];
+                }
+                
+                if (!empty($items)) {
+                    $this->markSourcesAsBilled($items, 'paid');
+                }
+            }
+
+            $this->billingModel->update($billingId, $updateData);
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Transaction failed');
+            }
+
+            // Calculate remaining balance after payment (accounting for deductions)
+            $newRemainingBalance = max(0, $patientShare - $newAmountPaid);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Payment processed successfully',
+                'data' => [
+                    'payment_id' => $this->paymentModel->getInsertID(),
+                    'amount_paid' => $newAmountPaid,
+                    'remaining_balance' => $newRemainingBalance,
+                    'payment_status' => $newPaymentStatus,
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Payment processing failed: ' . $e->getMessage()
+            ])->setStatusCode(500);
+        }
+    }
+
+    /**
+     * Get payments for a bill
+     */
+    public function getPayments($billingId = null)
+    {
+        $this->requireRole(['admin', 'accounting', 'accountant', 'receptionist']);
+        
+        $billingId = (int)($billingId ?? $this->request->getGet('billing_id'));
+        if ($billingId <= 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Billing ID is required'
+            ])->setStatusCode(400);
+        }
+
+        $payments = $this->paymentModel->getPaymentsByBill($billingId);
+        $totalPaid = $this->paymentModel->getTotalPaid($billingId);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'data' => [
+                'payments' => $payments,
+                'total_paid' => $totalPaid,
+            ]
+        ]);
+    }
+
+    /**
+     * Generate payment receipt
+     */
+    public function paymentPage($id = null)
+    {
+        $this->requireRole(['admin', 'accounting', 'accountant', 'receptionist']);
+        
+        if (!$id) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Bill not specified');
+        }
+        
+        $bill = $this->billingModel->findWithRelations((int)$id);
+        if (!$bill) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Bill not found');
+        }
+        
+        // Load payment information
+        $payments = [];
+        $totalPaid = 0.0;
+        $db = \Config\Database::connect();
+        if ($db->tableExists('payments')) {
+            $payments = $this->paymentModel->getPaymentsByBill((int)$id);
+            $totalPaid = $this->paymentModel->getTotalPaid((int)$id);
+        } else {
+            $totalPaid = (float)($bill['amount_paid'] ?? 0);
+        }
+        
+        // Calculate remaining balance
+        $finalAmount = (float)($bill['final_amount'] ?? 0);
+        $phAmount = (float)($bill['philhealth_approved_amount'] ?? 0);
+        $hmoAmount = (float)($bill['hmo_approved_amount'] ?? 0);
+        $remainingBalance = max(0, $finalAmount - $totalPaid - $phAmount - $hmoAmount);
+        
+        // Load HMO providers
+        $hmoProviders = [];
+        try {
+            $hmoProviderModel = new HmoProviderModel();
+            $hmoProviders = $hmoProviderModel->where('active', 1)->orderBy('name', 'ASC')->findAll();
+        } catch (\Throwable $e) {
+            // Ignore if table doesn't exist
+        }
+        
+        // Load HMO authorization data if it exists
+        if (empty($bill['hmo_loa_number']) || empty($bill['hmo_approved_amount'])) {
+            try {
+                $authModel = new HmoAuthorizationModel();
+                $hmoAuth = $authModel->where('billing_id', (int)$id)->first();
+                if ($hmoAuth) {
+                    if (empty($bill['hmo_loa_number']) && !empty($hmoAuth['loa_number'])) {
+                        $bill['hmo_loa_number'] = $hmoAuth['loa_number'];
+                    }
+                    if (empty($bill['hmo_approved_amount']) && $hmoAuth['approved_amount'] !== null) {
+                        $bill['hmo_approved_amount'] = (float)$hmoAuth['approved_amount'];
+                    }
+                    if (empty($bill['hmo_provider_id']) && !empty($hmoAuth['provider_id'])) {
+                        $bill['hmo_provider_id'] = $hmoAuth['provider_id'];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore if table doesn't exist
+            }
+        }
+        
+        // Load patient HMO data if available
+        if (!empty($bill['patient_id'])) {
+            $patient = (new PatientModel())->find($bill['patient_id']);
+            if ($patient) {
+                foreach ([
+                    'hmo_provider_id',
+                    'hmo_member_no',
+                    'hmo_valid_from',
+                    'hmo_valid_to',
+                ] as $field) {
+                    if (empty($bill[$field]) && isset($patient[$field]) && !empty($patient[$field])) {
+                        $bill[$field] = $patient[$field];
+                    }
+                }
+            }
+        }
+        
+        // Calculate PhilHealth suggested amount
+        try {
+            $svc = new PhilHealthCaseRateService();
+            $adate = $bill['admission_date'] ?? ($bill['bill_date'] ?? date('Y-m-d'));
+            $res = $svc->suggest($bill['primary_rvs_code'] ?? null, null, $adate ?: null);
+            $gross = (float)($bill['final_amount'] ?? 0);
+            $suggested = min((float)($res['suggested_amount'] ?? 0), max($gross, 0));
+            $bill['philhealth_suggested_amount_calc'] = $suggested;
+            $bill['philhealth_rate_ids_calc'] = $res['rate_ids'] ?? [];
+        } catch (\Throwable $e) {
+            // Ignore suggestion errors
+        }
+        
+        $bill['total_paid'] = $totalPaid;
+        $bill['remaining_balance'] = $remainingBalance;
+        $bill['payments'] = $payments;
+        
+        $data = [
+            'title' => 'Process Payment - ' . ($bill['patient_name'] ?? 'Unknown'),
+            'active_menu' => 'billing',
+            'bill' => $bill,
+            'hmoProviders' => $hmoProviders,
+        ];
+        
+        return view($this->getRoleViewPath('payment_process'), $data);
+    }
+
+    public function paymentReceipt($paymentId = null)
+    {
+        $this->requireRole(['admin', 'accounting', 'accountant', 'receptionist']);
+        
+        $paymentId = (int)($paymentId ?? $this->request->getGet('payment_id'));
+        if ($paymentId <= 0) {
+            return redirect()->to(base_url('billing'))->with('error', 'Invalid payment ID');
+        }
+
+        $payment = $this->paymentModel->find($paymentId);
+        if (!$payment) {
+            return redirect()->to(base_url('billing'))->with('error', 'Payment not found');
+        }
+
+        $bill = $this->billingModel->find($payment['billing_id']);
+        if (!$bill) {
+            return redirect()->to(base_url('billing'))->with('error', 'Bill not found');
+        }
+
+        // Get patient info
+        $patientModel = new PatientModel();
+        $patient = $patientModel->find($payment['patient_id']);
+        
+        // Format patient name for receipt
+        if ($patient) {
+            $firstName = trim($patient['first_name'] ?? '');
+            $lastName = trim($patient['last_name'] ?? '');
+            $patient['patient_name'] = trim($firstName . ' ' . $lastName);
+            if ($patient['patient_name'] === '') {
+                $patient['patient_name'] = $patient['name'] ?? 'N/A';
+            }
+        } else {
+            $patient = ['patient_name' => 'N/A', 'address' => 'Not Provided', 'phone' => 'Not Provided'];
+        }
+
+        // Get all payments for this bill to show payment history
+        $allPayments = $this->paymentModel->getPaymentsByBill($payment['billing_id']);
+        $totalPaid = $this->paymentModel->getTotalPaid($payment['billing_id']);
+
+        return view($this->getRoleViewPath('payment_receipt'), [
+            'title' => 'Payment Receipt',
+            'payment' => $payment,
+            'bill' => $bill,
+            'patient' => $patient,
+            'allPayments' => $allPayments,
+            'totalPaid' => $totalPaid,
+            'remainingBalance' => max(0, (float)($bill['final_amount'] ?? 0) - $totalPaid),
+        ]);
     }
 }

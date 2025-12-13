@@ -37,7 +37,9 @@ class BillingModel extends Model
         'discount',
         'tax',
         'final_amount',      // amount equivalent
-        'payment_status',    // status equivalent (pending/partial/paid/overdue)
+        'amount_paid',       // cumulative amount paid
+        'last_payment_date', // date of last payment
+        'payment_status',    // status equivalent (pending/partial/paid)
         'payment_method',
         // Normalized HMO reference (new)
         'hmo_authorization_id',
