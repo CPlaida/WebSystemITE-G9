@@ -299,27 +299,51 @@ class Admissions extends BaseController
                                 ->getResultArray();
                             
                             // Build a set of items already in any bills
+                            // Normalize source_id to string to ensure consistent comparison
                             $billedItemKeys = [];
+                            $hasBilledBedFee = false; // Track if any bed fee is already billed
                             foreach ($allBillItems as $bi) {
                                 $key = '';
                                 if (!empty($bi['lab_id'])) {
-                                    $key = 'lab_' . $bi['lab_id'];
+                                    $key = 'lab_' . trim((string)$bi['lab_id']);
                                 } elseif (!empty($bi['source_table']) && !empty($bi['source_id'])) {
-                                    $key = $bi['source_table'] . '_' . $bi['source_id'];
+                                    $key = trim((string)$bi['source_table']) . '_' . trim((string)$bi['source_id']);
                                 }
                                 if ($key !== '') {
                                     $billedItemKeys[$key] = true;
                                 }
+                                
+                                // Check if this is a bed/room charge
+                                $sourceTable = $bi['source_table'] ?? '';
+                                $serviceName = strtolower($bi['service'] ?? '');
+                                if ($sourceTable === 'admission_details' || $sourceTable === 'patients' || 
+                                    stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                                    $hasBilledBedFee = true;
+                                }
                             }
                             
                             // Filter out items that are already in any bills
+                            // Normalize source_id to string to ensure consistent comparison
                             $unbilledItems = [];
                             foreach ($allUnbilledItems as $item) {
                                 $key = '';
                                 if (!empty($item['lab_id'])) {
-                                    $key = 'lab_' . $item['lab_id'];
+                                    $key = 'lab_' . trim((string)$item['lab_id']);
                                 } elseif (!empty($item['source_table']) && !empty($item['source_id'])) {
-                                    $key = $item['source_table'] . '_' . $item['source_id'];
+                                    $key = trim((string)$item['source_table']) . '_' . trim((string)$item['source_id']);
+                                }
+                                
+                                // Check if this is a bed/room charge
+                                $category = $item['category'] ?? 'general';
+                                $sourceTable = $item['source_table'] ?? '';
+                                $serviceName = strtolower($item['service'] ?? '');
+                                $isRoomCharge = ($category === 'room') || 
+                                               ($sourceTable === 'admission_details' || $sourceTable === 'patients') ||
+                                               (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false);
+                                
+                                // If any bed fee is already billed, exclude ALL bed fees from unbilled check
+                                if ($isRoomCharge && $hasBilledBedFee) {
+                                    continue; // Skip this bed fee - one is already billed
                                 }
                                 
                                 // Only include if not already in any bill
@@ -334,6 +358,50 @@ class Admissions extends BaseController
                     } else {
                         // If tables don't exist, use all items (fallback)
                         $unbilledItems = $allUnbilledItems;
+                    }
+                    
+                    // Apply same "one bed fee only" logic as in billing interface
+                    // Limit bed/room charges to only one per patient (keep highest amount)
+                    if (!empty($unbilledItems)) {
+                        $roomItems = [];
+                        $otherItems = [];
+                        foreach ($unbilledItems as $item) {
+                            $category = $item['category'] ?? 'general';
+                            $sourceTable = $item['source_table'] ?? '';
+                            $serviceName = strtolower($item['service'] ?? '');
+                            
+                            // Check if it's a room/bed charge
+                            $isRoomCharge = false;
+                            if ($category === 'room') {
+                                $isRoomCharge = true;
+                            } elseif ($sourceTable === 'admission_details' || $sourceTable === 'patients') {
+                                if (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                                    $isRoomCharge = true;
+                                }
+                            } elseif (stripos($serviceName, 'room') !== false || stripos($serviceName, 'bed') !== false) {
+                                $isRoomCharge = true;
+                            }
+                            
+                            if ($isRoomCharge) {
+                                $roomItems[] = $item;
+                            } else {
+                                $otherItems[] = $item;
+                            }
+                        }
+                        
+                        // If multiple room charges, keep only the one with the highest amount
+                        if (count($roomItems) > 1) {
+                            // Sort by amount descending and keep only the first one
+                            usort($roomItems, function($a, $b) {
+                                $amountA = (float)($a['amount'] ?? 0);
+                                $amountB = (float)($b['amount'] ?? 0);
+                                return $amountB <=> $amountA; // Descending order
+                            });
+                            $roomItems = [array_shift($roomItems)]; // Keep only the first (highest amount)
+                        }
+                        
+                        // Combine: room items first (if any), then other items
+                        $unbilledItems = array_merge($roomItems, $otherItems);
                     }
                     
                     if (!empty($unbilledItems)) {
