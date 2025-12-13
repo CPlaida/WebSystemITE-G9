@@ -144,6 +144,26 @@
   const summary = document.getElementById('patientSummary');
 
   const roomsApiBase = '<?= base_url('api/rooms') ?>';
+  
+  // Store current patient info for room filtering
+  let currentPatientId = null;
+  let currentPatientDob = null;
+  let currentPatientGender = null;
+
+  // Calculate age in years and days from date of birth
+  function calculateAge(dateOfBirth) {
+    if (!dateOfBirth) return { years: null, days: null };
+    try {
+      const dob = new Date(dateOfBirth);
+      const now = new Date();
+      const diffTime = Math.abs(now - dob);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const years = Math.floor(diffDays / 365.25);
+      return { years, days: diffDays };
+    } catch (e) {
+      return { years: null, days: null };
+    }
+  }
 
   // Prefill date/time
   function initDateTime(){
@@ -211,6 +231,31 @@
       document.getElementById('p_address').value = addr || '';
       summary.style.display = 'grid';
 
+      // Store patient info for room filtering
+      currentPatientId = id;
+      currentPatientDob = p.date_of_birth || null;
+      currentPatientGender = p.gender || null;
+      
+      console.log('Patient selected:', {
+        id: currentPatientId,
+        dob: currentPatientDob,
+        gender: currentPatientGender
+      });
+      
+      // Reset ward/room/bed selections when patient changes
+      if (wardSelect) {
+        wardSelect.value = '';
+        roomSelect.innerHTML = '<option value="">Select Room</option>';
+        roomSelect.disabled = true;
+        bedSelect.innerHTML = '<option value="">Select Bed</option>';
+        bedSelect.disabled = true;
+      }
+      
+      // Reload wards with patient filter
+      if (wardSelect) {
+        loadWards();
+      }
+
       // Check if patient is already admitted
       const checkRes = await fetch(`<?= base_url('admin/patients/admission/check') ?>?patient_id=${encodeURIComponent(id)}`);
       const checkData = await checkRes.json();
@@ -231,6 +276,14 @@
         patientId.value = '';
         search.value = '';
         summary.style.display = 'none';
+        currentPatientId = null;
+        currentPatientDob = null;
+        currentPatientGender = null;
+        // Reset ward/room/bed
+        if (wardSelect) {
+          wardSelect.value = '';
+          wardSelect.dispatchEvent(new Event('change'));
+        }
       }
     }catch(e){ console.error(e); }
   });
@@ -245,6 +298,16 @@
         await Swal.fire({ icon: 'warning', title: 'Select a patient', text: 'Please search and select a patient first.' });
         return;
       }
+      
+      // Check if a valid room is selected
+      if (!roomSelect || !roomSelect.value || roomSelect.disabled) {
+        await Swal.fire({ 
+          icon: 'warning', 
+          title: 'No Valid Room', 
+          text: 'No available rooms for this patient\'s age and gender. Please select a different ward or patient.' 
+        });
+        return;
+      }
       btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
       const fd = new FormData(form);
       const csrf = document.querySelector('input[name="csrf_test_name"]');
@@ -255,6 +318,14 @@
         await Swal.fire({ icon: 'success', title: 'Success', text: result.message || 'Admission saved.' });
         form.reset();
         summary.style.display='none';
+        currentPatientId = null;
+        currentPatientDob = null;
+        currentPatientGender = null;
+        // Reset ward/room/bed
+        if (wardSelect) {
+          wardSelect.value = '';
+          wardSelect.dispatchEvent(new Event('change'));
+        }
         initDateTime();
       } else {
         let html = result.message || 'Failed to save. Please review the form.';
@@ -328,18 +399,31 @@
     if (!wardSelect) return;
     setSimpleLoading(wardSelect, 'Select Ward', 'Loading wards...');
     try {
-      const res = await fetch(`${roomsApiBase}/wards`);
+      // Build URL with patient_id if available
+      let url = `${roomsApiBase}/wards`;
+      if (currentPatientId) {
+        url += `?patient_id=${encodeURIComponent(currentPatientId)}`;
+      }
+      
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (data.categories && Object.keys(data.categories).length > 0) {
-        renderCategorizedWards(wardSelect, 'Select Ward', data.categories);
+        // Check if any categories have wards
+        const hasWards = Object.values(data.categories).some(cat => Array.isArray(cat) && cat.length > 0);
+        if (hasWards) {
+          renderCategorizedWards(wardSelect, 'Select Ward', data.categories);
+        } else {
+          wardSelect.innerHTML = '<option value="">No available wards for this patient\'s age and gender.</option>';
+          wardSelect.disabled = true;
+        }
       } else if (Array.isArray(data.all) && data.all.length > 0) {
         const wards = data.all.map(ward => ({ name: ward, value: ward }));
         renderSimpleOptions(wardSelect, 'Select Ward', wards, 'value', 'name');
       } else if (Array.isArray(data) && data.length > 0) {
         renderSimpleOptions(wardSelect, 'Select Ward', data, 'value', 'name');
       } else {
-        wardSelect.innerHTML = '<option value="">No wards available</option>';
+        wardSelect.innerHTML = '<option value="">No available wards for this patient\'s age and gender.</option>';
         wardSelect.disabled = true;
       }
     } catch (e) {
@@ -355,12 +439,38 @@
     bedSelect.innerHTML = '<option value="">Select Bed</option>';
     bedSelect.disabled = true;
     try {
-      const res = await fetch(`${roomsApiBase}/rooms/${encodeURIComponent(wardName)}`);
+      // Build URL with patient_id if available
+      let url = `${roomsApiBase}/rooms/${encodeURIComponent(wardName)}`;
+      if (currentPatientId) {
+        url += `?patient_id=${encodeURIComponent(currentPatientId)}`;
+        console.log('Loading rooms for ward:', wardName, 'with patient_id:', currentPatientId);
+      } else {
+        console.log('Loading rooms for ward:', wardName, '(no patient selected)');
+      }
+      
+      const res = await fetch(url);
       const rows = await res.json();
-      renderSimpleOptions(roomSelect, 'Select Room', rows, 'name', 'name');
+      console.log('Rooms response:', rows);
+      
+      if (!Array.isArray(rows) || rows.length === 0) {
+        roomSelect.innerHTML = '<option value="">No available rooms for this patient\'s age and gender.</option>';
+        roomSelect.disabled = true;
+        // Disable form submission if no valid rooms
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+      } else {
+        renderSimpleOptions(roomSelect, 'Select Room', rows, 'name', 'name');
+        // Re-enable form submission if rooms are available
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn && patientId.value) submitBtn.disabled = false;
+      }
     } catch (e) {
+      console.error('Error loading rooms:', e);
       roomSelect.innerHTML = '<option value="">Failed to load rooms</option>';
       roomSelect.disabled = true;
+      // Disable form submission on error
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
     }
   };
 
@@ -393,7 +503,27 @@
       bedSelect.innerHTML = '<option value="">Select Bed</option>';
       bedSelect.disabled = !(ward && room);
       if (ward && room) loadBeds(ward, room);
+      
+      // Enable/disable submit button based on room selection
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = !(patientId.value && ward && room && !roomSelect.disabled);
+      }
     });
+    
+    // Also check on bed selection
+    if (bedSelect) {
+      bedSelect.addEventListener('change', () => {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          const hasPatient = !!patientId.value;
+          const hasWard = !!wardSelect.value;
+          const hasRoom = !!roomSelect.value && !roomSelect.disabled;
+          const hasBed = !!bedSelect.value && !bedSelect.disabled;
+          submitBtn.disabled = !(hasPatient && hasWard && hasRoom && hasBed);
+        }
+      });
+    }
   }
 })();
 </script>

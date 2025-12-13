@@ -483,6 +483,23 @@ class Rooms extends BaseController
     {
         $this->requireRole(self::ACCESS_ROLES);
         
+        $patientId = $this->request->getGet('patient_id');
+        $patientAge = null;
+        $patientAgeDays = null;
+        $patientGender = null;
+        
+        // If patient_id is provided, load patient data and calculate age
+        if ($patientId) {
+            $patient = $this->patients->find($patientId);
+            if ($patient) {
+                $dateOfBirth = $patient['date_of_birth'] ?? null;
+                $ageData = $this->calculateAge($dateOfBirth);
+                $patientAge = $ageData['years'];
+                $patientAgeDays = $ageData['days'];
+                $patientGender = $patient['gender'] ?? null;
+            }
+        }
+        
         $available = $this->getAvailableBedsBySlot();
         $availableWards = [];
         foreach ($available as $slot) {
@@ -493,6 +510,20 @@ class Rooms extends BaseController
         }
 
         $allWards = array_keys($availableWards);
+
+        // Filter wards based on patient age/gender if patient is provided
+        if ($patientId) {
+            $filteredWards = [];
+            $filteredWardsMap = [];
+            foreach ($allWards as $wardName) {
+                if ($this->isWardValidForPatient($wardName, $patientAge, $patientAgeDays, $patientGender)) {
+                    $filteredWards[] = $wardName;
+                    $filteredWardsMap[$wardName] = true;
+                }
+            }
+            $allWards = $filteredWards;
+            $availableWards = $filteredWardsMap;
+        }
 
         $generalInpatient = array_column(self::GENERAL_FILTERS, 'ward');
         $criticalCare = array_column(self::CRITICAL_UNITS, 'ward');
@@ -555,11 +586,144 @@ class Rooms extends BaseController
     }
 
     /**
+     * Check if a ward is valid for a patient based on age and gender
+     * 
+     * @param string $ward Ward name
+     * @param int|null $ageInYears Patient age in years (null if unknown)
+     * @param int|null $ageInDays Patient age in days (for NICU - 0-28 days)
+     * @param string|null $gender Patient gender (male/female)
+     * @return bool True if ward is valid for patient
+     */
+    protected function isWardValidForPatient(string $ward, ?int $ageInYears, ?int $ageInDays, ?string $gender): bool
+    {
+        $wardNormalized = strtoupper(trim($ward));
+        $genderLower = $gender ? strtolower(trim($gender)) : null;
+        
+        // Pedia Ward: Age 0-12 years, Male & Female
+        if ($wardNormalized === 'PEDIA WARD') {
+            return ($ageInYears !== null && $ageInYears >= 0 && $ageInYears <= 12);
+        }
+        
+        // NICU: Age 0-28 days only, Male & Female
+        if ($wardNormalized === 'NICU') {
+            return ($ageInDays !== null && $ageInDays >= 0 && $ageInDays <= 28);
+        }
+        
+        // PICU: Age 0-12 years, Male & Female
+        if ($wardNormalized === 'PICU') {
+            return ($ageInYears !== null && $ageInYears >= 0 && $ageInYears <= 12);
+        }
+        
+        // Female Ward: Age 13+ years, Female only
+        if ($wardNormalized === 'FEMALE WARD') {
+            return ($ageInYears !== null && $ageInYears >= 13 && $genderLower === 'female');
+        }
+        
+        // Male Ward: Age 13+ years, Male only
+        if ($wardNormalized === 'MALE WARD') {
+            return ($ageInYears !== null && $ageInYears >= 13 && $genderLower === 'male');
+        }
+        
+        // Semi-Private Ward: Age 13+ years, Male & Female
+        if ($wardNormalized === 'SEMI-PRIVATE WARD') {
+            return ($ageInYears !== null && $ageInYears >= 13);
+        }
+        
+        // Private Suites: Age 13+ years, Male & Female
+        if ($wardNormalized === 'PRIVATE SUITES') {
+            return ($ageInYears !== null && $ageInYears >= 13);
+        }
+        
+        // ICU: All ages, Male & Female
+        if ($wardNormalized === 'ICU') {
+            return true;
+        }
+        
+        // Emergency Department: All ages, Male & Female
+        if ($wardNormalized === 'ED') {
+            return true;
+        }
+        
+        // Isolation Room: All ages, Male & Female
+        if ($wardNormalized === 'ISO') {
+            return true;
+        }
+        
+        // Labor & Delivery Suite: Age 13+ years, Female only
+        if ($wardNormalized === 'LD') {
+            return ($ageInYears !== null && $ageInYears >= 13 && $genderLower === 'female');
+        }
+        
+        // Step-Down Unit: All ages, Male & Female
+        if ($wardNormalized === 'SDU') {
+            return true;
+        }
+        
+        // Default: allow if we don't have specific rules (backward compatibility)
+        return true;
+    }
+
+    /**
+     * Calculate age in years and days from date of birth
+     * 
+     * @param string|null $dateOfBirth Date of birth (Y-m-d format)
+     * @return array{years: int|null, days: int|null}
+     */
+    protected function calculateAge(?string $dateOfBirth): array
+    {
+        if (!$dateOfBirth) {
+            return ['years' => null, 'days' => null];
+        }
+        
+        try {
+            $dob = new \DateTime($dateOfBirth);
+            $now = new \DateTime();
+            $diff = $now->diff($dob);
+            
+            $years = (int)$diff->y;
+            $days = (int)$diff->days;
+            
+            return ['years' => $years, 'days' => $days];
+        } catch (\Exception $e) {
+            return ['years' => null, 'days' => null];
+        }
+    }
+
+    /**
      * Return rooms in a given ward that still have at least one available bed.
+     * Optionally filters by patient age and gender if patient_id is provided.
      */
     public function apiRooms($ward)
     {
         $this->requireRole(self::ACCESS_ROLES);
+        
+        $patientId = $this->request->getGet('patient_id');
+        $patientAge = null;
+        $patientAgeDays = null;
+        $patientGender = null;
+        
+        // If patient_id is provided, load patient data and calculate age
+        if ($patientId) {
+            $patient = $this->patients->find($patientId);
+            if ($patient) {
+                $dateOfBirth = $patient['date_of_birth'] ?? null;
+                $ageData = $this->calculateAge($dateOfBirth);
+                $patientAge = $ageData['years'];
+                $patientAgeDays = $ageData['days'];
+                $patientGender = $patient['gender'] ?? null;
+            }
+        }
+        
+        // Check if ward is valid for patient (if patient info is available)
+        if ($patientId) {
+            $isValid = $this->isWardValidForPatient($ward, $patientAge, $patientAgeDays, $patientGender);
+            log_message('debug', "Ward validation: ward={$ward}, patient_id={$patientId}, age_years={$patientAge}, age_days={$patientAgeDays}, gender={$patientGender}, valid=" . ($isValid ? 'yes' : 'no'));
+            
+            if (!$isValid) {
+                // Ward is not valid for this patient, return empty array
+                return $this->response->setJSON([]);
+            }
+        }
         
         $available = $this->getAvailableBedsBySlot();
 
