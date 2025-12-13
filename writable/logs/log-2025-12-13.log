@@ -1634,3 +1634,243 @@ Stack trace:
 #10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 #11 {main}
 ERROR - 2025-12-13 16:20:45 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
+ERROR - 2025-12-13 16:56:42 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pi`.*, ...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pi`.*, ...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(1287): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getPatientPrescriptions()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-13 16:56:42 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
+ERROR - 2025-12-13 16:58:15 --> mysqli_sql_exception: Unknown column 'patient_name' in 'where clause' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `b`.*, C...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `b`.*, C...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `b`.*, C...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, C...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\app\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Billing->index()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 16:58:15 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'patient_name' in 'where clause'
+[Method: GET, Route: billing]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE :patient_name: ESCAPE \'!\'
+OR  `p`.`first_name` LIKE :p.first_name: ESCAPE \'!\'
+OR  `p`.`last_name` LIKE :p.last_name: ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE :b.bill_date: ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE :b.payment_status: ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE :b.payment_method: ESCAPE \'!\'
+OR  `s`.`name` LIKE :s.name: ESCAPE \'!\'
+OR  `b`.`id` LIKE :b.id: ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC', [...], false)
+ 2 APPPATH\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
+ 4 APPPATH\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 16:58:15 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'patient_name' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE :patient_name: ESCAPE \'!\'
+OR  `p`.`first_name` LIKE :p.first_name: ESCAPE \'!\'
+OR  `p`.`last_name` LIKE :p.last_name: ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE :b.bill_date: ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE :b.payment_status: ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE :b.payment_method: ESCAPE \'!\'
+OR  `s`.`name` LIKE :s.name: ESCAPE \'!\'
+OR  `b`.`id` LIKE :b.id: ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC', [...], false)
+ 4 APPPATH\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
+ 6 APPPATH\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 16:58:15 --> [Caused by] mysqli_sql_exception: Unknown column 'patient_name' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`first_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `p`.`last_name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `s`.`name` LIKE \'%frenchie%\' ESCAPE \'!\'
+OR  `b`.`id` LIKE \'%frenchie%\' ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `b`.*, CONCAT(p.first_name, \' \', p.last_name) AS patient_name, `p`.`address` AS `patient_address`, `p`.`phone` AS `patient_phone`, `s`.`name` AS `service_name`, `s`.`base_price` AS `service_price`, COALESCE(ha.loa_number, b.hmo_loa_number) AS hmo_loa_number, COALESCE(ha.coverage_limit, b.hmo_coverage_limit) AS hmo_coverage_limit, COALESCE(ha.approved_amount, b.hmo_approved_amount) AS hmo_approved_amount, COALESCE(ha.patient_share, b.hmo_patient_share) AS hmo_patient_share, COALESCE(ha.status, b.hmo_status) AS hmo_status, COALESCE(ha.notes, b.hmo_notes) AS hmo_notes, COALESCE(ha.provider_id, b.hmo_provider_id) AS hmo_provider_id, COALESCE(hp_auth.name, hp.name) AS hmo_provider_name, `pha`.`suggested_amount` AS `philhealth_suggested_amount`, `pha`.`approved_amount` AS `philhealth_approved_amount`, `pha`.`codes_used` AS `philhealth_codes_used`, `pha`.`officer_user_id` AS `philhealth_verified_by`, `pha`.`created_at` AS `philhealth_verified_at`, `pha`.`case_rate_id` AS `philhealth_case_rate_id`, `pcr`.`code` AS `philhealth_code`, `pcr`.`description` AS `philhealth_description`, `pcr`.`rate_total` AS `philhealth_rate_total`
+FROM `billing` `b`
+LEFT JOIN `patients` `p` ON `p`.`id` = `b`.`patient_id`
+LEFT JOIN `services` `s` ON `s`.`id` = `b`.`service_id`
+LEFT JOIN `hmo_authorizations` `ha` ON `ha`.`billing_id` = `b`.`id`
+LEFT JOIN `hmo_providers` `hp_auth` ON `hp_auth`.`id` = `ha`.`provider_id`
+LEFT JOIN `hmo_providers` `hp` ON `hp`.`id` = `b`.`hmo_provider_id`
+LEFT JOIN `bill_philhealth_audits` `pha` ON `pha`.`id` = `b`.`philhealth_audit_id`
+LEFT JOIN `philhealth_case_rates` `pcr` ON `pcr`.`id` = `pha`.`case_rate_id`
+WHERE   (
+`patient_name` LIKE :patient_name: ESCAPE \'!\'
+OR  `p`.`first_name` LIKE :p.first_name: ESCAPE \'!\'
+OR  `p`.`last_name` LIKE :p.last_name: ESCAPE \'!\'
+OR  `b`.`bill_date` LIKE :b.bill_date: ESCAPE \'!\'
+OR  `b`.`payment_status` LIKE :b.payment_status: ESCAPE \'!\'
+OR  `b`.`payment_method` LIKE :b.payment_method: ESCAPE \'!\'
+OR  `s`.`name` LIKE :s.name: ESCAPE \'!\'
+OR  `b`.`id` LIKE :b.id: ESCAPE \'!\'
+ )
+ORDER BY `b`.`created_at` DESC', [...], false)
+ 5 APPPATH\Models\BillingModel.php(175): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Models\BillingModel.php(183): App\Models\BillingModel->search('frenchie')
+ 7 APPPATH\Controllers\Billing.php(214): App\Models\BillingModel->getList('frenchie')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Billing->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Billing))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 16:59:05 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pi`.*, ...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pi`.*, ...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(1287): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getPatientPrescriptions()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-13 16:59:05 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'

@@ -4,167 +4,7 @@
 
 <?= $this->section('content') ?>
 <style>
-    /* Hospital Billing System Styles */
-    .hospital-billing-container {
-        background: #f8fafc;
-        min-height: 100vh;
-        padding: 24px;
-    }
-    
-    .billing-header {
-        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-        color: white;
-        padding: 28px 32px;
-        border-radius: 12px;
-        margin-bottom: 24px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    
-    .billing-header h1 {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
-    
-    .billing-header p {
-        margin: 8px 0 0;
-        opacity: 0.9;
-        font-size: 14px;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 20px;
-        margin-bottom: 24px;
-    }
-    
-    .stat-card {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        border-left: 4px solid;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-    }
-    
-    .stat-card.revenue { border-left-color: #10b981; }
-    .stat-card.pending { border-left-color: #f59e0b; }
-    .stat-card.paid { border-left-color: #3b82f6; }
-    .stat-card.outstanding { border-left-color: #ef4444; }
-    
-    .stat-card h3 {
-        margin: 0 0 12px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .stat-card .value {
-        font-size: 28px;
-        font-weight: 700;
-        color: #111827;
-    }
-    
-    .search-section {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    }
-    
-    .search-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-    
-    .search-icon {
-        position: absolute;
-        left: 16px;
-        color: #9ca3af;
-        font-size: 18px;
-    }
-    
-    .search-input {
-        width: 100%;
-        padding: 14px 16px 14px 48px;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 15px;
-        transition: all 0.2s;
-    }
-    
-    .search-input:focus {
-        outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-    }
-    
-    .bills-table-container {
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    }
-    
-    .table-header {
-        background: #f9fafb;
-        padding: 20px 24px;
-        border-bottom: 2px solid #e5e7eb;
-    }
-    
-    .table-header h2 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 700;
-        color: #111827;
-    }
-    
-    .bills-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .bills-table thead {
-        background: #f9fafb;
-    }
-    
-    .bills-table th {
-        padding: 16px 24px;
-        text-align: left;
-        font-size: 12px;
-        font-weight: 700;
-        color: #374151;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 2px solid #e5e7eb;
-    }
-    
-    .bills-table td {
-        padding: 18px 24px;
-        border-bottom: 1px solid #f3f4f6;
-        font-size: 14px;
-        color: #374151;
-    }
-    
-    .bills-table tbody tr {
-        transition: background 0.2s;
-    }
-    
-    .bills-table tbody tr:hover {
-        background: #f9fafb;
-    }
-    
+    /* Billing-specific styles */
     .bill-number {
         font-weight: 700;
         color: #1e40af;
@@ -574,48 +414,49 @@
     }
 </style>
 
-<div class="hospital-billing-container">
-    <!-- Header -->
-    <div class="billing-header">
-        <h1><i class="fas fa-file-invoice-dollar"></i> Billing & Payment Management</h1>
-        <p>Manage patient bills, process payments, and handle insurance claims</p>
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="header-left">
+            <h1 class="page-title">Billing & Payment Management</h1>
         </div>
-    
-    <!-- Statistics Cards -->
-    <div class="stats-grid">
-        <div class="stat-card revenue">
-            <h3>Total Revenue</h3>
-            <div class="value">₱<?= number_format($totals['totalRevenue'] ?? 0, 2) ?></div>
-        </div>
-        <div class="stat-card pending">
-            <h3>Pending Bills</h3>
-            <div class="value"><?= (int)($totals['pendingCount'] ?? 0) ?></div>
-        </div>
-        <div class="stat-card paid">
-            <h3>Paid This Month</h3>
-            <div class="value">₱<?= number_format($totals['paidThisMonth'] ?? 0, 2) ?></div>
-        </div>
-        <div class="stat-card outstanding">
-            <h3>Outstanding Balance</h3>
-            <div class="value">₱<?= number_format($totals['outstanding'] ?? 0, 2) ?></div>
+        <div class="header-right" style="display: flex; gap: 10px;">
+            <!-- Add action buttons here if needed -->
         </div>
     </div>
 
-    <!-- Search Section -->
-    <div class="search-section">
-        <div class="search-wrapper">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search by Invoice Number, Patient Name, or Date..." value="<?= esc($query ?? '') ?>">
+    <div class="content">
+        <!-- Statistics Cards -->
+        <div class="card-container">
+            <div class="card">
+                <h3>Total Revenue</h3>
+                <div class="value">₱<?= number_format($totals['totalRevenue'] ?? 0, 2) ?></div>
+            </div>
+            <div class="card">
+                <h3>Pending Bills</h3>
+                <div class="value"><?= (int)($totals['pendingCount'] ?? 0) ?></div>
+            </div>
+            <div class="card">
+                <h3>Paid This Month</h3>
+                <div class="value">₱<?= number_format($totals['paidThisMonth'] ?? 0, 2) ?></div>
+            </div>
+            <div class="card">
+                <h3>Outstanding Balance</h3>
+                <div class="value">₱<?= number_format($totals['outstanding'] ?? 0, 2) ?></div>
+            </div>
         </div>
-    </div>
 
-    <!-- Bills Table -->
-    <div class="bills-table-container">
-        <div class="table-header">
-            <h2><i class="fas fa-list"></i> Patient Bills</h2>
+        <!-- Search Section -->
+        <div class="medicine-search-wrapper">
+            <div class="medicine-search-row">
+                <i class="fas fa-search medicine-search-icon"></i>
+                <input type="text" id="searchInput" class="medicine-search-field" placeholder="Search by Invoice Number, Patient Name, or Date..." value="<?= esc($query ?? '') ?>" autocomplete="off">
+                <button type="button" id="clearSearch" class="medicine-search-clear">Clear</button>
+            </div>
         </div>
-        <div style="overflow-x: auto;">
-            <table class="bills-table">
+
+        <!-- Bills Table -->
+        <div class="table-responsive">
+            <table class="data-table">
                     <thead>
                         <tr>
                         <th>Invoice #</th>
@@ -1463,11 +1304,23 @@
     // Real-time search functionality
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearch');
         const tableBody = document.getElementById('billingTableBody');
         
+        // Clear search button functionality
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                if (searchInput) {
+                    searchInput.value = '';
+                    clearBtn.classList.remove('show');
+                    filterBillingTable();
+                }
+            });
+        }
+        
         if (searchInput && tableBody) {
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase().trim();
+            function filterBillingTable() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
                 const rows = tableBody.querySelectorAll('tr[data-search]');
                 let hasVisibleRows = false;
                 
@@ -1493,10 +1346,34 @@
                 } else if (noResultsRow) {
                     noResultsRow.style.display = 'none';
                 }
+            }
+            
+            searchInput.addEventListener('input', function() {
+                // Show/hide clear button
+                if (clearBtn) {
+                    if (this.value.trim().length > 0) {
+                        clearBtn.classList.add('show');
+                    } else {
+                        clearBtn.classList.remove('show');
+                    }
+                }
+                filterBillingTable();
+            });
+            
+            // Handle Escape key to clear search
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Escape') {
+                    this.value = '';
+                    if (clearBtn) clearBtn.classList.remove('show');
+                    filterBillingTable();
+                }
             });
             
             if (searchInput.value) {
-                searchInput.dispatchEvent(new Event('input'));
+                filterBillingTable();
+                if (clearBtn && searchInput.value.trim().length > 0) {
+                    clearBtn.classList.add('show');
+                }
             }
         }
     });
