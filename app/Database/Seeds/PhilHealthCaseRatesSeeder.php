@@ -447,6 +447,24 @@ class PhilHealthCaseRatesSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            
+            // ========== PROFESSIONAL FEES (Matching service: FEE-DOCTOR-DAILY) ==========
+            // Daily Professional Fee - matches FEE-DOCTOR-DAILY
+            [
+                'code_type' => 'RVS',
+                'code' => 'FEE-DOCTOR-DAILY',
+                'description' => 'Professional Fee (Daily)',
+                'case_type' => 'A',
+                'rate_total' => 500.00,
+                'facility_share' => 0.00,
+                'professional_share' => 500.00,
+                'effective_from' => '2024-01-01',
+                'effective_to' => null,
+                'active' => 1,
+                'updated_by' => 'seeder',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
         ];
 
         $normalizedData = array_map(function (array $row) use ($timestamp) {

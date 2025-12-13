@@ -1330,6 +1330,7 @@ class Billing extends BaseController
                 }
                 
                 // Filter out new charges that are already in the existing bill
+                // BUT: Allow incremental billing for room/doctor fees (same source but different days)
                 $newItems = $result['items'] ?? [];
                 $filteredNewItems = [];
                 foreach ($newItems as $item) {
@@ -1340,8 +1341,22 @@ class Billing extends BaseController
                         $key = $item['source_table'] . '_' . $item['source_id'];
                     }
                     
-                    // Only include if not already in existing bill
-                    if ($key === '' || !isset($existingItemKeys[$key])) {
+                    // Check if this is an incremental charge (room or doctor fee)
+                    $isIncrementalCharge = false;
+                    $sourceTable = $item['source_table'] ?? '';
+                    $serviceName = strtolower($item['service'] ?? '');
+                    $category = $item['category'] ?? '';
+                    
+                    if ($sourceTable === 'admission_details' || $sourceTable === 'admission_doctor_fee') {
+                        // Check if description contains "additional day" - indicates incremental billing
+                        if (stripos($serviceName, 'additional day') !== false) {
+                            $isIncrementalCharge = true;
+                        }
+                    }
+                    
+                    // Allow incremental charges even if same source (they represent additional days)
+                    // For other charges, only include if not already in existing bill
+                    if ($key === '' || !isset($existingItemKeys[$key]) || $isIncrementalCharge) {
                         $filteredNewItems[] = $item;
                     }
                 }
@@ -1630,6 +1645,10 @@ class Billing extends BaseController
             
             // Consultation & Professional Fees
             if (stripos($desc, 'consultation') !== false ||
+                stripos($desc, 'professional fee') !== false ||
+                stripos($desc, 'professional') !== false ||
+                stripos($code, 'FEE-DOCTOR') !== false ||
+                stripos($code, 'CONS-') !== false ||
                 stripos($desc, 'office') !== false ||
                 stripos($desc, 'outpatient') !== false ||
                 stripos($desc, 'visit') !== false ||

@@ -12,7 +12,7 @@ class ConsultationAndRoomServicesSeeder extends Seeder
         
         // Check if services table exists
         if (!$db->tableExists('services')) {
-            $this->command->write('Services table does not exist. Please run migrations first.');
+            echo "Services table does not exist. Please run migrations first.\n";
             return;
         }
 
@@ -164,6 +164,16 @@ class ConsultationAndRoomServicesSeeder extends Seeder
                 'base_price' => 500.00,
                 'active' => 1,
             ],
+            
+            // Professional Fee Services
+            [
+                'code' => 'FEE-DOCTOR-DAILY',
+                'name' => 'Professional Fee (Daily)',
+                'category' => 'professional',
+                'unit' => 'per day',
+                'base_price' => 500.00,
+                'active' => 1,
+            ],
         ];
 
         $now = date('Y-m-d H:i:s');
@@ -193,9 +203,9 @@ class ConsultationAndRoomServicesSeeder extends Seeder
             }
         }
 
-        $this->command->write("Consultation and Room Services Seeder completed:");
-        $this->command->write("  - Inserted: {$inserted} services");
-        $this->command->write("  - Updated: {$updated} services");
+        echo "Consultation and Room Services Seeder completed:\n";
+        echo "  - Inserted: {$inserted} services\n";
+        echo "  - Updated: {$updated} services\n";
     }
 }
 

@@ -6,6 +6,7 @@ use App\Services\Billing\Providers\LaboratoryChargeProvider;
 use App\Services\Billing\Providers\PharmacyChargeProvider;
 use App\Services\Billing\Providers\AppointmentChargeProvider;
 use App\Services\Billing\Providers\RoomChargeProvider;
+use App\Services\Billing\Providers\DoctorFeeProvider;
 
 class BillingChargeAggregator
 {
@@ -69,6 +70,7 @@ class BillingChargeAggregator
             new PharmacyChargeProvider(),
             new AppointmentChargeProvider(),
             new RoomChargeProvider(),
+            new DoctorFeeProvider(),
         ];
     }
 }

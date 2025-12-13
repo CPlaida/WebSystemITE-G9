@@ -37,27 +37,37 @@ class RoomChargeProvider extends AbstractChargeProvider
                     ->groupEnd();
             }
             
-            // Only include admissions that haven't been linked to billing_items (not yet billed)
-            // IMPORTANT: Check ALL billing_items (from both paid and unpaid bills) to prevent duplicates
-            if ($this->tableExists('billing_items')) {
-                // Include admitted OR discharged admissions that are NOT already in billing_items
-                // This prevents the same admission from being billed multiple times
-                $builder->whereIn('ad.status', ['admitted', 'discharged'])
-                    // Exclude admissions that are already linked to billing_items (from ANY bill, paid or unpaid)
-                    // Use string comparison to handle both string and numeric source_id values
-                    ->where('NOT EXISTS (SELECT 1 FROM billing_items bi WHERE bi.source_table = \'admission_details\' AND (bi.source_id = CAST(ad.id AS CHAR) OR CAST(bi.source_id AS UNSIGNED) = ad.id))', null, false);
-            } else {
-                // If billing_items table doesn't exist, show both admitted and discharged
-                $builder->whereIn('ad.status', ['admitted', 'discharged']);
-            }
-            
-            $builder->orderBy('ad.admission_date', 'DESC');
+            // Include all active admissions (we'll handle incremental billing below)
+            $builder->whereIn('ad.status', ['admitted', 'discharged'])
+                ->orderBy('ad.admission_date', 'DESC');
             $admissions = $builder->get()->getResultArray();
 
             if (!empty($admissions)) {
-                // Additional filter to exclude admissions already linked to billing_items
-                // This is a safety net to ensure we don't show already-billed admissions
-                $admissions = $this->filterOutAlreadyLinked($admissions, 'admission_details');
+                // Get already billed days for each admission (for incremental billing)
+                $billedDaysMap = [];
+                if ($this->tableExists('billing_items')) {
+                    $admissionIds = array_map(function($ad) {
+                        return (int)($ad['id'] ?? 0);
+                    }, $admissions);
+                    $admissionIds = array_filter($admissionIds);
+                    
+                    if (!empty($admissionIds)) {
+                        $billedItems = $this->db->table('billing_items')
+                            ->select('source_id, qty')
+                            ->where('source_table', 'admission_details')
+                            ->whereIn('source_id', $admissionIds)
+                            ->get()
+                            ->getResultArray();
+                        
+                        foreach ($billedItems as $bi) {
+                            $admissionId = (string)($bi['source_id'] ?? '');
+                            $billedQty = (int)($bi['qty'] ?? 0);
+                            if ($admissionId !== '' && $billedQty > 0) {
+                                $billedDaysMap[$admissionId] = ($billedDaysMap[$admissionId] ?? 0) + $billedQty;
+                            }
+                        }
+                    }
+                }
                 
                 // Remove duplicates: if multiple admissions exist for the same bed, only keep the most recent one
                 // Also ensure we don't have duplicate admission IDs
@@ -116,35 +126,79 @@ class RoomChargeProvider extends AbstractChargeProvider
                         if ($rate <= 0) {
                             $rate = 500.0; // Default room rate
                         }
-                        $days = $this->calculateDays($row);
-                        if ($days <= 0) {
-                            $days = 1;
+                        
+                        // Calculate total days from admission to today
+                        $totalDays = $this->calculateDays($row);
+                        if ($totalDays <= 0) {
+                            $totalDays = 1;
                         }
-                        $amount = $rate * $days;
+                        
+                        // Check how many days have already been billed (for incremental billing)
+                        $admissionId = (int)($row['id'] ?? 0);
+                        $admissionIdStr = (string)$admissionId;
+                        $alreadyBilledDays = $billedDaysMap[$admissionIdStr] ?? 0;
+                        
+                        // Calculate days to bill (incremental: only bill additional days)
+                        $daysToBill = $totalDays - $alreadyBilledDays;
+                        
+                        // If all days are already billed, skip this admission
+                        if ($daysToBill <= 0) {
+                            continue;
+                        }
+                        
+                        // Calculate amount for the additional days only
+                        $amount = $rate * $daysToBill;
                         $roomNum = $row['room'] ?? ($bed['room'] ?? '');
                         
                         // Build service description
-                        if ($serviceName) {
-                            $service = sprintf('%s - %s %s - %d day%s', 
-                                $serviceName, 
-                                $ward, 
-                                $roomNum ? "#{$roomNum}" : '', 
-                                $days, 
-                                $days > 1 ? 's' : ''
-                            );
+                        if ($alreadyBilledDays > 0) {
+                            // Show incremental billing info
+                            if ($serviceName) {
+                                $service = sprintf('%s - %s %s - %d additional day%s (Day %d-%d of %d total)', 
+                                    $serviceName, 
+                                    $ward, 
+                                    $roomNum ? "#{$roomNum}" : '', 
+                                    $daysToBill, 
+                                    $daysToBill > 1 ? 's' : '',
+                                    $alreadyBilledDays + 1,
+                                    $totalDays,
+                                    $totalDays
+                                );
+                            } else {
+                                $service = sprintf('Room %s %s - %d additional day%s (Day %d-%d of %d total)', 
+                                    $ward, 
+                                    $roomNum ? "#{$roomNum}" : '', 
+                                    $daysToBill, 
+                                    $daysToBill > 1 ? 's' : '',
+                                    $alreadyBilledDays + 1,
+                                    $totalDays,
+                                    $totalDays
+                                );
+                            }
                         } else {
-                            $service = sprintf('Room %s %s - %d day%s', 
-                                $ward, 
-                                $roomNum ? "#{$roomNum}" : '', 
-                                $days, 
-                                $days > 1 ? 's' : ''
-                            );
+                            // First time billing
+                            if ($serviceName) {
+                                $service = sprintf('%s - %s %s - %d day%s', 
+                                    $serviceName, 
+                                    $ward, 
+                                    $roomNum ? "#{$roomNum}" : '', 
+                                    $daysToBill, 
+                                    $daysToBill > 1 ? 's' : ''
+                                );
+                            } else {
+                                $service = sprintf('Room %s %s - %d day%s', 
+                                    $ward, 
+                                    $roomNum ? "#{$roomNum}" : '', 
+                                    $daysToBill, 
+                                    $daysToBill > 1 ? 's' : ''
+                                );
+                            }
                         }
                         $service = trim(preg_replace('/\s+/', ' ', $service));
                         
                         $item = $this->defaultItem();
                         $item['service'] = $service;
-                        $item['qty'] = $days;
+                        $item['qty'] = $daysToBill; // Only bill the additional days
                         $item['price'] = $rate;
                         $item['amount'] = $amount;
                         $item['category'] = 'room';
