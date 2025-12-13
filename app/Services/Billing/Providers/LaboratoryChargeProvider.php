@@ -27,10 +27,7 @@ class LaboratoryChargeProvider extends AbstractChargeProvider
 
         $builder = $this->db->table('laboratory');
         $builder->select('*');
-        $builder->groupStart()
-            ->where('status', 'completed')
-            ->orWhere('status', 'in_progress')
-            ->groupEnd();
+        $builder->where('status', 'completed');
         $builder->groupStart()
             ->where('patient_id', $patientId);
         if ($patientName !== '') {
@@ -50,20 +47,38 @@ class LaboratoryChargeProvider extends AbstractChargeProvider
         $rows = $builder->get()->getResultArray();
 
         // Exclude already linked lab IDs when billing_items has lab_id/source data
+        // Check both lab_id and source_table/source_id to catch all cases
         if (!empty($rows) && $this->tableExists('billing_items')) {
             $ids = array_values(array_filter(array_map(fn($r) => $r['id'] ?? null, $rows)));
             if (!empty($ids)) {
                 try {
-                    $linked = $this->db->table('billing_items')
+                    // Check for items linked via lab_id
+                    $linkedByLabId = $this->db->table('billing_items')
                         ->select('lab_id')
                         ->whereIn('lab_id', $ids)
                         ->get()->getResultArray();
+                    
+                    // Check for items linked via source_table and source_id
+                    $linkedBySource = $this->db->table('billing_items')
+                        ->select('source_id')
+                        ->where('source_table', 'laboratory')
+                        ->whereIn('source_id', array_map('strval', $ids))
+                        ->get()->getResultArray();
+                    
                     $linkedSet = [];
-                    foreach ($linked as $l) {
+                    // Add lab_ids from lab_id column
+                    foreach ($linkedByLabId as $l) {
                         if (!empty($l['lab_id'])) {
                             $linkedSet[(string)$l['lab_id']] = true;
                         }
                     }
+                    // Add lab_ids from source_id column
+                    foreach ($linkedBySource as $l) {
+                        if (!empty($l['source_id'])) {
+                            $linkedSet[(string)$l['source_id']] = true;
+                        }
+                    }
+                    
                     if (!empty($linkedSet)) {
                         $rows = array_values(array_filter($rows, function ($row) use ($linkedSet) {
                             $id = $row['id'] ?? null;
@@ -74,6 +89,11 @@ class LaboratoryChargeProvider extends AbstractChargeProvider
                     // ignore
                 }
             }
+        }
+        
+        // Also use the standard filterOutAlreadyLinked method as a safety net
+        if (!empty($rows)) {
+            $rows = $this->filterOutAlreadyLinked($rows, 'laboratory', 'id');
         }
 
         $items = [];

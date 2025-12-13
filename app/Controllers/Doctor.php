@@ -605,29 +605,28 @@ class Doctor extends BaseController
                 ->setJSON(['success' => false, 'message' => 'patient_id is required']);
         }
 
-        $vitals = $this->vitalModel->getLatestForPatient($patientId);
+        try {
+            $vitals = $this->vitalModel->getLatestForPatient($patientId);
 
-        if (!$vitals) {
-            $patient = $this->patientModel
-                ->select('id, vitals_bp, vitals_hr, vitals_temp, updated_at, created_at')
-                ->find($patientId);
-
-            if ($patient) {
-                $vitals = [
-                    'patient_id'     => (string) $patient['id'],
-                    'blood_pressure' => $patient['vitals_bp'],
-                    'heart_rate'     => $patient['vitals_hr'],
-                    'temperature'    => $patient['vitals_temp'],
-                    'created_at'     => $patient['updated_at'] ?? $patient['created_at'],
-                    'source'         => 'patient_record',
-                ];
+            // If no vitals found, return null (vitals should only come from patient_vitals table)
+            // No fallback to patients table since vitals columns don't exist there
+            // Ensure vitals is null (not empty array or false) if not found
+            if (empty($vitals) || $vitals === false) {
+                $vitals = null;
             }
-        }
 
-        return $this->response->setJSON([
-            'success' => true,
-            'vitals'  => $vitals,
-        ]);
+            return $this->response->setJSON([
+                'success' => true,
+                'vitals'  => $vitals,
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error fetching vitals: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => 'Error fetching vitals',
+                'vitals' => null,
+            ]);
+        }
     }
 
     /**
@@ -638,35 +637,61 @@ class Doctor extends BaseController
     {
         $this->requireRole(['doctor', 'nurse', 'admin']);
 
-        $data = [
-            'patient_id'     => (string) $this->request->getPost('patient_id'),
-            'blood_pressure' => trim((string) $this->request->getPost('blood_pressure')),
-            'heart_rate'     => $this->request->getPost('heart_rate'),
-            'temperature'    => $this->request->getPost('temperature'),
-            'recorded_by'    => (int) session()->get('user_id'),
-        ];
+        try {
+            $patientId = trim((string) $this->request->getPost('patient_id'));
+            $bloodPressure = trim((string) $this->request->getPost('blood_pressure'));
+            $heartRate = $this->request->getPost('heart_rate');
+            $temperature = $this->request->getPost('temperature');
+            $userId = session()->get('user_id');
 
-        if ($data['patient_id'] === '') {
-            return $this->response->setStatusCode(400)
-                ->setJSON(['success' => false, 'message' => 'patient_id is required']);
-        }
+            if ($patientId === '') {
+                return $this->response->setStatusCode(400)
+                    ->setJSON(['success' => false, 'message' => 'patient_id is required']);
+            }
 
-        if (!$this->vitalModel->save($data)) {
-            return $this->response->setStatusCode(400)
+            // Prepare data - convert empty strings to null for optional fields
+            $data = [
+                'patient_id'     => $patientId,
+                'blood_pressure' => $bloodPressure !== '' ? $bloodPressure : null,
+                'heart_rate'     => $heartRate !== '' && $heartRate !== null ? (int)$heartRate : null,
+                'temperature'    => $temperature !== '' && $temperature !== null ? (float)$temperature : null,
+                'recorded_by'    => $userId ? (string)$userId : null, // VARCHAR(20) in database
+            ];
+
+            // Validate that at least one vital sign is provided
+            if (empty($data['blood_pressure']) && empty($data['heart_rate']) && empty($data['temperature'])) {
+                return $this->response->setStatusCode(400)
+                    ->setJSON(['success' => false, 'message' => 'At least one vital sign is required']);
+            }
+
+            // Save vitals
+            if (!$this->vitalModel->save($data)) {
+                $errors = $this->vitalModel->errors();
+                log_message('error', 'Failed to save vitals: ' . json_encode($errors));
+                return $this->response->setStatusCode(400)
+                    ->setJSON([
+                        'success' => false,
+                        'message' => 'Failed to save vitals',
+                        'errors'  => $errors,
+                    ]);
+            }
+
+            // Get the saved record
+            $latest = $this->vitalModel->getLatestForPatient($patientId);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Vitals saved successfully',
+                'vitals'  => $latest,
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error saving vitals: ' . $e->getMessage());
+            return $this->response->setStatusCode(500)
                 ->setJSON([
                     'success' => false,
-                    'message' => 'Failed to save vitals',
-                    'errors'  => $this->vitalModel->errors(),
+                    'message' => 'Error saving vitals: ' . $e->getMessage(),
                 ]);
         }
-
-        $latest = $this->vitalModel->getLatestForPatient($data['patient_id']);
-
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Vitals saved successfully',
-            'vitals'  => $latest,
-        ]);
     }
 
     // ==================== PRESCRIPTION METHODS ====================
@@ -779,12 +804,12 @@ class Doctor extends BaseController
                 'beds.ward AS bed_ward',
                 'beds.room AS bed_room',
                 'beds.bed AS bed_label',
-                "COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), ' ', TRIM(doctors.last_name)), ' '), users.username, CONCAT('Doctor #', doctors.id)) AS physician_name",
+                "COALESCE(NULLIF(CONCAT(TRIM(staff_profiles.first_name), ' ', TRIM(staff_profiles.last_name)), ' '), users.username, CONCAT('Doctor #', staff_profiles.id)) AS physician_name",
                 'users.username AS physician_username',
             ])
             ->join('beds', 'beds.id = admission_details.bed_id', 'left')
-            ->join('doctors', 'doctors.id = admission_details.attending_doctor_id', 'left')
-            ->join('users', 'users.id = doctors.user_id', 'left')
+            ->join('staff_profiles', 'staff_profiles.id = admission_details.attending_doctor_id', 'left')
+            ->join('users', 'users.id = staff_profiles.user_id', 'left')
             ->where('admission_details.patient_id', $patientId)
             ->groupBy('admission_details.id')
             ->orderBy('admission_details.admission_date', 'DESC')

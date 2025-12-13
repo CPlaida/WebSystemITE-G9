@@ -1,0 +1,1023 @@
+ERROR - 2025-12-13 02:27:44 --> mysqli_sql_exception: Unknown column 'm.price' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `pi`.*, ...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `pi`.*, ...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `pi`.*, ...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `pi`.*, ...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Pharmacy.php(1269): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Pharmacy->getPatientPrescriptions()
+#6 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Pharmacy))
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#10 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#11 {main}
+ERROR - 2025-12-13 02:27:44 --> Error in getPatientPrescriptions: Unknown column 'm.price' in 'field list'
+ERROR - 2025-12-13 02:33:39 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:33:39 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:39 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:39 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:33:39 --> mysqli_sql_exception: Table 'hms_g9.doctors' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admissi...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admissi...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admissi...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admissi...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:33:39 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.doctors' doesn't exist
+[Method: GET, Route: doctor/medical-records]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:39 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.doctors' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:39 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.doctors' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:33:41 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:33:41 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:41 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:41 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:33:44 --> mysqli_sql_exception: Table 'hms_g9.doctors' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admissi...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admissi...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admissi...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admissi...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:33:44 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.doctors' doesn't exist
+[Method: GET, Route: doctor/medical-records]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:44 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.doctors' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:44 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.doctors' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:33:47 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:33:47 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:47 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:33:47 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:34:13 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:34:13 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:34:13 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:34:13 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:34:13 --> mysqli_sql_exception: Table 'hms_g9.doctors' doesn't exist in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admissi...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admissi...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admissi...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admissi...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:34:13 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.doctors' doesn't exist
+[Method: GET, Route: doctor/medical-records]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:34:13 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'hms_g9.doctors' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:34:13 --> [Caused by] mysqli_sql_exception: Table 'hms_g9.doctors' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = \'PAT-251212-0002\'
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `admission_details`.`id` AS `admission_id`, `admission_details`.`patient_id`, `admission_details`.`admission_date`, `admission_details`.`admission_time`, `admission_details`.`admission_type`, `admission_details`.`status` AS `admission_status`, `admission_details`.`admitting_diagnosis`, `admission_details`.`reason_admission`, `admission_details`.`ward` AS `admission_ward`, `admission_details`.`room` AS `admission_room`, `admission_details`.`updated_at` AS `update_timestamp`, `admission_details`.`attending_doctor_id`, `beds`.`ward` AS `bed_ward`, `beds`.`room` AS `bed_room`, `beds`.`bed` AS `bed_label`, COALESCE(NULLIF(CONCAT(TRIM(doctors.first_name), \' \', TRIM(doctors.last_name)), \' \'), users.username, CONCAT(\'Doctor #\', doctors.id)) AS physician_name, `users`.`username` AS `physician_username`
+FROM `admission_details`
+LEFT JOIN `beds` ON `beds`.`id` = `admission_details`.`bed_id`
+LEFT JOIN `doctors` ON `doctors`.`id` = `admission_details`.`attending_doctor_id`
+LEFT JOIN `users` ON `users`.`id` = `doctors`.`user_id`
+WHERE `admission_details`.`patient_id` = :admission_details.patient_id:
+GROUP BY `admission_details`.`id`
+ORDER BY `admission_details`.`admission_date` DESC, `admission_details`.`created_at` DESC', [...], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Doctor.php(792): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->medicalRecords()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:34:42 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:34:42 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:34:42 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:34:42 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:35:02 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:35:02 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:35:02 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:35:02 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:35:03 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:35:03 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:35:03 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:35:03 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0001\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0001')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0001')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:36:11 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:36:11 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:36:11 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:36:11 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-13 02:36:14 --> mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list' in C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WebSystemITE-G9\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `v...', 0)
+#1 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `v...')
+#2 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `v...')
+#3 C:\xampp\htdocs\WebSystemITE-G9\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `v...', Array, false)
+#4 C:\xampp\htdocs\WebSystemITE-G9\system\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WebSystemITE-G9\system\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+#6 C:\xampp\htdocs\WebSystemITE-G9\app\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+#7 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+#8 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+#9 C:\xampp\htdocs\WebSystemITE-G9\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WebSystemITE-G9\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WebSystemITE-G9\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-13 02:36:14 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+[Method: GET, Route: doctor/vitals]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 2 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 4 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:36:14 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 4 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 6 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-13 02:36:14 --> [Caused by] mysqli_sql_exception: Unknown column 'vitals_bp' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = \'PAT-251212-0002\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `id`, `vitals_bp`, `vitals_hr`, `vitals_temp`, `updated_at`, `created_at`
+FROM `patients`
+WHERE `patients`.`id` = :patients.id:', [...], false)
+ 5 SYSTEMPATH\Model.php(210): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(611): CodeIgniter\Model->doFind(true, 'PAT-251212-0002')
+ 7 APPPATH\Controllers\Doctor.php(613): CodeIgniter\BaseModel->find('PAT-251212-0002')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Doctor->vitals()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Doctor))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

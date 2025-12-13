@@ -28,17 +28,39 @@ class RoomChargeProvider extends AbstractChargeProvider
             $builder = $this->db->table('admission_details ad');
             $builder->select('ad.id, ad.patient_id, ad.bed_id, ad.admission_date, ad.admission_time, ad.updated_at, ad.status, ad.ward, ad.room');
             $builder->where('ad.patient_id', $patientId);
+            
+            // Filter by billed status
             if ($this->fieldExists('admission_details', 'billed')) {
                 $builder->groupStart()
                     ->where('ad.billed', 0)
                     ->orWhere('ad.billed IS NULL', null, false)
                     ->groupEnd();
             }
-            $builder->whereIn('ad.status', ['admitted', 'discharged']);
+            
+            // Only include admitted status (current active admission) OR discharged admissions
+            // that haven't been linked to billing_items (not yet billed)
+            if ($this->tableExists('billing_items')) {
+                // Include admitted status OR discharged that are not linked to billing_items
+                // Use a subquery to exclude discharged admissions already in billing_items
+                $builder->groupStart()
+                    ->where('ad.status', 'admitted')
+                    ->orGroupStart()
+                        ->where('ad.status', 'discharged')
+                        // Exclude discharged admissions that are already linked to billing_items
+                        ->where('NOT EXISTS (SELECT 1 FROM billing_items bi WHERE bi.source_table = \'admission_details\' AND CAST(bi.source_id AS UNSIGNED) = ad.id)', null, false)
+                        ->groupEnd()
+                    ->groupEnd();
+            } else {
+                // If billing_items table doesn't exist, show both admitted and discharged
+                $builder->whereIn('ad.status', ['admitted', 'discharged']);
+            }
+            
             $builder->orderBy('ad.admission_date', 'DESC');
             $admissions = $builder->get()->getResultArray();
 
             if (!empty($admissions)) {
+                // Additional filter to exclude admissions already linked to billing_items
+                // This is a safety net to ensure we don't show already-billed admissions
                 $admissions = $this->filterOutAlreadyLinked($admissions, 'admission_details');
                 
                 if (!empty($admissions)) {

@@ -219,11 +219,43 @@ class Patients extends BaseController
 
         // Save to database
         if ($this->patientModel->save($data)) {
+            // Get patient ID - try getInsertID first, if that fails, get from email (unique identifier)
+            $patientId = $this->patientModel->getInsertID();
+            if (empty($patientId)) {
+                // If getInsertID doesn't work (non-auto-increment ID), find by email
+                $patient = $this->patientModel->where('email', $data['email'])->first();
+                $patientId = $patient['id'] ?? null;
+            }
+            
+            // If vitals were provided during registration, save them to patient_vitals table
+            if ($patientId) {
+                $vitalsBp = $this->request->getPost('vitals_bp');
+                $vitalsHr = $this->request->getPost('vitals_hr');
+                $vitalsTemp = $this->request->getPost('vitals_temp');
+                
+                if (!empty($vitalsBp) || !empty($vitalsHr) || !empty($vitalsTemp)) {
+                    try {
+                        $vitalModel = new \App\Models\PatientVitalModel();
+                        $vitalData = [
+                            'patient_id'     => (string)$patientId,
+                            'blood_pressure' => !empty($vitalsBp) ? trim((string)$vitalsBp) : null,
+                            'heart_rate'     => !empty($vitalsHr) ? (int)$vitalsHr : null,
+                            'temperature'    => !empty($vitalsTemp) ? (float)$vitalsTemp : null,
+                            'recorded_by'    => session()->get('user_id') ? (string)session()->get('user_id') : null,
+                        ];
+                        $vitalModel->save($vitalData);
+                    } catch (\Exception $e) {
+                        // Log error but don't fail patient registration if vitals save fails
+                        log_message('error', 'Failed to save vitals during patient registration: ' . $e->getMessage());
+                    }
+                }
+            }
+            
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Patient registered successfully!',
                 'data' => [
-                    'id' => $this->patientModel->getInsertID()
+                    'id' => $patientId
                 ]
             ]);
         }
